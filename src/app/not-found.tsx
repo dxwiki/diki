@@ -1,4 +1,4 @@
-import ErrorLayout from '@/components/client/common/ErrorLayout';
+import ErrorLayout from '@/layouts/ErrorLayout';
 
 const NotFoundLayout = () => {
   return <ErrorLayout />;

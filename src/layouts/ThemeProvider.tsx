@@ -8,7 +8,7 @@ const ThemeLayout = ({
   ...props
 }: ThemeProviderProps) => {
   return (
-    <ThemeProvider attribute='class' defaultTheme='dark' {...props}>
+    <ThemeProvider attribute='class' defaultTheme='system' {...props}>
       {children}
     </ThemeProvider>
   );

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import ThemeProvider from '@/components/client/theme/ThemeProvider';
+import ThemeProvider from '@/layouts/ThemeProvider';
 import Header from '@/components/server/common/Header';
 
 interface RootLayoutProps {

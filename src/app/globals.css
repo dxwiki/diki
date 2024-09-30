@@ -30,6 +30,12 @@
   background-color: var(--accent-color);
 }
 
+.button-bg-gray {
+  &:hover {
+    background-color: var(--border-color);
+  }
+}
+
 .text-main {
   color: var(--text-color);
 }
