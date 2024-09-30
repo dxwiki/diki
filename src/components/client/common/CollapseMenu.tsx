@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
-import ThemeSwitch from '../theme/ThemeSwitch';
+import ThemeSwitch from '@/components/client/theme/ThemeSwitch';
 
 interface NavItem {
   href: string;
