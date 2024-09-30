@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import ThemeProvider from '@/components/client/theme/ThemeProvider';
 import Header from '@/components/server/common/Header';
 
 interface RootLayoutProps {
@@ -12,13 +13,13 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = ({ children }: RootLayoutProps) => {
-  const themeCookie = 'light';
-
   return (
-    <html lang='en' className={themeCookie === 'light' ? '' : 'dark'}>
+    <html lang='en' suppressHydrationWarning>
       <body className='bg-main text-main'>
-        <Header />
-        <main className='mt-16'>{children}</main>
+        <ThemeProvider>
+          <Header />
+          <main className='mt-16'>{children}</main>
+        </ThemeProvider>
       </body>
     </html>
   );
