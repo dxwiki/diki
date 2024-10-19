@@ -1,17 +1,9 @@
 /** @type {import('next').NextConfig} */
 
+const isProd = process.env.NODE_ENV === 'production';
+
 const nextConfig = {
-  darkMode: ['class'],
-  content: ['./src/**/*.{ts,tsx,mdx}'],
-  // output: 'export',
-  images: {
-    unoptimized: true
-  },
-  experimental: {
-    staticPages: {
-      '/': false
-    }
-  }
+  ...(isProd && { output: 'export' }), // 배포 환경에서만 'export' 설정 적용
 };
 
 module.exports = nextConfig;
