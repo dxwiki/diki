@@ -18,7 +18,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
       <body className='bg-main text-main'>
         <ThemeProvider>
           <Header />
-          <main className='mt-16'>{children}</main>
+          <main className='mt-16 max-w-6xl mx-auto px-4 py-3 md:px-6 lg:px-8'>{children}</main>
         </ThemeProvider>
       </body>
     </html>

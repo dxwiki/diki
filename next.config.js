@@ -3,7 +3,7 @@
 const nextConfig = {
   darkMode: ['class'],
   content: ['./src/**/*.{ts,tsx,mdx}'],
-  output: 'export',
+  // output: 'export',
   images: {
     unoptimized: true
   },
