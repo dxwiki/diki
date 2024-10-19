@@ -2,11 +2,11 @@ import { getTermData } from '@/utils/termsData';
 import { notFound } from 'next/navigation';
 
 interface Props {
-  id: string
+  slug: string
 }
 
-const PostDetail = async ({ id }: Props) => {
-  const term = await getTermData(Number(id));
+const PostDetail = async ({ slug }: Props) => {
+  const term = await getTermData(slug);
 
   if (!term) {
     notFound();

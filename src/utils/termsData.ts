@@ -12,8 +12,9 @@ const fetchTermsData = async (): Promise<TermData[]> => {
     const termsCollection = await firestore.collection('terms').get();
     cachedTermsData = termsCollection.docs.map((doc) => {
       const data = doc.data();
+      const urlPath = data.title.en.toLowerCase().replace(/\s+/g, '-');
       return {
-        url: `/posts/${ data.id }`,
+        url: `/posts/${ urlPath }`,
         id: data.id,
         usecase: data.usecase,
         relevance: data.relevance,
@@ -35,9 +36,11 @@ const fetchTermsData = async (): Promise<TermData[]> => {
   return cachedTermsData;
 };
 
-const getTermData = async (id: number): Promise<TermData | undefined> => {
+const getTermData = async (slug: string): Promise<TermData | undefined> => {
   const termsDataList = await fetchTermsData();
-  return termsDataList.find((term) => term.id === id);
+  return termsDataList.find((term) =>
+    term.title.en.toLowerCase().replace(/\s+/g, '-') === slug
+  );
 };
 
 const clearCache = () => {
