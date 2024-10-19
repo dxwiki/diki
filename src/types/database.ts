@@ -1,4 +1,4 @@
-export interface TermData {
+export interface FetchTermData {
   id: number;
   usecase: {
     example: string;
@@ -74,4 +74,8 @@ export interface TermData {
     full: string;
     short: string;
   };
+}
+
+export interface TermData extends FetchTermData {
+  url: string;
 }
