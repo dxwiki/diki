@@ -13,135 +13,175 @@ const PostDetail = async ({ slug }: Props) => {
   }
 
   return (
-    <>
-      <h1 className="text-3xl font-bold mb-5">{term.title.ko}</h1>
-
-      <section className="mb-5">
-        <h2 className="text-2xl font-semibold mb-3">{'Title'}</h2>
-        <p><strong>{'English:'}</strong> {term.title.en}</p>
-        <p><strong>{'Korean:'}</strong> {term.title.ko}</p>
-        <p><strong>{'Other:'}</strong> {term.title.etc.join(', ')}</p>
-      </section>
-
-      <section className="mb-5">
-        <h2 className="text-2xl font-semibold mb-3">{'Description'}</h2>
-        <p><strong>{'Short:'}</strong> {term.description.short}</p>
-        <p><strong>{'Full:'}</strong> {term.description.full}</p>
-      </section>
-
-      <section className="mb-5">
-        <h2 className="text-2xl font-semibold mb-3">{'Usecase'}</h2>
-        <p><strong>{'Description:'}</strong> {term.usecase.description}</p>
-        <p><strong>{'Example:'}</strong> {term.usecase.example}</p>
-        <p><strong>{'Industries:'}</strong> {term.usecase.industries.join(', ')}</p>
-      </section>
-
-      <section className="mb-5">
-        <h2 className="text-2xl font-semibold mb-3">{'Relevance'}</h2>
-        <div>
-          <h3 className="text-xl font-semibold">{'Analyst'}</h3>
-          <p><strong>{'Score:'}</strong> {term.relevance.analyst.score}</p>
-          <p><strong>{'Description:'}</strong> {term.relevance.analyst.description}</p>
+    <div>
+      <section className='flex justify-between items-end my-5 py-5 border-b border-gray-500'>
+        <div className='flex flex-col'>
+          <h1 className="text-3xl font-bold">{term.title.ko}</h1>
+          <p className='text-gray-500'>{term.description.short}</p>
         </div>
-        <div>
-          <h3 className="text-xl font-semibold">{'Engineer'}</h3>
-          <p><strong>{'Score:'}</strong> {term.relevance.engineer.score}</p>
-          <p><strong>{'Description:'}</strong> {term.relevance.engineer.description}</p>
-        </div>
-        <div>
-          <h3 className="text-xl font-semibold">{'Scientist'}</h3>
-          <p><strong>{'Score:'}</strong> {term.relevance.scientist.score}</p>
-          <p><strong>{'Description:'}</strong> {term.relevance.scientist.description}</p>
+        <div className='flex flex-col'>
+          <p className='text-gray-500'><strong>{'발행일:'}</strong> {term.metadata.created_at}</p>
+          <p className='text-gray-500'><strong>{'수정일:'}</strong> {term.metadata.updated_at}</p>
         </div>
       </section>
-
-      <section className="mb-5">
-        <h2 className="text-2xl font-semibold mb-3">{'Difficulty'}</h2>
-        <p><strong>{'Level:'}</strong> {term.difficulty.level}</p>
-        <p><strong>{'Description:'}</strong> {term.difficulty.description}</p>
-      </section>
-
-      <section className="mb-5">
-        <h2 className="text-2xl font-semibold mb-3">{'Tags'}</h2>
-        <p>{term.tags.join(', ')}</p>
-      </section>
-
-      <section className="mb-5">
-        <h2 className="text-2xl font-semibold mb-3">{'Terms'}</h2>
-        <ul>
-          {term.terms.map((item, index) => (
-            <li key={index}>
-              <strong>{item.term}{':'}</strong> {item.description}
-              {'('}<a href={item.link} target="_blank" rel="noopener noreferrer">{'Link'}</a>{')'}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mb-5">
-        <h2 className="text-2xl font-semibold mb-3">{'Publish Status'}</h2>
-        <p>{term.publish ? 'Published' : 'Not Published'}</p>
-      </section>
-
-      <section className="mb-5">
-        <h2 className="text-2xl font-semibold mb-3">{'Metadata'}</h2>
-        <p><strong>{'Contributors:'}</strong> {term.metadata.contributors}</p>
-        <p><strong>{'Authors:'}</strong> {term.metadata.authors}</p>
-        <p><strong>{'Created at:'}</strong> {term.metadata.created_at}</p>
-        <p><strong>{'Updated at:'}</strong> {term.metadata.updated_at}</p>
-        <p><strong>{'Last reviewed:'}</strong> {term.metadata.last_reviewed}</p>
-      </section>
-
-      <section className="mb-5">
-        <h2 className="text-2xl font-semibold mb-3">{'References'}</h2>
+      <div className='grid grid-cols-[5fr_1fr] gap-2'>
         <div>
-          <h3 className="text-xl font-semibold">{'Tutorials'}</h3>
-          <ul>
-            {term.references.tutorials.map((tutorial, index) => (
-              <li key={index}>
-                <a href={tutorial.link} target="_blank" rel="noopener noreferrer">{tutorial.title}</a>
-                {'- '}{tutorial.platform}
-              </li>
-            ))}
-          </ul>
+          <section className="my-10 group">
+
+            <h2 className="text-xl font-semibold mb-3 relative">
+              <span className="text-[#33cfff] ml-[-20px] mr-2 opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              {'개념'}
+            </h2>
+            <p>{term.description.full}</p>
+          </section>
+
+          <section className="my-10 group">
+            <h2 className="text-xl font-semibold mb-3">
+              <span className="text-[#33cfff] ml-[-20px] mr-2 opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+
+              {'난이도'}
+            </h2>
+            <p><strong>{'Level:'}</strong> {term.difficulty.level}{' stars'}</p>
+            <p><strong>{'Description:'}</strong> {term.difficulty.description}</p>
+          </section>
+
+          <section className="my-10 group">
+            <h2 className="text-xl font-semibold mb-3">
+              <span className="text-[#33cfff] ml-[-20px] mr-2 opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              {'관련성'}
+            </h2>
+            <div className='grid grid-cols-[5fr_4fr_2fr_10fr] gap-2'>
+              <div className='col-span-1 row-span-4 flex justify-center items-center border-gray-500 border-2'>{'삼각형'}</div>
+              <p>{'직무'}</p>
+              <p>{'관련도'}</p>
+              <p>{'설명'}</p>
+              <h3 className="text-xl font-semibold">{'Data Analyst'}</h3>
+              <p className=''>{term.relevance.analyst.score}{' stars'}</p>
+              <p className=''>{term.relevance.analyst.description}</p>
+              <h3 className="text-xl font-semibold">{'Data Engineer'}</h3>
+              <p className=''>{term.relevance.engineer.score}{' stars'}</p>
+              <p className=''>{term.relevance.engineer.description}</p>
+              <h3 className="text-xl font-semibold">{'Data Scientist'}</h3>
+              <p className=''>{term.relevance.scientist.score}{' stars'}</p>
+              <p className=''>{term.relevance.scientist.description}</p>
+            </div>
+          </section>
+
+          <section className="my-10 group">
+            <h2 className="text-xl font-semibold mb-3">
+              <span className="text-[#33cfff] ml-[-20px] mr-2 opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              {'관련용어'}
+            </h2>
+            <ul>
+              {term.terms.map((item, index) => (
+                <li key={index} className='my-2 flex items-center'>
+                  <p className='px-2 rounded-3xl bg-[#33CFFF] text-white mr-20'>{item.term}</p>
+                  {item.description}
+                  {'('}<a href={item.link} target="_blank" rel="noopener noreferrer" className='border-b border-gray-500'>{'Link'}</a>{')'}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="my-10 group">
+            <h2 className="text-xl font-semibold mb-3">
+              <span className="text-[#33cfff] ml-[-20px] mr-2 opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              {'사용사례'}
+            </h2>
+            <p>{term.usecase.industries.join(', ')}</p>
+            <p>{term.usecase.example}</p>
+            <p className='text-gray-500'>{term.usecase.description}</p>
+          </section>
+
+          <section className="my-10 group">
+            <h2 className="text-xl font-semibold mb-3">
+              <span className="text-[#33cfff] ml-[-20px] mr-2 opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              {'레퍼런스'}
+            </h2>
+            <div>
+              <h3 className="text-xl font-semibold mt-5">{'1. Tutorials'}</h3>
+              <ul>
+                {term.references.tutorials.map((tutorial, index) => (
+                  <li key={index}>
+                    <a className='text-lg text-[#33cfff] border-b border-[#33cfff]' href={tutorial.link} target="_blank" rel="noopener noreferrer">{tutorial.title}</a>
+                    <p>{tutorial.platform}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mt-5">{'2. Books'}</h3>
+              <ul>
+                {term.references.books.map((book, index) => (
+                  <li key={index}>
+                    <div>
+                      <a className='text-lg text-[#33cfff] border-b border-[#33cfff]' href={book.link} target="_blank" rel="noopener noreferrer">{book.title}</a>
+                    </div>
+                    {' by '}{book.authors.join(', ')}{'('}{book.year}{', '}{book.publisher}{')'}
+                    <div>
+                      {'ISBN: '}{book.isbn}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mt-5">{'3. Academic'}</h3>
+              <ul>
+                {term.references.academic.map((paper, index) => (
+                  <li key={index}>
+                    <div>
+                      <a className='text-lg text-[#33cfff] border-b border-[#33cfff]' href={paper.link} target="_blank" rel="noopener noreferrer">{paper.title}</a>
+                    </div>
+                    {paper.authors.join(', ')}{' ('}{paper.year}{') '}
+                    <div>
+                      {'DOI: '}{paper.doi}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mt-5">{'4. Open Source'}</h3>
+              <ul>
+                {term.references.opensource.map((project, index) => (
+                  <li key={index}>
+                    <div>
+                      <a className='text-lg text-[#33cfff] border-b border-[#33cfff]' href={project.link} target="_blank" rel="noopener noreferrer">{project.name}</a>
+                    </div>
+                    {project.description}
+                    {'(License: '}{project.license}{')'}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+
+          <section className="my-10 group">
+            <h2 className="text-xl font-semibold mb-3">
+              <span className="text-[#33cfff] ml-[-20px] mr-2 opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              {'Tags'}
+            </h2>
+            <p>{term.tags.join(', ')}</p>
+          </section>
+
+          {/* <section className="my-10">
+            <h2 className="text-xl font-semibold mb-3">{'Metadata'}</h2>
+            <p><strong>{'Contributors:'}</strong> {term.metadata.contributors}</p>
+            <p><strong>{'Authors:'}</strong> {term.metadata.authors}</p>
+            <p><strong>{'Last reviewed:'}</strong> {term.metadata.last_reviewed}</p>
+          </section>
+
+          <section className="my-10">
+            <h2 className="text-xl font-semibold mb-3">{'Publish Status'}</h2>
+            <p>{term.publish ? 'Published' : 'Not Published'}</p>
+          </section> */}
         </div>
-        <div>
-          <h3 className="text-xl font-semibold">{'Books'}</h3>
-          <ul>
-            {term.references.books.map((book, index) => (
-              <li key={index}>
-                <strong>{book.title}</strong>{' by '}{book.authors.join(', ')}
-                {'('}{book.year}{', '}{book.publisher}{') ISBN: '}{book.isbn}
-                <a href={book.link} target="_blank" rel="noopener noreferrer">{'Link'}</a>
-              </li>
-            ))}
-          </ul>
+        <div className='sticky mt-10 top-[150px] h-32 border border-gray-500'>
+          {'TOC'}
         </div>
-        <div>
-          <h3 className="text-xl font-semibold">{'Academic'}</h3>
-          <ul>
-            {term.references.academic.map((paper, index) => (
-              <li key={index}>
-                {paper.authors.join(', ')}{' ('}{paper.year}{'). '}{paper.title}{'. DOI: '}{paper.doi}
-                <a href={paper.link} target="_blank" rel="noopener noreferrer">{'Link'}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-xl font-semibold">{'Open Source'}</h3>
-          <ul>
-            {term.references.opensource.map((project, index) => (
-              <li key={index}>
-                <strong>{project.name}</strong>{' - '}{project.description}
-                {'(License: '}{project.license}{')'}
-                <a href={project.link} target="_blank" rel="noopener noreferrer">{'Link'}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-    </>
+      </div>
+    </div>
   );
 };
 
