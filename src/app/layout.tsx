@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { fontMono, fontSans, fontMaru, fontJua } from '@/lib/fonts';
 import './globals.css';
 import ThemeProvider from '@/layouts/ThemeProvider';
 import Header from '@/components/server/common/Header';
@@ -15,7 +16,15 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className='bg-main text-main'>
+      <body
+        className={`
+        bg-main text-main 
+        ${ fontSans.variable } 
+        ${ fontMono.variable } 
+        ${ fontJua.variable }
+        ${ fontMaru.variable } 
+      `}
+      >
         <ThemeProvider>
           <Header />
           <main className='mt-16 max-w-6xl mx-auto px-4 py-3 md:px-6 lg:px-8'>{children}</main>

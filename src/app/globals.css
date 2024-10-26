@@ -80,6 +80,10 @@
     }
     h2{
       font-weight: 700;
+      @apply font-maru;
+    }
+    p, div{
+      @apply font-maru;
     }
   }
 }
