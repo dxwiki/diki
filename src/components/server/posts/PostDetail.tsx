@@ -94,7 +94,7 @@ const PostDetail = async ({ slug }: Props) => {
             <ul>
               {term.terms.map((item, index) => (
                 <li key={index} className='my-2 flex items-center'>
-                  <span className='px-2 py-1 rounded-3xl bg-accent text-white mr-2 shrink-0'>
+                  <span className='px-2 py-1 rounded-3xl bg-accent hover-bg-primary text-white mr-2 shrink-0'>
                     <a
                       href={item.link}
                       target="_blank"
@@ -120,7 +120,7 @@ const PostDetail = async ({ slug }: Props) => {
               {term.usecase.industries.map((tag, index) => (
                 <button
                   key={index}
-                  className="px-3 py-1 rounded-3xl bg-accent text-white"
+                  className="px-2 py-0.5 hover-bg-primary rounded-3xl bg-accent text-white"
                 >
                   {tag}
                 </button>
@@ -195,7 +195,7 @@ const PostDetail = async ({ slug }: Props) => {
               {term.tags.map((tag, index) => (
                 <button
                   key={index}
-                  className="px-3 py-1 rounded-3xl bg-accent text-white"
+                  className="px-3 py-1 rounded-3xl bg-accent text-white hover-bg-primary"
                 >
                   {tag}
                 </button>
