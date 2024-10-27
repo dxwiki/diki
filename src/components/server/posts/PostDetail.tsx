@@ -1,6 +1,7 @@
 import { getTermData } from '@/utils/termsData';
 import { notFound } from 'next/navigation';
 import { ExternalLink } from 'lucide-react';
+import MarkdownContent from './MarkdownContent';
 
 interface Props {
   slug: string
@@ -38,7 +39,7 @@ const PostDetail = async ({ slug }: Props) => {
               <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'개념'}
             </h2>
-            <p>{term.description.full}</p>
+            <MarkdownContent content={term.description.full} />
           </section>
 
           <section className="my-10 group">
