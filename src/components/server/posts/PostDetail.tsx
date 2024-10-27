@@ -2,7 +2,8 @@ import { getTermData } from '@/utils/termsData';
 import { notFound } from 'next/navigation';
 import { ExternalLink } from 'lucide-react';
 import MarkdownContent from './MarkdownContent';
-import { formatDate } from '@/utils/metaData';
+import { formatDate, getReadingTime } from '@/utils/metaData';
+import { Clock3 } from 'lucide-react';
 
 interface Props {
   slug: string
@@ -19,9 +20,9 @@ const PostDetail = async ({ slug }: Props) => {
     <div>
       <section className='flex justify-between items-end mt-10 mb-5 border-b border-main'>
         <div className='flex flex-col mb-5'>
-          <h1 className="text-3xl font-bold text-accent font-noto">{term.title.ko}{'('}{term.title.en}{')'}</h1>
+          <h1 className="text-3xl font-bold text-accent dark:text-[#33cfff] font-noto">{term.title.ko}{'('}{term.title.en}{')'}</h1>
           <p className='text-sub'>{term.description.short}</p>
-          <div className="flex flex-wrap gap-1 justify-end">
+          <div className="flex flex-wrap gap-1">
             {term.tags.map((tag, index) => (
               <button
                 key={index}
@@ -33,8 +34,15 @@ const PostDetail = async ({ slug }: Props) => {
           </div>
         </div>
       </section>
-      <div>
-        <div className='flex gap-2 justify-end items-center'>
+      <div className='flex flex-col sm:flex-row gap-2 items-end sm:justify-end sm:items-center'>
+        <div className="flex items-center gap-1">
+          <span className='text-sub'>{'by '}{term.metadata.authors}</span>
+          <span className="text-gray-400">{'•'}</span>
+          <Clock3 className="size-4" />
+          <span>{getReadingTime(term)}</span>
+        </div>
+        <span className="text-gray-400 hidden sm:block">{'•'}</span>
+        <div className='flex gap-2 items-center'>
           <span className='text-sub'>{'발행: '}{formatDate(term.metadata.created_at)}</span>
           <div className='w-px h-4 bg-gray-600 dark:bg-gray-300' />
           <span className='text-sub'>{'수정: '}{formatDate(term.metadata.updated_at)}</span>
