@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { fontMono, fontSans, fontMaru, fontJua } from '@/lib/fonts';
+import { fontNanum, fontCoding, fontNoto } from '@/lib/fonts';
 import './globals.css';
 import ThemeProvider from '@/layouts/ThemeProvider';
 import Header from '@/components/server/common/Header';
@@ -19,10 +19,9 @@ const RootLayout = ({ children }: RootLayoutProps) => {
       <body
         className={`
         bg-main text-main 
-        ${ fontSans.variable } 
-        ${ fontMono.variable } 
-        ${ fontJua.variable }
-        ${ fontMaru.variable } 
+        ${ fontNanum.variable } 
+        ${ fontCoding.variable } 
+        ${ fontNoto.variable } 
       `}
       >
         <ThemeProvider>

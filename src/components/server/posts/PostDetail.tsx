@@ -17,8 +17,8 @@ const PostDetail = async ({ slug }: Props) => {
     <div>
       <section className='flex justify-between items-end my-5 py-5 border-b border-main'>
         <div className='flex flex-col'>
-          <h1 className="text-3xl font-bold text-primary font-jua">{term.title.ko}</h1>
-          <p className='text-sub font-sans'>{term.description.short}</p>
+          <h1 className="text-3xl font-bold text-primary font-noto">{term.title.ko}</h1>
+          <p className='text-sub'>{term.description.short}</p>
         </div>
         <div className='hidden sm:flex flex-col'>
           <p className='text-sub'><strong>{'발행:'}</strong> {term.metadata.created_at}</p>

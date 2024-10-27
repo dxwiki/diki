@@ -10,10 +10,9 @@ const config: Config = {
         'custom-border': 'var(--border-color)',
       },
       fontFamily: {
-        sans: ['var(--font-sans)', ...fontFamily.sans],
-        mono: ['var(--font-mono)', ...fontFamily.mono],
-        maru: ['var(--font-maru)', ...fontFamily.sans],
-        jua: ['var(--font-jua)', ...fontFamily.sans],
+        nanum: ['var(--font-nanum)', ...fontFamily.sans],
+        coding: ['var(--font-coding)', ...fontFamily.mono],
+        noto: ['var(--font-noto)', ...fontFamily.sans],
       },
     },
   },

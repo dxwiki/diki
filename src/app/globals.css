@@ -74,16 +74,16 @@
 }
 
 @layer base {
+  h2{
+    font-weight: 700;
+    @apply font-noto;
+  }
+  p, div{
+    @apply font-nanum;
+  }
   @media (min-width: 640px) {
     section > :not(h2) {
       margin-left: 8px;
-    }
-    h2{
-      font-weight: 700;
-      @apply font-maru;
-    }
-    p, div{
-      @apply font-maru;
     }
   }
 }

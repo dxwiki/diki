@@ -1,52 +1,23 @@
-import { Inter as FontSans, JetBrains_Mono as FontMono, Jua } from 'next/font/google';
-import localFont from 'next/font/local';
+import { Nanum_Gothic as FontNanum, Nanum_Gothic_Coding as FontCoding, Noto_Serif_KR as FontNoto } from 'next/font/google';
+// import localFont from 'next/font/local';
 
-export const fontSans = FontSans({
+export const fontNanum = FontNanum({
+  weight: ['400', '700'],
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--font-nanum',
   display: 'swap',
 });
 
-export const fontMono = FontMono({
+export const fontCoding = FontCoding({
+  weight: ['400', '700'],
   subsets: ['latin'],
-  variable: '--font-mono',
+  variable: '--font-coding',
   display: 'swap',
 });
 
-export const fontJua = Jua({
-  weight: '400',
+export const fontNoto = FontNoto({
+  weight: ['400', '700'],
   subsets: ['latin'],
-  variable: '--font-jua',
-});
-
-// 시범용으로, ttf 사용함. woff2 폰트로 변경 예정.
-export const fontMaru = localFont({
-  variable: '--font-maru',
-  src: [
-    {
-      path: '../app/fonts/MaruBuri-ExtraLight.ttf',
-      weight: '100',
-      style: 'normal',
-    },
-    {
-      path: '../app/fonts/MaruBuri-Light.ttf',
-      weight: '300',
-      style: 'normal',
-    },
-    {
-      path: '../app/fonts/MaruBuri-Regular.ttf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../app/fonts/MaruBuri-SemiBold.ttf',
-      weight: '500',
-      style: 'normal',
-    },
-    {
-      path: '../app/fonts/MaruBuri-Bold.ttf',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
+  variable: '--font-noto',
+  display: 'swap',
 });
