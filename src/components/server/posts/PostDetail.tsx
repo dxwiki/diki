@@ -2,6 +2,7 @@ import { getTermData } from '@/utils/termsData';
 import { notFound } from 'next/navigation';
 import { ExternalLink } from 'lucide-react';
 import MarkdownContent from './MarkdownContent';
+import { formatDate } from '@/utils/metaData';
 
 interface Props {
   slug: string
@@ -26,13 +27,14 @@ const PostDetail = async ({ slug }: Props) => {
           <span className='text-sub'>{'수정:'}{term.metadata.updated_at}</span>
         </div>
       </section>
-      <div className='block md:grid grid-cols-[5fr_1fr] gap-2 md:mr-5'>
-        <div className='flex gap-2 justify-end items-center sm:hidden'>
-          <span className='text-sub'>{'발행:'}{term.metadata.created_at}</span>
+      <div>
+        <div className='flex gap-2 justify-end items-center'>
+          <span className='text-sub'>{'발행: '}{formatDate(term.metadata.created_at)}</span>
           <div className='w-px h-4 bg-gray-600 dark:bg-gray-300' />
-          <span className='text-sub'>{'수정:'}{term.metadata.updated_at}</span>
+          <span className='text-sub'>{'수정: '}{formatDate(term.metadata.updated_at)}</span>
         </div>
-
+      </div>
+      <div className='block md:grid grid-cols-[5fr_1fr] gap-2 md:mr-5'>
         <div className='sm:ml-5'>
           <section className="my-12 group">
             <h2 className="text-xl font-semibold mb-3 relative flex">
