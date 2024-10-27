@@ -17,14 +17,20 @@ const PostDetail = async ({ slug }: Props) => {
 
   return (
     <div>
-      <section className='flex justify-between items-end my-5 py-5 border-b border-main'>
-        <div className='flex flex-col'>
-          <h1 className="text-3xl font-bold text-primary font-noto">{term.title.ko}</h1>
+      <section className='flex justify-between items-end mt-10 mb-5 border-b border-main'>
+        <div className='flex flex-col mb-5'>
+          <h1 className="text-3xl font-bold text-accent font-noto">{term.title.ko}{'('}{term.title.en}{')'}</h1>
           <p className='text-sub'>{term.description.short}</p>
-        </div>
-        <div className='hidden sm:flex flex-col'>
-          <span className='text-sub'>{'발행:'}{term.metadata.created_at}</span>
-          <span className='text-sub'>{'수정:'}{term.metadata.updated_at}</span>
+          <div className="flex flex-wrap gap-1 justify-end">
+            {term.tags.map((tag, index) => (
+              <button
+                key={index}
+                className="px-2 py-0.5 rounded-3xl bg-[#cff4ff] text-[#333] hover-bg-primary"
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
       <div>
@@ -189,7 +195,7 @@ const PostDetail = async ({ slug }: Props) => {
             </div>
           </section>
 
-          <section className="my-12 group">
+          {/* <section className="my-12 group">
             <h2 className="text-xl font-semibold mb-3">
               <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'Tags'}
@@ -204,7 +210,7 @@ const PostDetail = async ({ slug }: Props) => {
                 </button>
               ))}
             </div>
-          </section>
+          </section> */}
 
           {/* <section className="my-10">
             <h2 className="text-xl font-semibold mb-3">{'Metadata'}</h2>
