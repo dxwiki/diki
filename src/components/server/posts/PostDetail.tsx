@@ -22,19 +22,19 @@ const PostDetail = async ({ slug }: Props) => {
           <p className='text-sub'>{term.description.short}</p>
         </div>
         <div className='hidden sm:flex flex-col'>
-          <p className='text-sub'><strong>{'발행:'}</strong> {term.metadata.created_at}</p>
-          <p className='text-sub'><strong>{'수정:'}</strong> {term.metadata.updated_at}</p>
+          <span className='text-sub'>{'발행:'}{term.metadata.created_at}</span>
+          <span className='text-sub'>{'수정:'}{term.metadata.updated_at}</span>
         </div>
       </section>
       <div className='block md:grid grid-cols-[5fr_1fr] gap-2 md:mr-5'>
         <div className='flex gap-2 justify-end items-center sm:hidden'>
-          <p className='text-sub'><strong>{'발행:'}</strong> {term.metadata.created_at}</p>
+          <span className='text-sub'>{'발행:'}{term.metadata.created_at}</span>
           <div className='w-px h-4 bg-gray-600 dark:bg-gray-300' />
-          <p className='text-sub'><strong>{'수정:'}</strong> {term.metadata.updated_at}</p>
+          <span className='text-sub'>{'수정:'}{term.metadata.updated_at}</span>
         </div>
 
         <div className='sm:ml-5'>
-          <section className="my-10 group">
+          <section className="my-12 group">
             <h2 className="text-xl font-semibold mb-3 relative flex">
               <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'개념'}
@@ -42,7 +42,7 @@ const PostDetail = async ({ slug }: Props) => {
             <MarkdownContent content={term.description.full} />
           </section>
 
-          <section className="my-10 group">
+          <section className="my-12 group">
             <h2 className="text-xl font-semibold mb-3">
               <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'난이도'}
@@ -51,7 +51,7 @@ const PostDetail = async ({ slug }: Props) => {
             <p className='mt-2'>{term.difficulty.description}</p>
           </section>
 
-          <section className="my-10 group">
+          <section className="my-12 group">
             <h2 className="text-xl font-semibold mb-3">
               <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'관련성'}
@@ -59,35 +59,35 @@ const PostDetail = async ({ slug }: Props) => {
             <div className='block sm:flex justify-center'>
               <div className='w-[100vw-8px] sm:w-[300px] flex justify-center items-center border-main border-2 sm:mr-2'>{'삼각형'}</div>
               <div className='grid grid-cols-[3fr_2fr_10fr]'>
-                <p className="text-lg text-sub text-center my-2 sm:m-0">{'직무'}</p>
-                <p className="text-lg text-sub text-center my-2 sm:m-0">{'관련도'}</p>
-                <p className="text-lg text-sub pl-3 my-2 sm:m-0">{'설명'}</p>
+                <span className="text-lg text-sub text-center my-2 sm:m-0">{'직무'}</span>
+                <span className="text-lg text-sub text-center my-2 sm:m-0">{'관련도'}</span>
+                <span className="text-lg text-sub pl-3 my-2 sm:m-0">{'설명'}</span>
 
                 <div className="pr-2 grid grid-rows-3">
-                  {/* <p className="text-lg text-sub text-center self-center">{'직무'}</p> */}
+                  {/* <span className="text-lg text-sub text-center self-center">{'직무'}</span> */}
                   <h3 className="text-center self-center">{'Data Analyst'}</h3>
                   <h3 className="text-center self-center">{'Data Engineer'}</h3>
                   <h3 className="text-center self-center">{'Data Scientist'}</h3>
                 </div>
 
                 <div className="px-2 border-x border-custom-border grid grid-rows-3">
-                  {/* <p className="text-lg text-sub text-center self-center">{'관련도'}</p> */}
-                  <p className='text-center self-center'>{term.relevance.analyst.score}{' stars'}</p>
-                  <p className='text-center self-center'>{term.relevance.engineer.score}{' stars'}</p>
-                  <p className='text-center self-center'>{term.relevance.scientist.score}{' stars'}</p>
+                  {/* <span className="text-lg text-sub text-center self-center">{'관련도'}</span> */}
+                  <span className='text-center self-center'>{term.relevance.analyst.score}{' stars'}</span>
+                  <span className='text-center self-center'>{term.relevance.engineer.score}{' stars'}</span>
+                  <span className='text-center self-center'>{term.relevance.scientist.score}{' stars'}</span>
                 </div>
 
                 <div className="pl-3 grid grid-rows-3">
-                  {/* <p className="text-lg text-sub self-center">{'설명'}</p> */}
-                  <p className="self-center py-1">{term.relevance.analyst.description}</p>
-                  <p className="self-center py-1">{term.relevance.engineer.description}</p>
-                  <p className="self-center py-1">{term.relevance.scientist.description}</p>
+                  {/* <span className="text-lg text-sub self-center">{'설명'}</span> */}
+                  <span className="self-center py-1">{term.relevance.analyst.description}</span>
+                  <span className="self-center py-1">{term.relevance.engineer.description}</span>
+                  <span className="self-center py-1">{term.relevance.scientist.description}</span>
                 </div>
               </div>
             </div>
           </section>
 
-          <section className="my-10 group">
+          <section className="my-12 group">
             <h2 className="text-xl font-semibold mb-3">
               <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'관련용어'}
@@ -112,7 +112,7 @@ const PostDetail = async ({ slug }: Props) => {
             </ul>
           </section>
 
-          <section className="my-10 group">
+          <section className="my-12 group">
             <h2 className="text-xl font-semibold mb-3">
               <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'사용사례'}
@@ -131,7 +131,7 @@ const PostDetail = async ({ slug }: Props) => {
             <p className='text-sub mt-2'>{term.usecase.description}</p>
           </section>
 
-          <section className="my-10 group">
+          <section className="my-12 group">
             <h2 className="text-xl font-semibold mb-3">
               <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'레퍼런스'}
@@ -187,7 +187,7 @@ const PostDetail = async ({ slug }: Props) => {
             </div>
           </section>
 
-          <section className="my-10 group">
+          <section className="my-12 group">
             <h2 className="text-xl font-semibold mb-3">
               <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'Tags'}

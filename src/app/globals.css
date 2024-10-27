@@ -87,3 +87,15 @@
     }
   }
 }
+
+strong {
+  padding: 0.1rem;
+  margin-right: -0.25rem;
+  background-color: #cff4ff;
+  color: #333;
+}
+
+p {
+  line-height: 1.7;
+  margin: 10px 0;
+}
