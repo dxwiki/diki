@@ -34,7 +34,7 @@ h2{
 .bg-main {
   background-color: var(--background-color);
 }
-.bg-sub{
+.bg-sub {
   background-color: var(--secondary-color);
 }
 .bg-accent {
@@ -80,31 +80,4 @@ h2{
   &:hover {
     color: var(--primary-color);
   }
-}
-
-@layer base {
-  h2{
-    font-weight: 700;
-    @apply font-noto;
-  }
-  p, div{
-    @apply font-nanum;
-  }
-  @media (min-width: 640px) {
-    section > :not(h2) {
-      margin-left: 8px;
-    }
-  }
-}
-
-strong {
-  padding: 0.1rem;
-  margin-right: -0.25rem;
-  background-color: #cff4ff;
-  color: #333;
-}
-
-p {
-  line-height: 1.7;
-  margin: 10px 0;
 }

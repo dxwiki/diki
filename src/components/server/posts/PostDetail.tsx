@@ -17,10 +17,10 @@ const PostDetail = async ({ slug }: Props) => {
   }
 
   return (
-    <div>
+    <div className='prose'>
       <section className='flex justify-between items-end mt-10 mb-5 border-b border-main'>
         <div className='flex flex-col mb-5'>
-          <h1 className="text-3xl font-bold text-accent dark:text-[#33cfff] font-noto">{term.title.ko}{'('}{term.title.en}{')'}</h1>
+          <h1 className="text-3xl font-bold">{term.title.ko}{'('}{term.title.en}{')'}</h1>
           <p className='text-sub'>{term.description.short}</p>
           <div className="flex flex-wrap gap-1">
             {term.tags.map((tag, index) => (
@@ -38,13 +38,13 @@ const PostDetail = async ({ slug }: Props) => {
         <div className="flex items-center gap-1">
           <span className='text-sub'>{'by '}{term.metadata.authors}</span>
           <span className="text-gray-400">{'•'}</span>
-          <Clock3 className="size-4" />
-          <span>{getReadingTime(term)}</span>
+          <Clock3 className="size-4 text-sub" />
+          <span className='text-sub'>{getReadingTime(term)}</span>
         </div>
         <span className="text-gray-400 hidden sm:block">{'•'}</span>
         <div className='flex gap-2 items-center'>
           <span className='text-sub'>{'발행: '}{formatDate(term.metadata.created_at)}</span>
-          <div className='w-px h-4 bg-gray-600 dark:bg-gray-300' />
+          <span className="text-gray-400">{'•'}</span>
           <span className='text-sub'>{'수정: '}{formatDate(term.metadata.updated_at)}</span>
         </div>
       </div>
