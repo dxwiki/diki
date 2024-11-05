@@ -13,6 +13,8 @@ const config: Config = {
         nanum: ['var(--font-nanum)', ...fontFamily.sans],
         coding: ['var(--font-coding)', ...fontFamily.mono],
         noto: ['var(--font-noto)', ...fontFamily.sans],
+        pretendard: ['var(--font-pretendard)', ...fontFamily.sans],
+      },
       },
     },
   },

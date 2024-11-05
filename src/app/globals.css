@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+body, * {
+  font-family: 'Pretendard', sans-serif;
+}
+
+h2{
+  font-weight: 700;
+  font-family: 'font-noto', sans-serif;
+}
+
 :root {
   --primary-color: #33cfff;
   --secondary-color: #F3F9FC;
