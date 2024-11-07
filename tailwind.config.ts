@@ -10,7 +10,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'custom-border': 'var(--border-color)',
+        'custom-border': 'var(--border)',
+        'primary': 'var(--primary)',
+        'background': 'var(--background)',
+        'accent': 'var(--accent)',
+        'main': 'var(--text)',
+        'sub': 'var(--text-secondary)',
+        'light': 'var(--light)',
       },
       fontFamily: {
         nanum: ['var(--font-nanum)', ...fontFamily.sans],
@@ -22,38 +28,63 @@ const config: Config = {
         DEFAULT: {
           css: {
             maxWidth: 'none',
-            h1: {
-              color: 'var(--text-color)',
+            'h1, h2, h3, strong': {
+              marginBottom: '1rem',
+              color: 'var(--text)',
             },
-            h2: {
-              color: 'var(--text-color)',
+            'p, span, li': {
+              color: 'var(--text-secondary)',
             },
-            h3: {
-              color: 'var(--text-color)',
-            },
-            p: {
-              margin: '1.25rem 0',
-              lineHeight: '1.7',
-              color: 'var(--text-secondary-color)',
-            },
-            span: {
-              color: 'var(--text-secondary-color)',
-            },
-            ul: {
-              padding: 0,
-            },
-            li: {
-              color: 'var(--text-secondary-color)',
+            'ul, li': {
               padding: 0,
               margin: 0,
             },
-            a: {
-              color: 'var(--link-color)',
+            p: {
+              marginTop: '0',
+              marginBottom: '1.7rem',
+              lineHeight: '1.7',
             },
             strong: {
               padding: '0.1rem',
-              marginRight: '-0.25rem',
-              color: 'var(--text-color)',
+            },
+
+            '.prose :where(h1):not(:where([class~="not-prose"],[class~="not-prose"] *))': {
+              color: 'var(--accent)',
+              fontFamily: 'var(--font-noto)',
+            },
+            '.prose :where(h2):not(:where([class~="not-prose"],[class~="not-prose"] *))': {
+              marginTop: '6rem',
+              fontSize: '1.2rem',
+              fontWeight: 'semibold',
+              fontFamily: 'var(--font-noto)',
+            },
+            '.prose :where(h3):not(:where([class~="not-prose"],[class~="not-prose"] *))': {
+              fontSize: '1.05rem',
+            },
+            '.prose :where(a):not(:where([class~="not-prose"],[class~="not-prose"] *))': {
+              color: 'var(--accent)',
+              textDecoration: 'none',
+              fontWeight: 'bold',
+            },
+            '.prose :where(a):not(:where([class~="not-prose"],[class~="not-prose"] *)):hover': {
+              color: 'var(--accent)',
+              textDecoration: 'underline',
+            },
+            '.prose :where(ul > li):not(:where([class~="not-prose"],[class~="not-prose"] *))::marker':{
+              color: 'var(--background)',
+            },
+            '.prose .tag-button': {
+              color: 'var(--background)',
+              backgroundColor: 'var(--accent)',
+              padding: '0.2rem 0.6rem',
+              borderRadius: '1rem',
+              fontSize: '0.95rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              marginRight: '0.25rem',
+            },
+            '.prose .tag-button:hover': {
+              backgroundColor: 'var(--primary)',
             },
           },
         },
