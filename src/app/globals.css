@@ -12,10 +12,11 @@ body {
 
 :root {
   --primary: #33cfff;
+  --secondary: #b9ddf1;
   --accent: #0099CC;
   
   --background: #F8F8F8;
-  --background-secondary: #F3F9FC;
+  --background-secondary: #e0e9ed;
 
   --text: #333333;
   --text-secondary: #666666;
@@ -25,6 +26,7 @@ body {
 
 .dark {
   --primary: #33cfff;
+  --secondary: #03537f;
   --accent: #66A2B7;
   
   --background: #121212;
@@ -39,52 +41,3 @@ body {
 .text-primary {
   color: var(--primary);
 }
-
-/* . {
-  background: var(--background);
-}
-.bg-sub {
-  }
-  .bg-accent {
-    background: var(--accent);
-    background: var(--background-secondary);
-}
-.hover-bg-primary {
-  &:hover {
-    color: var(--text);
-    background: var(--primary);
-  }
-}
-
-.button-bg-gray {
-  &:hover {
-    background: var(--border);
-  }
-}
-
-.text-main {
-  color: var(--text);
-}
-
-.text-sub {
-  color: var(--text-secondary);
-}
-.text-accent {
-  color: var(--accent);
-}
-
-.border-main {
-  color: var(--border);
-}
-
-.h-content {
-  height: calc(100vh - 64px);
-} */
-
-/* .hyperlink {
-  color: var(--accent);
-  text-decoration: underline;
-  &:hover {
-    color: var(--primary);
-  }
-} */

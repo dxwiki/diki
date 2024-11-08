@@ -65,7 +65,7 @@ const PostDetail = async ({ slug }: Props) => {
             </h2>
             <Star className="size-6 text-primary" />
             <p>{term.difficulty.level}{' stars'}</p>
-            <p className='mt-2'>{term.difficulty.description}</p>
+            <p>{term.difficulty.description}</p>
           </section>
 
           <section className="group">
@@ -87,7 +87,7 @@ const PostDetail = async ({ slug }: Props) => {
                   <h3 className="text-center self-center m-0 p-1">{'Data Scientist'}</h3>
                 </div>
 
-                <div className="px-2 border-x border-custom-border grid grid-rows-3">
+                <div className="px-2 border-x border-light grid grid-rows-3">
                   {/* <span className="text-center self-center m-0 p-1">{'관련도'}</span> */}
                   <span className='text-center self-center m-0 p-1'>{term.relevance.analyst.score}{' stars'}</span>
                   <span className='text-center self-center m-0 p-1'>{term.relevance.engineer.score}{' stars'}</span>
@@ -111,7 +111,7 @@ const PostDetail = async ({ slug }: Props) => {
             </h2>
             <ul>
               {term.terms.map((item, index) => (
-                <li key={index} className='flex items-center gap-3 ml-2'>
+                <li key={index} className='flex items-center gap-3 mb-4'>
                   <a
                     href={item.link}
                     target="_blank"
@@ -130,7 +130,7 @@ const PostDetail = async ({ slug }: Props) => {
               <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'사용사례'}
             </h2>
-            <div className="flex flex-wrap gap-1 mb-2">
+            <div className="flex flex-wrap gap-1 mb-4">
               {term.usecase.industries.map((tag, index) => (
                 <button
                   key={index}
@@ -141,7 +141,7 @@ const PostDetail = async ({ slug }: Props) => {
               ))}
             </div>
             <p>{term.usecase.example}</p>
-            <p className='mt-2'>{term.usecase.description}</p>
+            <p>{term.usecase.description}</p>
           </section>
 
           <section className="group">
@@ -229,7 +229,7 @@ const PostDetail = async ({ slug }: Props) => {
             <p>{term.publish ? 'Published' : 'Not Published'}</p>
           </section> */}
         </div>
-        <div className='sticky mt-10 top-[150px] h-32 border border-light hidden md:block'>
+        <div className='sticky mt-24 top-[150px] h-32 border border-light hidden md:block'>
           {'TOC'}
         </div>
       </div>

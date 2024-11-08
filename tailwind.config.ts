@@ -10,13 +10,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'custom-border': 'var(--border)',
         'primary': 'var(--primary)',
+        'secondary': 'var(--secondary)',
         'background': 'var(--background)',
+        'background-secondary': 'var(--background-secondary)',
         'accent': 'var(--accent)',
         'main': 'var(--text)',
         'sub': 'var(--text-secondary)',
-        'light': 'var(--light)',
+        'light': 'var(--border)',
       },
       fontFamily: {
         nanum: ['var(--font-nanum)', ...fontFamily.sans],
@@ -41,7 +42,7 @@ const config: Config = {
             },
             p: {
               marginTop: '0',
-              marginBottom: '1.7rem',
+              marginBottom: '0.75rem',
               lineHeight: '1.7',
             },
             strong: {
@@ -76,10 +77,10 @@ const config: Config = {
             '.prose .tag-button': {
               color: 'var(--background)',
               backgroundColor: 'var(--accent)',
-              padding: '0.2rem 0.6rem',
-              borderRadius: '1rem',
-              fontSize: '0.95rem',
-              fontWeight: 'bold',
+              padding: '0.15rem 0.5rem',
+              borderRadius: '0.5rem',
+              fontSize: '1rem',
+              fontWeight: '600',
               cursor: 'pointer',
               marginRight: '0.25rem',
             },
