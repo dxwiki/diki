@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { formatDate, getReadingTime } from '@/utils/metaData';
 import { Clock3 } from 'lucide-react';
 import MarkdownContent from './MarkdownContent';
+import RadarChart from '@/components/client/GLRadarChart';
 import Stars from '@/components/server/ui/Stars';
 
 interface Props {
@@ -74,7 +75,13 @@ const PostDetail = async ({ slug }: Props) => {
               {'관련성'}
             </h2>
             <div className='block sm:flex justify-center md:justify-between'>
-              <div className='w-[100vw-8px] sm:w-[300px] flex justify-center items-center border-light border mb-4 sm:mb-0 sm:mr-2'>{'삼각형'}</div>
+              <div className='w-[100vw-8px] sm:w-[300px] flex justify-center items-center mb-4 sm:mb-0 sm:mr-2'>
+                <RadarChart
+                  className="mt-6"
+                  targetData={[term.relevance.analyst.score,term.relevance.engineer.score,term.relevance.scientist.score]}
+                  init
+                />
+              </div>
               <div className='grid grid-cols-[1fr_5fr] lg:grid-cols-[3fr_1fr_10fr]'>
                 <span className="text-main text-center sm:m-0">{'직무'}</span>
                 <span className="hidden lg:block text-main text-center sm:m-0">{'관련도'}</span>
