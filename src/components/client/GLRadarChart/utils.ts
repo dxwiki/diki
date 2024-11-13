@@ -130,10 +130,10 @@ export const createClipPathCSS = (vertices: number, radius = 0.95) => {
 
   return `polygon(
     ${ Array.from({ length: vertices }, (_, i) => {
-    const x = Math.sin(((angle * i) + 180) * Math.PI / 180) * radius;
-    const y = Math.cos(((angle * i) + 180) * Math.PI / 180) * radius;
-    return `${ ((x + 1) * 50).toFixed(2) }% ${ ((y + 1) * 50).toFixed(2) }%`;
-  }).join(', ') })`;
+      const x = Math.sin(((angle * i) + 180) * Math.PI / 180) * radius;
+      const y = Math.cos(((angle * i) + 180) * Math.PI / 180) * radius;
+      return `${ ((x + 1) * 50).toFixed(2) }% ${ ((y + 1) * 50).toFixed(2) }%`;
+    }).join(', ') })`;
 };
 export const createAbsoluteLabelsCSS = (vertices: number, labelWidth: number, labelHeight: number, radius = 0.95) => {
   const angle = 360 / vertices;
