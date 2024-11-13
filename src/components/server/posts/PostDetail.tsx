@@ -49,7 +49,7 @@ const PostDetail = async ({ slug }: Props) => {
           <span className=''>{'수정: '}{formatDate(term.metadata.updated_at)}</span>
         </div>
       </div>
-      <div className='block md:grid grid-cols-[5fr_1fr] gap-2 md:mr-5'>
+      <div>
         <div className='sm:ml-5'>
           <section className="group">
             <h2 className="relative flex">
@@ -237,9 +237,9 @@ const PostDetail = async ({ slug }: Props) => {
             <p>{term.publish ? 'Published' : 'Not Published'}</p>
           </section> */}
         </div>
-        <div className='sticky mt-24 top-[150px] h-32 border border-light hidden md:block'>
+        {/* <div className='sticky mt-24 top-[150px] h-32 border border-light hidden md:block'>
           {'TOC'}
-        </div>
+        </div> */}
       </div>
     </div>
   );
