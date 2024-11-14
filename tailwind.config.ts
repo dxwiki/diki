@@ -45,13 +45,17 @@ const config: Config = {
               marginBottom: '0.75rem',
               lineHeight: '1.7',
             },
+            section: {
+              marginTop: '6rem',
+              marginBottom: '6rem',
+            },
 
             '.prose :where(h1):not(:where([class~="not-prose"],[class~="not-prose"] *))': {
               color: 'var(--accent)',
               fontFamily: 'var(--font-noto)',
             },
             '.prose :where(h2):not(:where([class~="not-prose"],[class~="not-prose"] *))': {
-              marginTop: '6rem',
+              marginTop: '0',
               fontSize: '1.2rem',
               fontWeight: 'semibold',
               // fontFamily: 'var(--font-noto)',
