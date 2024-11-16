@@ -16,7 +16,7 @@ export default async function PostsPage() {
     <>
       <h1 className='flex items-center gap-2 mt-20 mb-5 text-sub border-b border-background-secondary'>
         {'검색결과'}
-        <span className='text-primary text-lg'>{termsData.length}</span>
+        <span className='text-primary font-bold'>{termsData.length}</span>
         {'/ '}{termsData.length}{' 개'}
       </h1>
       <Pagination termsData={termsData} totalPages={totalPages} itemsPerPage={itemsPerPage} />
