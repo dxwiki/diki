@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 * {
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   word-break: keep-all;
 }
 
