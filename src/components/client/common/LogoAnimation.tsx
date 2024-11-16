@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from 'react';
 
+interface LogoAnimationProps {
+  fontSize?: string;
+}
+
 interface LogoText {
   prefix: string;
   key: number;
 }
 
-const LogoAnimation = () => {
+const LogoAnimation = ({ fontSize = '2rem' }: LogoAnimationProps) => {
   const [currentLogo, setCurrentLogo] = useState<LogoText>({ prefix: 'DataW', key: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
   const [nextLogo, setNextLogo] = useState<LogoText>({ prefix: 'DxW', key: 1 });
@@ -36,8 +40,8 @@ const LogoAnimation = () => {
   }, [currentLogo]);
 
   return (
-    <h1 className="flex text-3xl font-bold text-main">
-      <div className="relative flex justify-end overflow-hidden w-[7ch]">
+    <h1 className="flex font-bold text-main" style={{ fontSize }}>
+      <div className="relative flex justify-end overflow-hidden w-[5ch]">
         {/* 현재 텍스트 */}
         <span
           className="absolute flex justify-end top-0 right-0 w-full text-primary"
