@@ -14,7 +14,7 @@ const PostCard = ({ posts }: PostCardProps) => {
       {posts.map((term: TermData) => (
         <li
           key={term.id}
-          className="transition-transform duration-300 hover:-translate-y-4" // y값 상승
+          className="transition-transform duration-300 hover:-translate-y-2" // y값 상승
         >
           <Link
             href={term.url}
