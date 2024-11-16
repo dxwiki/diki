@@ -44,51 +44,22 @@ const LogoAnimation = ({ fontSize = '2rem' }: LogoAnimationProps) => {
       <div className="relative flex justify-end overflow-hidden w-[5ch]">
         {/* 현재 텍스트 */}
         <span
-          className="absolute flex justify-end top-0 right-0 w-full text-primary"
-          style={{
-            animation: isAnimating ? 'slideDownOut 400ms ease-in-out forwards' : 'none',
-          }}
+          className={`absolute flex justify-end top-0 right-0 w-full text-primary ${
+            isAnimating ? 'animate-slideDownOut' : ''
+          }`}
         >
           {currentLogo.prefix}
         </span>
         {/* 다음 텍스트 */}
         {isAnimating && (
           <span
-            className="absolute flex justify-end top-0 right-0 w-full text-primary"
-            style={{
-              animation: 'slideDownIn 400ms ease-in-out forwards',
-            }}
+            className="absolute flex justify-end top-0 right-0 w-full text-primary animate-slideDownIn"
           >
             {nextLogo.prefix}
           </span>
         )}
       </div>
-      <span>{'iki'}</span>
-
-      <style jsx>{`
-        @keyframes slideDownOut {
-          0% {
-            transform: translateY(0);
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(100%);
-            opacity: 0;
-          }
-        }
-
-        @keyframes slideDownIn {
-          0% {
-            transform: translateY(-100%);
-            opacity: 0;
-          }
-          100% {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-      `}
-      </style>
+      <span className="text-main">{'iki'}</span>
     </h1>
   );
 };
