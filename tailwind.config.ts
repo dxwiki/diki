@@ -50,7 +50,6 @@ const config: Config = {
           css: {
             maxWidth: 'none',
             'h1, h2, h3, strong': {
-              marginBottom: '0.5rem',
               color: 'var(--text)',
             },
             'p, span, li': {
@@ -68,11 +67,8 @@ const config: Config = {
               lineHeight: '1.7',
             },
             section: {
-              marginTop: '10rem',
-              marginBottom: '10rem',
-              '& > *:not(h2, p)': {
-                paddingLeft: '0.5rem',
-              },
+              marginTop: '4rem',
+              marginBottom: '4rem',
             },
 
             '.prose :where(h1):not(:where([class~="not-prose"],[class~="not-prose"] *))': {
@@ -83,10 +79,12 @@ const config: Config = {
               marginTop: '0',
               fontSize: '1.2rem',
               fontWeight: 'semibold',
+              marginBottom: '1rem',
               // fontFamily: 'var(--font-noto)',
             },
             '.prose :where(h3):not(:where([class~="not-prose"],[class~="not-prose"] *))': {
               fontSize: '1.05rem',
+              marginBottom: '0.4rem',
             },
             '.prose :where(a):not(:where([class~="not-prose"],[class~="not-prose"] *))': {
               color: 'var(--accent)',
@@ -105,8 +103,8 @@ const config: Config = {
             '.prose .tag-button': {
               color: 'var(--text-secondary)',
               border: '1px solid var(--border)',
-              padding: '0.15rem 0.5rem',
-              borderRadius: '1rem',
+              padding: '3px 7px 1px 8px',
+              borderRadius: '0.5rem',
               fontSize: '1rem',
               fontWeight: '600',
               cursor: 'pointer',
@@ -115,6 +113,7 @@ const config: Config = {
             '.prose .tag-button:hover': {
               color: 'var(--text)',
               backgroundColor: 'var(--border)',
+              transition: 'background-color 0.2s ease-in-out, color 0.2s ease-in-out',
             },
           },
         },

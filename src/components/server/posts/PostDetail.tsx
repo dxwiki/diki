@@ -26,45 +26,40 @@ const PostDetail = async ({ slug }: Props) => {
         <div className='sm:ml-5'>
           <div className='flex justify-center sm:justify-start mt-32 border-b border-light'>
             <div className='flex flex-col items-center sm:items-start mb-2'>
-              <h1 className="text-3xl font-bold text-main">{term.title.ko}</h1>
-              <span className="text-xl font-bold text-sub mb-8 font-noto">{term.title.en}</span>
+              <h1 className="text-3xl font-bold text-main mb-2">{term.title.ko}</h1>
+              <span className="text-xl text-main mb-5 font-noto">{term.title.en}</span>
               <p>{term.description.short}</p>
             </div>
           </div>
           <div className='flex flex-col sm:flex-row justify-start items-end mt-5 gap-2'>
-            <span className=''>{'by '}{term.metadata.authors}</span>
+            <span>{'by '}{term.metadata.authors}</span>
             <span className="text-gray-400 hidden sm:block">{'•'}</span>
             <div className='flex gap-2 items-center'>
-              <span className=''>{formatDate(term.metadata.created_at)}{' 발행'}</span>
+              <span>{formatDate(term.metadata.created_at)}{' 발행'}</span>
               <span className="text-gray-400">{'•'}</span>
-              <span className=''>{formatDate(term.metadata.updated_at)}{' 수정'}</span>
+              <span>{formatDate(term.metadata.updated_at)}{' 수정'}</span>
             </div>
           </div>
         </div>
         <div className='sm:ml-5'>
-          <section className="group">
-            <h2 className="relative flex items-center">
-              <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
-              {'개념'}
-            </h2>
+          <div className='mt-4'>
             <MarkdownContent content={term.description.full} />
-          </section>
+          </div>
 
           <section className="group">
             <h2 className='flex items-center'>
-              <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'난이도'}
-              <span className='ml-4'>
-                <Stars rating={term.difficulty.level} />
-              </span>
             </h2>
-            <div className='mb-2' />
+            <div className='flex items-center mb-4'>
+              <Stars rating={term.difficulty.level} />
+            </div>
             <MarkdownContent content={term.difficulty.description} />
           </section>
 
           <section className="group">
             <h2>
-              <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'직무 연관도'}
             </h2>
             <div className='block sm:flex items-start gap-10'>
@@ -98,7 +93,7 @@ const PostDetail = async ({ slug }: Props) => {
 
           <section className="group">
             <h2>
-              <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'관련용어'}
             </h2>
             <ul>
@@ -119,7 +114,7 @@ const PostDetail = async ({ slug }: Props) => {
 
           <section className="group">
             <h2>
-              <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'사용사례'}
             </h2>
             <div className="flex flex-wrap gap-1 mb-4">
@@ -138,7 +133,7 @@ const PostDetail = async ({ slug }: Props) => {
 
           <section className="group">
             <h2>
-              <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'레퍼런스'}
             </h2>
             <div>
@@ -194,7 +189,7 @@ const PostDetail = async ({ slug }: Props) => {
 
           <section className="group">
             <h2>
-              <span className="text-primary sm:ml-[-20px] mr-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'태그'}
             </h2>
             <div className="flex flex-wrap gap-1">
