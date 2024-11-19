@@ -4,7 +4,6 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 import ScrollDirectionHandler from '@/components/client/common/ScrollDirectionHandler';
-import LogoAnimation from '@/components/client/common/LogoAnimation';
 import ThemeSwitch from '@/components/client/theme/ThemeSwitch';
 
 const Header = () => {
@@ -20,7 +19,10 @@ const Header = () => {
             {!isHomePage && (
               <>
                 <Link href='/'>
-                  <LogoAnimation />
+                  <span className='h-full flex items-center mt-1 text-3xl font-bold'>
+                    <span className='text-primary'>{'D'}</span>
+                    {'iki'}
+                  </span>
                 </Link>
                 <Link href='/' className='flex rounded-md p-2 ml-3 mr-1 hover:bg-background-secondary duration-300'>
                   <Search className='size-4' />
