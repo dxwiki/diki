@@ -5,7 +5,7 @@ import SearchInput from '@/components/client/common/SearchInput';
 
 export default function Home() {
   return (
-    <div className="min-h-[calc(100vh_-230px)] flex flex-col justify-center items-end sm:mx-10 md:mx-40">
+    <div className="min-h-[calc(100vh_-230px)] flex flex-col justify-center items-end sm:mx-10 md:mx-40 overflow-hidden">
       <LogoAnimation fontSize='10vw' />
       <div className='flex justify-center items-center gap-4 mb-4 text-sm sm:text-base md:text-lg'>
         <span>{'3 개의 데이터 용어사전'}</span>
