@@ -21,10 +21,10 @@ const PostCard = ({ posts }: PostCardProps) => {
             className="group h-full flex flex-col gap-4 justify-between p-4 border border-background-secondary rounded-lg
             dark:hover:bg-background-secondary duration-300 shadow-md hover:shadow-xl"
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
               <span className="font-noto text-2xl text-primary font-semibold">{term.title.ko}</span>
-              <span className="hidden sm:block font-noto text-lg text-main truncate">{term.title.en}</span>
-              <span className="text-sub line-clamp-3">{term.description.short}</span>
+              <span className="hidden sm:block font-noto text-lg text-main truncate mt-1">{term.title.en}</span>
+              <span className="text-sub line-clamp-3 mt-5">{term.description.short}</span>
             </div>
             <div className="flex justify-between items-center">
               <Stars rating={term.difficulty.level} size={16} />
