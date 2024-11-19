@@ -34,7 +34,7 @@ const LogoAnimation = ({ fontSize = '2rem' }: LogoAnimationProps) => {
         setCurrentLogo(upcomingLogo);
         setIsAnimating(false);
       }, 400);
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [currentLogo]);
