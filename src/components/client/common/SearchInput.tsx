@@ -46,7 +46,7 @@ const SearchInput = ({ suggestions }: SearchInputProps) => {
 
   return (
     <div className="relative w-full">
-      <div className="flex items-center border border-light rounded-md focus-within:border-background focus-within:ring-1 focus-within:ring-accent bg-background">
+      <div className="flex items-center border border-light rounded-md focus-within:border-accent bg-background">
         <Search className="ml-3 text-main" />
         <input
           type="text"
@@ -65,24 +65,26 @@ const SearchInput = ({ suggestions }: SearchInputProps) => {
           <Lightbulb className="size-5" />
           {'검색 팁'}
         </span>
-        <span className="flex flex-wrap items-center gap-2 sm:gap-3 ml-6">
-          <span className="flex items-center gap-1">
-            <span className="border border-light px-3 py-0.5 rounded-md">{'Ctrl'}</span>
-            <span className="font-semibold">{'+'}</span>
-            <span className="border border-light px-2.5 py-0.5 rounded-md">{'K'}</span>
-          </span>
-          <span className="text-sub sm:mx-1">{'또는'}</span>
-          <span className="flex items-center gap-1">
-            <span className="border border-light px-2 py-1 rounded-md">
-              <Command className="size-5" />
+        <div className='hidden sm:block'>
+          <span className="flex flex-wrap items-center gap-1 sm:gap-1 ml-6">
+            <span className="flex items-center gap-1">
+              <span className="border border-light pt-[5px] pr-2.5 pb-0.5 pl-[9px] rounded-md">{'Ctrl'}</span>
+              <span className="font-semibold">{'+'}</span>
+              <span className="border border-light px-2.5 py-0.5 pt-[5px] rounded-md">{'K'}</span>
             </span>
-            <span className="font-semibold">{'+'}</span>
-            <span className="border border-light px-2.5 py-0.5 rounded-md">{'K'}</span>
+            <span className="text-sub sm:mx-1">{'또는'}</span>
+            <span className="flex items-center gap-1">
+              <span className="border border-light px-2.5 py-[5px] rounded-md">
+                <Command className="size-5" />
+              </span>
+              <span className="font-semibold">{'+'}</span>
+              <span className="border border-light px-2.5 py-0.5 pt-[5px] rounded-md">{'K'}</span>
+            </span>
+            <span className="block mt-2 sm:mt-0 text-sub">
+              {'를 눌러 검색창에 직접 이동할 수 있습니다.'}
+            </span>
           </span>
-          <span className="block mt-2 sm:mt-0 text-sub">
-            {'를 눌러 검색창에 직접 이동할 수 있습니다.'}
-          </span>
-        </span>
+        </div>
 
         <div className='ml-6'>
           <span className="text-main font-semibold">{'용어'}</span>
