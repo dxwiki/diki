@@ -11,10 +11,11 @@ interface LogoText {
   key: number;
 }
 
-const LogoAnimation = ({ fontSize = '2rem' }: LogoAnimationProps) => {
+const LogoAnimation = ({ fontSize = '4rem' }: LogoAnimationProps) => {
   const [currentLogo, setCurrentLogo] = useState<LogoText>({ prefix: 'DataW', key: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
   const [nextLogo, setNextLogo] = useState<LogoText>({ prefix: 'DxW', key: 1 });
+  const responsiveFontSize = `clamp(4rem, ${ fontSize }, 10rem)`;
 
   useEffect(() => {
     const logos: LogoText[] = [
@@ -40,7 +41,7 @@ const LogoAnimation = ({ fontSize = '2rem' }: LogoAnimationProps) => {
   }, [currentLogo]);
 
   return (
-    <h1 className="flex font-bold text-main" style={{ fontSize }}>
+    <h1 className="flex font-bold text-main" style={{ fontSize : responsiveFontSize }}>
       <div className="relative flex justify-end overflow-hidden w-[6ch]">
         {/* 현재 텍스트 */}
         <span
