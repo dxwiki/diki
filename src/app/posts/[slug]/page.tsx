@@ -11,7 +11,7 @@ export const dynamicParams = false;
 export async function generateStaticParams() {
   const termsData = await fetchTermsData();
   return termsData.map((term) => ({
-    slug: term.title.en.toLowerCase().replace(/\s+/g, '-'),
+    slug: term.title.en.toLowerCase().replace(/\s+/g, '_'),
   }));
 }
 

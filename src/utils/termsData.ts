@@ -8,7 +8,7 @@ const subscribeToTermsData = (updateCallback: (data: TermData[])=> void) => {
   unsubscribe = firestore.collection('terms').onSnapshot((snapshot) => {
     cachedTermsData = snapshot.docs.map((doc) => {
       const data = doc.data();
-      const urlPath = data.title.en.toLowerCase().replace(/\s+/g, '-');
+      const urlPath = data.title.en.toLowerCase().replace(/\s+/g, '_');
       return {
         url: `/posts/${ urlPath }`,
         id: data.id,
@@ -44,7 +44,7 @@ const fetchTermsData = async (): Promise<TermData[]> => {
 const getTermData = async (slug: string): Promise<TermData | undefined> => {
   const termsDataList = await fetchTermsData();
   return termsDataList.find((term) =>
-    term.title.en.toLowerCase().replace(/\s+/g, '-') === slug
+    term.title.en.toLowerCase().replace(/\s+/g, '_') === slug
   );
 };
 
