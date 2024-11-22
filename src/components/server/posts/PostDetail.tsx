@@ -19,24 +19,37 @@ const PostDetail = async ({ slug }: Props) => {
 
   return (
     <div className='prose block md:grid md:grid-cols-[1fr_5fr]'>
-      <div className='sticky mt-24 top-[382px] h-32 hidden md:block'>
-        <TableOfContents title={term.title.ko} />
+      <div className='flex flex-col'>
+        <div className='h-[293px] hidden md:block' />
+        <div className='sticky top-[132px] h-32 hidden md:block'>
+          <TableOfContents title={term.title.ko} />
+        </div>
       </div>
       <div className='md:mr-40'>
         <div className='sm:ml-5'>
-          <div className='flex justify-center sm:justify-start mt-32 border-b border-light'>
-            <div className='flex flex-col items-center sm:items-start mb-2'>
-              <h1 className="text-3xl font-bold text-main mb-2">{term.title.ko}</h1>
-              <span className="text-xl text-main mb-5 font-noto">{term.title.en}</span>
-              <p>{term.description.short}</p>
+          <div className='flex justify-center sm:justify-start mt-32'>
+            <div className='flex flex-col sm:flex-row justify-center items-center'>
+              <h1 className="text-3xl font-bold text-main mb-0">{term.title.ko}</h1>
+              <span className="text-xl text-main font-noto">{'('}{term.title.en}{')'}</span>
             </div>
           </div>
-          <div className='flex flex-col sm:flex-row justify-start items-end mt-5 gap-2'>
+          <p className='mt-2 mb-5'>{term.description.short}</p>
+          <div className="flex justify-start items-center flex-wrap mt-2">
+            {term.tags.map((tag, index) => (
+              <button
+                key={index}
+                className="tag-button rounded-3xl text-sm"
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+          <div className='flex flex-col sm:flex-row justify-start items-end gap-2 border-t border-light mt-5 pt-3'>
             <span>{'by '}{term.metadata.authors}</span>
-            <span className="text-gray-400 hidden sm:block">{'•'}</span>
+            <span className="text-light hidden sm:block">{'•'}</span>
             <div className='flex gap-2 items-center'>
               <span>{formatDate(term.metadata.created_at)}{' 발행'}</span>
-              <span className="text-gray-400">{'•'}</span>
+              <span className="text-light">{'•'}</span>
               <span>{formatDate(term.metadata.updated_at)}{' 수정'}</span>
             </div>
           </div>
@@ -184,23 +197,6 @@ const PostDetail = async ({ slug }: Props) => {
                   </li>
                 ))}
               </ul>
-            </div>
-          </section>
-
-          <section className="group">
-            <h2>
-              <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
-              {'태그'}
-            </h2>
-            <div className="flex flex-wrap gap-1">
-              {term.tags.map((tag, index) => (
-                <button
-                  key={index}
-                  className="tag-button"
-                >
-                  {tag}
-                </button>
-              ))}
             </div>
           </section>
         </div>
