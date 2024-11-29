@@ -6,6 +6,8 @@ import RadarChart from '@/components/GLRadarChart';
 import Stars from '@/components/ui/Stars';
 import Link from 'next/link';
 import PostHeader from './sections/PostHeader';
+import { transformToSlug } from '@/utils/filters';
+import { Link as LinkIcon } from 'lucide-react';
 
 interface Props {
   slug: string
@@ -85,16 +87,34 @@ const PostDetail = async ({ slug }: Props) => {
               <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
               {'관련용어'}
             </h2>
-            <ul>
-              {term.terms.map((item, index) => (
+            {term.terms.map((item, index) => (
+              item.internal_link ? (
+                <div key={index} className='flex gap-1 items-center mb-2'>
+                  <Link
+                    href={transformToSlug(item.internal_link)}
+                    className='group flex items-center tag-button rounded-3xl text-sm hover:no-underline'
+                  >
+                    <span>{item.term}</span>
+                    <LinkIcon size={16} />
+                  </Link>
+                  <span>{item.description}</span>
+                </div>
+              ) : (
+                <div className='flex items-center mb-2' key={index}>
+                  <span key={index} className='tag-button-no-link rounded-3xl text-sm bg-extreme-light'>
+                    {item.term}
+                  </span>
+                  <span>{item.description}</span>
+                </div>
+              )
+            ))}
+            {/* {term.terms.map((item, index) => (
                 <li key={index} className='flex items-center gap-3 mb-2'>
                   <span >
                     {item.term} {item.internal_link && <a href={item.internal_link}>{'🔗'}</a>}
                   </span>
-                  <span>{item.description}</span>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                  ))} */}
           </section>
 
           <section className="group">

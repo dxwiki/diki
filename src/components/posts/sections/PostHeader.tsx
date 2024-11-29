@@ -40,7 +40,7 @@ const PostHeader = ({ term, slug }: PostHeaderProps) => {
               {transformToSlug(tag.internal_link) === slug ? <span className='sm:hidden group-hover:block text-sub'>{'• 현재글'}</span> : <LinkIcon size={16} />}
             </Link>
           ) : (
-            <span key={index} className='tag-button-no-link rounded-3xl text-sm mb-2 bg-background-secondary'>
+            <span key={index} className='tag-button-no-link rounded-3xl text-sm mb-2 bg-extreme-light'>
               {tag.name}
             </span>
           )
