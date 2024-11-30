@@ -136,7 +136,7 @@ function GLRadarChart(props: RadarChartProps) {
   }, [initAnimation]);
 
   return (
-    <div id="GLRadarChart" style={style} className={'relative p-6 transition-all' + (className ? ` ${ className }` : '')}>
+    <div id="GLRadarChart" style={style} className={'relative p-6 pb-0 mb-[-40px] transition-all' + (className ? ` ${ className }` : '')}>
       {labelData?.length && createAbsoluteLabelsCSS(vertices, 5, 3, 1).map((label, i) => (
         <button
           key={i}
@@ -148,17 +148,17 @@ function GLRadarChart(props: RadarChartProps) {
           onMouseEnter={() => setHoveredIndex(i)}
           onMouseLeave={() => setHoveredIndex(null)}
         >
-          <span
+          {/* <span
             className={`absolute left-0 top-[-16px] transition-opacity ${
               hoveredIndex === i ? 'sm:opacity-100' : 'sm:opacity-0'
             }`}
           >
             <Stars rating={targetData[i]} size={12} />
-          </span>
+          </span> */}
           {labelData[i]}
         </button>
       ))}
-      <div className="relative size-[250px]">
+      <div className="relative size-[250px] mt-[-10px]">
         {!loaded && (
           <>
             <div
