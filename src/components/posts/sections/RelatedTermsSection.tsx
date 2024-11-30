@@ -19,10 +19,10 @@ const RelatedTermsSection = ({ terms }: RelatedTerm) => {
       </h2>
       {terms.map((item, index) => (
         item.internal_link ? (
-          <div key={index} className='flex gap-1.5 items-center mb-2'>
+          <div key={index} className='flex gap-0.5 items-center mb-2'>
             <Link
               href={transformToSlug(item.internal_link)}
-              className='group flex items-center gap-1 tag-button rounded-3xl text-sm hover:no-underline'
+              className='group flex shrink-0 items-center gap-1 tag-button rounded-3xl text-sm hover:no-underline'
             >
               <span>{item.term}</span>
               <LinkIcon size={16} />
