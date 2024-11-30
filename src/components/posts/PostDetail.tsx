@@ -1,7 +1,4 @@
-import { getTermData } from '@/utils/termsData';
-import { notFound } from 'next/navigation';
 import TableOfContents from '@/components/common/TableOfContents';
-import Stars from '@/components/ui/Stars';
 import PostHeader from './sections/PostHeader';
 import DifficultyLevel from './sections/DifficultyLevel';
 import DescriptionSection from './sections/DescriptionSection';
@@ -9,18 +6,14 @@ import RelevanceSection from './sections/RelevanceSection';
 import RelatedTermsSection from './sections/RelatedTermsSection';
 import UsecaseSection from './sections/UsecaseSection';
 import ReferencesSection from './sections/ReferencesSection';
+import { TermData } from '@/types/database';
 
 interface Props {
+  term: TermData
   slug: string
 }
 
-const PostDetail = async ({ slug }: Props) => {
-  const term = await getTermData(slug);
-
-  if (!term) {
-    notFound();
-  }
-
+const PostDetail = async ({ term, slug }: Props) => {
   return (
     <div className='prose block md:grid md:grid-cols-[1fr_5fr]'>
       <TableOfContents title={term.title.ko} />
