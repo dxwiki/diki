@@ -62,12 +62,6 @@ const config: Config = {
             'p, span, li': {
               color: 'var(--text-secondary)',
             },
-            'ul, li': {
-              paddingLeft: '0.5rem',
-            },
-            'ul > li': {
-              borderLeft: '1px solid var(--background-secondary)',
-            },
             p: {
               marginTop: '0',
               marginBottom: '0.75rem',
