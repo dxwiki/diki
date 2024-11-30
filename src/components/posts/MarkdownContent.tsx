@@ -1,6 +1,10 @@
 'use client';
 
-const MarkdownContent = ({ content }: { content: string }) => {
+interface MarkdownContentProps {
+  content: string;
+}
+
+const MarkdownContent = ({ content }: MarkdownContentProps) => {
   const parseMarkdown = (text: string) => {
     let html = text
       .replace(/<br\s*\/?>/gi, '\n\n')

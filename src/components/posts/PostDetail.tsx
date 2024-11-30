@@ -22,30 +22,26 @@ const PostDetail = async ({ slug }: Props) => {
 
   return (
     <div className='prose block md:grid md:grid-cols-[1fr_5fr]'>
-      <div className='flex flex-col'>
-        <div className='h-[293px] hidden md:block' />
-        <div className='sticky top-[132px] h-32 hidden md:block'>
-          <TableOfContents title={term.title.ko} />
-        </div>
-      </div>
+      <TableOfContents title={term.title.ko} />
       <div className='md:mr-40 text-justify'>
-        <div className='sm:ml-5'>
-          <PostHeader term={term} slug={slug} />
-        </div>
-        <div className='sm:ml-5'>
-          <div className='mt-5'>
-            <MarkdownContent content={term.description.full} />
-          </div>
-
-          <section className="group">
-            <h2 className='flex items-center'>
-              <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
-              {'난이도'}
-            </h2>
-            <div className='flex items-center mb-4'>
+        <PostHeader term={term} slug={slug} />
+        <div className='animate-introSecond sm:ml-5'>
+          <div className="group mt-1 p-2 sm:p-4 border border-extreme-light rounded-lg">
+            <div className='flex items-center gap-2 mb-3'>
+              <span className="text-primary h-[26px]">{'난이도 '}</span>
               <Stars rating={term.difficulty.level} />
             </div>
-            <MarkdownContent content={term.difficulty.description} />
+            <div className='markdown-text-sub'>
+              <MarkdownContent content={term.difficulty.description} />
+            </div>
+          </div>
+
+          <section className='group mt-10'>
+            <h2 className='flex items-center'>
+              <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+              {'개념'}
+            </h2>
+            <MarkdownContent content={term.description.full} />
           </section>
 
           <section className="group">
@@ -92,7 +88,7 @@ const PostDetail = async ({ slug }: Props) => {
                 <div key={index} className='flex gap-1 items-center mb-2'>
                   <Link
                     href={transformToSlug(item.internal_link)}
-                    className='group flex items-center tag-button rounded-3xl text-sm hover:no-underline'
+                    className='group flex items-center gap-1 tag-button rounded-3xl text-sm hover:no-underline'
                   >
                     <span>{item.term}</span>
                     <LinkIcon size={16} />
@@ -108,13 +104,6 @@ const PostDetail = async ({ slug }: Props) => {
                 </div>
               )
             ))}
-            {/* {term.terms.map((item, index) => (
-                <li key={index} className='flex items-center gap-3 mb-2'>
-                  <span >
-                    {item.term} {item.internal_link && <a href={item.internal_link}>{'🔗'}</a>}
-                  </span>
-                  </li>
-                  ))} */}
           </section>
 
           <section className="group">

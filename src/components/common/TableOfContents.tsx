@@ -83,28 +83,33 @@ const TableOfContents = ({ title }: Props) => {
   }, []);
 
   return (
-    <nav className="space-y-2 text-sm min-w-32">
-      <span className='text-main text-base font-bold'>{title}</span>
-      {sections.map((section) => (
-        <div
-          key={section.id}
-          className={`cursor-pointer hover:text-primary transition-colors underline underline-offset-4 decoration-light hover:decoration-primary
-            ${ activeSection === section.text ? 'text-accent font-medium decoration-primary' : 'text-sub' }
-          `}
-          onClick={() => scrollToSection(section.id)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              scrollToSection(section.id);
-            }
-          }}
-          aria-current={activeSection === section.text ? 'true' : 'false'}
-        >
-          {section.text}
-        </div>
-      ))}
-    </nav>
+    <div className='animate-introSecond flex flex-col'>
+      <div className='h-[463px] hidden md:block' />
+      <div className='sticky top-[132px] h-32 hidden md:block'>
+        <nav className="space-y-2 text-sm min-w-32">
+          <span className='text-main text-base font-bold'>{title}</span>
+          {sections.map((section) => (
+            <div
+              key={section.id}
+              className={`cursor-pointer hover:text-primary transition-colors underline underline-offset-4 decoration-light hover:decoration-primary
+                  ${ activeSection === section.text ? 'text-accent font-medium decoration-primary' : 'text-sub' }
+                `}
+              onClick={() => scrollToSection(section.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  scrollToSection(section.id);
+                }
+              }}
+              aria-current={activeSection === section.text ? 'true' : 'false'}
+            >
+              {section.text}
+            </div>
+          ))}
+        </nav>
+      </div>
+    </div>
   );
 };
 

@@ -13,8 +13,8 @@ interface PostHeaderProps {
 
 const PostHeader = ({ term, slug }: PostHeaderProps) => {
   return (
-    <>
-      <div className='flex sm:justify-start mt-32'>
+    <div className='animate-intro sm:ml-5'>
+      <div className='flex sm:justify-start mt-10 sm:mt-32'>
         <div className='flex flex-col justify-center items-center'>
           <h1 className="text-3xl font-bold mb-0">
             <span className='block sm:inline text-main'>{term.title.ko}</span>
@@ -32,7 +32,7 @@ const PostHeader = ({ term, slug }: PostHeaderProps) => {
           <span>{formatDate(term.metadata.updated_at)}{' 수정'}</span>
         </div>
       </div>
-      <div className="flex justify-start items-center flex-wrap mt-2.5">
+      <div className="flex justify-start items-center flex-wrap mt-2.5 sm:mt-10">
         {term.tags.map((tag, index) => (
           tag.internal_link ? (
             <Link href={transformToSlug(tag.internal_link)} key={index} className='group flex gap-1 items-center tag-button rounded-3xl text-sm mb-2 hover:no-underline'>
@@ -46,7 +46,7 @@ const PostHeader = ({ term, slug }: PostHeaderProps) => {
           )
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

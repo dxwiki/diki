@@ -11,6 +11,7 @@
 
 body {
   background-color: var(--background);
+  font-weight: 450;
 }
 
 :root {
