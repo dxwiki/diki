@@ -8,7 +8,7 @@ export default async function Home() {
 
   return (
     <>
-      <div className="relative min-h-[calc(100vh_-230px)] flex flex-col justify-center items-end sm:mx-10 md:mx-40 overflow-hidden">
+      <div className="relative min-h-[calc(100vh_-300px)] flex flex-col justify-center items-end sm:mx-10 md:mx-40 overflow-hidden">
         <LogoAnimation fontSize='10vw' />
         <div className='flex items-center gap-1 whitespace-nowrap mb-4 text-sm sm:text-base md:text-lg'>
           <span className='text-primary font-bold'>{terms.length}</span>

@@ -16,7 +16,7 @@ const SearchTip = () => {
           </span>
           <span className="text-sub sm:mx-1">{'또는'}</span>
           <span className="flex items-center gap-1">
-            <span className="border border-light px-3.5 pt-0.5 rounded-md text-sub text-[18px]">
+            <span className="w-[43px] h-[31px] flex justify-center border border-light px-2.5 pt-px rounded-md text-sub text-[18px]">
               {'⌘'}
             </span>
             <span className="font-semibold">{'+'}</span>

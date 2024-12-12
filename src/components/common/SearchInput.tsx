@@ -74,9 +74,11 @@ const SearchInput = ({ suggestions, tip = true, filter = false }: SearchInputPro
           </button>
         )}
       </div>
-      <div className={`opacity-0 text-sub mt-2 ${ isFilterActive ? 'opacity-100' : '' }`}>
-        {'필터:'}
-      </div>
+      {filter && (
+        <div className={`opacity-0 text-sub mt-2 ${ isFilterActive ? 'opacity-100' : '' }`}>
+          {'필터:'}
+        </div>
+      )}
       {tip && (
         <SearchTip />
       )}
