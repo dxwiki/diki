@@ -1,5 +1,5 @@
 import { fetchTermsData } from '@/utils/termsData';
-import Pagination from '@/components/posts/Pagination';
+import PostList from '@/components/posts/PostList';
 // import { TermData } from '@/types/database';
 import SearchInput from '@/components/common/SearchInput';
 
@@ -24,7 +24,7 @@ export default async function PostsPage() {
           <span className='text-primary font-bold'>{termsData.length}</span>
           {'/ '}{termsData.length}{' 개'}
         </h1>
-        <Pagination termsData={termsData} totalPages={totalPages} itemsPerPage={itemsPerPage} />
+        <PostList termsData={termsData} totalPages={totalPages} itemsPerPage={itemsPerPage} />
       </div>
     </div>
   );
