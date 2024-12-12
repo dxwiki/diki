@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { MoveUpRight, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { TermData } from '@/types/database';
+import CarouselWrapper from '@/components/common/CarouselWrapper';
 
 export default async function RecommendTerms({ terms }: { terms: TermData[] }) {
   const recentTerms = [...terms]
@@ -16,18 +17,17 @@ export default async function RecommendTerms({ terms }: { terms: TermData[] }) {
           <ChevronRight className='size-3.5' />
         </Link>
       </div>
-      <div className='flex sm:flex-wrap gap-1 sm:gap-2.5 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0'>
+      <CarouselWrapper itemCount={recentTerms.length} itemWidth={100}>
         {recentTerms.map((term) => (
           <Link
             key={term.url}
             href={`${ term.url }`}
-            className='inline-flex items-center text-sub gap-1 px-3 py-2 rounded-lg border border-secondary hover:bg-secondary hover:text-primary transition-colors text-xs sm:text-sm shrink-0 shadow-md'
+            className='w-[100px] py-1.5 flex justify-center items-center text-sub rounded-lg border border-light hover:bg-extreme-light hover:text-main transition-colors text-xs sm:text-sm'
           >
             {term.title.ko}
-            <MoveUpRight className='size-3.5' />
           </Link>
         ))}
-      </div>
+      </CarouselWrapper>
     </div>
   );
 }
