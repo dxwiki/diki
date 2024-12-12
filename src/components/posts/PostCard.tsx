@@ -16,7 +16,7 @@ const PostCard = ({ posts }: PostCardProps) => {
       {posts.map((term: TermData) => (
         <li
           key={term.id}
-          className="transition-transform duration-300 hover:-translate-y-2" // y값 상승
+          className="transition-transform duration-300 hover:-translate-y-2"
         >
           <Link
             href={term.url}
@@ -24,19 +24,20 @@ const PostCard = ({ posts }: PostCardProps) => {
             dark:hover:bg-background-secondary duration-300 shadow-md hover:shadow-xl"
           >
             <div className="flex flex-col">
-              <div className='flex items-center gap-2'>
-                <span className="font-noto text-2xl text-primary font-semibold">{term.title.ko}</span>
-                <div className="block sm:hidden">
-                  <Stars rating={term.difficulty.level} size={12} />
+              <div className='flex justify-between items-center'>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl text-primary font-semibold">{term.title.ko}</span>
+                  <div className="block sm:hidden">
+                    <Stars rating={term.difficulty.level} size={14} />
+                  </div>
                 </div>
+                <ChevronRight className="size-5 text-light group-hover:text-sub" />
               </div>
-              <span className="hidden sm:block font-noto text-lg text-main truncate">{term.title.en}</span>
+              <span className="hidden sm:block text-lg text-main truncate">{term.title.en}</span>
               <span className="text-sub line-clamp-1 sm:line-clamp-3 mt-4">{term.description.short}</span>
             </div>
-            <div className="flex justify-end sm:justify-between items-center">
-              <div className="hidden sm:block">
-                <Stars rating={term.difficulty.level} size={16} />
-              </div>
+            <div className="hidden sm:flex justify-end sm:justify-between items-center">
+              <Stars rating={term.difficulty.level} size={16} />
               <div className="flex gap-1 items-center">
                 <span
                   className="text-sub sm:opacity-0 -translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0"
