@@ -29,7 +29,16 @@ const PostList = ({ termsData, itemsPerPage }: PaginationProps) => {
   return (
     <>
       {paginatedData.length > 0 ? (
-        <PostCard posts={paginatedData} />
+        <ul className="grid sm:grid-cols-3 lg:grid-cols-4 gap-5">
+          {paginatedData.map((term: TermData) => (
+            <li
+              key={term.id}
+              className="transition-transform duration-300 hover:-translate-y-2"
+            >
+              <PostCard term={term} />
+            </li>
+          ))}
+        </ul>
       ) : (
         <p>{'검색결과가 없습니다.'}</p>
       )}
