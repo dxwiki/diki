@@ -20,7 +20,7 @@ const PostList = ({ termsData, itemsPerPage }: PaginationProps) => {
   const currentGroup = Math.ceil(currentPage / pagesPerGroup);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedData = termsData.slice(startIndex, endIndex);
+  const TermsPerPage = termsData.slice(startIndex, endIndex);
 
   const startPage = ((currentGroup - 1) * pagesPerGroup) + 1;
   const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
@@ -28,9 +28,9 @@ const PostList = ({ termsData, itemsPerPage }: PaginationProps) => {
 
   return (
     <>
-      {paginatedData.length > 0 ? (
+      {TermsPerPage.length > 0 ? (
         <ul className="grid sm:grid-cols-3 lg:grid-cols-4 gap-5">
-          {paginatedData.map((term: TermData) => (
+          {TermsPerPage.map((term: TermData) => (
             <li
               key={term.id}
               className="transition-transform duration-300 hover:-translate-y-2"
