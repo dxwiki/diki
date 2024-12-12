@@ -3,6 +3,10 @@ import PostList from '@/components/posts/PostList';
 // import { TermData } from '@/types/database';
 import SearchInput from '@/components/common/SearchInput';
 
+export const metadata = {
+  title: '포스트 목록',
+};
+
 export default async function PostsPage() {
   const termsData = await fetchTermsData();
   // const extendedTermsData = Array.from({ length: 122 }, (data: TermData, i) => ({
