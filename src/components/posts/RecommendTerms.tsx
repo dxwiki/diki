@@ -9,7 +9,7 @@ export default async function RecommendTerms({ terms }: { terms: TermData[] }) {
 
   return (
     <div className='space-y-1.5'>
-      <h3 className='font-semibold text-sub'>{'최근 등록'}</h3>
+      <h3 className='text-sub'>{'최근 등록'}</h3>
       <CarouselWrapper itemCount={recentTerms.length} itemWidth={100}>
         {recentTerms.map((term) => (
           <Link
