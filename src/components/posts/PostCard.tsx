@@ -24,7 +24,7 @@ const PostCard = ({ term, size = 'flex' }: PostCardProps) => {
             <span className="text-lg text-primary font-semibold">{term.title.ko}</span>
             <ChevronRight className="size-5 text-light group-hover:text-sub font-normal" />
           </div>
-          <span className="text-sub text-sm line-clamp-2 font-normal">{term.description.short}</span>
+          <span className="text-sub text-sm line-clamp-1 font-normal">{term.description.short}</span>
         </div>
       </Link>
     );
