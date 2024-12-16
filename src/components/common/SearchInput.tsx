@@ -45,7 +45,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength }: S
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
+  
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!e.relatedTarget || !(e.relatedTarget as HTMLElement).closest('.suggestions-modal')) {
       setIsModalOpen(false);
