@@ -17,6 +17,7 @@ const config: Config = {
         'accent': 'var(--accent)',
         'main': 'var(--text)',
         'sub': 'var(--text-secondary)',
+        'gray1': 'var(--gray1)',
         'light': 'var(--border)',
         'extreme-light': 'var(--extreme-light)',
       },
