@@ -17,7 +17,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength }: S
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [showTip, setShowTip] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const placeholder = termsLength ? `${termsLength}개의 데이터 용어사전` : '검색어 입력해주세요';
+  const placeholder = termsLength ? `${ termsLength }개의 데이터 용어사전` : '검색어 입력해주세요';
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
 
   const filteredSuggestions = suggestions?.filter((suggestion) =>
