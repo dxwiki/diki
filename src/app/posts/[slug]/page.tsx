@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {};
   }
 
-  const title = `${ term.title.ko } (${ term.title.en })`;
+  const title = `${ term.title.ko }(${ term.title.en })`;
   const description = term.description.short;
 
   return {

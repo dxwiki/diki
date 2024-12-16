@@ -12,14 +12,14 @@ import { TermData } from '@/types/database'; // TermData 타입 (타입 정의�
 
     // RSS 객체 생성
     const feed = new RSS({
-      title: '데이터 위키',
-      description: '데이터 위키, 데이터 백과사전 - 디키',
+      title: 'Diki',
+      description: '데이터 위키 - Diki',
       feed_url: 'https://dxwiki.github.io/feed.xml',
       site_url: 'https://dxwiki.github.io',
       image_url: 'https://dxwiki.github.io/logo.png',
       language: 'ko',
       pubDate: new Date(),
-      ttl: 60, // 60분마다 업데이트
+      ttl: 60,
     });
 
     // 각 포스트를 RSS 항목으로 추가
