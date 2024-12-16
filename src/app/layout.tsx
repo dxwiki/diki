@@ -57,10 +57,11 @@ const RootLayout = ({ children }: RootLayoutProps) => {
       </head>
       <body
         className={`
-        ${ fontNanum.variable } 
-        ${ fontCoding.variable } 
-        ${ fontNoto.variable } 
-      `}
+          overflow-x-hidden overflow-y-auto
+          ${ fontNanum.variable } 
+          ${ fontCoding.variable } 
+          ${ fontNoto.variable } 
+        `}
       >
         <ThemeProvider>
           <Header />
