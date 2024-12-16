@@ -26,7 +26,7 @@ const RelatedTermsSection = ({ terms }: RelatedTerm) => {
             <Fragment key={index}>
               <Link
                 href={transformToSlug(item.internal_link)}
-                className='group flex shrink-0 justify-center items-center gap-1 tag-button rounded-3xl text-sm hover:no-underline'
+                className='group flex shrink-0 justify-center items-center gap-1 tag-button rounded-3xl text-sm hover:no-underline px-2.5'
               >
                 <span>{item.term}</span>
                 <LinkIcon size={16} />
@@ -35,7 +35,7 @@ const RelatedTermsSection = ({ terms }: RelatedTerm) => {
             </Fragment>
           ) : (
             <Fragment key={index}>
-              <span className='tag-button-no-link flex justify-center shrink-0 rounded-3xl text-sm bg-extreme-light'>
+              <span className='tag-button-no-link flex justify-center shrink-0 rounded-3xl text-sm bg-extreme-light px-2.5'>
                 {item.term}
               </span>
               <span className="mb-2">{item.description}</span>
