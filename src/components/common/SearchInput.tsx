@@ -1,20 +1,23 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, Filter, Info } from 'lucide-react';
+import { Search, Filter, CircleHelp } from 'lucide-react';
 import SearchTip from '@/components/search/SearchTip';
+
 interface SearchInputProps {
   suggestions?: string[];
   tip?: boolean;
   filter?: boolean;
+  termsLength?: number;
 }
 
-const SearchInput = ({ suggestions, tip = true, filter = false }: SearchInputProps) => {
+const SearchInput = ({ suggestions, tip = true, filter = false, termsLength }: SearchInputProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [showTip, setShowTip] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const placeholder = termsLength ? `${termsLength}개의 데이터 용어사전` : '검색어 입력해주세요';
 
   const filteredSuggestions = suggestions?.filter((suggestion) =>
     suggestion.toLowerCase().includes(searchTerm.toLowerCase())
@@ -56,7 +59,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false }: SearchInputPro
           type="text"
           ref={inputRef}
           value={searchTerm}
-          placeholder="검색어를 입력하세요"
+          placeholder={placeholder}
           onChange={(e) => setSearchTerm(e.target.value)}
           onFocus={() => setIsModalOpen(true)}
           onBlur={handleBlur}
@@ -68,7 +71,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false }: SearchInputPro
             className={`${ showTip ? 'text-primary' : 'text-light' } group flex items-center mr-3 hover:text-accent`}
             onClick={() => setShowTip(!showTip)}
           >
-            <Info className="size-5" />
+            <CircleHelp className="size-5" />
           </button>
         )}
         {filter && (
