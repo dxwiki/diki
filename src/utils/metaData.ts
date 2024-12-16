@@ -10,10 +10,6 @@ const getReadingTime = (term: FetchTermData) => {
     ${ term.relevance.scientist.description }
     ${ term.usecase.example }
     ${ term.usecase.description }
-    ${ term.references.tutorials.map((t) => t.title).join(' ') }
-    ${ term.references.books.map((b) => b.title).join(' ') }
-    ${ term.references.academic.map((a) => a.title).join(' ') }
-    ${ term.references.opensource.map((o) => o.name).join(' ') }
   `;
 
   const stats = readingTime(allTextContent);

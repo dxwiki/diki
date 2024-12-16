@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Info } from 'lucide-react';
 import SearchTip from '@/components/search/SearchTip';
 interface SearchInputProps {
   suggestions?: string[];
@@ -13,6 +13,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false }: SearchInputPro
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterActive, setIsFilterActive] = useState(false);
+  const [showTip, setShowTip] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const filteredSuggestions = suggestions?.filter((suggestion) =>
@@ -48,7 +49,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false }: SearchInputPro
   };
 
   return (
-    <div className="relative w-full z-[1]">
+    <div className="relative w-full">
       <div className="flex items-center border border-light rounded-md focus-within:border-accent bg-background">
         <Search className="ml-3 text-main" />
         <input
@@ -62,6 +63,14 @@ const SearchInput = ({ suggestions, tip = true, filter = false }: SearchInputPro
           onKeyDown={(e) => redirect(e, searchTerm)}
           className="w-full p-2 pl-3 bg-background outline-none text-main rounded-md"
         />
+        {tip && (
+          <button
+            className={`${ showTip ? 'text-primary' : 'text-light' } group flex items-center mr-3 hover:text-accent`}
+            onClick={() => setShowTip(!showTip)}
+          >
+            <Info className="size-5" />
+          </button>
+        )}
         {filter && (
           <button
             onClick={() => setIsFilterActive(!isFilterActive)}
@@ -79,8 +88,10 @@ const SearchInput = ({ suggestions, tip = true, filter = false }: SearchInputPro
           {'필터:'}
         </div>
       )}
-      {tip && (
-        <SearchTip />
+      {showTip && (
+        <div className='w-full absolute bottom-[-250px] right-0 opacity-80 animate-slideDown'>
+          <SearchTip />
+        </div>
       )}
       {isModalOpen && (
         <div

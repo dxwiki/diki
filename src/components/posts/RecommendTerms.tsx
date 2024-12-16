@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
 import { TermData } from '@/types/database';
 import CarouselWrapper from '@/components/common/CarouselWrapper';
 
@@ -9,14 +8,8 @@ export default async function RecommendTerms({ terms }: { terms: TermData[] }) {
     .slice(0, 10);
 
   return (
-    <div className='sm:mx-10 md:mx-40 space-y-1.5 mt-10'>
-      <div className='w-full inline-flex justify-between items-center gap-2'>
-        <h3 className='font-semibold text-sub'>{'최근 등록된 용어'}</h3>
-        <Link href='/posts' className='flex items-center border-0 no-underline text-sub text-sm hover:text-accent hover:font-semibold'>
-          {'전체 보기'}
-          <ChevronRight className='size-3.5' />
-        </Link>
-      </div>
+    <div className='space-y-1.5'>
+      <h3 className='font-semibold text-sub'>{'최근 등록'}</h3>
       <CarouselWrapper itemCount={recentTerms.length} itemWidth={100}>
         {recentTerms.map((term) => (
           <Link
