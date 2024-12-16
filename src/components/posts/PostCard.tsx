@@ -16,7 +16,7 @@ const PostCard = ({ term, size = 'flex' }: PostCardProps) => {
     return (
       <Link
         href={term.url}
-        className="group h-full flex flex-col gap-0 justify-between p-4 border border-background-secondary rounded-lg
+        className="group h-full flex flex-col gap-0 justify-between p-2.5 border border-background-secondary rounded-lg
         dark:hover:bg-background-secondary hover:no-underline duration-300 shadow-md hover:shadow-xl"
       >
         <div className="flex flex-col">
@@ -24,7 +24,7 @@ const PostCard = ({ term, size = 'flex' }: PostCardProps) => {
             <span className="text-lg text-primary font-semibold">{term.title.ko}</span>
             <ChevronRight className="size-5 text-light group-hover:text-sub font-normal" />
           </div>
-          <span className="text-sub text-sm line-clamp-1 font-normal">{term.description.short}</span>
+          <span className="text-sub text-sm line-clamp-1 mt-1 font-normal">{term.description.short}</span>
         </div>
       </Link>
     );

@@ -18,6 +18,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength }: S
   const [showTip, setShowTip] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const placeholder = termsLength ? `${termsLength}개의 데이터 용어사전` : '검색어 입력해주세요';
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
 
   const filteredSuggestions = suggestions?.filter((suggestion) =>
     suggestion.toLowerCase().includes(searchTerm.toLowerCase())
@@ -36,6 +37,15 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength }: S
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!e.relatedTarget || !(e.relatedTarget as HTMLElement).closest('.suggestions-modal')) {
       setIsModalOpen(false);
@@ -48,6 +58,12 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength }: S
         .trim()
         .split(' ')
         .join('+') }`;
+    }
+  };
+
+  const handleTipClick = () => {
+    if (windowWidth < 640) {
+      setShowTip(!showTip);
     }
   };
 
@@ -69,7 +85,9 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength }: S
         {tip && (
           <button
             className={`${ showTip ? 'text-primary' : 'text-light' } group flex items-center mr-3 hover:text-accent`}
-            onClick={() => setShowTip(!showTip)}
+            onClick={handleTipClick}
+            onMouseEnter={() => windowWidth >= 640 && setShowTip(true)}
+            onMouseLeave={() => windowWidth >= 640 && setShowTip(false)}
           >
             <CircleHelp className="size-5" />
           </button>
@@ -92,7 +110,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength }: S
         </div>
       )}
       {showTip && (
-        <div className='w-full absolute bottom-[-250px] right-0 opacity-80 animate-slideDown'>
+        <div className='w-full absolute top-[40px] right-0 animate-slideDown'>
           <SearchTip />
         </div>
       )}
