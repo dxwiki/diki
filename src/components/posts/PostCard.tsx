@@ -46,7 +46,7 @@ const PostCard = ({ term, size = 'flex' }: PostCardProps) => {
           <ChevronRight className="size-5 text-light group-hover:text-sub font-normal block sm:hidden" />
         </div>
         <span className="hidden sm:block text-lg text-main truncate font-normal">{term.title.en}</span>
-        <span className="text-sub line-clamp-1 sm:line-clamp-3 mt-4 font-normal">{term.description.short}</span>
+        <span className="text-gray1 line-clamp-1 sm:line-clamp-3 mt-4 font-normal">{term.description.short}</span>
       </div>
       <div className="hidden sm:flex justify-end sm:justify-between items-center">
         <Stars rating={term.difficulty.level} size={16} />
