@@ -1,6 +1,9 @@
 // import RadarChart from '@/components/GLRadarChart';
 import Stars from '@/components/ui/Stars';
 import { Relevance } from '@/types';
+import DACanvas from '@/components/particleCanvas/DACanvas';
+import DECanvas from '@/components/particleCanvas/DECanvas';
+import DSCanvas from '@/components/particleCanvas/DSCanvas';
 
 interface RelevanceSectionProps {
   analyst: Relevance['analyst'];
@@ -47,6 +50,11 @@ const RelevanceSection = ({ analyst, engineer, scientist }: RelevanceSectionProp
           init
         />
       </div> */}
+      <div className='grid justify-between items-center grid-cols-3 gap-3'>
+        <DACanvas />
+        <DECanvas />
+        <DSCanvas />
+      </div>
       <div className='grid lg:grid-cols-3 gap-4'>
         {
           analyst && (
