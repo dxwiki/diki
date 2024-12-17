@@ -4,7 +4,7 @@ const SearchTip = () => {
   return (
     <div className="w-full flex flex-col bg-extreme-light text-sub rounded-xl mt-4 p-4 gap-3">
       <span className="flex items-center text-main gap-2">
-        <Lightbulb className="size-5" />
+        <Lightbulb className="size-5 font-semibold" />
         {'검색 팁'}
       </span>
       <div className='hidden sm:block'>
