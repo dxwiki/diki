@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, Filter, CircleHelp } from 'lucide-react';
+import { Search, Filter, CircleHelp, ChevronLeft } from 'lucide-react';
 import SearchTip from '@/components/search/SearchTip';
 
 interface SearchInputProps {
@@ -9,15 +9,16 @@ interface SearchInputProps {
   tip?: boolean;
   filter?: boolean;
   termsLength?: number;
+  goBack?: boolean;
 }
 
-const SearchInput = ({ suggestions, tip = true, filter = false, termsLength }: SearchInputProps) => {
+const SearchInput = ({ suggestions, tip = true, filter = false, termsLength, goBack = false }: SearchInputProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [showTip, setShowTip] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const placeholder = termsLength ? `${ termsLength }개의 데이터 용어사전` : '검색어 입력해주세요';
+  const placeholder = termsLength ? `${ termsLength }개의 데이터 용어사전 검색` : '검색어 입력해주세요';
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
 
   const filteredSuggestions = suggestions?.filter((suggestion) =>
@@ -69,40 +70,47 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength }: S
 
   return (
     <div className="relative w-full">
-      <div className="flex items-center border border-light rounded-md focus-within:border-accent bg-background">
-        <Search className="ml-3 text-main" />
-        <input
-          type="text"
-          ref={inputRef}
-          value={searchTerm}
-          placeholder={placeholder}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => setIsModalOpen(true)}
-          onBlur={handleBlur}
-          onKeyDown={(e) => redirect(e, searchTerm)}
-          className="w-full p-2 pl-3 bg-background outline-none text-main rounded-md"
-        />
-        {tip && (
-          <button
-            className={`${ showTip ? 'text-primary' : 'text-light' } group flex items-center mr-3 hover:text-accent`}
-            onClick={handleTipClick}
-            onMouseEnter={() => windowWidth >= 640 && setShowTip(true)}
-            onMouseLeave={() => windowWidth >= 640 && setShowTip(false)}
-          >
-            <CircleHelp className="size-5" />
+      <div className='w-full flex items-center gap-2'>
+        {goBack && (
+          <button className='rounded-md p-2 hover:bg-background-secondary duration-300' onClick={() => history.back()}>
+            <ChevronLeft className='size-5' />
           </button>
         )}
-        {filter && (
-          <button
-            onClick={() => setIsFilterActive(!isFilterActive)}
-            className={`group flex items-center gap-1 w-16 mr-2 pl-2 py-0.5 rounded-sm shrink-0 text-sub hover:text-primary ${
-              isFilterActive ? 'bg-accent text-white hover:text-white' : ''
-            }`}
-          >
-            <Filter className='size-4' />
-            <span className=''>{'필터'}</span>
-          </button>
-        )}
+        <div className="w-full flex items-center border border-light rounded-md focus-within:border-accent bg-background">
+          <Search className="ml-3 text-main" />
+          <input
+            type="text"
+            ref={inputRef}
+            value={searchTerm}
+            placeholder={placeholder}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onFocus={() => setIsModalOpen(true)}
+            onBlur={handleBlur}
+            onKeyDown={(e) => redirect(e, searchTerm)}
+            className="w-full p-2 pl-3 bg-background outline-none text-main rounded-md"
+          />
+          {tip && (
+            <button
+              className={`${ showTip ? 'text-primary' : 'text-light' } group flex items-center mr-3 hover:text-accent`}
+              onClick={handleTipClick}
+              onMouseEnter={() => windowWidth >= 640 && setShowTip(true)}
+              onMouseLeave={() => windowWidth >= 640 && setShowTip(false)}
+            >
+              <CircleHelp className="size-5" />
+            </button>
+          )}
+          {filter && (
+            <button
+              onClick={() => setIsFilterActive(!isFilterActive)}
+              className={`group flex items-center gap-1 w-16 mr-2 pl-2 py-0.5 rounded-sm shrink-0 text-sub hover:text-primary ${
+                isFilterActive ? 'bg-accent text-white hover:text-white' : ''
+              }`}
+            >
+              <Filter className='size-4' />
+              <span className=''>{'필터'}</span>
+            </button>
+          )}
+        </div>
       </div>
       {filter && (
         <div className={`opacity-0 text-sub mt-2 ${ isFilterActive ? 'opacity-100' : '' }`}>

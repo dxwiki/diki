@@ -14,8 +14,8 @@ export default async function PostsPage() {
 
   return (
     <div className="relative">
-      <div className='animate-intro relative z-20 sm:mx-24'>
-        <SearchInput tip={false} filter={true} termsLength={terms.length} />
+      <div className='animate-intro relative z-20'>
+        <SearchInput tip={false} filter={true} goBack={true} termsLength={terms.length} />
       </div>
       <div className='animate-introSecond z-10'>
         <h1 className='flex justify-start items-center gap-2 mt-4 md:mt-20 mb-5 pb-1 text-sub border-b border-extreme-light'>
