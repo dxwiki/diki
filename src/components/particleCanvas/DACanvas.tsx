@@ -7,12 +7,13 @@ import { useTheme } from 'next-themes';
 interface ParticleStreamProps {
   width?: number;
   height?: number;
+  title?: string;
+  score?: number;
+  description?: string;
 }
 
-export default function DACanvas({
-  width = 250,
-  height = 400,
-}: ParticleStreamProps) {
+export default function DACanvas(props: ParticleStreamProps) {
+  const { width = 250, height = 400, title, score, description } = props;
   const { theme } = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
@@ -57,9 +58,25 @@ export default function DACanvas({
   }, [width, height, theme]); // theme 의존성 추가
 
   return (
-    <div className="relative w-full min-h-[300px] rounded-2xl overflow-hidden shadow-lg border-2 border-black/10 dark:border-white/10 backdrop-blur-md">
-      {/* <div className="absolute inset-0 bg-gradient-radial from-[rgba(0,100,0,0.4)] via-[rgba(0,80,0,0.3)] to-[rgba(0,60,0,0.2)] dark:from-[rgba(0,70,0,0.8)] dark:via-[rgba(0,40,0,0.8)] dark:to-[rgba(0,20,0,0.8)]" />
-      <div className="absolute inset-0 bg-gradient-to-tr from-[rgba(144,238,144,0.1)] via-[rgba(0,255,0,0.05)] to-[rgba(0,100,0,0.02)] dark:from-[rgba(0,255,0,0.05)] dark:via-[rgba(0,200,0,0.02)] dark:to-[rgba(0,150,0,0.01)]" /> */}
+    <div className="relative w-full min-h-[300px] rounded-2xl overflow-hidden
+      shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(255,255,255,0.1)]
+      border-2 border-black/5 dark:border-white/10
+      bg-white/30 dark:bg-black/30 backdrop-blur-md
+      before:absolute before:inset-0 before:z-0
+      before:bg-gradient-to-b before:from-transparent before:to-white/5 dark:before:to-white/10"
+    >
+      <div className="absolute top-2 right-2 text-sub backdrop-blur-md rounded px-2">
+        {'DA | L'}
+        <span className='text-green-400'>{score}</span>
+      </div>
+      <div className='absolute bottom-2 left-2 mr-2 min-h-[100px] space-y-1'>
+        <div className='text-green-400 text-lg font-bold inline-block bg-background/20 dark:bg-background/80 backdrop-blur-md rounded px-2'>
+          {title}
+        </div>
+        <div className='text-sub inline-block bg-background/20 dark:bg-background/80 backdrop-blur-md rounded-lg px-2'>
+          {description}
+        </div>
+      </div>
       <canvas
         ref={canvasRef}
         className="relative z-10 size-full"

@@ -6,12 +6,13 @@ import { Particle, CONSTANTS } from '@/libs/DSParticleSystem';
 interface DSParticleStreamProps {
   width?: number;
   height?: number;
+  title: string;
+  score: number;
+  description: string;
 }
 
-export default function DSParticleStream({
-  width = 250,
-  height = 400,
-}: DSParticleStreamProps) {
+export default function DSParticleStream(props: DSParticleStreamProps) {
+  const { width = 250, height = 400, title, score, description } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const animationFrameRef = useRef<number>();
@@ -82,8 +83,25 @@ export default function DSParticleStream({
   }, [width, height]);
 
   return (
-    <div className="relative w-full min-h-[300px] rounded-2xl overflow-hidden shadow-lg border-2 border-white/10 backdrop-blur-md">
-      <div className="absolute inset-0 bg-gradient-radial from-[rgba(70,0,0,0.8)] via-[rgba(35,0,0,0.8)] to-[rgba(20,0,0,0.8)]" />
+    <div className="relative w-full min-h-[300px] rounded-2xl overflow-hidden
+      shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(255,255,255,0.1)]
+      border-2 border-black/5 dark:border-white/10
+      bg-white/30 dark:bg-black/30 backdrop-blur-md
+      before:absolute before:inset-0 before:z-0
+      before:bg-gradient-to-b before:from-transparent before:to-white/5 dark:before:to-white/10"
+    >
+      <div className="absolute top-2 right-2 text-sub backdrop-blur-sm rounded px-2">
+        {'DA | L'}
+        <span className='text-red-600'>{score}</span>
+      </div>
+      <div className='absolute bottom-2 left-2 mr-2 min-h-[100px] space-y-1'>
+        <div className='text-red-600 text-lg font-bold inline-block bg-background/20 dark:bg-background/80 backdrop-blur-sm rounded px-2'>
+          {title}
+        </div>
+        <div className='text-sub inline-block bg-background/20 dark:bg-background/80 backdrop-blur-sm rounded-lg px-2'>
+          {description}
+        </div>
+      </div>
       <canvas
         ref={canvasRef}
         className="relative z-10 size-full"
