@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { TermData } from '@/types';
-import CarouselWrapper from '@/components/common/CarouselWrapper';
+// import CarouselWrapper from '@/components/common/CarouselWrapper';
 
 export default async function RecommendTerms({ terms }: { terms: TermData[] }) {
   const recentTerms = [...terms]
@@ -9,8 +9,9 @@ export default async function RecommendTerms({ terms }: { terms: TermData[] }) {
 
   return (
     <div className='space-y-1.5'>
-      <h3 className='text-sub'>{'최근 등록'}</h3>
-      <CarouselWrapper itemCount={recentTerms.length} itemWidth={100}>
+      <h3 className='text-sub font-semibold'>{'최근 등록'}</h3>
+      {/* <CarouselWrapper itemCount={recentTerms.length} itemWidth={100}> */}
+      <div className='flex flex-wrap gap-2'>
         {recentTerms.map((term) => (
           <Link
             key={term.url}
@@ -20,7 +21,8 @@ export default async function RecommendTerms({ terms }: { terms: TermData[] }) {
             {term.title?.ko}
           </Link>
         ))}
-      </CarouselWrapper>
+      </div>
+      {/* </CarouselWrapper> */}
     </div>
   );
 }
