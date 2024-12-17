@@ -5,8 +5,10 @@ const RecommendationSection = async () => {
   const terms = await fetchTermsData();
 
   const recentTerms = [...terms]
-    .sort((a, b) => new Date(b.metadata.updated_at).getTime() - new Date(a.metadata.updated_at).getTime())
+    .sort((a, b) => new Date(b.metadata?.created_at ?? '').getTime() - new Date(a.metadata?.created_at ?? '').getTime())
     .slice(0, 6);
+
+  if(recentTerms.length < 6) return null;
 
   return (
     <div className='flex flex-col gap-2 border-t border-background-secondary my-10 pt-4'>

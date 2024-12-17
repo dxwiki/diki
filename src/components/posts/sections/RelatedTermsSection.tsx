@@ -4,16 +4,14 @@ import Link from 'next/link';
 import { Link as LinkIcon } from 'lucide-react';
 import { transformToSlug } from '@/utils/filters';
 import { Fragment } from 'react';
+import { Terms } from '@/types';
 
 interface RelatedTerm {
-  terms: Array<{
-    internal_link: string | null;
-    description: string;
-    term: string;
-  }>;
+  terms: Terms[];
 }
 
 const RelatedTermsSection = ({ terms }: RelatedTerm) => {
+  if(terms.length === 0) return null;
   return(
     <section className="group">
       <h2>
