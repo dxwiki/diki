@@ -1,12 +1,19 @@
 import type { Config } from 'tailwindcss';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 import typography from '@tailwindcss/typography';
+import plugin from 'tailwindcss/plugin';
 
 const config: Config = {
   darkMode: ['class'],
   content: ['./src/**/*.{ts,tsx,mdx}'],
   prefix: '',
-  plugins: [typography],
+  plugins: [
+    typography,
+    plugin(({ addVariant }: { addVariant: (name: string, rules: string)=> void }) => {
+      addVariant('windows', '.windows &');
+      addVariant('mac', '.mac &');
+    }),
+  ],
   theme: {
     extend: {
       colors: {

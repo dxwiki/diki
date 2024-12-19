@@ -9,13 +9,12 @@ const SearchTip = () => {
       </span>
       <div className='hidden sm:block'>
         <span className="flex flex-wrap items-center gap-1 sm:gap-1 ml-6">
-          <span className="flex items-center gap-1">
+          <span className="hidden windows:flex items-center gap-1">
             <span className="border border-light p-[3px_8px_2px_7px] rounded-md">{'Ctrl'}</span>
             <span className="font-semibold">{'+'}</span>
             <span className="border border-light px-2.5 py-0.5 pt-[3px] rounded-md">{'K'}</span>
           </span>
-          <span className="text-sub sm:mx-1">{'또는'}</span>
-          <span className="flex items-center gap-1">
+          <span className="hidden mac:flex items-center gap-1">
             <span className="w-[43px] h-[31px] flex justify-center border border-light px-2.5 pt-px rounded-md text-sub text-[18px]">
               {'⌘'}
             </span>
