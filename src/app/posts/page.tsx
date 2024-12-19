@@ -18,7 +18,7 @@ export default async function PostsPage() {
         <SearchInput tip={false} filter={true} goBack={true} termsLength={terms.length} />
       </div>
       <div className='animate-introSecond z-10'>
-        <h1 className='flex justify-start items-center gap-2 mt-4 md:mt-20 mb-5 pb-1 text-sub border-b border-light'>
+        <h1 className='flex justify-start items-center gap-2 my-6 pb-1 text-sub border-b border-light'>
           {'검색결과'}
           <span className='text-primary font-bold'>{terms.length}</span>
           {'/ '}{terms.length}{' 개'}
