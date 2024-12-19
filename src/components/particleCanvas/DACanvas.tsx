@@ -60,8 +60,8 @@ export default function DACanvas(props: ParticleStreamProps) {
   return (
     <div className="relative w-full min-h-[300px] rounded-2xl overflow-hidden
       shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(255,255,255,0.1)]
-      border-2 border-green-500 dark:border-green-400
       bg-white/30 dark:bg-black/20 backdrop-blur-md
+      border border-green-400 dark:border-0
       before:absolute before:inset-0 before:z-0
       before:bg-gradient-to-b before:from-transparent before:to-white/5 dark:before:to-white/5"
     >
@@ -70,7 +70,7 @@ export default function DACanvas(props: ParticleStreamProps) {
         <span className='text-green-700 dark:text-green-500'>{score}</span>
       </div>
       <div className='absolute w-full bottom-0 left-0 p-2 z-20
-        bg-green-500/5 min-h-[100px] flex flex-col justify-start
+      min-h-[100px] flex flex-col justify-start
         before:absolute before:inset-0 before:-z-10
         before:backdrop-blur-3xl before:bg-green-500/5'
       >
