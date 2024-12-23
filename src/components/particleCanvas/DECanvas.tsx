@@ -63,15 +63,16 @@ export default function DECanvas(props: DEParticleStreamProps) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [width, height, theme]); // theme을 의존성 배열에 추가
+  }, [width, height, theme]);
 
   return (
-    <div className="relative w-full min-h-[300px] rounded-2xl overflow-hidden
-      shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(255,255,255,0.1)]
+    <div
+      className={`relative w-full min-h-[300px] rounded-2xl overflow-hidden
       bg-white/30 dark:bg-black/20 backdrop-blur-md
-      border border-amber-400 dark:border-0
       before:absolute before:inset-0 before:z-0
-      before:bg-gradient-to-b before:from-transparent before:to-white/5 dark:before:to-white/5"
+      border border-amber-500/20
+      before:bg-gradient-to-b before:from-transparent before:to-white/5 dark:before:to-white/5`}
+      style={{ boxShadow: theme === 'dark' ? 'inset 0px 0px 10px rgba(255, 193, 7, 0.3)' : '0px 0px 4px rgba(255, 193, 7, 0.5), inset 0px 2px 4px rgba(255, 193, 7, 0.2)' }}
     >
       <div className="absolute top-2 right-2 text-main backdrop-blur-md rounded px-2 z-20">
         {'DE | L'}
@@ -80,7 +81,7 @@ export default function DECanvas(props: DEParticleStreamProps) {
       <div className='absolute w-full bottom-0 left-0 p-2 z-20
         min-h-[100px] flex flex-col justify-start
         before:absolute before:inset-0 before:-z-10
-        before:backdrop-blur-3xl before:bg-amber-500/5'
+        before:backdrop-blur-3xl'
       >
         <div className='text-amber-600 dark:text-amber-400 text-lg font-bold mb-1'>
           {title}
