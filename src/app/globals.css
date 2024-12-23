@@ -22,8 +22,8 @@ body {
 
   --text: rgb(5, 5, 5);
   --text-secondary: rgb(24, 24, 24);
-  
-  --gray1: rgb(100, 100, 100);
+
+  --gray1: rgb(150, 150, 150);
   --border: #cccccc; /* 밝은 테마의 기본 테두리 색상 */
   --extreme-light: #efefef;
 }
@@ -39,7 +39,7 @@ body {
   --text: rgb(251, 251, 251);
   --text-secondary: rgb(226, 226, 226);
 
-  --gray1: rgb(155, 155, 155);
+  --gray1: rgb(165, 165, 165);
   --border: #666666; /* 다크 테마의 기본 테두리 색상 */
   --extreme-light: #1f1f1f;
 }
