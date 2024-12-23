@@ -20,7 +20,7 @@ const PostHeader = ({ term, slug }: PostHeaderProps) => {
             <span className='block sm:inline text-main'>{term.title?.ko}</span>
             {
               term.title?.en && (
-                <span className='block sm:inline text-main'>{'('}{term.title.en}{')'}</span>
+                <span className='block sm:inline text-main break-all'>{'('}{term.title.en}{')'}</span>
               )
             }
           </h1>
