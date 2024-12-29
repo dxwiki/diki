@@ -11,7 +11,7 @@ interface Section {
 
 interface Props {
   title: string;
-  onShare: () => void;
+  onShare: ()=> void;
 }
 
 const HEADER_HEIGHT = 64;
@@ -20,7 +20,6 @@ const Threshold = 10;
 const TableOfContents = ({ title, onShare }: Props) => {
   const [activeSection, setActiveSection] = useState<string>('');
   const [sections, setSections] = useState<Section[]>([]);
-  const [isAtBottom, setIsAtBottom] = useState(false);
 
   useEffect(() => {
     const sectionElements = document.querySelectorAll<HTMLElement>('section');
@@ -44,8 +43,6 @@ const TableOfContents = ({ title, onShare }: Props) => {
       const bottomReached
         = window.innerHeight + window.scrollY
         >= document.documentElement.scrollHeight - 10;
-
-      setIsAtBottom(bottomReached);
 
       if (bottomReached && sectionElements.length > 0) {
         const lastSection = sectionElements[sectionElements.length - 1];
@@ -92,20 +89,6 @@ const TableOfContents = ({ title, onShare }: Props) => {
     }
   }, []);
 
-  const scrollToBottom = useCallback((): void => {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
-    });
-  }, []);
-
-  const scrollToTop = useCallback((): void => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  }, []);
-
   const handleShareClick = useCallback((): void => {
     onShare();
   }, [onShare]);
@@ -116,14 +99,14 @@ const TableOfContents = ({ title, onShare }: Props) => {
       <div className='sticky top-[132px] hidden md:block'>
         <nav className="space-y-2 text-sm min-w-32">
           <div className='flex items-center gap-4'>
-          <span className='text-main text-base font-bold'>{title}</span>
-          <TooltipButton
-            onClick={handleShareClick}
-            tooltip="공유하기"
-            className='p-1'
-          >
-            <Share className='size-3' />
-          </TooltipButton>
+            <span className='text-main text-base font-bold'>{title}</span>
+            <TooltipButton
+              onClick={handleShareClick}
+              tooltip="공유하기"
+              className='p-1'
+            >
+              <Share className='size-3' />
+            </TooltipButton>
           </div>
           {sections.map((section) => (
             <div

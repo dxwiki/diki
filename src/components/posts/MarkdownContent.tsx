@@ -32,7 +32,7 @@ const MarkdownContent = ({ content }: MarkdownContentProps) => {
     // 7. 새 문단 처리 (빈 줄 기준으로 <p> 태그 감싸기)
     html = html
       .split('\n\n')
-      .map((paragraph) => (paragraph.trim() ? `<p>${paragraph.trim()}</p>` : ''))
+      .map((paragraph) => (paragraph.trim() ? `<p>${ paragraph.trim() }</p>` : ''))
       .join('');
 
     return html;

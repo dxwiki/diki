@@ -15,12 +15,12 @@ interface KakaoShare {
         webUrl: string;
       };
     };
-  }) => void;
+  })=> void;
 }
 
 interface KakaoStatic {
-  init: (apiKey: string) => void;
-  isInitialized: () => boolean;
+  init: (apiKey: string)=> void;
+  isInitialized: ()=> boolean;
   Share: KakaoShare;
 }
 
@@ -32,12 +32,10 @@ declare global {
 
 interface ShareModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: ()=> void;
 }
 
 const ShareModal = ({ isOpen, onClose }: ShareModalProps) => {
-  if (!isOpen) return null;
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -47,6 +45,8 @@ const ShareModal = ({ isOpen, onClose }: ShareModalProps) => {
     };
   }, [isOpen]);
 
+  if (!isOpen) return null;
+
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
       alert('URL이 복사되었습니다.');
@@ -55,10 +55,10 @@ const ShareModal = ({ isOpen, onClose }: ShareModalProps) => {
   };
 
   const shareKakao = () => {
-    if (typeof window === 'undefined' || !window.Kakao) return;
+    if (typeof window === 'undefined') return;
 
     const KAKAO_KEY = process.env.NEXT_PUBLIC_KAKAO_APP_KEY;
-    
+
     if (!KAKAO_KEY) {
       console.error('Kakao API key가 없습니다.');
       return;
@@ -85,50 +85,50 @@ const ShareModal = ({ isOpen, onClose }: ShareModalProps) => {
   const shareFacebook = () => {
     const shareUrl = window.location.href;
     const encodedUrl = encodeURIComponent(shareUrl);
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodeURIComponent(document.title)}\n${encodedUrl}`;
-    
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${ encodedUrl }&quote=${ encodeURIComponent(document.title) }\n${ encodedUrl }`;
+
     window.open(url, '_blank');
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+    <div
+      className="fixed inset-0 bg-black opacity-80 flex items-center justify-center z-50"
       onClick={onClose}
     >
-      <div 
+      <div
         className="bg-background rounded-lg p-6 w-80"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <span className="text-lg font-semibold text-main">공유하기</span>
+          <span className="text-lg font-semibold text-main">{'공유하기'}</span>
           <button onClick={onClose} className="p-1">
             <X className="size-5 text-main" />
           </button>
         </div>
-        
+
         <div className="grid grid-cols-3 gap-4">
           <button
             onClick={shareKakao}
             className="flex flex-col items-center gap-2 p-3 hover:bg-background-secondary rounded-lg"
           >
             <MessageCircle className="size-6 text-main" />
-            <span className="text-sm">카카오톡</span>
+            <span className="text-sm">{'카카오톡'}</span>
           </button>
-          
+
           <button
             onClick={shareFacebook}
             className="flex flex-col items-center gap-2 p-3 hover:bg-background-secondary rounded-lg"
           >
             <Facebook className="size-6 text-main" />
-            <span className="text-sm">페이스북</span>
+            <span className="text-sm">{'페이스북'}</span>
           </button>
-          
+
           <button
             onClick={copyLink}
             className="flex flex-col items-center gap-2 p-3 hover:bg-background-secondary rounded-lg"
           >
             <Copy className="size-6 text-main" />
-            <span className="text-sm">링크 복사</span>
+            <span className="text-sm">{'링크 복사'}</span>
           </button>
         </div>
       </div>

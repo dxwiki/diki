@@ -18,7 +18,7 @@ const PostDetailClient = ({ title, children }: Props) => {
 
   return (
     <div className='prose block md:grid md:grid-cols-[1fr_5fr]'>
-      <TableOfContents 
+      <TableOfContents
         title={title}
         onShare={handleShare}
       />
@@ -26,7 +26,7 @@ const PostDetailClient = ({ title, children }: Props) => {
         {children}
       </div>
 
-      <ShareModal 
+      <ShareModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
       />

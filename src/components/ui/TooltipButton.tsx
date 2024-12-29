@@ -16,11 +16,11 @@ const TooltipButton = ({ onClick, tooltip, children, isLink = false, href, class
   return (
     <div className="relative group">
       {isLink ? (
-        <Link href={href!} className={`${buttonClasses} ${className}`}>
+        <Link href={href!} className={`${ buttonClasses } ${ className }`}>
           {children}
         </Link>
       ) : (
-        <button onClick={onClick} className={`${buttonClasses} ${className}`}>
+        <button onClick={onClick} className={`${ buttonClasses } ${ className }`}>
           {children}
         </button>
       )}
@@ -30,7 +30,7 @@ const TooltipButton = ({ onClick, tooltip, children, isLink = false, href, class
           z-50 before:content-[''] before:absolute before:top-[-4px] before:left-[10px]
           before:size-0 before:border-x-4 before:border-x-transparent before:border-b-4
           before:border-b-extreme-light"
-      >L
+      >
         {tooltip}
       </div>
     </div>

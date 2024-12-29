@@ -49,12 +49,12 @@ const SortButtons = ({ sortType, sortDirection, onSortChange, onSortMobile }: So
       {
         type,
         direction: 'desc' as SortDirection,
-        label: `${sortTypeLabel[type].label} ${sortTypeLabel[type].desc}`,
+        label: `${ sortTypeLabel[type].label } ${ sortTypeLabel[type].desc }`,
       },
       {
         type,
         direction: 'asc' as SortDirection,
-        label: `${sortTypeLabel[type].label} ${sortTypeLabel[type].asc}`,
+        label: `${ sortTypeLabel[type].label } ${ sortTypeLabel[type].asc }`,
       },
     ]);
   };
@@ -96,7 +96,7 @@ const SortButtons = ({ sortType, sortDirection, onSortChange, onSortMobile }: So
             {renderSortButton(type)}
             {index !== sortTypes.length - 1 && <span className='text-light'>{'•'}</span>}
           </div>
-      ))}
+        ))}
       </div>
     </div>
   );
