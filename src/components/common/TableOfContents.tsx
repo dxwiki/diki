@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { List, ArrowDown, ArrowUp, Share2 } from 'lucide-react';
+import { Share } from 'lucide-react';
 import TooltipButton from '@/components/ui/TooltipButton';
 
 interface Section {
@@ -11,12 +11,13 @@ interface Section {
 
 interface Props {
   title: string;
+  onShare: () => void;
 }
 
 const HEADER_HEIGHT = 64;
 const Threshold = 10;
 
-const TableOfContents = ({ title }: Props) => {
+const TableOfContents = ({ title, onShare }: Props) => {
   const [activeSection, setActiveSection] = useState<string>('');
   const [sections, setSections] = useState<Section[]>([]);
   const [isAtBottom, setIsAtBottom] = useState(false);
@@ -105,18 +106,25 @@ const TableOfContents = ({ title }: Props) => {
     });
   }, []);
 
-  const copyCurrentURL = useCallback((): void => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      alert('URL이 복사되었습니다.');
-    });
-  }, []);
+  const handleShareClick = useCallback((): void => {
+    onShare();
+  }, [onShare]);
 
   return (
     <div className='animate-introSecond flex flex-col'>
       <div className='h-[425px] hidden md:block' />
       <div className='sticky top-[132px] hidden md:block'>
         <nav className="space-y-2 text-sm min-w-32">
+          <div className='flex items-center gap-4'>
           <span className='text-main text-base font-bold'>{title}</span>
+          <TooltipButton
+            onClick={handleShareClick}
+            tooltip="공유하기"
+            className='p-1'
+          >
+            <Share className='size-3' />
+          </TooltipButton>
+          </div>
           {sections.map((section) => (
             <div
               key={section.id}
@@ -137,30 +145,6 @@ const TableOfContents = ({ title }: Props) => {
             </div>
           ))}
         </nav>
-
-        <div className="mt-4 flex items-center gap-2">
-          <TooltipButton
-            isLink
-            href="/posts"
-            tooltip="목록으로"
-          >
-            <List className='size-4' />
-          </TooltipButton>
-
-          <TooltipButton
-            onClick={isAtBottom ? scrollToTop : scrollToBottom}
-            tooltip={isAtBottom ? '맨 위로' : '맨 아래로'}
-          >
-            {isAtBottom ? <ArrowUp className='size-4' /> : <ArrowDown className='size-4' />}
-          </TooltipButton>
-
-          <TooltipButton
-            onClick={copyCurrentURL}
-            tooltip="공유"
-          >
-            <Share2 className='size-4' />
-          </TooltipButton>
-        </div>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import GoogleVerification from '@/components/meta/GoogleVerification';
 import GoogleAdSense from '@/components/meta/GoogleAdSense';
 import GoogleAnalytics from '@/components/meta/GoogleAnalytics';
 import { dikiMetadata } from '@/constants';
+import Script from 'next/script';
 
 interface RootLayoutProps {
   readonly children: React.ReactNode;
@@ -54,6 +55,10 @@ const RootLayout = ({ children }: RootLayoutProps) => {
         <GoogleVerification />
         <GoogleAdSense />
         <GoogleAnalytics />
+        <Script
+          src="https://t1.kakaocdn.net/kakao_js_sdk/2.6.0/kakao.min.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body
         className={`

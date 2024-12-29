@@ -43,6 +43,7 @@ jobs:
           echo "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID }}" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_GOOGLE_ADSENSE_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_ADSENSE_ID }}" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=${{ secrets.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_KAKAO_APP_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_APP_KEY }}" >> $GITHUB_ENV
       - name: Detect package manager
         id: detect-package-manager
         run: |

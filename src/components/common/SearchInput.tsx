@@ -88,6 +88,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength, goB
             isLink
             href="/"
             tooltip="홈으로"
+            className='p-2'
           >
             <ChevronLeft className='size-4' />
           </TooltipButton>
@@ -120,6 +121,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength, goB
           <TooltipButton
             onClick={() => setIsFilterActive(!isFilterActive)}
             tooltip="필터"
+            className='p-2'
           >
             <Filter className='size-4' />
           </TooltipButton>
