@@ -18,8 +18,14 @@ interface AdContainerProps {
 
 const AdContainer = ({ slot, format, className }: AdContainerProps) => {
   useEffect(() => {
-    (window.adsbygoogle = window.adsbygoogle || []).push({});
-  }, []);
+    if (!window.adsbygoogle) {
+      window.adsbygoogle = [];
+    }
+    // 광고가 이미 로드된 경우 push 호출을 하지 않음
+    if (!document.querySelector(`.adsbygoogle[data-ad-slot="${ slot }"]`)) {
+      window.adsbygoogle.push({});
+    }
+  }, [slot]);
 
   return (
     <div className="googleAd-container">
@@ -29,7 +35,7 @@ const AdContainer = ({ slot, format, className }: AdContainerProps) => {
         strategy="afterInteractive"
       />
       <ins
-        className={`adsbygoogle block ${ className }`}
+        className={`adsbygoogle block min-h-[100px] ${ className }`}
         data-ad-client="ca-pub-1278038564950020"
         data-ad-slot={slot}
         data-auto-format={format}

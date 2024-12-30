@@ -6,6 +6,7 @@ import { SortType, SortDirection } from '@/types';
 import PostCard from '@/components/posts/PostCard';
 import Pagination from '@/components/common/Pagination';
 import SortButtons from './SortButtons';
+import AdContainer from '@/components/common/AdContainer';
 
 interface PaginationProps {
   termsData: TermData[];
@@ -104,6 +105,11 @@ const PostList = ({ termsData, itemsPerPage }: PaginationProps) => {
         totalPages={totalPages}
         pageNumbers={pageNumbers}
         setCurrentPage={setCurrentPage}
+      />
+      <AdContainer
+        slot="5709016505"
+        format="mcrspv"
+        className="w-full"
       />
     </>
   );

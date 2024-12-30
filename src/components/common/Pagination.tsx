@@ -9,7 +9,7 @@ interface PaginationProps {
 
 const Pagination = ({ currentPage, totalPages, pageNumbers, setCurrentPage }: PaginationProps) => {
   return (
-    <div className="relative flex gap-2 mt-10 justify-center">
+    <div className="relative flex gap-2 my-10 justify-center">
       <button
         onClick={() => setCurrentPage(1)}
         className={`px-2 py-1 rounded-md hover:bg-background-secondary text-gray1 hover:text-main ${

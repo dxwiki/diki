@@ -31,16 +31,11 @@ const PostDetail = async ({ term, slug }: Props) => {
         />
         <UsecaseSection usecase={term.usecase ?? { industries: [], example: '', description: '' }} />
         <ReferencesSection references={term.references ?? { tutorials: [], books: [], academic: [], opensource: [] }} />
-        <AdContainer
-          slot="5709016505"
-          format="mcrspv"
-          className="w-full min-h-[160px]"
-        />
         <RecommendationSection />
         <AdContainer
           slot="6880591392"
           format="rspv"
-          className="w-full min-h-[200px]"
+          className="w-full"
         />
       </div>
     </PostDetailClient>
