@@ -1,6 +1,5 @@
 import PostDetailClient from './PostDetailClient';
 import PostHeader from './sections/PostHeader';
-import DifficultyLevel from './sections/DifficultyLevel';
 import DescriptionSection from './sections/DescriptionSection';
 import RelevanceSection from './sections/RelevanceSection';
 import RelatedTermsSection from './sections/RelatedTermsSection';
@@ -16,13 +15,13 @@ interface Props {
 
 const PostDetail = async ({ term, slug }: Props) => {
   return (
-    <PostDetailClient title={term.title?.ko ?? ''} >
-      <PostHeader term={term} slug={slug} />
+    <PostDetailClient
+      title={term.title?.ko ?? ''}
+      term={term}
+      slug={slug}
+    >
+      <PostHeader term={term} />
       <div className='animate-introSecond sm:ml-5'>
-        <DifficultyLevel
-          level={term.difficulty?.level ?? 0}
-          description={term.difficulty?.description ?? ''}
-        />
         <DescriptionSection description={term.description?.full ?? ''} />
         <RelatedTermsSection terms={term.terms ?? []} />
         <RelevanceSection

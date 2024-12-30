@@ -4,13 +4,16 @@ import { useState, useCallback } from 'react';
 import TableOfContents from '@/components/common/TableOfContents';
 import ShareModal from '@/components/common/ShareModal';
 import AdContainer from '@/components/common/AdContainer';
+import { TermData } from '@/types';
 
 interface Props {
   title: string;
   children: React.ReactNode;
+  term: TermData;
+  slug: string;
 }
 
-const PostDetailClient = ({ title, children }: Props) => {
+const PostDetailClient = ({ title, children, term, slug }: Props) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const handleShare = useCallback(() => {
@@ -22,8 +25,10 @@ const PostDetailClient = ({ title, children }: Props) => {
       <TableOfContents
         title={title}
         onShare={handleShare}
+        term={term}
+        slug={slug}
       />
-      <div className='md:grid md:grid-cols-[1fr_160px]'>
+      <div className='md:grid md:grid-cols-[minmax(0,788px)_minmax(0,1fr)]'>
         <div className='text-justify'>
           {children}
         </div>

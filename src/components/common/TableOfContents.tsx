@@ -1,8 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 import { Share } from 'lucide-react';
 import TooltipButton from '@/components/ui/TooltipButton';
+import { TermData, Tags } from '@/types';
+import { transformToSlug } from '@/utils/filters';
 
 interface Section {
   id: string;
@@ -12,12 +15,14 @@ interface Section {
 interface Props {
   title: string;
   onShare: ()=> void;
+  term: TermData;
+  slug: string;
 }
 
 const HEADER_HEIGHT = 64;
 const Threshold = 10;
 
-const TableOfContents = ({ title, onShare }: Props) => {
+const TableOfContents = ({ title, onShare, term, slug }: Props) => {
   const [activeSection, setActiveSection] = useState<string>('');
   const [sections, setSections] = useState<Section[]>([]);
 
@@ -95,7 +100,7 @@ const TableOfContents = ({ title, onShare }: Props) => {
 
   return (
     <div className='animate-introSecond flex flex-col'>
-      <div className='h-[425px] hidden md:block' />
+      <div className='h-[325px] hidden md:block' />
       <div className='sticky top-[132px] hidden md:block'>
         <nav className="space-y-2 text-sm min-w-32">
           <div className='flex items-center gap-1.5'>
@@ -128,6 +133,20 @@ const TableOfContents = ({ title, onShare }: Props) => {
             </div>
           ))}
         </nav>
+        <div className="flex flex-col flex-wrap mt-10 gap-2">
+          <span className='text-main text-base font-bold'>{'관련 용어'}</span>
+          {term.tags?.map((tag: Tags, index: number) => (
+            tag.internal_link && transformToSlug(tag.internal_link) !== slug ? (
+              <Link href={transformToSlug(tag.internal_link)} key={index} className='font-normal text-sm text-main cursor-pointer transition-colors underline underline-offset-4 decoration-light hover:text-accent hover:decoration-accent'>
+                {tag.name}
+              </Link>
+            ) : (
+              <span key={index} className='font-normal text-sm'>
+                <span className='border-b border-light pb-px'>{tag.name}</span>
+              </span>
+            )
+          ))}
+        </div>
       </div>
     </div>
   );
