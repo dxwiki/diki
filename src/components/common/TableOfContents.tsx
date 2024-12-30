@@ -100,7 +100,7 @@ const TableOfContents = ({ title, onShare, term, slug }: Props) => {
 
   return (
     <div className='animate-introSecond flex flex-col'>
-      <div className='h-[325px] hidden md:block' />
+      <div className='h-[332px] hidden md:block' />
       <div className='sticky top-[132px] hidden md:block'>
         <nav className="space-y-2 text-sm min-w-32">
           <div className='flex items-center gap-1.5'>

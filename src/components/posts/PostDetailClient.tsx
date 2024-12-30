@@ -33,7 +33,7 @@ const PostDetailClient = ({ title, children, term, slug }: Props) => {
           {children}
         </div>
         <div className='hidden md:flex flex-col ml-4'>
-          <div className='w-full h-[425px]' />
+          <div className='w-full h-[135px]' />
           <AdContainer
             slot="5547328424"
             format="mcrspv"

@@ -23,7 +23,7 @@ const PostHeader = ({ term }: PostHeaderProps) => {
           </h1>
         </div>
       </div>
-      <div className='flex justify-start gap-1 text-xs my-1'>
+      <div className='flex justify-start gap-1 text-xs my-2'>
         <span className='text-main'>{term.metadata?.authors ?? '작가 확인 안됨'}</span>
         <span className="text-light">{'•'}</span>
         <div className='flex gap-1 items-center'>
@@ -42,7 +42,7 @@ const PostHeader = ({ term }: PostHeaderProps) => {
           )}
         </div>
       </div>
-      <div className='flex items-start gap-1 my-1'>
+      <div className='flex items-start gap-2 my-1'>
         <div>
           <Level level={0} />
         </div>

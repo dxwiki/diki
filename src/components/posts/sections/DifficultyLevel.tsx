@@ -11,7 +11,7 @@ const DifficultyLevel = ({ level, description }: DifficultyLevelProps) => {
 
   return (
     <div className="group">
-      <div className='flex gap-1 items-start'>
+      <div className='flex gap-2 items-start'>
         <div>
           <Level level={level} />
         </div>
