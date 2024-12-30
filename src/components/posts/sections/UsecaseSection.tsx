@@ -12,7 +12,7 @@ const UsecaseSection = ({ usecase }: UsecaseSectionProps) => {
     <section className="group">
       <h2>
         <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
-        {'사용사례'}
+        {'사용 사례'}
       </h2>
       <div className="flex flex-wrap gap-1 mb-3">
         {usecase.industries?.map((tag, index) => (

@@ -97,7 +97,7 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
     <section className="references-section break-all">
       <h2>
         <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 references-section-hover:opacity-100 transition-opacity">{'#'}</span>
-        {'레퍼런스'}
+        {'참고 자료'}
       </h2>
       <div className='grid lg:grid-cols-2 gap-4 sm:mt-[-4px]'>
         {references.tutorials && references.tutorials.length > 0 && (
