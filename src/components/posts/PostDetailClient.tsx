@@ -28,7 +28,7 @@ const PostDetailClient = ({ title, children, term, slug }: Props) => {
         term={term}
         slug={slug}
       />
-      <div className='md:grid md:grid-cols-[minmax(0,788px)_minmax(0,1fr)]'>
+      <div className='md:grid md:grid-cols-[minmax(0,768px)_minmax(0,1fr)]'>
         <div className='text-justify'>
           <PostHeader term={term} onShare={handleShare} />
           <div className='animate-introSecond sm:ml-5'>
