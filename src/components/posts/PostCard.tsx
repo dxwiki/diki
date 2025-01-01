@@ -15,7 +15,7 @@ interface PostCardProps {
 }
 
 const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
-  const sortTagStyle = 'px-2 py-1 sm:border sm:border-light sm:bg-extreme-light rounded-2xl text-gray1 text-xs';
+  const sortTagStyle = 'text-gray1 text-xs';
   const getSortData = (type: SortType) => {
     switch (type) {
       case 'updated':
@@ -87,7 +87,7 @@ const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
           </div>
           <ChevronRight className="size-5 text-light group-hover:text-sub block sm:hidden" />
         </div>
-        <span className="hidden sm:block text-main truncate">{term.title?.en}</span>
+        <span className="hidden sm:block text-sub group-hover:text-main truncate">{term.title?.en}</span>
         <span className="text-gray1 group-hover:text-sub line-clamp-1 sm:line-clamp-2 sm:mt-2 text-sm sm:text-base">
           {term.description?.short}
         </span>
