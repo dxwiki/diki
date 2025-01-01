@@ -25,7 +25,7 @@ const PostHeader = ({ term, onShare }: PostHeaderProps) => {
           <TooltipButton
             onClick={handleShareClick}
             tooltip="공유하기"
-            className='block sm:hidden text-gray1 hover:text-primary mb-1 whitespace-nowrap'
+            className='block sm:hidden text-gray1 hover:text-primary ml-1.5 mb-1 whitespace-nowrap'
           >
             <Share className='size-6' />
           </TooltipButton>
