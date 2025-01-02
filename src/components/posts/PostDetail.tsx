@@ -29,7 +29,7 @@ const PostDetail = async ({ term, slug }: Props) => {
       />
       <UsecaseSection usecase={term.usecase ?? { industries: [], example: '', description: '' }} />
       <ReferencesSection references={term.references ?? { tutorials: [], books: [], academic: [], opensource: [] }} />
-      <PrevNextSection id={term.id ?? 0} />
+      {term.id && <PrevNextSection id={term.id} />}
       <RecommendationSection />
       <AdContainer
         slot="6880591392"

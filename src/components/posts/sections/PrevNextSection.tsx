@@ -15,7 +15,6 @@ const PrevNextSection = async ({ id }: Props) => {
   if(nextTerm?.id) {
     nextTerm = await getTermDataByID(id + 1);
   }
-  console.log(id, prevTerm?.title, nextTerm?.title);
 
   return (
     <div className="grid grid-cols-2">
