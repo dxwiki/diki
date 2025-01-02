@@ -48,4 +48,9 @@ const clearCache = () => {
   cachedTermsData = null;
 };
 
-export { fetchTermsData, getTermData, clearCache };
+const getTermDataByID = async (id: number): Promise<TermData | undefined> => {
+  const termsDataList = await fetchTermsData();
+  return termsDataList.find((term) => term.id === id);
+};
+
+export { fetchTermsData, getTermData, clearCache, getTermDataByID };

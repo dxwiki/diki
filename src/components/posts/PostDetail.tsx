@@ -7,6 +7,7 @@ import ReferencesSection from './sections/ReferencesSection';
 import RecommendationSection from './sections/RecommendationSection';
 import { TermData } from '@/types';
 import AdContainer from '@/components/common/AdContainer';
+import PrevNextSection from './sections/PrevNextSection';
 interface Props {
   term: TermData
   slug: string
@@ -28,6 +29,7 @@ const PostDetail = async ({ term, slug }: Props) => {
       />
       <UsecaseSection usecase={term.usecase ?? { industries: [], example: '', description: '' }} />
       <ReferencesSection references={term.references ?? { tutorials: [], books: [], academic: [], opensource: [] }} />
+      <PrevNextSection id={term.id ?? 0} />
       <RecommendationSection />
       <AdContainer
         slot="6880591392"
