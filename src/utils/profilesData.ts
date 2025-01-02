@@ -16,6 +16,8 @@ const fetchProfilesData = async (): Promise<Profile[]> => {
         id: data.id,
         email: data.email,
         name: data.name,
+        role: data.role,
+        thumbnail: data.thumbnail,
         social: {
           github: data.social?.github,
           linkedin: data.social?.linkedin,
