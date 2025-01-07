@@ -5,19 +5,28 @@ interface CardComponentProps {
   description: string;
   title: string;
   subtitle: string;
-  imageUrl: string;
   className?: string;
+  isHighest?: boolean;
 }
+
+const levelColors = {
+  1: 'level-1',
+  2: 'level-2',
+  3: 'level-3',
+  4: 'level-4',
+  5: 'level-5',
+} as const;
 
 const RelevanceCard = ({
   score,
   description,
   title,
   subtitle,
-  imageUrl,
   className,
+  isHighest,
 }: CardComponentProps) => {
   let tag = '';
+  let relevance = '';
 
   switch (title) {
     case '데이터 분석가':
@@ -31,34 +40,57 @@ const RelevanceCard = ({
       break;
   }
 
+  switch (score) {
+    case 1:
+      relevance = '희박';
+      break;
+    case 2:
+      relevance = '낮음';
+      break;
+    case 3:
+      relevance = '보통';
+      break;
+    case 4:
+      relevance = '높음';
+      break;
+    case 5:
+      relevance = '밀착';
+      break;
+  }
+
   return (
-    <div className={`card size-full min-h-80 rounded-lg border border-light overflow-hidden flex flex-col relative ${ className }`}>
-      <div className="h-64 overflow-hidden relative">
-        <div
-          className="card-image bg-cover bg-center size-full"
-          style={{ backgroundImage: `url(${ imageUrl })` }}
-        />
-        <span
-          className="absolute top-2 right-3 text-white text-2xl font-bold"
-          style={{ textShadow: '2px 2px 4px rgba(0, 0, 10, 0.9)' }}
-        >
-          {'L'}
-          {score}
-        </span>
-        <span
-          className="absolute text-white text-xl font-bold left-4 top-[215px]"
-          style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}
-        >
-          {title}
-        </span>
-      </div>
-      <div className="p-4 bg-white dark:bg-black opacity-90 flex-1 relative z-10">
-        <div className="text-primary mb-2 text-sm">
-          {tag}
-          {' | '}
-          {subtitle}
+    <div className={`group rounded-lg border overflow-hidden flex flex-col relative ${ className }
+      sm:hover:scale-105 transition-transform duration-300 backdrop-blur-xl bg-white/5
+      ${ isHighest ? `border-${ levelColors[score as keyof typeof levelColors] }` : 'border-gray1 hover:border-accent' }`}
+    >
+      <div className="p-2.5 lg:p-4 flex flex-col gap-2 opacity-90 flex-1 relative z-10">
+        <div className="flex justify-between items-center">
+          <span className="flex items-center font-semibold text-primary">
+            {tag}{' | '}
+            {subtitle}
+          </span>
         </div>
-        <div className="card-description text-sub text-sm font-semibold">{description}</div>
+        <div className="w-full flex">
+          {[1, 2, 3, 4, 5].map((level) => (
+            <div key={level} className="flex-1 flex flex-col items-center">
+              <span
+                className={`text-center text-xs mb-0.5 font-semibold ${ level === score
+                  ? `text-${ levelColors[level as keyof typeof levelColors] }`
+                  : 'opacity-0'
+                }`}
+              >
+                {level === score ? relevance : '-'}
+              </span>
+              <div
+                className={`h-2 w-full ${ level < 5
+                  ? `bg-gradient-to-r from-${ levelColors[level as keyof typeof levelColors] } to-${ levelColors[(level + 1) as keyof typeof levelColors] }`
+                  : `bg-${ levelColors[level as keyof typeof levelColors] }`
+                } ${ level === 1 ? 'rounded-l-full' : '' } ${ level === 5 ? 'rounded-r-full' : '' }`}
+              />
+            </div>
+          ))}
+        </div>
+        <div className="card-description text-sub sm:text-gray1 group-hover:text-sub text-sm font-semibold">{description}</div>
       </div>
     </div>
   );
