@@ -1,14 +1,11 @@
 import LogoAnimation from '@/components/common/LogoAnimation';
 import SearchInput from '@/components/search/SearchInput';
 import RecommendTerms from '@/components/posts/RecommendTerms';
-import { fetchTermsData } from '@/utils/termsData';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import AdContainer from '@/components/common/AdContainer';
 
 export default async function Home() {
-  const terms = await fetchTermsData();
-
   return (
     <>
       <div className="relative min-h-[calc(100vh_-600px)] flex flex-col justify-end items-end sm:mx-10 md:mx-40 overflow-hidden">
@@ -22,10 +19,10 @@ export default async function Home() {
       </div>
       <div className='max-w-3xl sm:mx-10 md:mx-40 mx-auto'>
         <div className='relative my-4 z-20'>
-          <SearchInput termsLength={terms.length} />
+          <SearchInput />
         </div>
         <div className='relative z-10'>
-          <RecommendTerms terms={terms} />
+          <RecommendTerms />
         </div>
         <AdContainer
           slot="6880591392"

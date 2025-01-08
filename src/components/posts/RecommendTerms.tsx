@@ -1,14 +1,13 @@
 'use client';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 import Link from 'next/link';
 import { TermData } from '@/types';
 import { useEffect, useRef, useState } from 'react';
 
-interface RecommendTermsProps {
-  terms: TermData[];
-}
-
-export default function RecommendTerms({ terms }: RecommendTermsProps) {
+export default function RecommendTerms() {
+  const { terms } = useSelector((state: RootState) => state.terms);
   const containerRef = useRef<HTMLDivElement>(null);
   const [visibleItems, setVisibleItems] = useState<TermData[]>([]);
 

@@ -1,5 +1,7 @@
 'use client';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 import { useState, useEffect, useRef } from 'react';
 import { Search, CircleHelp } from 'lucide-react';
 import SearchTip from '@/components/search/SearchTip';
@@ -7,15 +9,15 @@ import SearchTip from '@/components/search/SearchTip';
 interface SearchInputProps {
   suggestions?: string[];
   tip?: boolean;
-  termsLength?: number;
 }
 
-const SearchInput = ({ suggestions, tip = true, termsLength }: SearchInputProps) => {
+const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
+  const { terms } = useSelector((state: RootState) => state.terms);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showTip, setShowTip] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const placeholder = termsLength ? `${ termsLength }개의 데이터 용어 검색` : '검색어 입력해주세요';
+  const placeholder = terms.length ? `${ terms.length }개의 데이터 용어 검색` : '검색어 입력해주세요';
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
   const [isHovering, setIsHovering] = useState(false);
 
