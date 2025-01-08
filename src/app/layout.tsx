@@ -8,7 +8,9 @@ import GoogleAdSense from '@/components/meta/GoogleAdSense';
 import GoogleAnalytics from '@/components/meta/GoogleAnalytics';
 import { dikiMetadata } from '@/constants';
 import Script from 'next/script';
-
+import ReduxProvider from '@/components/redux/ReduxProvider';
+import StoreInitializer from '@/components/redux/StoreInitializer';
+import { fetchTermsData } from '@/utils/termsData';
 interface RootLayoutProps {
   readonly children: React.ReactNode;
 }
@@ -48,7 +50,9 @@ export const metadata: Metadata = {
   },
 };
 
-const RootLayout = ({ children }: RootLayoutProps) => {
+const RootLayout = async ({ children }: RootLayoutProps) => {
+  const terms = await fetchTermsData();
+
   return (
     <html lang='en' suppressHydrationWarning>
       <head>
@@ -69,11 +73,14 @@ const RootLayout = ({ children }: RootLayoutProps) => {
           ${ fontNoto.variable } 
         `}
       >
-        <ThemeProvider>
-          <Header />
-          <main className='mt-16 max-w-6xl min-h-[calc(100vh_-150px)] mx-auto px-4 py-3 md:px-6 lg:px-8'>{children}</main>
-          <div className='w-full h-20 flex justify-center items-center text-gray1 text-sm'>{'© 2024 dxwiki All rights reserved.'}</div>
-        </ThemeProvider>
+        <ReduxProvider>
+          <StoreInitializer terms={terms} />
+          <ThemeProvider>
+            <Header />
+            <main className='mt-16 max-w-6xl min-h-[calc(100vh_-150px)] mx-auto px-4 py-3 md:px-6 lg:px-8'>{children}</main>
+            <div className='w-full h-20 flex justify-center items-center text-gray1 text-sm'>{'© 2024 dxwiki All rights reserved.'}</div>
+          </ThemeProvider>
+        </ReduxProvider>
       </body>
     </html>
   );
