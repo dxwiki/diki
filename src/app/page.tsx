@@ -1,5 +1,5 @@
 import LogoAnimation from '@/components/common/LogoAnimation';
-import SearchInput from '@/components/common/SearchInput';
+import SearchInput from '@/components/search/SearchInput';
 import RecommendTerms from '@/components/posts/RecommendTerms';
 import { fetchTermsData } from '@/utils/termsData';
 import Link from 'next/link';

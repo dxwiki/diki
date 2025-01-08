@@ -1,6 +1,6 @@
 import { fetchTermsData } from '@/utils/termsData';
 import PostList from '@/components/posts/PostList';
-import SearchInput from '@/components/common/SearchInput';
+import SearchDetailInput from '@/components/search/SearchDetailInput';
 
 export const metadata = {
   title: '포스트 목록',
@@ -15,7 +15,7 @@ export default async function PostsPage() {
   return (
     <div className="relative">
       <div className='animate-intro relative z-20'>
-        <SearchInput tip={false} filter={true} goBack={true} termsLength={terms.length} />
+        <SearchDetailInput filter={true} goBack={true} termsLength={terms.length} />
       </div>
       <div className='animate-introSecond mt-5 z-10'>
         <PostList termsData={terms} totalPages={totalPages} itemsPerPage={itemsPerPage} />

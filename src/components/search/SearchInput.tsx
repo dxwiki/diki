@@ -1,22 +1,18 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, Filter, CircleHelp, ChevronLeft } from 'lucide-react';
+import { Search, CircleHelp } from 'lucide-react';
 import SearchTip from '@/components/search/SearchTip';
-import TooltipButton from '@/components/ui/TooltipButton';
 
 interface SearchInputProps {
   suggestions?: string[];
   tip?: boolean;
-  filter?: boolean;
   termsLength?: number;
-  goBack?: boolean;
 }
 
-const SearchInput = ({ suggestions, tip = true, filter = false, termsLength, goBack = false }: SearchInputProps) => {
+const SearchInput = ({ suggestions, tip = true, termsLength }: SearchInputProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isFilterActive, setIsFilterActive] = useState(false);
   const [showTip, setShowTip] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const placeholder = termsLength ? `${ termsLength }개의 데이터 용어 검색` : '검색어 입력해주세요';
@@ -82,17 +78,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength, goB
 
   return (
     <div className="relative w-full">
-      <div className={`w-full ${ goBack ? 'grid grid-cols-[36px_minmax(0,1fr)] p-4 border border-extreme-light rounded-2xl hover:bg-extreme-light' : 'flex items-center' } items-center gap-2`}>
-        {goBack && (
-          <TooltipButton
-            isLink
-            href="/"
-            tooltip="홈으로"
-            className='p-2'
-          >
-            <ChevronLeft className='size-4' />
-          </TooltipButton>
-        )}
+      <div className="flex items-center">
         <div className="w-full px-3 flex items-center border border-light rounded-full focus-within:border-accent bg-background">
           <Search className="text-main size-4" />
           <input
@@ -117,20 +103,6 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength, goB
             </button>
           )}
         </div>
-        {filter && (
-          <TooltipButton
-            onClick={() => setIsFilterActive(!isFilterActive)}
-            tooltip="필터"
-            className='p-2'
-          >
-            <Filter className='size-4' />
-          </TooltipButton>
-        )}
-        {filter && (
-          <div className={`opacity-0 text-sub ${ isFilterActive ? 'opacity-100' : '' }`}>
-            {'필터:'}
-          </div>
-        )}
       </div>
       {showTip && (
         <div className='w-full absolute top-[40px] right-0 animate-slideDown'>
@@ -139,7 +111,7 @@ const SearchInput = ({ suggestions, tip = true, filter = false, termsLength, goB
       )}
       {isModalOpen && (
         <div
-          className={`absolute top-12 right-0 mt-2 ${ goBack ? 'w-[calc(100%_-44px)]' : 'w-full' } border border-light rounded-md shadow-lg max-h-60 overflow-y-auto suggestions-modal animate-slideDown bg-background opacity-100`}
+          className="absolute top-12 right-0 mt-2 w-full border border-light rounded-md shadow-lg max-h-60 overflow-y-auto suggestions-modal animate-slideDown bg-background opacity-100"
         >
           {filteredSuggestions && filteredSuggestions.length > 0 ? (
             filteredSuggestions.map((suggestion, index) => (
