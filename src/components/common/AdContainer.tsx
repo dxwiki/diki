@@ -18,7 +18,7 @@ interface AdContainerProps {
 
 const AdContainer = ({ slot, format, className }: AdContainerProps) => {
   useEffect(() => {
-    // if(process.env.NODE_ENV !== 'production') return;
+    if(process.env.NODE_ENV !== 'production') return;
     (window.adsbygoogle = window.adsbygoogle || []).push({});
   }, []);
 

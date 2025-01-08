@@ -54,7 +54,7 @@ const RelevanceCard = ({
       relevance = '높음';
       break;
     case 5:
-      relevance = '밀착';
+      relevance = '밀접';
       break;
   }
 
