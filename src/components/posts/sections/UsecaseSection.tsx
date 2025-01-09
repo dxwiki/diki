@@ -18,7 +18,7 @@ const UsecaseSection = ({ usecase }: UsecaseSectionProps) => {
         {usecase.industries?.map((tag, index) => (
           <span
             key={index}
-            className="tag-button-no-link bg-extreme-light text-sm mb-1"
+            className="tag-button-no-link text-sub text-sm mb-1"
           >
             {tag}
           </span>

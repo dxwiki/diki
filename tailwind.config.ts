@@ -116,7 +116,6 @@ const config: Config = {
               padding: '2px 7px 3px 8px',
               borderRadius: '0.5rem',
               fontSize: '1rem',
-              fontWeight: '600',
               marginRight: '0.25rem',
             },
             '.prose .tag-button:hover': {

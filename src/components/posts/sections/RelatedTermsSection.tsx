@@ -33,7 +33,7 @@ const RelatedTermsSection = ({ terms }: RelatedTerm) => {
             </Fragment>
           ) : (
             <Fragment key={index}>
-              <span className='tag-button-no-link flex justify-center shrink-0 rounded-lg text-sm bg-extreme-light mt-px pl-2.5 pr-[9px]'>
+              <span className='tag-button-no-link flex justify-center shrink-0 rounded-lg text-sm text-sub mt-px pl-2.5 pr-[9px]'>
                 {item.term}
               </span>
               <span className="mb-2">{item.description}</span>

@@ -71,7 +71,7 @@ export default function RecommendTerms() {
           <Link
             key={term.url}
             href={`${ term.url }`}
-            className='py-1.5 flex justify-center items-center text-sub rounded-lg border border-light hover:border-primary hover:text-primary hover:font-semibold transition-colors text-xs sm:text-sm shrink-0'
+            className='py-1.5 flex justify-center items-center text-sub rounded-lg border border-light hover:border-primary hover:text-primary hover:font-semibold transition-colors text-xs sm:text-sm shrink-0 bg-background'
             style={{ width: 'var(--item-width)' }}
           >
             {term.title?.ko}
