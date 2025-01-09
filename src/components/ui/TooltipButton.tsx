@@ -22,15 +22,17 @@ const TooltipButton = ({ onClick, tooltip, children, isLink = false, href, class
           {children}
         </button>
       )}
-      <div
-        className="animate-slideDown absolute -bottom-8 hidden group-hover:block
+      {tooltip && (
+        <div
+          className="animate-slideDown absolute -bottom-8 hidden group-hover:block
           bg-extreme-light text-main text-xs py-1 px-2 rounded whitespace-nowrap
           z-50 before:content-[''] before:absolute before:top-[-4px] before:left-[10px]
           before:size-0 before:border-x-4 before:border-x-transparent before:border-b-4
           before:border-b-extreme-light"
-      >
-        {tooltip}
-      </div>
+        >
+          {tooltip}
+        </div>
+      )}
     </div>
   );
 };

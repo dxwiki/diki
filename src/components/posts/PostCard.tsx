@@ -15,7 +15,7 @@ interface PostCardProps {
 }
 
 const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
-  const sortTagStyle = 'text-gray1 text-xs';
+  const sortTagStyle = 'text-gray1 text-xs ml-2 sm:ml-0';
   const getSortData = (type: SortType) => {
     switch (type) {
       case 'updated':
@@ -66,7 +66,7 @@ const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
             <span className="text-lg text-primary font-semibold">{term.title?.ko}</span>
             <ChevronRight className="size-5 text-light group-hover:text-sub" />
           </div>
-          <span className="text-gray1 group-hover:text-sub text-sm line-clamp-1 mt-1 font-normal">{term.description?.short}</span>
+          <span className="text-sub text-sm line-clamp-1 mt-1 font-normal">{term.description?.short}</span>
         </div>
       </Link>
     );
@@ -81,14 +81,14 @@ const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
         <div className='flex justify-between items-center'>
           <div className="flex items-center">
             <span className="text-lg sm:text-2xl text-primary font-semibold">{term.title?.ko}</span>
-            <div className="block sm:hidden min-h-[28px]">
+            <div className="flex items-center sm:hidden min-h-[28px]">
               {sortType ? getSortData(sortType) : <span className={sortTagStyle}>{formatDate(term.metadata?.created_at || '')}</span>}
             </div>
           </div>
-          <ChevronRight className="size-5 text-light group-hover:text-sub block sm:hidden" />
+          <ChevronRight className="size-5 text-sub group-hover:text-sub block sm:hidden" />
         </div>
-        <span className="hidden sm:block text-sub group-hover:text-main truncate">{term.title?.en}</span>
-        <span className="text-gray1 group-hover:text-sub line-clamp-1 sm:line-clamp-2 sm:mt-2 text-sm sm:text-base">
+        <span className="hidden sm:block text-primary truncate">{term.title?.en}</span>
+        <span className="text-sub line-clamp-1 sm:line-clamp-2 sm:mt-2 text-sm sm:text-base">
           {term.description?.short}
         </span>
       </div>
