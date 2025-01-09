@@ -1,13 +1,11 @@
 'use client';
 
-import RecommendTerms from '@/components/posts/RecommendTerms';
 import { Lightbulb } from 'lucide-react';
 
 const SearchTip = () => {
   return (
     <div className="w-[calc(100%-16px)] flex flex-col text-sub bg-extreme-light rounded-xl m-2 p-4 gap-1 sm:gap-2">
-      <RecommendTerms />
-      <span className="mt-2 flex items-center text-main gap-1 sm:gap-2">
+      <span className="flex items-center text-main gap-1 sm:gap-2">
         <Lightbulb className="size-4" />
         <span className='text-base font-semibold'>{'검색 팁'}</span>
       </span>

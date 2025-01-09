@@ -60,10 +60,10 @@ const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full bg-background">
       <div
         className={`flex flex-col ${
-          isModalOpen ? 'border border-light rounded-[21px] focus-within:border-primary' : ''
+          isModalOpen ? 'border border-light rounded-[21px] bg-background focus-within:border-primary' : ''
         }`}
       >
         <div className={`flex items-center px-3 ${
@@ -93,7 +93,7 @@ const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
         </div>
 
         {isModalOpen && (
-          <div className="w-full overflow-y-auto suggestions-modal opacity-100">
+          <div className="w-full overflow-y-auto suggestions-modal">
             {searchTerm ? (
               filteredSuggestions && filteredSuggestions.length > 0 ? (
                 filteredSuggestions.map((suggestion, index) => (
