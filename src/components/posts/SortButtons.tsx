@@ -32,13 +32,13 @@ const SortButtons = ({ sortType, sortDirection, onSortChange, onSortMobile }: So
   const renderSortButton = (type: SortType) => (
     <button
       onClick={() => onSortChange(type)}
-      className={`shrink-0 flex items-center text-sm gap-0.5 ${
+      className={`group shrink-0 flex items-center text-sm gap-0.5 ${
         sortType === type ? 'text-primary' : 'text-gray1'
       }`}
     >
-      {type === sortType && <ArrowUpDown className='text-primary size-4' />}
-      <span>{sortTypeLabel[type].label}</span>
-      <span className='hidden sm:block'>{getSortText(type)}</span>
+      {type === sortType && <ArrowUpDown className='text-primary size-4 group-hover:text-accent' />}
+      <span className='group-hover:text-accent'>{sortTypeLabel[type].label}</span>
+      <span className='hidden sm:block group-hover:text-accent'>{getSortText(type)}</span>
       {/* <span>{getSortIcon(type)}</span> */}
     </button>
   );
