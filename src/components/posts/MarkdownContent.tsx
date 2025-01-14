@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { MathJax } from 'better-react-mathjax';
+import { MathJaxProvider } from './MathJaxProvider';
 
 // 마크다운 파싱 함수
 function parseMarkdownSegment(segment: string) {
@@ -23,7 +24,7 @@ function parseMarkdownSegment(segment: string) {
   // 문단 처리
   html = html
     .split('\n\n')
-    .map((paragraph) => (paragraph.trim() ? `<p>${ paragraph.trim() }</p>` : ''))
+    .map((paragraph) => (paragraph.trim() ? `<span class="markdown">${ paragraph.trim() }</span>` : ''))
     .join('');
 
   return html;
@@ -32,7 +33,8 @@ function parseMarkdownSegment(segment: string) {
 // 수식/텍스트 분리 함수
 function splitContentIntoSegments(text: string) {
   const regex = /(\${2}[\s\S]+?\${2}|\$[\s\S]+?\$)/g;
-  return text.split(regex).filter((segment) => segment.trim() !== '');
+  const segments = text.split(regex).filter((segment) => segment.trim() !== '');
+  return segments;
 }
 
 interface MarkdownContentProps {
@@ -49,11 +51,12 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
         const isMathInline = segment.startsWith('$') && segment.endsWith('$');
 
         if (isMathBlock || isMathInline) {
-          const mathContent = segment.replace(/\${1,2}/g, ''); // '$$' 또는 '$' 제거
           return (
-            <MathJax key={i} inline={!isMathBlock}>
-              {mathContent}
-            </MathJax>
+            <MathJaxProvider key={i}>
+              <MathJax inline={!isMathBlock} className={`${ isMathBlock ? 'markdown-math-block' : 'markdown-math-inline' }`}>
+                {segment}
+              </MathJax>
+            </MathJaxProvider>
           );
         }
 

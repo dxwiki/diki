@@ -8,9 +8,9 @@ interface MathJaxProviderProps {
 }
 
 const mathJaxConfig = {
-  loader: { load: ['[tex]/html', '[tex]/ams'] },
+  loader: { load: ['[tex]/html'] },
   tex: {
-    packages: { '[+]': ['html', 'ams'] },
+    packages: { '[+]': ['html'] },
     inlineMath: [
       ['$', '$'],
       ['\\(', '\\)'],
@@ -19,14 +19,6 @@ const mathJaxConfig = {
       ['$$', '$$'],
       ['\\[', '\\]'],
     ],
-    processEscapes: true,
-    processEnvironments: true,
-  },
-  options: {
-    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-  },
-  startup: {
-    typeset: true,
   },
 };
 

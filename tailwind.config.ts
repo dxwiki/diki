@@ -149,6 +149,15 @@ const config: Config = {
               margin: '0.2rem 0',
               paddingLeft: '0.2rem',
             },
+            '.markdown': {
+              display: 'inline-block',
+              marginTop: '0',
+              marginBottom: '0.75rem',
+              lineHeight: '1.7',
+            },
+            '.markdown-math-inline': {
+              margin: '0 0.5rem',
+            },
           },
         },
       },
