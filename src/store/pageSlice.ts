@@ -4,11 +4,13 @@ import { SortType, SortDirection } from '@/types';
 interface PageState {
   sortType: SortType;
   sortDirection: SortDirection;
+  currentPage: number;
 }
 
 const initialState: PageState = {
   sortType: 'created',
   sortDirection: 'desc',
+  currentPage: 1,
 };
 
 const pageSlice = createSlice({
@@ -25,8 +27,11 @@ const pageSlice = createSlice({
       state.sortType = action.payload.type;
       state.sortDirection = action.payload.direction;
     },
+    setCurrentPage: (state, action: PayloadAction<number>) => {
+      state.currentPage = action.payload;
+    },
   },
 });
 
-export const { setSortType, setSortDirection, setSort } = pageSlice.actions;
+export const { setSortType, setSortDirection, setSort, setCurrentPage } = pageSlice.actions;
 export default pageSlice.reducer;
