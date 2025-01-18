@@ -1,4 +1,5 @@
-import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react';
+// import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PaginationProps {
   currentPage: number;
@@ -10,19 +11,19 @@ interface PaginationProps {
 const Pagination = ({ currentPage, totalPages, pageNumbers, setCurrentPage }: PaginationProps) => {
   return (
     <div className="relative flex gap-2 my-10 justify-center">
-      <button
+      {/* <button
         onClick={() => setCurrentPage(1)}
         className={`px-2 py-1 rounded-md hover:bg-background-secondary text-gray1 hover:text-main ${
           currentPage === 1 ? 'opacity-0 pointer-events-none' : ''
         }`}
       >
         <ChevronsLeft className='size-4' />
-      </button>
+      </button> */}
       <button
         onClick={() => setCurrentPage(currentPage - 1)}
         disabled={currentPage === 1}
         className={`px-2 py-1 rounded-md hover:bg-background-secondary text-gray1 hover:text-main ${
-          currentPage === 1 ? 'opacity-0 pointer-events-none' : ''
+          currentPage === 1 ? 'text-gray4 pointer-events-none' : ''
         }`}
       >
         <ChevronLeft className='size-4' />
@@ -44,19 +45,19 @@ const Pagination = ({ currentPage, totalPages, pageNumbers, setCurrentPage }: Pa
         onClick={() => setCurrentPage(currentPage + 1)}
         disabled={currentPage === totalPages}
         className={`px-2 py-1 rounded-md hover:bg-background-secondary text-gray1 hover:text-main ${
-          currentPage === totalPages ? 'opacity-0 pointer-events-none' : ''
+          currentPage === totalPages ? 'text-gray4 pointer-events-none' : ''
         }`}
       >
         <ChevronRight className='size-4' />
       </button>
-      <button
+      {/* <button
         onClick={() => setCurrentPage(totalPages)}
         className={`px-2 py-1 rounded-md hover:bg-background-secondary text-gray1 hover:text-main ${
           currentPage === totalPages ? 'opacity-0 pointer-events-none' : ''
         }`}
       >
         <ChevronsRight className='size-4' />
-      </button>
+      </button> */}
     </div>
   );
 };
