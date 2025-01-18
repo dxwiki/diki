@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/store/store';
+import { RootState } from '@/store';
 import { useEffect, useRef } from 'react';
 import { Search, ChevronLeft } from 'lucide-react';
 import ButtonWrap from '@/components/ui/ButtonWrap';

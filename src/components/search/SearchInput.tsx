@@ -1,7 +1,7 @@
 'use client';
 
 import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { RootState } from '@/store';
 import { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import SearchTip from '@/components/search/SearchTip';
