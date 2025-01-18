@@ -1,28 +1,30 @@
 import { SortType, SortDirection } from '@/types';
 import { Dropdown, DropdownTrigger, DropdownList, DropdownItem } from '@/components/ui/Dropdown';
 import { ArrowUpDown } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSort } from '@/store/pageSlice';
+import { RootState } from '@/store';
 
-interface SortButtonsProps {
-  sortType: SortType;
-  sortDirection: SortDirection;
-  onSortChange: (type: SortType)=> void;
-  onSortMobile: (type: SortType, direction: SortDirection)=> void;
-}
-
-const sortTypeLabel = {
+const sortTypeLabel: Record<SortType, { label: string; desc: string; asc: string }> = {
   created: { label: '발행일', desc: '최신순', asc: '과거순' },
   updated: { label: '수정일', desc: '최신순', asc: '과거순' },
   difficulty: { label: '난이도', desc: '높은순', asc: '낮은순' },
-  // DA: { label: 'DA 관련', desc: '높은순', asc: '낮은순' },
-  // DE: { label: 'DE 관련', desc: '높은순', asc: '낮은순' },
-  // DS: { label: 'DS 관련', desc: '높은순', asc: '낮은순' },
 };
 
-const SortButtons = ({ sortType, sortDirection, onSortChange, onSortMobile }: SortButtonsProps) => {
-  // const getSortIcon = (type: SortType) => {
-  //   if (sortType !== type) return '';
-  //   return sortDirection === 'asc' ? '↑' : '↓';
-  // };
+const SortButtons = () => {
+  const dispatch = useDispatch();
+  const { sortType, sortDirection } = useSelector((state: RootState) => state.page);
+
+  const handleSortChange = (type: SortType) => {
+    const newDirection = type === sortType
+      ? (sortDirection === 'desc' ? 'asc' : 'desc')
+      : 'desc';
+    dispatch(setSort({ type, direction: newDirection }));
+  };
+
+  const handleSortMobile = (type: SortType, direction: SortDirection) => {
+    dispatch(setSort({ type, direction }));
+  };
 
   const getSortText = (type: SortType) => {
     if (sortType !== type) return '';
@@ -31,7 +33,7 @@ const SortButtons = ({ sortType, sortDirection, onSortChange, onSortMobile }: So
 
   const renderSortButton = (type: SortType) => (
     <button
-      onClick={() => onSortChange(type)}
+      onClick={() => handleSortChange(type)}
       className={`group shrink-0 flex items-center text-sm gap-0.5 ${
         sortType === type ? 'text-primary' : 'text-gray1'
       }`}
@@ -39,7 +41,6 @@ const SortButtons = ({ sortType, sortDirection, onSortChange, onSortMobile }: So
       {type === sortType && <ArrowUpDown className='text-primary size-4 group-hover:text-accent' />}
       <span className='group-hover:text-accent'>{sortTypeLabel[type].label}</span>
       <span className='hidden sm:block group-hover:text-accent'>{getSortText(type)}</span>
-      {/* <span>{getSortIcon(type)}</span> */}
     </button>
   );
 
@@ -76,7 +77,7 @@ const SortButtons = ({ sortType, sortDirection, onSortChange, onSortMobile }: So
               <DropdownItem
                 key={index}
                 onClick={() => {
-                  onSortMobile(item.type, item.direction);
+                  handleSortMobile(item.type, item.direction);
                 }}
                 className={sortType === item.type && sortDirection === item.direction ? 'text-primary' : ''}
               >

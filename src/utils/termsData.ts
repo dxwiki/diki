@@ -1,7 +1,7 @@
 import { firestore } from '@/libs/firebaseAdmin';
 import { TermData } from '@/types';
 import { transformToSlug } from '@/utils/filters';
-import { store } from '@/store/store';
+import { store } from '@/store';
 import { setTerms, setLoading, setError } from '@/store/termsSlice';
 
 const fetchTermsData = async (): Promise<TermData[]> => {

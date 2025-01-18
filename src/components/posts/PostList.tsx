@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { TermData } from '@/types';
-import { SortType, SortDirection } from '@/types';
 import PostCard from '@/components/posts/PostCard';
 import Pagination from '@/components/common/Pagination';
 import SortButtons from './SortButtons';
 import AdContainer from '@/components/common/AdContainer';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface PaginationProps {
   termsData: TermData[];
@@ -16,26 +17,7 @@ interface PaginationProps {
 
 const PostList = ({ termsData, itemsPerPage }: PaginationProps) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortType, setSortType] = useState<SortType>('created');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-
-  const handleSort = (type: SortType) => {
-    let newDirection: SortDirection = 'desc';
-
-    if (sortType === type) {
-      newDirection = sortDirection === 'desc' ? 'asc' : 'desc';
-    }
-
-    setSortType(type);
-    setSortDirection(newDirection);
-    setCurrentPage(1);
-  };
-
-  const handleSortMobile = (type: SortType, direction: SortDirection) => {
-    setSortType(type);
-    setSortDirection(direction);
-    setCurrentPage(1);
-  };
+  const { sortType, sortDirection } = useSelector((state: RootState) => state.page);
 
   const sortedTermsData = [...termsData].sort((a, b) => {
     const multiplier = sortDirection === 'asc' ? 1 : -1;
@@ -80,12 +62,7 @@ const PostList = ({ termsData, itemsPerPage }: PaginationProps) => {
           <span className='text-primary font-bold'>{sortedTermsData.length}</span>
           {'/ '}{sortedTermsData.length}{' 개'}
         </h1>
-        <SortButtons
-          sortType={sortType}
-          sortDirection={sortDirection}
-          onSortChange={handleSort}
-          onSortMobile={handleSortMobile}
-        />
+        <SortButtons />
       </div>
       <div className='sm:min-h-[804px] lg:min-h-[598px]'>
         {TermsPerPage.length > 0 ? (
