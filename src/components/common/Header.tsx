@@ -5,11 +5,18 @@ import Link from 'next/link';
 import ScrollDirectionHandler from '@/components/common/ScrollDirectionHandler';
 import ThemeSwitch from '@/components/theme/ThemeSwitch';
 import { Send } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { setSearchedTerms } from '@/store/termsSlice';
 
 const Header = () => {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
   const isContactPage = pathname === '/contact';
+  const dispatch = useDispatch();
+
+  const handleClickHome = () => {
+    dispatch(setSearchedTerms([]));
+  };
 
   return (
     <>
@@ -18,7 +25,7 @@ const Header = () => {
         <div className='flex justify-center items-center max-w-6xl mx-auto px-4 py-3 md:px-6 lg:px-8'>
           <div className='w-full flex justify-end items-center gap-3'>
             {!isHomePage && (
-              <Link href='/'>
+              <Link href='/' onClick={handleClickHome}>
                 <span className='h-8 flex items-center text-3xl font-bold'>
                   <span className='text-primary'>{'D'}</span>
                   {'iki'}
