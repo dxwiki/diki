@@ -7,6 +7,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import SearchTip from '@/components/search/SearchTip';
 import { useRouter } from 'next/navigation';
+import { searchTerms } from '@/utils/search';
+import { setSearchedTerms } from '@/store/termsSlice';
 
 interface SearchInputProps {
   suggestions?: string[];
@@ -66,6 +68,12 @@ const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
     dispatch(setSearchQuery(''));
   };
 
+  const handleSearch = (query: string) => {
+    dispatch(setSearchQuery(query));
+    const results = searchTerms(query, terms);
+    dispatch(setSearchedTerms(results));
+  };
+
   return (
     <div className="relative w-full">
       <div
@@ -85,7 +93,7 @@ const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
             ref={inputRef}
             value={searchQuery}
             placeholder={placeholder}
-            onChange={(e) => dispatch(setSearchQuery(e.target.value))}
+            onChange={(e) => handleSearch(e.target.value)}
             onFocus={() => setIsModalOpen(true)}
             onBlur={handleBlur}
             onKeyDown={(e) => redirect(e, searchQuery)}

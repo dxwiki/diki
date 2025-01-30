@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { TermData } from '@/types';
 import PostCard from '@/components/posts/PostCard';
 import Pagination from '@/components/common/Pagination';
@@ -10,14 +11,23 @@ import { RootState } from '@/store';
 import { setCurrentPage } from '@/store/pageSlice';
 
 interface PaginationProps {
-  termsData: TermData[];
   totalPages: number;
   itemsPerPage: number;
 }
 
-const PostList = ({ termsData, itemsPerPage }: PaginationProps) => {
+const PostList = ({ itemsPerPage }: PaginationProps) => {
+  const { terms, searchedTerms } = useSelector((state: RootState) => state.terms);
   const { sortType, sortDirection, currentPage } = useSelector((state: RootState) => state.page);
   const dispatch = useDispatch();
+
+  const [termsData, setTermsData] = useState<TermData[]>(searchedTerms.length > 0 ? searchedTerms : terms);
+
+  useEffect(() => {
+    setTermsData(searchedTerms.length > 0 ? searchedTerms : terms);
+  }, [searchedTerms, terms]);
+
+  console.log('terms', terms);
+  console.log('searchedTerms', searchedTerms);
 
   const sortedTermsData = [...termsData].sort((a, b) => {
     const multiplier = sortDirection === 'asc' ? 1 : -1;
@@ -60,7 +70,7 @@ const PostList = ({ termsData, itemsPerPage }: PaginationProps) => {
         <h1 className='flex items-center gap-2 text-sub'>
           {'검색결과'}
           <span className='text-primary font-bold'>{sortedTermsData.length}</span>
-          {'/ '}{sortedTermsData.length}{' 개'}
+          {'/ '}{terms.length}{' 개'}
         </h1>
         <SortButtons />
       </div>

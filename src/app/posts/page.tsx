@@ -19,7 +19,7 @@ export default async function PostsPage() {
         <SearchDetailInput />
       </div>
       <div className='animate-introSecond mt-5 z-10'>
-        <PostList termsData={terms} totalPages={totalPages} itemsPerPage={itemsPerPage} />
+        <PostList totalPages={totalPages} itemsPerPage={itemsPerPage} />
       </div>
       <div className='block sm:hidden'>
         <Footer />
