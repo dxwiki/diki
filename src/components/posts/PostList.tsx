@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { TermData } from '@/types';
 import PostCard from '@/components/posts/PostCard';
 import Pagination from '@/components/common/Pagination';
@@ -8,7 +9,8 @@ import SortButtons from './SortButtons';
 import AdContainer from '@/components/common/AdContainer';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
-import { setCurrentPage } from '@/store/pageSlice';
+import { setCurrentPage, setSortType } from '@/store/pageSlice';
+import { searchTerms } from '@/utils/search';
 
 interface PaginationProps {
   totalPages: number;
@@ -16,18 +18,26 @@ interface PaginationProps {
 }
 
 const PostList = ({ itemsPerPage }: PaginationProps) => {
-  const { terms, searchedTerms } = useSelector((state: RootState) => state.terms);
+  const { terms } = useSelector((state: RootState) => state.terms);
   const { sortType, sortDirection, currentPage } = useSelector((state: RootState) => state.page);
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q') || '';
+  const [termsData, setTermsData] = useState<TermData[]>([]);
   const dispatch = useDispatch();
 
-  const [termsData, setTermsData] = useState<TermData[]>(searchedTerms.length > 0 ? searchedTerms : terms);
-
   useEffect(() => {
-    setTermsData(searchedTerms.length > 0 ? searchedTerms : terms);
-  }, [searchedTerms, terms]);
+    if (query) {
+      const searchResults = searchTerms(query, terms);
+      dispatch(setSortType('relevance'));
+      setTermsData(searchResults);
+    } else {
+      dispatch(setSortType('created'));
+      setTermsData(terms);
+    }
+  }, [query, terms, dispatch]);
 
   console.log('terms', terms);
-  console.log('searchedTerms', searchedTerms);
+  console.log('searchedTerms', query);
 
   const sortedTermsData = [...termsData].sort((a, b) => {
     const multiplier = sortDirection === 'asc' ? 1 : -1;

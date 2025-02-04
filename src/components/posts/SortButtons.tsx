@@ -4,16 +4,20 @@ import { ArrowUpDown } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSort } from '@/store/pageSlice';
 import { RootState } from '@/store';
+import { useSearchParams } from 'next/navigation';
 
 const sortTypeLabel: Record<SortType, { label: string; desc: string; asc: string }> = {
   created: { label: '발행일', desc: '최신순', asc: '과거순' },
   updated: { label: '수정일', desc: '최신순', asc: '과거순' },
   difficulty: { label: '난이도', desc: '높은순', asc: '낮은순' },
+  relevance: { label: '관련도', desc: '높은순', asc: '낮은순' },
 };
 
 const SortButtons = () => {
   const dispatch = useDispatch();
   const { sortType, sortDirection } = useSelector((state: RootState) => state.page);
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q') || '';
 
   const handleSortChange = (type: SortType) => {
     const newDirection = type === sortType
@@ -44,7 +48,9 @@ const SortButtons = () => {
     </button>
   );
 
-  const sortTypes: SortType[] = ['created', 'updated', 'difficulty'];
+  const sortTypes: SortType[] = query
+    ? ['relevance', 'created', 'updated', 'difficulty']
+    : ['created', 'updated', 'difficulty'];
 
   const getMobileDropdownItems = () => {
     return sortTypes.flatMap((type) => [

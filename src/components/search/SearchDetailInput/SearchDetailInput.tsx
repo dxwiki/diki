@@ -18,6 +18,7 @@ import {
   setSelectedModifiedQuickSelect,
 } from '@/store/searchSlice';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 const levels = ['기초', '초급', '중급', '고급', '전문'];
 const relevanceLevels = ['희박', '낮음', '보통', '높음', '밀접'];
@@ -30,6 +31,7 @@ interface ComplexRange {
 
 const SearchDetailInput = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { terms } = useSelector((state: RootState) => state.terms);
   const {
     searchQuery,
@@ -46,6 +48,7 @@ const SearchDetailInput = () => {
   const dispatch = useDispatch();
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const query = searchParams.get('q') || '';
   const placeholder = terms.length ? `${ terms.length }개의 데이터 용어 검색` : '검색어 입력해주세요';
 
   useEffect(() => {
@@ -55,10 +58,11 @@ const SearchDetailInput = () => {
         inputRef.current?.focus();
       }
     };
+    dispatch(setSearchQuery(query));
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [dispatch, query]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -240,7 +244,7 @@ const SearchDetailInput = () => {
 
   const handleSearch = () => {
     const searchUrl = buildSearchUrl();
-    window.location.href = searchUrl;
+    router.push(searchUrl);
   };
 
   return (
