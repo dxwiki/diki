@@ -13,9 +13,10 @@ interface PostCardProps {
   size?: 'flex' | 'sm';
   sortType?: SortType;
 }
+const levels = ['기초', '초급', '중급', '고급', '전문'];
 
 const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
-  const sortTagStyle = 'text-gray1 text-xs ml-2 sm:ml-0';
+  const sortTagStyle = 'flex gap-1 items-center text-gray1 text-xs ml-2 sm:ml-0';
   const getSortData = (type: SortType) => {
     switch (type) {
       case 'updated':
@@ -25,6 +26,7 @@ const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
       case 'difficulty':
         return (
           <div className={sortTagStyle}>
+            <span className='text-primary'>{levels[(term.difficulty?.level ?? 1) - 1]}</span>
             <Stars rating={term.difficulty?.level ?? 0} size={12} className='py-0.5' />
           </div>
         );
