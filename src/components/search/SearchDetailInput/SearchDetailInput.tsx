@@ -312,27 +312,33 @@ const SearchDetailInput = () => {
               </span>
               {activeModal === 'complex' && (
                 <div className="filter-modal absolute top-full left-0 mt-2 min-w-72 border border-primary bg-background shadow-lg dark:shadow-gray5 rounded-lg p-4 z-10">
-                  <div className="grid grid-cols-[60px_1fr] items-center pr-4">
+                  <div className="flex flex-col pr-4">
                     <span className="text-sm font-medium">{'난이도'}</span>
-                    <Slider
-                      displayLevels={levels}
-                      range={complexRange.level}
-                      onRangeChange={(newRange: [number, number]) => handleComplexRangeChange('level', newRange)}
-                    />
-                    <span className="col-span-2 mt-1 text-sm font-medium">{'직무 연관도'}</span>
-                    <span className="text-sm w-9 flex justify-center">{'DS'}</span>
+                    <div className='flex justify-end mt-[-6px]'>
+                      <div className='w-[178px]'>
+                        <Slider
+                          displayLevels={levels}
+                          range={complexRange.level}
+                          onRangeChange={(newRange: [number, number]) => handleComplexRangeChange('level', newRange)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-[60px_1fr] items-center pr-4">
+                    <span className="col-span-2 text-sm font-medium">{'직무 연관도'}</span>
+                    <span className="text-sm flex justify-center mt-1 ml-[-4px]">{'DS'}</span>
                     <Slider
                       displayLevels={relevanceLevels}
                       range={complexRange.DS}
                       onRangeChange={(newRange: [number, number]) => handleComplexRangeChange('DS', newRange)}
                     />
-                    <span className="text-sm w-9 flex justify-center">{'DE'}</span>
+                    <span className="text-sm flex justify-center mt-1 ml-[-4px]">{'DE'}</span>
                     <Slider
                       displayLevels={relevanceLevels}
                       range={complexRange.DE}
                       onRangeChange={(newRange: [number, number]) => handleComplexRangeChange('DE', newRange)}
                     />
-                    <span className="text-sm w-9 flex justify-center">{'DA'}</span>
+                    <span className="text-sm flex justify-center mt-1 ml-[-4px]">{'DA'}</span>
                     <Slider
                       displayLevels={relevanceLevels}
                       range={complexRange.DA}
