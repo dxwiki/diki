@@ -6,11 +6,11 @@ import { setSort } from '@/store/pageSlice';
 import { RootState } from '@/store';
 import { useSearchParams } from 'next/navigation';
 
-const sortTypeLabel: Record<SortType, { label: string; desc: string; asc: string }> = {
+const sortTypeLabel: Record<SortType, { label: string; desc: string; asc?: string }> = {
   created: { label: '발행일', desc: '최신순', asc: '과거순' },
   updated: { label: '수정일', desc: '최신순', asc: '과거순' },
   difficulty: { label: '난이도', desc: '높은순', asc: '낮은순' },
-  relevance: { label: '관련도', desc: '높은순', asc: '낮은순' },
+  relevance: { label: '관련도', desc: '높은순' },
 };
 
 const SortButtons = () => {
@@ -31,6 +31,7 @@ const SortButtons = () => {
   };
 
   const getSortText = (type: SortType) => {
+    if (type === 'relevance' && sortType === 'relevance') return '높은순';
     if (sortType !== type) return '';
     return sortDirection === 'asc' ? sortTypeLabel[type].asc : sortTypeLabel[type].desc;
   };
@@ -38,13 +39,14 @@ const SortButtons = () => {
   const renderSortButton = (type: SortType) => (
     <button
       onClick={() => handleSortChange(type)}
-      className={`group shrink-0 flex items-center text-sm gap-0.5 ${
-        sortType === type ? 'text-primary' : 'text-gray1'
-      }`}
+      className={`group shrink-0 flex items-center text-sm gap-0.5 
+        ${ sortType === type ? 'text-primary' : 'text-gray1' }
+        ${ type === 'relevance' && sortType === 'relevance' ? 'pointer-events-none' : '' }
+      `}
     >
       {type === sortType && <ArrowUpDown className='text-primary size-4 group-hover:text-accent' />}
-      <span className='group-hover:text-accent'>{sortTypeLabel[type].label}</span>
-      <span className='hidden sm:block group-hover:text-accent'>{getSortText(type)}</span>
+      <span className={`${ type === 'relevance' ? '' : 'group-hover:text-accent' }`}>{sortTypeLabel[type].label}</span>
+      <span className={`${ type === 'relevance' ? '' : 'group-hover:text-accent' }`}>{getSortText(type)}</span>
     </button>
   );
 
