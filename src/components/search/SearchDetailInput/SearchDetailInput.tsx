@@ -170,20 +170,20 @@ const SearchDetailInput = () => {
 
   const datePickerCustomStyles = `
     .react-datepicker {
-      border-color: var(--gray3) !important;
+      border-color: var(--background) !important;
     }
     .react-datepicker__day:hover {
       background-color: var(--gray2) !important;
       color: var(--text) !important;
     }
     .react-datepicker__month-container {
-        width: 278px;
+        // width: 278px;
         background-color: var(--background);
-        border-radius: 5px;
+        // border-radius: 5px;
     }
     .react-datepicker__header {
       background-color: var(--background);
-      border-bottom: 1px solid var(--gray3);
+      border-bottom: 1px solid var(--background);
     }
     .react-datepicker__current-month,
     .react-datepicker__day-name,
@@ -201,7 +201,7 @@ const SearchDetailInput = () => {
       background-color: var(--background-secondary) !important;
     }
     .react-datepicker__day--keyboard-selected {
-      background-color: var(--gray3);
+      background-color: var(--background);
     }
   `;
 
@@ -254,7 +254,7 @@ const SearchDetailInput = () => {
 
   return (
     <>
-      {/* <div className='flex flex-col gap-2'>
+      {/* <div className='flex flex-col gap-1'>
         <div>{'searchQuery: '}{searchQuery}</div>
         <div>{'activeModal: '}{activeModal}</div>
         <div>{'hasInteractedComplex: '}{hasInteractedComplex}</div>
@@ -381,53 +381,52 @@ const SearchDetailInput = () => {
                 {formatDateRange(publishedDateRange)}
               </span>
               {activeModal === 'publishedDate' && (
-                <div className="filter-modal absolute top-full left-0 mt-2 w-80 border border-primary bg-background shadow-lg dark:shadow-gray5 rounded-lg p-5 z-10">
-                  <div className="text-sm font-medium mb-2">{'발행일'}</div>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        onClick={() => handleQuickSelect('all', 'published')}
-                        className={`px-2 py-1 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
-                          (selectedQuickSelect === 'all' && !publishedDateRange[0])
-                            ? 'border-primary text-primary'
-                            : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
-                        }`}
-                      >
-                        {'전체 기간'}
-                      </button>
-                      <button
-                        onClick={() => handleQuickSelect('week', 'published')}
-                        className={`px-2 py-1 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
-                          selectedQuickSelect === 'week'
-                            ? 'border-primary text-primary'
-                            : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
-                        }`}
-                      >
-                        {'최근 1주'}
-                      </button>
-                      <button
-                        onClick={() => handleQuickSelect('month', 'published')}
-                        className={`px-2 py-1 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
-                          selectedQuickSelect === 'month'
-                            ? 'border-primary text-primary'
-                            : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
-                        }`}
-                      >
-                        {'최근 1달'}
-                      </button>
-                    </div>
-                    <div className="flex justify-center">
-                      <DatePicker
-                        selected={publishedDateRange[0]}
-                        onChange={(dates) => handleDateChange(dates as [Date | null, Date | null], 'published')}
-                        startDate={publishedDateRange[0]}
-                        endDate={publishedDateRange[1]}
-                        selectsRange
-                        calendarClassName="dark:bg-background"
-                        locale={ko}
-                        inline
-                      />
-                    </div>
+                <div className="filter-modal absolute top-full left-0 mt-2 w-64 border border-primary bg-background shadow-lg dark:shadow-gray5 rounded-lg p-3.5 z-10">
+                  <div className="text-sm font-medium mb-2.5">{'발행일'}</div>
+                  <div className="grid grid-cols-3 gap-1">
+                    <button
+                      onClick={() => handleQuickSelect('all', 'published')}
+                      className={`px-1 py-0.5 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
+                        (selectedQuickSelect === 'all' && !publishedDateRange[0])
+                          ? 'border-primary text-primary'
+                          : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
+                      }`}
+                    >
+                      {'전체 기간'}
+                    </button>
+                    <button
+                      onClick={() => handleQuickSelect('week', 'published')}
+                      className={`px-1 py-0.5 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
+                        selectedQuickSelect === 'week'
+                          ? 'border-primary text-primary'
+                          : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
+                      }`}
+                    >
+                      {'최근 1주'}
+                    </button>
+                    <button
+                      onClick={() => handleQuickSelect('month', 'published')}
+                      className={`px-1 py-0.5 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
+                        selectedQuickSelect === 'month'
+                          ? 'border-primary text-primary'
+                          : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
+                      }`}
+                    >
+                      {'최근 1달'}
+                    </button>
+                  </div>
+                  <div className="h-px bg-gray3 mt-3 mb-1" />
+                  <div className="flex justify-center">
+                    <DatePicker
+                      selected={publishedDateRange[0]}
+                      onChange={(dates) => handleDateChange(dates as [Date | null, Date | null], 'published')}
+                      startDate={publishedDateRange[0]}
+                      endDate={publishedDateRange[1]}
+                      selectsRange
+                      calendarClassName="dark:bg-background"
+                      locale={ko}
+                      inline
+                    />
                   </div>
                 </div>
               )}
@@ -454,53 +453,52 @@ const SearchDetailInput = () => {
                 </span>
               </div>
               {activeModal === 'modifiedDate' && (
-                <div className="filter-modal absolute top-full right-0 mt-2 w-80 border border-primary bg-background shadow-lg dark:shadow-gray5 rounded-lg p-5 z-10">
-                  <div className="text-sm font-medium mb-2">{'수정일'}</div>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        onClick={() => handleQuickSelect('all', 'modified')}
-                        className={`px-2 py-1 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
-                          (selectedModifiedQuickSelect === 'all' && !modifiedDateRange[0])
-                            ? 'border-primary text-primary'
-                            : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
-                        }`}
-                      >
-                        {'전체 기간'}
-                      </button>
-                      <button
-                        onClick={() => handleQuickSelect('week', 'modified')}
-                        className={`px-2 py-1 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
-                          selectedModifiedQuickSelect === 'week'
-                            ? 'border-primary text-primary'
-                            : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
-                        }`}
-                      >
-                        {'최근 1주'}
-                      </button>
-                      <button
-                        onClick={() => handleQuickSelect('month', 'modified')}
-                        className={`px-2 py-1 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
-                          selectedModifiedQuickSelect === 'month'
-                            ? 'border-primary text-primary'
-                            : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
-                        }`}
-                      >
-                        {'최근 1달'}
-                      </button>
-                    </div>
-                    <div className="flex justify-center">
-                      <DatePicker
-                        selected={modifiedDateRange[0]}
-                        onChange={(dates) => handleDateChange(dates as [Date | null, Date | null], 'modified')}
-                        startDate={modifiedDateRange[0]}
-                        endDate={modifiedDateRange[1]}
-                        selectsRange
-                        calendarClassName="dark:bg-background"
-                        locale={ko}
-                        inline
-                      />
-                    </div>
+                <div className="filter-modal absolute top-full right-0 mt-2 w-64 border border-primary bg-background shadow-lg dark:shadow-gray5 rounded-lg p-3.5 z-10">
+                  <div className="text-sm font-medium mb-2.5">{'수정일'}</div>
+                  <div className="grid grid-cols-3 gap-1">
+                    <button
+                      onClick={() => handleQuickSelect('all', 'modified')}
+                      className={`px-1 py-0.5 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
+                        (selectedModifiedQuickSelect === 'all' && !modifiedDateRange[0])
+                          ? 'border-primary text-primary'
+                          : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
+                      }`}
+                    >
+                      {'전체 기간'}
+                    </button>
+                    <button
+                      onClick={() => handleQuickSelect('week', 'modified')}
+                      className={`px-1 py-0.5 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
+                        selectedModifiedQuickSelect === 'week'
+                          ? 'border-primary text-primary'
+                          : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
+                      }`}
+                    >
+                      {'최근 1주'}
+                    </button>
+                    <button
+                      onClick={() => handleQuickSelect('month', 'modified')}
+                      className={`px-1 py-0.5 text-sm rounded-full border transition-colors hover:bg-background-secondary ${
+                        selectedModifiedQuickSelect === 'month'
+                          ? 'border-primary text-primary'
+                          : 'border-gray2 text-gray0 hover:text-primary hover:border-primary'
+                      }`}
+                    >
+                      {'최근 1달'}
+                    </button>
+                  </div>
+                  <div className="h-px bg-gray3 mt-3 mb-1" />
+                  <div className="flex justify-center">
+                    <DatePicker
+                      selected={modifiedDateRange[0]}
+                      onChange={(dates) => handleDateChange(dates as [Date | null, Date | null], 'modified')}
+                      startDate={modifiedDateRange[0]}
+                      endDate={modifiedDateRange[1]}
+                      selectsRange
+                      calendarClassName="dark:bg-background"
+                      locale={ko}
+                      inline
+                    />
                   </div>
                 </div>
               )}
