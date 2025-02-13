@@ -19,6 +19,7 @@ import {
 } from '@/store/searchSlice';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
+import { ko } from 'date-fns/locale';
 
 const levels = ['기초', '초급', '중급', '고급', '전문'];
 const relevanceLevels = ['희박', '낮음', '보통', '높음', '밀접'];
@@ -169,24 +170,28 @@ const SearchDetailInput = () => {
 
   const datePickerCustomStyles = `
     .react-datepicker {
-      border-color: var(--gray2);
+      border-color: var(--gray3) !important;
     }
     .react-datepicker__day:hover {
       background-color: var(--gray2) !important;
       color: var(--text) !important;
     }
     .react-datepicker__month-container {
-        width: 270px;
+        width: 278px;
         background-color: var(--background);
         border-radius: 5px;
     }
     .react-datepicker__header {
-      background-color: var(--gray5);
+      background-color: var(--background);
+      border-bottom: 1px solid var(--gray3);
     }
     .react-datepicker__current-month,
     .react-datepicker__day-name,
     .react-datepicker__day {
       color: var(--text);
+    }
+    .react-datepicker__day--outside-month {
+      color: var(--gray2) !important;
     }
     .react-datepicker__day--selected,
     .react-datepicker__day--in-range {
@@ -413,6 +418,7 @@ const SearchDetailInput = () => {
                         endDate={publishedDateRange[1]}
                         selectsRange
                         calendarClassName="dark:bg-background"
+                        locale={ko}
                         inline
                       />
                     </div>
@@ -485,6 +491,7 @@ const SearchDetailInput = () => {
                         endDate={modifiedDateRange[1]}
                         selectsRange
                         calendarClassName="dark:bg-background"
+                        locale={ko}
                         inline
                       />
                     </div>
