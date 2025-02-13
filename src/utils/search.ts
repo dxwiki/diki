@@ -60,7 +60,7 @@ export function buildSearchIndex(terms: TermData[]) {
 function calculateScore(term: TermData, queryLower: string): number {
   return Object.entries(SEARCH_FIELDS).reduce((score, [, { boost, path }]) => {
     const value = (path(term) || '').toLowerCase();
-    return score + (value.split(queryLower).length - 1) * boost;
+    return score + ((value.split(queryLower).length - 1) * boost);
   }, 0);
 }
 
