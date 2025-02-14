@@ -256,7 +256,7 @@ const SearchDetailInput = () => {
 
   return (
     <>
-      <div className='flex flex-col gap-1'>
+      {/* <div className='flex flex-col gap-1'>
         <div>{'searchQuery: '}{searchQuery}</div>
         <div>{'activeModal: '}{activeModal}</div>
         <div>{'hasInteractedComplex: '}{hasInteractedComplex}</div>
@@ -265,7 +265,7 @@ const SearchDetailInput = () => {
         <div>{'complexRange: '}{JSON.stringify(complexRange)}</div>
         <div>{'publishedDateRange: '}{JSON.stringify(publishedDateRange)}</div>
         <div>{'modifiedDateRange: '}{JSON.stringify(modifiedDateRange)}</div>
-      </div>
+      </div> */}
       <style>{datePickerCustomStyles}</style>
       <div className="relative w-full mt-2 mb-10">
         <div className={`w-full flex items-center border border-light rounded-full shadow-md dark:shadow-gray4 bg-background ${ activeModal ? 'border-primary' : '' }`}>
