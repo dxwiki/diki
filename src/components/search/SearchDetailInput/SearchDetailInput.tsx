@@ -208,38 +208,40 @@ const SearchDetailInput = () => {
   const buildSearchUrl = () => {
     const params = new URLSearchParams();
 
-    // Add search query if exists
+    // q 있으면 추가
     if (searchQuery.trim()) {
       params.append('q', searchQuery.trim());
     }
 
-    // Add complex range if not all selected
-    const isAllSelected = (range: [number, number]) => {
-      return range[0] === 0 && range[1] === 4;
-    };
+    const isAllSelected = (range: [number, number]) => range[0] === 0 && range[1] === 4;
 
     if (!Object.values(complexRange).every(isAllSelected)) {
       const complexParams = Object.entries(complexRange)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .filter(([_, range]) => !isAllSelected(range))
-        .map(([key, range]) => `${ key }:${ range.join(',') }`)
-        .join(';');
+        .filter(([, range]) => !isAllSelected(range))
+        .map(([key, range]) => {
+          return `${ key.toLowerCase() }-${ range[0] }-${ range[1] }`;
+        })
+        .join('_');
       if (complexParams) {
-        params.append('c', complexParams);
+        params.append('f', complexParams);
       }
     }
 
-    // Add date ranges if set
-    const formatDateParam = (date: Date | null) =>
-      date ? date.toISOString().split('T')[0] : '';
+    const formatDateParam = (date: Date | null) => {
+      if (!date) return '';
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${ year }${ month }${ day }`;
+    };
 
     if (publishedDateRange[0] || publishedDateRange[1]) {
-      const publishedParam = `${ formatDateParam(publishedDateRange[0]) },${ formatDateParam(publishedDateRange[1]) }`;
+      const publishedParam = `${ formatDateParam(publishedDateRange[0]) }-${ formatDateParam(publishedDateRange[1]) }`;
       params.append('p', publishedParam);
     }
 
     if (modifiedDateRange[0] || modifiedDateRange[1]) {
-      const modifiedParam = `${ formatDateParam(modifiedDateRange[0]) },${ formatDateParam(modifiedDateRange[1]) }`;
+      const modifiedParam = `${ formatDateParam(modifiedDateRange[0]) }-${ formatDateParam(modifiedDateRange[1]) }`;
       params.append('m', modifiedParam);
     }
 
@@ -254,7 +256,7 @@ const SearchDetailInput = () => {
 
   return (
     <>
-      {/* <div className='flex flex-col gap-1'>
+      <div className='flex flex-col gap-1'>
         <div>{'searchQuery: '}{searchQuery}</div>
         <div>{'activeModal: '}{activeModal}</div>
         <div>{'hasInteractedComplex: '}{hasInteractedComplex}</div>
@@ -263,7 +265,7 @@ const SearchDetailInput = () => {
         <div>{'complexRange: '}{JSON.stringify(complexRange)}</div>
         <div>{'publishedDateRange: '}{JSON.stringify(publishedDateRange)}</div>
         <div>{'modifiedDateRange: '}{JSON.stringify(modifiedDateRange)}</div>
-      </div> */}
+      </div>
       <style>{datePickerCustomStyles}</style>
       <div className="relative w-full mt-2 mb-10">
         <div className={`w-full flex items-center border border-light rounded-full shadow-md dark:shadow-gray4 bg-background ${ activeModal ? 'border-primary' : '' }`}>
@@ -326,23 +328,23 @@ const SearchDetailInput = () => {
                   </div>
                   <div className="grid grid-cols-[60px_1fr] items-center pr-4">
                     <span className="col-span-2 text-sm font-medium">{'직무 연관도'}</span>
-                    <span className="text-sm flex justify-center mt-1 ml-[-4px]">{'DS'}</span>
+                    <span className="text-sm flex justify-center mt-1 ml-[-6px]">{'DA'}</span>
+                    <Slider
+                      displayLevels={relevanceLevels}
+                      range={complexRange.DA}
+                      onRangeChange={(newRange: [number, number]) => handleComplexRangeChange('DA', newRange)}
+                    />
+                    <span className="text-sm flex justify-center mt-1 ml-[-6px]">{'DS'}</span>
                     <Slider
                       displayLevels={relevanceLevels}
                       range={complexRange.DS}
                       onRangeChange={(newRange: [number, number]) => handleComplexRangeChange('DS', newRange)}
                     />
-                    <span className="text-sm flex justify-center mt-1 ml-[-4px]">{'DE'}</span>
+                    <span className="text-sm flex justify-center mt-1 ml-[-6px]">{'DE'}</span>
                     <Slider
                       displayLevels={relevanceLevels}
                       range={complexRange.DE}
                       onRangeChange={(newRange: [number, number]) => handleComplexRangeChange('DE', newRange)}
-                    />
-                    <span className="text-sm flex justify-center mt-1 ml-[-4px]">{'DA'}</span>
-                    <Slider
-                      displayLevels={relevanceLevels}
-                      range={complexRange.DA}
-                      onRangeChange={(newRange: [number, number]) => handleComplexRangeChange('DA', newRange)}
                     />
                   </div>
                   <div className="flex justify-end mt-1.5">
