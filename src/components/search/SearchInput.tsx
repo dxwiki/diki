@@ -2,7 +2,7 @@
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
-import { setSearchQuery } from '@/store/searchSlice';
+import { setSearchQuery, resetSearchState } from '@/store/searchSlice';
 import { setCurrentPage } from '@/store/pageSlice';
 import { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
@@ -26,7 +26,7 @@ const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
   const router = useRouter();
 
   useEffect(() => {
-    dispatch(setSearchQuery(''));
+    dispatch(resetSearchState());
     dispatch(setCurrentPage(1));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

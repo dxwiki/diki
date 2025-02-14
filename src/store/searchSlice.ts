@@ -42,6 +42,9 @@ const searchSlice = createSlice({
   name: 'search',
   initialState,
   reducers: {
+    resetSearchState: () => {
+      return initialState;
+    },
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
     },
@@ -71,6 +74,7 @@ const searchSlice = createSlice({
 });
 
 export const {
+  resetSearchState,
   setSearchQuery,
   setActiveModal,
   setComplexRange,
