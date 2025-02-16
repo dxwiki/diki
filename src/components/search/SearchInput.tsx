@@ -10,13 +10,9 @@ import SearchTip from '@/components/search/SearchTip';
 import { useRouter } from 'next/navigation';
 import { searchTerms } from '@/utils/search';
 import { setSearchedTerms } from '@/store/termsSlice';
+import { TermData } from '@/types';
 
-interface SearchInputProps {
-  suggestions?: string[];
-  tip?: boolean;
-}
-
-const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
+const SearchInput = () => {
   const dispatch = useDispatch();
   const { terms } = useSelector((state: RootState) => state.terms);
   const { searchQuery } = useSelector((state: RootState) => state.search);
@@ -24,16 +20,16 @@ const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const placeholder = terms.length ? `${ terms.length }개의 데이터 용어 검색` : '검색어 입력해주세요';
   const router = useRouter();
+  const [recommendedTerms, setRecommendedTerms] = useState<TermData[]>([]);
+  const SUGGESTION_COUNT = 6;
+  const debounceDelay = 300;
+  let searchTimeout: NodeJS.Timeout;
 
   useEffect(() => {
     dispatch(resetSearchState());
     dispatch(setCurrentPage(1));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const filteredSuggestions = suggestions?.filter((suggestion) =>
-    suggestion.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -53,9 +49,11 @@ const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
   }, [isModalOpen]);
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (!e.relatedTarget || !(e.relatedTarget as HTMLElement).closest('.suggestions-modal')) {
-      setIsModalOpen(false);
-    }
+    setTimeout(() => {
+      if (!e.relatedTarget || !(e.relatedTarget as HTMLElement).closest('.suggestions-modal')) {
+        setIsModalOpen(false);
+      }
+    }, 0);
   };
 
   const redirect = (e: React.KeyboardEvent<HTMLInputElement>, term: string) => {
@@ -72,9 +70,22 @@ const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
 
   const handleSearch = (query: string) => {
     dispatch(setSearchQuery(query));
-    const results = searchTerms(query, terms);
-    dispatch(setSearchedTerms(results));
+
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      const results = searchTerms(query, terms);
+      dispatch(setSearchedTerms(results));
+      setRecommendedTerms(results.slice(0, SUGGESTION_COUNT));
+    }, debounceDelay);
   };
+
+  // const handleSuggestionClick = (term: TermData) => {
+  //   const query = term.title?.ko || term.title?.en || '';
+  //   dispatch(setSearchQuery(query));
+  //   dispatch(setSearchedTerms([term]));
+  //   setIsModalOpen(false);
+  //   router.push(`/posts?q=${ query.trim().split(' ').join('+') }`);
+  // };
 
   return (
     <div className="relative w-full">
@@ -110,26 +121,43 @@ const SearchInput = ({ suggestions, tip = true }: SearchInputProps) => {
         </div>
 
         {isModalOpen && (
-          <div className="w-full overflow-y-auto suggestions-modal">
+          <div className="w-full suggestions-modal">
             {searchQuery ? (
-              filteredSuggestions && filteredSuggestions.length > 0 ? (
-                filteredSuggestions.map((suggestion, index) => (
-                  <div
-                    key={index}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      dispatch(setSearchQuery(suggestion));
-                      setIsModalOpen(false);
-                    }}
-                  >
-                    {suggestion}
-                  </div>
-                ))
+              recommendedTerms.length > 0 ? (
+                <div className="flex flex-col">
+                  {recommendedTerms.map((term, index) => (
+                    <div
+                      key={term.id}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        router.push(term.url ?? '/not-found');
+                      }}
+                      className={`
+                        flex items-center px-4 py-2 hover:bg-gray4 cursor-pointer
+                        ${ index === recommendedTerms.length - 1 ? 'rounded-b-[21px]' : '' }
+                      `}
+                    >
+                      <Search className="text-gray1 size-4 mr-2 shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-sub text-sm">
+                          {term.title?.ko || term.title?.en}
+                        </span>
+                        {term.description?.short && (
+                          <span className="text-xs text-gray1 line-clamp-1">
+                            {term.description.short}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               ) : (
-                <div className="px-4 py-2 text-sub min-h-56">{'검색어 추천'}</div>
+                <div className="flex items-center px-4 py-10 text-sub">
+                  {'검색 결과가 없습니다.'}
+                </div>
               )
             ) : (
-              tip && <SearchTip />
+              <SearchTip />
             )}
           </div>
         )}
