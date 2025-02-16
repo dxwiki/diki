@@ -2,6 +2,7 @@ import PostCard from '@/components/posts/PostCard';
 import PrevNextSection from '../sections/PrevNextSection';
 import { fetchTermsData } from '@/utils/termsData';
 import { TermData } from '@/types';
+import { searchTerms } from '@/utils/search';
 
 interface RecommendationSectionProps {
   term: TermData
@@ -10,12 +11,22 @@ interface RecommendationSectionProps {
 
 const RecommendationSection = async ({ term, lastTermId }: RecommendationSectionProps) => {
   const terms = await fetchTermsData();
-
-  const recentTerms = [...terms]
-    .sort((a, b) => new Date(b.metadata?.created_at ?? '').getTime() - new Date(a.metadata?.created_at ?? '').getTime())
+  let filteredTerms = searchTerms(term.title?.ko ?? '', terms)
+    .filter((t) => t.id !== term.id)
     .slice(0, 6);
 
-  if(recentTerms.length < 6) return null;
+  // 추천 포스트가 6개 미만이면 최신 컨텐츠로 채우기
+  if (filteredTerms.length < 6) {
+    const recentTerms = terms
+      .filter((t) =>
+        t.id !== term.id
+        && !filteredTerms.some((ft) => ft.id === t.id)
+      )
+      .sort((a, b) => (b.id ?? 0) - (a.id ?? 0))
+      .slice(0, 6 - filteredTerms.length);
+
+    filteredTerms = [...filteredTerms, ...recentTerms];
+  }
 
   return (
     <section className='w-full group-section flex flex-col gap-4'>
@@ -26,7 +37,7 @@ const RecommendationSection = async ({ term, lastTermId }: RecommendationSection
       {term.id && <PrevNextSection id={term.id} lastTermId={lastTermId} />}
       <div className="flex justify-center mt-4">
         <div className="w-full grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {recentTerms.map((term) => (
+          {filteredTerms.map((term) => (
             <div
               key={term.id}
               className="transition-transform duration-300 hover:-translate-y-2"
