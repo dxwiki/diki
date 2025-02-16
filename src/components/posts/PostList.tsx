@@ -115,9 +115,6 @@ const PostList = ({ itemsPerPage }: PaginationProps) => {
     setTermsData(filteredTerms);
   }, [searchParams, terms, dispatch]);
 
-  console.log('terms', terms);
-  console.log('searchedTerms', searchParams.get('q'));
-
   const sortedTermsData = [...termsData].sort((a, b) => {
     const multiplier = sortDirection === 'asc' ? 1 : -1;
 
