@@ -22,7 +22,7 @@ const Header = () => {
   return (
     <>
       <ScrollDirectionHandler />
-      <header className='fixed left-0 top-0 z-50 w-full bg-background background-' style={{ transform: 'translateY(var(--header-transform, 0))' }}>
+      <header className='fixed left-0 top-0 z-50 w-full bg-background-opacity backdrop-blur-sm transition-all duration-1000' style={{ transform: 'translateY(var(--header-transform, 0))' }}>
         <div className='flex justify-center items-center max-w-6xl mx-auto px-4 py-3 md:px-6 lg:px-8'>
           <div className='w-full flex justify-end items-center gap-3'>
             {!isHomePage && (

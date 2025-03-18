@@ -21,6 +21,7 @@ const config: Config = {
         'secondary': 'var(--secondary)',
         'background': 'var(--background)',
         'background-secondary': 'var(--background-secondary)',
+        'background-opacity': 'var(--background-opacity)',
         'accent': 'var(--accent)',
         'main': 'var(--text)',
         'sub': 'var(--text-secondary)',

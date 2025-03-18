@@ -21,6 +21,7 @@ body {
 
   --background: #f8f8f8;
   --background-secondary: #e0e9ed;
+  --background-opacity: rgba(248, 248, 248, 0.5);
 
   --text: rgb(5, 5, 5);
   --text-secondary: rgb(24, 24, 24);
@@ -49,6 +50,7 @@ body {
 
   --background: #121212;
   --background-secondary: #1e3e4b;
+  --background-opacity: rgba(18, 18, 18, 0.5);
 
   --text: rgb(251, 251, 251);
   --text-secondary: rgb(226, 226, 226);
