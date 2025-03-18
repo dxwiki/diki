@@ -28,7 +28,7 @@ const PrevNextSection = async ({ id, lastTermId }: Props) => {
         <Link href={`${ prevTerm.url }`} className='group min-h-20 flex flex-col justify-center col-start-1 border border-light border-r-0 p-2 hover:no-underline rounded-l-md hover:bg-gray5 hover:border-primary hover:border-r -mr-px z-10'>
           <div className='flex items-center gap-1 font-normal'>
             <ChevronLeft className='size-4 sm:size-5 text-light group-hover:text-sub' />
-            <span className='text-xs sm:text-sm text-primary'>{'이전 포스트'}</span>
+            <span className='text-[13px] sm:text-sm text-primary'>{'이전 포스트'}</span>
           </div>
           <div className='flex items-center gap-1 mt-1 ml-2 text-sm sm:text-base text-sub pb-1'>
             <span className='font-medium text-sub group-hover:text-primary group-hover:underline underline-offset-4 group-hover:decoration-primary'>
@@ -41,7 +41,7 @@ const PrevNextSection = async ({ id, lastTermId }: Props) => {
       {nextTerm && (
         <Link href={`${ nextTerm.url }`} className='group min-h-20 col-start-2 flex flex-col justify-center items-end border border-light p-2 hover:no-underline rounded-r-md hover:bg-gray5 hover:border-primary hover:z-20'>
           <div className='flex items-center gap-1 font-normal'>
-            <span className='text-xs sm:text-sm text-primary'>{'다음 포스트'}</span>
+            <span className='text-[13px] sm:text-sm text-primary'>{'다음 포스트'}</span>
             <ChevronRight className='size-4 sm:size-5 text-light group-hover:text-sub' />
           </div>
           <div className='flex justify-end items-center gap-1 mt-1 mr-1.5 text-primary text-sm sm:text-base pb-1'>

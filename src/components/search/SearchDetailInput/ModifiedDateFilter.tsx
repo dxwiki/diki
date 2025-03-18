@@ -58,7 +58,7 @@ const ModifiedDateFilter = ({
         `}
     >
       <div className='flex flex-col group-hover:cursor-pointer'>
-        <label htmlFor="modifiedDate" className={`text-xs text-main group-hover:cursor-pointer group-hover:text-primary ${ activeModal === 'modifiedDate' ? 'text-primary' : '' }`}>
+        <label htmlFor="modifiedDate" className={`text-[13px] text-main group-hover:cursor-pointer group-hover:text-primary ${ activeModal === 'modifiedDate' ? 'text-primary' : '' }`}>
           {'수정일'}
         </label>
         <span className={`${

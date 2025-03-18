@@ -72,7 +72,7 @@ export default function RecentTerms() {
             key={term.url}
             href={`${ term.url }`}
             style={{ width: 'var(--item-width)' }}
-            className='py-1.5 px-2.5 flex justify-center items-center text-sub rounded-lg border border-light hover:border-primary hover:text-primary hover:font-semibold transition-colors text-xs md:text-sm shrink-0 bg-background'
+            className='py-1.5 px-2.5 flex justify-center items-center text-sub rounded-lg border border-light hover:border-primary hover:text-primary hover:font-semibold transition-colors text-[13px] md:text-sm shrink-0 bg-background'
           >
             <span className="overflow-hidden text-nowrap text-ellipsis">
               {term.title?.ko}

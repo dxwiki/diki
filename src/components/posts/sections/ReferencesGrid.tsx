@@ -230,10 +230,10 @@ const ReferencesGrid = ({ references, colorConfig = defaultColorConfig }: Refere
               {activeTooltip === tooltipId && item.details && (
                 <div
                   className={`animate-slideDown absolute w-[calc(100%+2px)] -left-px border ${ colors.border }
-                  bg-gray5 text-main text-xs p-2 shadow-md z-50`}
+                  bg-gray5 text-main text-[13px] p-2 shadow-md z-50`}
                 >
                   <div className="flex flex-col gap-1.5">
-                    <span className={`text-xs font-medium ${ colors.text }`}>{item.type}</span>
+                    <span className={`text-[13px] font-medium ${ colors.text }`}>{item.type}</span>
                     <p className="whitespace-pre-line text-[13px] break-words m-0">{item.details}</p>
                   </div>
                 </div>

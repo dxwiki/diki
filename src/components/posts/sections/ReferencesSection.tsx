@@ -216,14 +216,14 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
                 }`}
               >
                 <span className="flex justify-between">
-                  <span className={`text-xs ${ colors.text } font-medium mb-1 block`}>
+                  <span className={`text-[13px] ${ colors.text } font-medium mb-1 block`}>
                     {section === 'tutorials' && '튜토리얼'}
                     {section === 'books' && '참고서적'}
                     {section === 'academic' && '연구논문'}
                     {section === 'opensource' && '오픈소스'}
                   </span>
                   {getExternalLink(item) && (
-                    <span className={`flex justify-center text-xs ${ colors.text } font-normal`}>
+                    <span className={`flex justify-center text-[13px] ${ colors.text } font-normal`}>
                       {'바로가기 →'}
                     </span>
                   )}

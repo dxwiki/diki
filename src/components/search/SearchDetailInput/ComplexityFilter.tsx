@@ -36,7 +36,7 @@ const ComplexityFilter = ({
         ${ activeModal === 'searchQuery' ? 'before:bg-primary' : '' }
         `}
     >
-      <label htmlFor="complex" className={`text-xs text-main group-hover:cursor-pointer group-hover:text-primary ${ activeModal === 'complex' ? 'text-primary' : '' }`}>
+      <label htmlFor="complex" className={`text-[13px] text-main group-hover:cursor-pointer group-hover:text-primary ${ activeModal === 'complex' ? 'text-primary' : '' }`}>
         {'난이도 / 직무 연관도'}
       </label>
       <span className={`${ hasInteractedComplex ? 'text-main' : 'text-gray1' } group-hover:cursor-pointer text-sm`}>

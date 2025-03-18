@@ -143,7 +143,7 @@ const SearchInput = () => {
                           {term.title?.ko || term.title?.en}
                         </span>
                         {term.description?.short && (
-                          <span className="text-xs text-gray1 line-clamp-1">
+                          <span className="text-[13px] text-gray1 line-clamp-1">
                             {term.description.short}
                           </span>
                         )}

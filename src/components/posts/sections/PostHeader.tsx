@@ -46,7 +46,7 @@ const PostHeader = ({ term, onShare }: PostHeaderProps) => {
           </span>
         </div>
       </div>
-      <div className='flex justify-start gap-1 text-xs my-2'>
+      <div className='flex justify-start gap-1 text-[13px] my-2'>
         <span className='text-main'>{term.metadata?.authors ?? '작가 확인 안됨'}</span>
         <span className="text-light">{'•'}</span>
         <div className='flex gap-1 items-center'>

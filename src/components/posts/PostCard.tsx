@@ -16,7 +16,7 @@ interface PostCardProps {
 const levels = ['기초', '초급', '중급', '고급', '전문'];
 
 const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
-  const sortTagStyle = 'flex gap-1 items-center text-gray1 text-xs ml-2 sm:ml-0';
+  const sortTagStyle = 'flex gap-1 items-center text-gray1 text-[13px] ml-2 sm:ml-0';
   const getSortData = (type: SortType) => {
     switch (type) {
       case 'updated':

@@ -279,7 +279,7 @@ const SearchDetailInput = () => {
               onClick={() => handleFilterClick('searchQuery')}
               className='peer/search group flex flex-col py-3 px-4 rounded-full'
             >
-              <label htmlFor="searchQuery" className={`text-xs text-main group-hover:cursor-pointer group-hover:text-primary ${ activeModal === 'searchQuery' ? 'text-primary' : '' }`}>
+              <label htmlFor="searchQuery" className={`text-[13px] text-main group-hover:cursor-pointer group-hover:text-primary ${ activeModal === 'searchQuery' ? 'text-primary' : '' }`}>
                 {'검색어'}
               </label>
               <input

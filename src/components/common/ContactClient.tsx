@@ -86,7 +86,7 @@ const ContactClient = ({ profile }: ContactClientProps) => {
             <Link
             key={term.url + '-left'}
             href={`${ term.url }`}
-            className='w-[120px] px-2.5 py-1.5 flex justify-center items-center text-gray2 rounded-lg border border-gray2 hover:border-primary hover:text-primary hover:font-semibold transition-colors text-xs md:text-sm shrink-0 bg-background'
+            className='w-[120px] px-2.5 py-1.5 flex justify-center items-center text-gray2 rounded-lg border border-gray2 hover:border-primary hover:text-primary hover:font-semibold transition-colors text-[13px] md:text-sm shrink-0 bg-background'
             >
               <span className="overflow-hidden text-nowrap text-ellipsis">
                 {term.title?.ko}
@@ -99,7 +99,7 @@ const ContactClient = ({ profile }: ContactClientProps) => {
             <Link
             key={term.url + '-right'}
             href={`${ term.url }`}
-            className='w-[120px] px-2.5 py-1.5 flex justify-center items-center text-gray1 rounded-lg border border-gray1 hover:border-primary hover:text-primary hover:font-semibold transition-colors text-xs md:text-sm shrink-0 bg-background'
+            className='w-[120px] px-2.5 py-1.5 flex justify-center items-center text-gray1 rounded-lg border border-gray1 hover:border-primary hover:text-primary hover:font-semibold transition-colors text-[13px] md:text-sm shrink-0 bg-background'
             >
               <span className="overflow-hidden text-nowrap text-ellipsis">
                 {term.title?.ko}
@@ -112,7 +112,7 @@ const ContactClient = ({ profile }: ContactClientProps) => {
             <Link
             key={term.url + '-left-fast'}
             href={`${ term.url }`}
-            className='w-[120px] px-2.5 py-1.5 flex justify-center items-center text-gray0 rounded-lg border border-gray0 hover:border-primary hover:text-primary hover:font-semibold transition-colors text-xs md:text-sm shrink-0 bg-background'
+            className='w-[120px] px-2.5 py-1.5 flex justify-center items-center text-gray0 rounded-lg border border-gray0 hover:border-primary hover:text-primary hover:font-semibold transition-colors text-[13px] md:text-sm shrink-0 bg-background'
             >
               <span className="overflow-hidden text-nowrap text-ellipsis">
                 {term.title?.ko}

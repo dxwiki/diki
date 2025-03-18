@@ -58,7 +58,7 @@ const PublishedDateFilter = ({
         ${ activeModal === 'complex' ? 'before:bg-primary' : '' }
         `}
     >
-      <label htmlFor="publishedDate" className={`text-xs text-main group-hover:cursor-pointer group-hover:text-primary ${ activeModal === 'publishedDate' ? 'text-primary' : '' }`}>
+      <label htmlFor="publishedDate" className={`text-[13px] text-main group-hover:cursor-pointer group-hover:text-primary ${ activeModal === 'publishedDate' ? 'text-primary' : '' }`}>
         {'발행일'}
       </label>
       <span className={`${

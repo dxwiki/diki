@@ -103,7 +103,7 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
       {displayLevels.map((level, index) => (
         <div
           key={index}
-          className="absolute top-1 text-center text-xs text-gray3 w-10 cursor-pointer z-10"
+          className="absolute top-1 text-center text-[13px] text-gray3 w-10 cursor-pointer z-10"
           style={{
             left: `${ getPositionFromValue(index) + 4.5 }%`,
             transform: 'translateX(-50%)',
@@ -128,7 +128,7 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
 
       {/* Start Level Label */}
       <div
-        className="absolute top-1 text-center text-xs text-primary w-10 z-10"
+        className="absolute top-1 text-center text-[13px] text-primary w-10 z-10"
         style={{
           left: `${ getPositionFromValue(range[0]) + 4.5 }%`,
           transform: 'translateX(-50%)',
@@ -139,7 +139,7 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
 
       {/* End Level Label */}
       <div
-        className="absolute top-1 text-center text-xs text-primary w-10 z-10"
+        className="absolute top-1 text-center text-[13px] text-primary w-10 z-10"
         style={{
           left: `${ getPositionFromValue(range[1]) + 4.5 }%`,
           transform: 'translateX(-50%)',
