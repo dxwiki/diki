@@ -4,6 +4,13 @@ import { References } from '@/types';
 import React from 'react';
 import ReferencesGrid from './ReferencesGrid';
 import { ChevronDown } from 'lucide-react';
+import {
+  formatTutorialDetails,
+  formatBookDetails,
+  formatAcademicDetails,
+  formatOpenSourceDetails,
+} from './referenceUtils';
+
 interface ReferencesSectionProps {
   references: References;
 }
@@ -15,24 +22,28 @@ export const colorConfig = {
     text: 'text-emerald-600 dark:text-emerald-400',
     border: 'border-emerald-600 dark:border-emerald-400',
     decoration: 'decoration-emerald-600 dark:decoration-emerald-400',
+    titleGradient: 'bg-gradient-to-b from-main from-0% to-emerald-600 to-90% dark:to-emerald-400 bg-clip-text text-transparent',
   },
   '참고서적': {
     outline: 'group-hover:outline-orange-600 dark:group-hover:outline-orange-400',
     text: 'text-orange-600 dark:text-orange-400',
     border: 'border-orange-600 dark:border-orange-400',
     decoration: 'decoration-orange-600 dark:decoration-orange-400',
+    titleGradient: 'bg-gradient-to-b from-main from-0% to-orange-600 to-90% dark:to-orange-400 bg-clip-text text-transparent',
   },
   '연구논문': {
     outline: 'group-hover:outline-rose-600 dark:group-hover:outline-rose-400',
     text: 'text-rose-600 dark:text-rose-400',
     border: 'border-rose-600 dark:border-rose-400',
     decoration: 'decoration-rose-600 dark:decoration-rose-400',
+    titleGradient: 'bg-gradient-to-b from-main from-0% to-rose-600 to-90% dark:to-rose-400 bg-clip-text text-transparent',
   },
   '오픈소스': {
     outline: 'group-hover:outline-violet-600 dark:group-hover:outline-violet-400',
     text: 'text-violet-600 dark:text-violet-400',
     border: 'border-violet-600 dark:border-violet-400',
     decoration: 'decoration-violet-600 dark:decoration-violet-400',
+    titleGradient: 'bg-gradient-to-b from-main from-0% to-violet-600 to-90% dark:to-violet-400 bg-clip-text text-transparent',
   },
 };
 
@@ -97,108 +108,6 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
     };
   };
 
-  // 상세 정보 포맷팅 함수들
-  const formatTutorialDetails = (tutorial: NonNullable<References['tutorials']>[number]) => {
-    return tutorial.platform ? [
-      <div key="platform" className="flex items-start gap-1.5">
-        <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['튜토리얼'].border } ${ colorConfig['튜토리얼'].text }`}>
-          {'플랫폼'}
-        </span>
-        <span className='text-sm font-medium'>{tutorial.platform}</span>
-      </div>,
-    ] : [];
-  };
-
-  const formatBookDetails = (book: NonNullable<References['books']>[number]) => {
-    const parts = [];
-
-    if (book.authors?.length) {
-      parts.push(
-        <div key="authors" className="flex items-start gap-1.5">
-          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['참고서적'].border } ${ colorConfig['참고서적'].text }`}>
-            {'저자'}
-          </span>
-          <span className='text-sm font-medium'>
-            {book.authors.join(', ')}
-            {book.publisher && <span>{'('}{book.publisher}</span>}
-            {book.year && !book.publisher && <span>{'('}{book.year}{')'}</span>}
-            {book.year && book.publisher && <span>{', '}{book.year}{')'}</span>}
-            {!book.year && book.publisher && <span>{')'}</span>}
-          </span>
-        </div>
-      );
-    }
-
-    if (book.isbn) {
-      parts.push(
-        <div key="isbn" className="flex items-start gap-1.5">
-          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['참고서적'].border } ${ colorConfig['참고서적'].text }`}>
-            {'ISBN'}
-          </span>
-          <span className='text-sm font-medium'>{book.isbn}</span>
-        </div>
-      );
-    }
-
-    return parts;
-  };
-
-  const formatAcademicDetails = (paper: NonNullable<References['academic']>[number]) => {
-    const parts = [];
-
-    if (paper.authors?.length) {
-      parts.push(
-        <div key="authors" className="flex items-start gap-1.5">
-          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['연구논문'].border } ${ colorConfig['연구논문'].text }`}>
-            {'저자'}
-          </span>
-          <span className='text-sm font-medium'>{paper.authors.join(', ')}{paper.year && <span>{'('}{paper.year}{')'}</span>}</span>
-        </div>
-      );
-    }
-
-    if (paper.doi) {
-      parts.push(
-        <div key="doi" className="flex items-start gap-1.5">
-          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['연구논문'].border } ${ colorConfig['연구논문'].text }`}>
-            {'DOI'}
-          </span>
-          <span className='text-sm font-medium'>{paper.doi}</span>
-        </div>
-      );
-    }
-
-    return parts;
-  };
-
-  const formatOpenSourceDetails = (project: NonNullable<References['opensource']>[number]) => {
-    const parts = [];
-
-    if (project.description) {
-      parts.push(
-        <div key="description" className="flex items-start gap-1.5">
-          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['오픈소스'].border } ${ colorConfig['오픈소스'].text }`}>
-            {'설명'}
-          </span>
-          <span className='text-sm font-medium'>{project.description}</span>
-        </div>
-      );
-    }
-
-    if (project.license) {
-      parts.push(
-        <div key="license" className="flex items-start gap-1.5">
-          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['오픈소스'].border } ${ colorConfig['오픈소스'].text }`}>
-            {'라이선스'}
-          </span>
-          <span className='text-sm font-medium'>{project.license}</span>
-        </div>
-      );
-    }
-
-    return parts;
-  };
-
   const ReferenceList = <T,>({
     title,
     items,
@@ -211,7 +120,7 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
     items: T[] | undefined;
     section: string;
     getTitle: (item: T)=> string;
-    formatDetails: (item: T)=> (string | null)[];
+    formatDetails: (item: T)=> (string | null | React.ReactElement)[];
     getExternalLink: (item: T)=> string | undefined;
   }) => {
     if (!items?.length) return null;
@@ -229,7 +138,7 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
 
     return (
       <div className='flex flex-col'>
-        <strong className={`ml-1 mb-1.5 ${ colors.text }`}>{title}</strong>
+        <strong className={`ml-1 mb-1.5 ${ colors.titleGradient }`}>{title}</strong>
         {items.map((item, index) => (
           <div key={index} className={`ml-1 overflow-hidden ${ index === 0 ? 'border-t border-light' : '' }`}>
             <div
@@ -260,20 +169,14 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
                   !getExternalLink(item) ? 'cursor-default' : ''
                 }`}
               >
-                <span className="flex justify-between mb-2">
-                  <span className={`text-[13px] ${ colors.text } font-medium block`}>
-                    {section === 'tutorials' && '튜토리얼'}
-                    {section === 'books' && '참고서적'}
-                    {section === 'academic' && '연구논문'}
-                    {section === 'opensource' && '오픈소스'}
-                  </span>
+                <span className="flex justify-end">
                   {getExternalLink(item) && (
-                    <span className={`flex justify-center text-[13px] ${ colors.text } font-normal`}>
+                    <span className="text-xs text-primary font-normal">
                       {'바로가기 →'}
                     </span>
                   )}
                 </span>
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col">
                   {formatDetails(item).map((detail, i) => (
                     detail && <React.Fragment key={i}>{detail}</React.Fragment>
                   ))}
@@ -295,10 +198,38 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
 
       {isSmallScreen ? (
         <div className='flex flex-col gap-4 sm:mt-[-4px]'>
-          <ReferenceList title="튜토리얼" items={references.tutorials} section="tutorials" getTitle={(item) => item.title || ''} formatDetails={formatTutorialDetails} getExternalLink={(item) => item.external_link} />
-          <ReferenceList title="참고서적" items={references.books} section="books" getTitle={(item) => item.title || ''} formatDetails={formatBookDetails} getExternalLink={(item) => item.external_link} />
-          <ReferenceList title="연구논문" items={references.academic} section="academic" getTitle={(item) => item.title || ''} formatDetails={formatAcademicDetails} getExternalLink={(item) => item.external_link} />
-          <ReferenceList title="오픈소스" items={references.opensource} section="opensource" getTitle={(item) => item.name || ''} formatDetails={formatOpenSourceDetails} getExternalLink={(item) => item.external_link} />
+          <ReferenceList
+            title="튜토리얼"
+            items={references.tutorials}
+            section="tutorials"
+            getTitle={(item) => item.title || ''}
+            formatDetails={(item) => formatTutorialDetails(item, colorConfig)}
+            getExternalLink={(item) => item.external_link}
+          />
+          <ReferenceList
+            title="참고서적"
+            items={references.books}
+            section="books"
+            getTitle={(item) => item.title || ''}
+            formatDetails={(item) => formatBookDetails(item, colorConfig)}
+            getExternalLink={(item) => item.external_link}
+          />
+          <ReferenceList
+            title="연구논문"
+            items={references.academic}
+            section="academic"
+            getTitle={(item) => item.title || ''}
+            formatDetails={(item) => formatAcademicDetails(item, colorConfig)}
+            getExternalLink={(item) => item.external_link}
+          />
+          <ReferenceList
+            title="오픈소스"
+            items={references.opensource}
+            section="opensource"
+            getTitle={(item) => item.name || ''}
+            formatDetails={(item) => formatOpenSourceDetails(item, colorConfig)}
+            getExternalLink={(item) => item.external_link}
+          />
         </div>
       ) : (
         <ReferencesGrid references={references} colorConfig={colorConfig} />

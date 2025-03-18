@@ -4,6 +4,7 @@ import { References } from '@/types';
 import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { colorConfig as defaultColorConfig } from './ReferencesSection';
+import { getAllReferences } from './referenceUtils';
 
 interface ReferencesSectionProps {
   references: References;
@@ -138,103 +139,9 @@ const ReferencesGrid = ({ references, colorConfig = defaultColorConfig }: Refere
   }, []);
 
   // 모든 참고자료를 하나의 배열로 통합
-  const allReferences = useMemo(() => [
-    ...(references.tutorials?.map((item) => ({
-      type: '튜토리얼',
-      details: (
-        <div className="flex flex-wrap items-start gap-1.5">
-          {item.platform && (
-            <div className="flex items-start gap-1.5">
-              <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ getColorConfig('튜토리얼').border } ${ getColorConfig('튜토리얼').text }`}>
-                {'플랫폼'}
-              </span>
-              <span>{item.platform}</span>
-            </div>
-          )}
-        </div>
-      ),
-      ...item,
-    })) || []),
-    ...(references.books?.map((item) => ({
-      type: '참고서적',
-      details: (
-        <div className="flex-col flex-wrap items-center space-y-1.5">
-          {item.authors && (
-            <div className="flex items-start gap-1.5">
-              <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ getColorConfig('참고서적').border } ${ getColorConfig('참고서적').text }`}>
-                {'저자'}
-              </span>
-              <span>
-                {item.authors.join(', ')}
-                {item.publisher && <span>{'('}{item.publisher}</span>}
-                {item.year && !item.publisher && <span>{'('}{item.year}{')'}</span>}
-                {item.year && item.publisher && <span>{', '}{item.year}{')'}</span>}
-                {!item.year && item.publisher && <span>{')'}</span>}
-              </span>
-            </div>
-          )}
-          {item.isbn && (
-            <div className="flex items-start gap-1.5">
-              <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ getColorConfig('참고서적').border } ${ getColorConfig('참고서적').text }`}>
-                {'ISBN'}
-              </span>
-              <span>{item.isbn}</span>
-            </div>
-          )}
-        </div>
-      ),
-      ...item,
-    })) || []),
-    ...(references.academic?.map((item) => ({
-      type: '연구논문',
-      details: (
-        <div className="flex flex-wrap items-center gap-1.5">
-          {item.authors && (
-            <div className="flex items-start gap-1.5">
-              <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ getColorConfig('연구논문').border } ${ getColorConfig('연구논문').text }`}>
-                {'저자'}
-              </span>
-              <span>{item.authors.join(', ')}{item.year && <span>{'('}{item.year}{')'}</span>}</span>
-            </div>
-          )}
-          {item.doi && (
-            <div className="flex items-start gap-1.5">
-              <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ getColorConfig('연구논문').border } ${ getColorConfig('연구논문').text }`}>
-                {'DOI'}
-              </span>
-              <span>{item.doi}</span>
-            </div>
-          )}
-        </div>
-      ),
-      ...item,
-    })) || []),
-    ...(references.opensource?.map((item) => ({
-      type: '오픈소스',
-      details: (
-        <div className="flex-col flex-wrap items-center space-y-1.5">
-          {item.description && (
-            <div className="flex items-start gap-1.5">
-              <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ getColorConfig('오픈소스').border } ${ getColorConfig('오픈소스').text }`}>
-                {'설명'}
-              </span>
-              <span>{item.description}</span>
-            </div>
-          )}
-          {item.license && (
-            <div className="flex items-start gap-1.5">
-              <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ getColorConfig('오픈소스').border } ${ getColorConfig('오픈소스').text }`}>
-                {'라이선스'}
-              </span>
-              <span>{item.license}</span>
-            </div>
-          )}
-        </div>
-      ),
-      title: item.name,
-      ...item,
-    })) || []),
-  ], [references, getColorConfig]);
+  const allReferences = useMemo(() =>
+    getAllReferences(references, colorConfig),
+  [references, colorConfig]);
 
   // 그리드 아이템 생성 - 화면 크기에 따라 최대 열 수 조정
   const gridItems = useMemo(() =>
@@ -290,9 +197,9 @@ const ReferencesGrid = ({ references, colorConfig = defaultColorConfig }: Refere
                   className={`animate-slideDown absolute w-[calc(100%+2px)] -left-px border ${ colors.border }
                   bg-gray5 text-main p-2 shadow-md z-50`}
                 >
-                  <div className="flex flex-col gap-1.5">
-                    <span className={`text-sm font-medium ${ colors.text }`}>{item.type}</span>
-                    <p className="whitespace-pre-line text-sm break-words m-0">{item.details}</p>
+                  <div className="flex flex-col">
+                    <span className={`text-sm font-medium ${ colors.titleGradient }`}>{item.type}</span>
+                    <div className="whitespace-pre-line text-sm break-words m-0">{item.details}</div>
                   </div>
                 </div>
               )}
