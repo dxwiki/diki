@@ -13,7 +13,7 @@ body {
 }
 
 :root {
-  font-family: 'Pretendard', sans-serif !important;
+  font-family: 'Pretendard', sans-serif;
 
   --primary: #0099cc;
   --secondary: #b9ddf1;

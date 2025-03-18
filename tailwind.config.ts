@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-// import { fontFamily } from 'tailwindcss/defaultTheme';
+import { fontFamily } from 'tailwindcss/defaultTheme';
 import typography from '@tailwindcss/typography';
 import plugin from 'tailwindcss/plugin';
 
@@ -38,12 +38,11 @@ const config: Config = {
         'level-4': 'var(--level-4)',
         'level-5': 'var(--level-5)',
       },
-      // fontFamily: {
-      //   nanum: ['var(--font-nanum)', ...fontFamily.sans],
-      //   coding: ['var(--font-coding)', ...fontFamily.mono],
-      //   noto: ['var(--font-noto)', ...fontFamily.sans],
+      fontFamily: {
+        coding: ['var(--font-coding)', ...fontFamily.mono],
+        tinos: ['var(--font-tinos)', ...fontFamily.serif],
       //   pretendard: ['Pretendard Variable', ...fontFamily.sans],
-      // },
+      },
       keyframes: {
         slideDown: {
           '0%': { transform: 'translateY(-10%)', opacity: '0' },

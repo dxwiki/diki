@@ -1,9 +1,8 @@
-/* eslint-disable */
-
 'use client';
 
 import { Profile } from '@/types';
 import { Mail } from 'lucide-react';
+import Image from 'next/image';
 import TooltipButton from '@/components/ui/TooltipButton';
 interface ContactClientProps {
   profile: Profile[];
@@ -12,16 +11,10 @@ interface ContactClientProps {
 const ContactClient = ({ profile }: ContactClientProps) => {
   return (
     <div className="relative" >
-      {/* <div
-        className="absolute top-0 left-0 z-0 w-full min-h-[80vh] opacity-100 dark:opacity-25 blur-xl
-        bg-[url(https://cdn.pixabay.com/photo/2022/04/18/17/27/artwork-7141136_1280.png)]
-        dark:bg-[url(https://cdn.pixabay.com/photo/2020/06/20/05/26/color-5319718_1280.jpg)]"
-        style={{  backgroundSize: 'cover', backgroundPosition: 'center' }}
-      /> */}
       <h2 className="w-full flex justify-center items-center text-4xl md:text-8xl font-bold text-sub mt-10 md:mt-40 mb-4 z-10">
         {'Contact Us'}
       </h2>
-      <div className="w-full flex justify-center items-center text-2xl md:text-4xl text-primary mb-8 z-10">
+      <div className="w-full flex justify-center items-center text-2xl md:text-4xl text-primary mb-8 z-10 font-tinos">
         {'Diki : Data Wiki'}
       </div>
       <div className="w-full min-h-[30vh] flex flex-col md:flex-row justify-center items-center gap-5 md:gap-10 z-10 mb-10">
@@ -31,14 +24,14 @@ const ContactClient = ({ profile }: ContactClientProps) => {
             className="flex flex-col md:flex-row justify-center items-center text-center transition-transform gap-0 md:gap-10 border w-full py-5 md:py-0 border-gray4 rounded-xl md:border-0"
           >
             <div className='size-24 md:size-36 rounded-full md:rounded-xl flex items-center justify-center my-2 mb-4' style={{ backgroundImage: `url(${ p.thumbnail })`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
-            <div className='flex flex-col justify-center items-center md:items-start'>
-              <h2 className="text-xl md:text-2xl font-semibold text-main">
+            <div className='flex flex-col justify-center items-center md:items-start gap-1'>
+              <h2 className="text-center text-xl md:text-2xl font-semibold text-main">
                 {p.name}
               </h2>
-              <div className='text-sm md:text-base text-primary mt-1 mb-2 md:mt-2 md:mb-4'>
+              <div className='text-[13px] md:text-base text-primary text-center font-tinos'>
                 {p.role}
               </div>
-              <div className="flex items-center justify-center gap-4 mb-2">
+              <div className="flex items-center justify-center gap-4 mt-2">
                 <TooltipButton
                   isLink={true}
                   tooltip="메일 보내기"
@@ -53,15 +46,19 @@ const ContactClient = ({ profile }: ContactClientProps) => {
                   href={`https://github.com/${ p.social.github }`}
                   className="p-2 border border-light rounded-md shrink-0"
                 >
-                  <img
+                  <Image
                     src="/images/github-mark.png"
                     alt="github"
                     className="block dark:hidden size-6 md:size-5"
+                    width={24}
+                    height={24}
                   />
-                  <img
+                  <Image
                     src="/images/github-mark-white.png"
                     alt="github"
                     className="hidden dark:block size-6 md:size-5"
+                    width={24}
+                    height={24}
                   />
                 </TooltipButton>
                 <TooltipButton
@@ -70,10 +67,12 @@ const ContactClient = ({ profile }: ContactClientProps) => {
                   href={`https://linkedin.com/in/${ p.social.linkedin }`}
                   className="p-2 border border-light rounded-md shrink-0"
                 >
-                  <img
+                  <Image
                     src="/images/linkedin.jpeg"
                     alt="linkedin"
                     className="rounded-sm size-6 md:size-5"
+                    width={24}
+                    height={24}
                   />
                 </TooltipButton>
               </div>

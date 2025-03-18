@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { fontCoding, fontTinos } from '@/libs/fonts';
 import './globals.css';
 import ThemeProvider from '@/layouts/ThemeProvider';
 import Header from '@/components/common/Header';
@@ -69,7 +70,7 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
         <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js" />
       </head>
       <body
-        className='overflow-x-hidden overflow-y-auto'
+        className={`${ fontCoding.variable } ${ fontTinos.variable } overflow-x-hidden overflow-y-auto`}
       >
         <ReduxProvider>
           <StoreInitializer terms={terms} />
