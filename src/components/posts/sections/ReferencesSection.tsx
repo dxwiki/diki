@@ -99,43 +99,73 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
 
   // 상세 정보 포맷팅 함수들
   const formatTutorialDetails = (tutorial: NonNullable<References['tutorials']>[number]) => {
-    return tutorial.platform ? [tutorial.platform] : [];
+    return tutorial.platform ? [
+      <div key="platform" className="flex items-start gap-1.5">
+        <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['튜토리얼'].border } ${ colorConfig['튜토리얼'].text }`}>
+          {'플랫폼'}
+        </span>
+        <span className='text-sm font-medium'>{tutorial.platform}</span>
+      </div>,
+    ] : [];
   };
 
   const formatBookDetails = (book: NonNullable<References['books']>[number]) => {
     const parts = [];
 
     if (book.authors?.length) {
-      parts.push(book.authors.join(', '));
+      parts.push(
+        <div key="authors" className="flex items-start gap-1.5">
+          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['참고서적'].border } ${ colorConfig['참고서적'].text }`}>
+            {'저자'}
+          </span>
+          <span className='text-sm font-medium'>
+            {book.authors.join(', ')}
+            {book.publisher && <span>{'('}{book.publisher}</span>}
+            {book.year && !book.publisher && <span>{'('}{book.year}{')'}</span>}
+            {book.year && book.publisher && <span>{', '}{book.year}{')'}</span>}
+            {!book.year && book.publisher && <span>{')'}</span>}
+          </span>
+        </div>
+      );
     }
 
-    const parenthesisParts = [];
-    if (book.year) parenthesisParts.push(book.year);
-    if (book.publisher) parenthesisParts.push(book.publisher);
-
-    if (parenthesisParts.length) {
-      parts.push(`(${ parenthesisParts.join(', ') })`);
+    if (book.isbn) {
+      parts.push(
+        <div key="isbn" className="flex items-start gap-1.5">
+          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['참고서적'].border } ${ colorConfig['참고서적'].text }`}>
+            {'ISBN'}
+          </span>
+          <span className='text-sm font-medium'>{book.isbn}</span>
+        </div>
+      );
     }
 
-    return [parts.join(' '), book.isbn ? `ISBN: ${ book.isbn }` : null].filter(Boolean);
+    return parts;
   };
 
   const formatAcademicDetails = (paper: NonNullable<References['academic']>[number]) => {
     const parts = [];
 
-    const authorYear = [];
     if (paper.authors?.length) {
-      authorYear.push(paper.authors.join(', '));
-    }
-    if (paper.year) {
-      authorYear.push(`(${ paper.year })`);
-    }
-    if (authorYear.length) {
-      parts.push(authorYear.join(' '));
+      parts.push(
+        <div key="authors" className="flex items-start gap-1.5">
+          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['연구논문'].border } ${ colorConfig['연구논문'].text }`}>
+            {'저자'}
+          </span>
+          <span className='text-sm font-medium'>{paper.authors.join(', ')}{paper.year && <span>{'('}{paper.year}{')'}</span>}</span>
+        </div>
+      );
     }
 
     if (paper.doi) {
-      parts.push(`DOI: ${ paper.doi }`);
+      parts.push(
+        <div key="doi" className="flex items-start gap-1.5">
+          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['연구논문'].border } ${ colorConfig['연구논문'].text }`}>
+            {'DOI'}
+          </span>
+          <span className='text-sm font-medium'>{paper.doi}</span>
+        </div>
+      );
     }
 
     return parts;
@@ -145,10 +175,25 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
     const parts = [];
 
     if (project.description) {
-      parts.push(project.description);
+      parts.push(
+        <div key="description" className="flex items-start gap-1.5">
+          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['오픈소스'].border } ${ colorConfig['오픈소스'].text }`}>
+            {'설명'}
+          </span>
+          <span className='text-sm font-medium'>{project.description}</span>
+        </div>
+      );
     }
+
     if (project.license) {
-      parts.push(`License: ${ project.license }`);
+      parts.push(
+        <div key="license" className="flex items-start gap-1.5">
+          <span className={`text-xs px-1.5 py-0.5 border rounded-full shrink-0 ${ colorConfig['오픈소스'].border } ${ colorConfig['오픈소스'].text }`}>
+            {'라이선스'}
+          </span>
+          <span className='text-sm font-medium'>{project.license}</span>
+        </div>
+      );
     }
 
     return parts;
@@ -215,8 +260,8 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
                   !getExternalLink(item) ? 'cursor-default' : ''
                 }`}
               >
-                <span className="flex justify-between">
-                  <span className={`text-[13px] ${ colors.text } font-medium mb-1 block`}>
+                <span className="flex justify-between mb-2">
+                  <span className={`text-[13px] ${ colors.text } font-medium block`}>
                     {section === 'tutorials' && '튜토리얼'}
                     {section === 'books' && '참고서적'}
                     {section === 'academic' && '연구논문'}
@@ -228,9 +273,11 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
                     </span>
                   )}
                 </span>
-                {formatDetails(item).map((detail, i) => (
-                  detail && <span key={i} className='text-sm font-medium block'>{detail}</span>
-                ))}
+                <div className="flex flex-col gap-1.5">
+                  {formatDetails(item).map((detail, i) => (
+                    detail && <React.Fragment key={i}>{detail}</React.Fragment>
+                  ))}
+                </div>
               </a>
             </div>
           </div>
