@@ -135,8 +135,8 @@ const SearchDetailInput = () => {
       border-color: var(--background) !important;
     }
     .react-datepicker__day:hover {
-      background-color: var(--gray3) !important;
-      color: var(--text) !important;
+      background-color: var(--accent) !important;
+      color: white !important;
     }
     .react-datepicker__month-container {
         width: 240px !important;
@@ -156,7 +156,7 @@ const SearchDetailInput = () => {
     }
     .react-datepicker__month-text--selected,
     .react-datepicker__month-text--keyboard-selected{
-      background-color: var(--background-secondary) !important;
+      background-color: var(--background-secondary);
       color: var(--text) !important;
     }
     .react-datepicker__header {
@@ -187,6 +187,16 @@ const SearchDetailInput = () => {
     }
     .react-datepicker__day--today {
       color: var(--primary) !important;
+    }
+    .react-datepicker__month-text--in-range, .react-datepicker__month-text--in-selecting-range  {
+      background-color: var(--background-secondary) !important;
+    }
+    .react-datepicker__month-text--in-range:hover, .react-datepicker__month-text--in-selecting-range:hover {
+      background-color: var(--accent) !important;
+      color: white !important;
+    }
+    .react-datepicker__month-text--today {
+      background-color: var(--background);
     }
   `;
 

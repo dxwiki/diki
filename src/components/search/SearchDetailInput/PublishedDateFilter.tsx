@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
@@ -24,20 +21,32 @@ const PublishedDateFilter = ({
   handleDateChange,
   formatDateRange,
 }: PublishedDateFilterProps) => {
-  // 월/년 선택 모드 상태 추가
   const [isMonthYearPickerVisible, setIsMonthYearPickerVisible] = useState(false);
 
-  // 월 선택 핸들러
-  const handleMonthYearChange = (date: Date) => {
-    // 선택한 월의 첫날과 마지막날을 계산
-    const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
-    const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  const handleMonthYearChange = (dates: [Date | null, Date | null]) => {
+    if (!dates[0]) return;
 
-    // 날짜 범위 업데이트
+    if (!dates[1]) {
+      const startDate = new Date(dates[0].getFullYear(), dates[0].getMonth(), 1);
+      // const endDate = new Date(dates[0].getFullYear(), dates[0].getMonth() + 1, 0);
+      handleDateChange([startDate, null], 'published');
+      return;
+    }
+
+    const startDate = new Date(dates[0].getFullYear(), dates[0].getMonth(), 1);
+    const endDate = new Date(dates[1].getFullYear(), dates[1].getMonth() + 1, 0);
+
     handleDateChange([startDate, endDate], 'published');
-
-    // 월/년 선택 모드 종료
     setIsMonthYearPickerVisible(false);
+  };
+
+  // 월/년 선택 모드로 전환할 때 날짜 초기화하는 함수 추가
+  const handleMonthYearPickerToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isMonthYearPickerVisible) {
+      handleDateChange([null, null], 'published');
+    }
+    setIsMonthYearPickerVisible(!isMonthYearPickerVisible);
   };
 
   return (
@@ -60,16 +69,15 @@ const PublishedDateFilter = ({
       </span>
       {activeModal === 'publishedDate' && (
         <div className="filter-modal absolute top-full left-0 mt-2 w-64 border border-primary bg-background shadow-lg dark:shadow-gray5 rounded-lg p-3.5 z-10">
-          {/* <div className="text-sm font-medium mb-2.5">{'발행일'}</div> */}
+          <div className="text-sm font-medium mb-2.5">{publishedDateRange[0]?.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+          <div className="text-sm font-medium mb-2.5">{publishedDateRange[1]?.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
           <div className="flex justify-center">
             <DatePicker
               selected={publishedDateRange[0]}
               onChange={(dates: [Date | null, Date | null]) => {
                 if (isMonthYearPickerVisible) {
-                  // 월/년 선택 모드에서는 단일 날짜가 선택됨
-                  handleMonthYearChange(dates as unknown as Date);
+                  handleMonthYearChange(dates);
                 } else {
-                  // 일반 모드에서는 날짜 범위가 선택됨
                   handleDateChange([
                     dates[0] || undefined,
                     dates[1] || undefined,
@@ -78,8 +86,7 @@ const PublishedDateFilter = ({
               }}
               startDate={publishedDateRange[0]}
               endDate={publishedDateRange[1]}
-              {...(!isMonthYearPickerVisible ? { selectsRange: true } : {})}
-              selectsMultiple={false}
+              selectsRange={true}
               calendarClassName="dark:bg-background"
               locale={ko}
               inline
@@ -114,8 +121,7 @@ const PublishedDateFilter = ({
 
                       <div
                         onClick={(e) => {
-                          e.stopPropagation();
-                          setIsMonthYearPickerVisible(true);
+                          handleMonthYearPickerToggle(e);
                         }}
                         className="cursor-pointer font-semibold text-main text-sm"
                       >
