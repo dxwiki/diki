@@ -40,21 +40,21 @@ const ThemeSwitch = () => {
   );
 
   return (
-    <TooltipButton tooltip='테마'>
-      <Dropdown>
+    <Dropdown>
+      <TooltipButton tooltip='테마'>
         <DropdownTrigger>
           <button className='flex rounded-md p-2 hover:bg-background-secondary duration-300'>
             <Sun className='size-4 rotate-180 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
             <Moon className='absolute size-4 rotate-180 scale-0 transition-all dark:rotate-0 dark:scale-100' />
           </button>
         </DropdownTrigger>
-        <DropdownList align='end'>
-          <ThemeItem newTheme='light' label='Light' Icon={Sun} />
-          <ThemeItem newTheme='dark' label='Dark' Icon={Moon} />
-          <ThemeItem newTheme='system' label='System' Icon={Monitor} />
-        </DropdownList>
-      </Dropdown>
-    </TooltipButton>
+      </TooltipButton>
+      <DropdownList align='end'>
+        <ThemeItem newTheme='light' label='Light' Icon={Sun} />
+        <ThemeItem newTheme='dark' label='Dark' Icon={Moon} />
+        <ThemeItem newTheme='system' label='System' Icon={Monitor} />
+      </DropdownList>
+    </Dropdown>
   );
 };
 
