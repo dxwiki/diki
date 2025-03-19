@@ -57,8 +57,7 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
     if (!bounds) return;
 
     const percent = Math.max(0, Math.min(100, (e.clientX - bounds.left) / bounds.width * 100));
-    const segmentWidth = 100 / (displayLevels.length - 1);
-    const clickedValue = Math.round(percent / segmentWidth);
+    const clickedValue = (percent / 100) * (displayLevels.length - 1);
     const clampedValue = Math.max(0, Math.min(displayLevels.length - 1, clickedValue));
 
     // 클릭한 위치가 시작 핸들과 끝 핸들 사이에 있는지 확인
@@ -69,18 +68,18 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
 
       const newRange: [number, number] = [...range];
       if (distanceToStart <= distanceToEnd) {
-        newRange[0] = clampedValue;
+        newRange[0] = Math.round(clampedValue);
       } else {
-        newRange[1] = clampedValue;
+        newRange[1] = Math.round(clampedValue);
       }
       onRangeChange(newRange);
     } else {
       // 클릭한 위치가 범위 밖에 있는 경우, 가장 가까운 핸들을 이동
       const newRange: [number, number] = [...range];
       if (clampedValue <= range[0]) {
-        newRange[0] = clampedValue;
+        newRange[0] = Math.round(clampedValue);
       } else {
-        newRange[1] = clampedValue;
+        newRange[1] = Math.round(clampedValue);
       }
       onRangeChange(newRange);
     }
@@ -108,18 +107,32 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
             left: `${ getPositionFromValue(index) + 4.5 }%`,
             transform: 'translateX(-50%)',
           }}
-          onClick={() => {
-            const distanceToStart = Math.abs(index - range[0]);
-            const distanceToEnd = Math.abs(index - range[1]);
+          onClick={(e) => {
+            e.stopPropagation();
 
-            const newRange: [number, number] = [...range];
-            if (distanceToStart <= distanceToEnd) {
-              newRange[0] = index;
+            // 클릭한 마커가 현재 범위 내에 있는지 확인
+            if (index > range[0] && index < range[1]) {
+              // 더 가까운 핸들을 이동
+              const distanceToStart = Math.abs(index - range[0]);
+              const distanceToEnd = Math.abs(index - range[1]);
+
+              const newRange: [number, number] = [...range];
+              if (distanceToStart <= distanceToEnd) {
+                newRange[0] = index;
+              } else {
+                newRange[1] = index;
+              }
+              onRangeChange(newRange);
             } else {
-              newRange[1] = index;
+              // 범위 밖에 있는 경우 가장 가까운 핸들을 이동
+              const newRange: [number, number] = [...range];
+              if (index <= range[0]) {
+                newRange[0] = index;
+              } else {
+                newRange[1] = index;
+              }
+              onRangeChange(newRange);
             }
-
-            onRangeChange(newRange);
           }}
         >
           {level}
