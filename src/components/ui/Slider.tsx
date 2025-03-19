@@ -26,18 +26,13 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging || !activeHandle) return;
 
-    const getValueFromPosition = (position: number) => {
-      const bounds = sliderRef.current?.getBoundingClientRect();
-      if (!bounds) return 0;
+    const bounds = sliderRef.current?.getBoundingClientRect();
+    if (!bounds) return;
 
-      const percent = Math.max(0, Math.min(100, (position - bounds.left) / bounds.width * 100));
-      const index = Math.round((percent / 100) * (displayLevels.length - 1));
-      return Math.max(0, Math.min(displayLevels.length - 1, index));
-    };
+    const percent = Math.max(0, Math.min(100, (e.clientX - bounds.left) / bounds.width * 100));
+    const newValue = (percent / 100) * (displayLevels.length - 1);
 
-    const newValue = getValueFromPosition(e.clientX);
     const newRange: [number, number] = [...range];
-
     if (activeHandle === 'start') {
       newRange[0] = Math.min(newValue, range[1]);
     } else {
@@ -47,10 +42,16 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
     onRangeChange(newRange);
   }, [isDragging, activeHandle, range, onRangeChange, displayLevels.length]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
     setActiveHandle(null);
-  };
+
+    // Snap to nearest marker
+    const newRange: [number, number] = [...range];
+    newRange[0] = Math.round(newRange[0]);
+    newRange[1] = Math.round(newRange[1]);
+    onRangeChange(newRange);
+  }, [range, onRangeChange]);
 
   const handleTrackClick = useCallback((e: React.MouseEvent) => {
     const bounds = sliderRef.current?.getBoundingClientRect();
@@ -94,7 +95,7 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, activeHandle, handleMouseMove]);
+  }, [isDragging, activeHandle, handleMouseMove, handleMouseUp]);
 
   return (
     <div className="relative w-full h-12 px-2">
@@ -145,6 +146,7 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
         style={{
           left: `${ getPositionFromValue(range[0]) + 4.5 }%`,
           transform: 'translateX(-50%)',
+          opacity: isDragging && activeHandle === 'start' ? 0 : 1,
         }}
       >
         {displayLevels[range[0]]}
@@ -156,6 +158,7 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
         style={{
           left: `${ getPositionFromValue(range[1]) + 4.5 }%`,
           transform: 'translateX(-50%)',
+          opacity: isDragging && activeHandle === 'end' ? 0 : 1,
         }}
       >
         {displayLevels[range[1]]}
@@ -192,6 +195,8 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
           style={{
             left: `${ getPositionFromValue(range[0]) }%`,
             right: `${ 100 - getPositionFromValue(range[1]) }%`,
+            transition: isDragging ? 'none' : 'left 0.2s ease-out, right 0.2s ease-out',
+
           }}
         />
 
@@ -200,14 +205,23 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
           className={`absolute size-3 -mt-px ml-[-6px] bg-primary rounded-full cursor-pointer z-30 ${
             activeHandle === 'start' ? 'ring-4 ring-primary/10 dark:ring-primary/30' : ''
           }`}
-          style={{ left: `${ getPositionFromValue(range[0]) }%`, top: '9px' }}
+          style={{
+            left: `${ getPositionFromValue(range[0]) }%`,
+            top: '9px',
+            transition: isDragging ? 'none' : 'left 0.2s ease-out, opacity 0.1s ease-out',
+          }}
           onMouseDown={(e) => handleMouseDown(e, 'start')}
         />
         <div
           className={`absolute size-3 -mt-px ml-[-6px] bg-primary rounded-full cursor-pointer z-30 ${
             activeHandle === 'end' ? 'ring-4 ring-primary/10 dark:ring-primary/30' : ''
           }`}
-          style={{ left: `${ getPositionFromValue(range[1]) }%`, top: '9px' }}
+          style={{
+            left: `${ getPositionFromValue(range[1]) }%`,
+            top: '9px',
+            transition: isDragging ? 'none' : 'left 0.2s ease-out, opacity 0.1s ease-out',
+
+          }}
           onMouseDown={(e) => handleMouseDown(e, 'end')}
         />
       </div>
