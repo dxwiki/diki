@@ -18,7 +18,7 @@ const SearchInput = () => {
   const { searchQuery } = useSelector((state: RootState) => state.search);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const placeholder = terms.length ? `${ terms.length }개의 데이터 용어 검색` : '검색어 입력해주세요';
+  const [placeholder, setPlaceholder] = useState('검색어 입력해주세요');
   const router = useRouter();
   const [recommendedTerms, setRecommendedTerms] = useState<TermData[]>([]);
   const SUGGESTION_COUNT = 6;
@@ -30,6 +30,10 @@ const SearchInput = () => {
     dispatch(setCurrentPage(1));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    setPlaceholder(terms.length ? `${ terms.length }개의 데이터 용어 검색` : '검색어 입력해주세요');
+  }, [terms.length]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

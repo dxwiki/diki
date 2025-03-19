@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Search, ChevronLeft } from 'lucide-react';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
@@ -43,7 +43,11 @@ const SearchDetailInput = () => {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const query = searchParams.get('q') || '';
-  const placeholder = terms.length ? `${ terms.length }개의 데이터 용어 검색` : '검색어 입력해주세요';
+  const [placeholder, setPlaceholder] = useState('검색어 입력해주세요');
+
+  useEffect(() => {
+    setPlaceholder(terms.length ? `${ terms.length }개의 데이터 용어 검색` : '검색어 입력해주세요');
+  }, [terms.length]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
