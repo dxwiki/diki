@@ -76,4 +76,24 @@ const fetchProfilesData = async (): Promise<Profile[]> => {
   }
 };
 
-export { fetchTermsData, getTermData, getTermDataByID, fetchProfilesData };
+// 작성자별 글 목록을 가져오는 함수
+async function fetchTermsByAuthor(authorSlug: string) {
+  const profiles = await fetchProfilesData();
+  const profile = profiles.find((p) => p.username === authorSlug);
+
+  if (!profile) return [];
+
+  // 여기서는 모든 글을 가져온 후 필터링하는 방식을 사용
+  // 실제로는 DB 쿼리나 API 호출로 최적화할 수 있음
+  const { fetchTermsData } = await import('@/utils/fetchData');
+  const allTerms = await fetchTermsData();
+
+  // 작성자 ID가 authors 배열에 포함되어 있는지 확인
+  return allTerms.filter((term) =>
+    term.metadata?.authors
+    && Array.isArray(term.metadata.authors)
+    && term.metadata.authors.includes(profile.name)
+  );
+}
+
+export { fetchTermsData, getTermData, getTermDataByID, fetchProfilesData, fetchTermsByAuthor };

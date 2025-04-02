@@ -7,6 +7,7 @@ export interface SocialType {
 export interface Profile {
   id: number;
   email: string;
+  username: string;
   name: string;
   role: string;
   social: SocialType;
