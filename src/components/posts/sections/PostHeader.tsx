@@ -1,22 +1,46 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TermData } from '@/types';
 import { formatDate, getAuthorSlug } from '@/utils/filters';
 import DifficultyLevel from './DifficultyLevel';
 import Level from '@/components/ui/Level';
 import TooltipButton from '@/components/ui/TooltipButton';
 import { Share2 } from 'lucide-react';
-
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 interface PostHeaderProps {
   term: TermData
   onShare: ()=> void;
 }
 
 const PostHeader = ({ term, onShare }: PostHeaderProps) => {
+  const profiles = useSelector((state: RootState) => state.profiles.profiles);
+  const [authorSlugs, setAuthorSlugs] = useState<{[key: string]: string}>({});
+  const [isDataReady, setIsDataReady] = useState(false);
+  
   const handleShareClick = useCallback((): void => {
     onShare();
   }, [onShare]);
+
+  useEffect(() => {
+    if (profiles && profiles.length > 0 && term.metadata?.authors) {
+      const slugs: {[key: string]: string} = {};
+      term.metadata.authors.forEach(author => {
+        slugs[author] = getAuthorSlug(author);
+      });
+      
+      setAuthorSlugs(slugs);
+      setIsDataReady(true);
+    }
+  }, [profiles, term.metadata?.authors]);
+
+  if(!isDataReady) {
+    return (
+      <LoadingSpinner />
+    );
+  }
 
   return (
     <div className='animate-intro sm:ml-5'>
@@ -54,7 +78,7 @@ const PostHeader = ({ term, onShare }: PostHeaderProps) => {
                 <TooltipButton
                   tooltip={`${ author }님의 포스트 보기`}
                   isLink={true}
-                  href={`/profiles/${ getAuthorSlug(author) }`}
+                  href={`/profiles/${authorSlugs[author] || ''}`}
                   className="text-primary hover:text-accent hover:underline"
                 >
                   {author}

@@ -14,6 +14,7 @@ async function fetchAndSaveProfiles() {
         id: data.id,
         email: data.email,
         name: data.name,
+        username: data.username,
         role: data.role,
         thumbnail: data.thumbnail,
         social: {

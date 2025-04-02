@@ -10,7 +10,7 @@ import { dikiMetadata } from '@/constants';
 import Script from 'next/script';
 import ReduxProvider from '@/components/redux/ReduxProvider';
 import HydrateStore from '@/components/redux/HydrateStore';
-import { fetchTermsData } from '@/utils/fetchData';
+import { fetchTermsData, fetchProfilesData } from '@/utils/fetchData';
 import Footer from '@/components/common/Footer';
 import './assets/font/font.css';
 import { createPreloadedStateScript } from '@/utils/stateHydration';
@@ -56,9 +56,10 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: RootLayoutProps) => {
   const terms = await fetchTermsData();
+  const profiles = await fetchProfilesData();
 
   // Generate the script for hydrating the store
-  const preloadedStateScript = createPreloadedStateScript(terms);
+  const preloadedStateScript = createPreloadedStateScript(terms, profiles);
 
   return (
     <html lang='en' suppressHydrationWarning>

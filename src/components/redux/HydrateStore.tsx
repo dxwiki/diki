@@ -3,6 +3,18 @@
 import { useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setTerms } from '@/store/termsSlice';
+import { setProfiles } from '@/store/profilesSlice';
+import { Profile, TermData } from '@/types';
+
+// 전역 데이터 객체 선언
+declare global {
+  interface Window {
+    __PRELOADED_STATE__: {
+      terms: TermData[];
+      profiles: Profile[];
+    };
+  }
+}
 
 export default function HydrateStore() {
   const dispatch = useDispatch();
@@ -15,9 +27,10 @@ export default function HydrateStore() {
 
       // 전역 변수를 렌더링 된 페이지에 전달
       dispatch(setTerms(preloadedState.terms));
+      dispatch(setProfiles(preloadedState.profiles));
 
       // 메모리 문제를 방지하기 위해 전역 변수를 빈 객체로 설정
-      window.__PRELOADED_STATE__ = { terms: [] };
+      window.__PRELOADED_STATE__ = { terms: [], profiles: [] };
 
       initialized.current = true;
     }

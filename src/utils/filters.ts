@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import profiles from '@/data/profiles.json';
+import { Profile } from '@/types';
+import { store } from '@/store';
 
 export const transformToSlug = (text: string): string => {
   return text.toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-');
@@ -10,6 +11,13 @@ export const formatDate = (date: string): string => {
 };
 
 export const getAuthorSlug = (author: string): string => {
-  const profile = profiles.find((p) => p.name === author);
-  return profile?.username ?? '';
+  const profiles = store.getState().profiles.profiles;
+  
+  if (!profiles || profiles.length === 0) {
+    return '';
+  }
+  const profile = profiles.find((p: Profile) => p.name === author);
+  const username = profile?.username ?? '';
+  
+  return username;
 };
