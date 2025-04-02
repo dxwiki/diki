@@ -9,11 +9,9 @@ import GoogleAnalytics from '@/components/meta/GoogleAnalytics';
 import { dikiMetadata } from '@/constants';
 import Script from 'next/script';
 import ReduxProvider from '@/components/redux/ReduxProvider';
-import HydrateStore from '@/components/redux/HydrateStore';
-import { fetchTermsData, fetchProfilesData } from '@/utils/fetchData';
+import DataInitializer from '@/components/redux/DataInitializer';
 import Footer from '@/components/common/Footer';
 import './assets/font/font.css';
-import { createPreloadedStateScript } from '@/utils/stateHydration';
 
 interface RootLayoutProps {
   readonly children: React.ReactNode;
@@ -55,12 +53,6 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = async ({ children }: RootLayoutProps) => {
-  const terms = await fetchTermsData();
-  const profiles = await fetchProfilesData();
-
-  // Generate the script for hydrating the store
-  const preloadedStateScript = createPreloadedStateScript(terms, profiles);
-
   return (
     <html lang='en' suppressHydrationWarning>
       <head>
@@ -73,16 +65,12 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
           strategy="afterInteractive"
         />
         <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js" />
-        <script
-          id="__PRELOADED_STATE__"
-          dangerouslySetInnerHTML={{ __html: preloadedStateScript }}
-        />
       </head>
       <body
         className={`${ fontCoding.variable } ${ fontTinos.variable } overflow-x-hidden overflow-y-auto`}
       >
         <ReduxProvider>
-          <HydrateStore />
+          <DataInitializer />
           <ThemeProvider>
             <Header />
             <main className='mt-16 max-w-6xl min-h-[calc(100vh_-150px)] mx-auto px-4 py-3 md:px-6 lg:px-8'>{children}</main>

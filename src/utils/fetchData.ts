@@ -6,6 +6,7 @@ import { setProfiles, setLoading as setProfilesLoading, setError as setProfilesE
 import fs from 'fs';
 import path from 'path';
 
+// 서버 사이드에서 실행되는 함수 (getStaticProps, getServerSideProps 등에서 사용)
 let terms: TermData[] = [];
 const fetchTermsData = async (): Promise<TermData[]> => {
   store.dispatch(setTermsLoading(true));
@@ -31,6 +32,25 @@ const fetchTermsData = async (): Promise<TermData[]> => {
     store.dispatch(setTermsLoading(false));
     store.dispatch(setTermsError('데이터 로드 실패'));
 
+    return [];
+  }
+};
+
+// 클라이언트 사이드에서 사용할 함수 (이미 Redux 스토어에 데이터가 로드되어 있다고 가정)
+export const getClientTermsData = (): TermData[] => {
+  try {
+    const state = store.getState();
+    const termsData = state.terms.terms;
+
+    // 데이터가 없으면 빈 배열 반환
+    if (!termsData || termsData.length === 0) {
+      console.warn('Terms data not found in Redux store');
+      return [];
+    }
+
+    return termsData;
+  } catch (error) {
+    console.error('Error getting terms data from Redux store:', error);
     return [];
   }
 };
@@ -74,6 +94,25 @@ const fetchProfilesData = async (): Promise<Profile[]> => {
     console.error('Error fetching profiles:', error);
     store.dispatch(setProfilesLoading(false));
     store.dispatch(setProfilesError('프로필 데이터 로드 실패'));
+    return [];
+  }
+};
+
+// 클라이언트 사이드에서 사용할 함수 (이미 Redux 스토어에 데이터가 로드되어 있다고 가정)
+export const getClientProfilesData = (): Profile[] => {
+  try {
+    const state = store.getState();
+    const profilesData = state.profiles.profiles;
+
+    // 데이터가 없으면 빈 배열 반환
+    if (!profilesData || profilesData.length === 0) {
+      console.warn('Profiles data not found in Redux store');
+      return [];
+    }
+
+    return profilesData;
+  } catch (error) {
+    console.error('Error getting profiles data from Redux store:', error);
     return [];
   }
 };

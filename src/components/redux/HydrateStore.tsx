@@ -1,41 +1,27 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { setTerms } from '@/store/termsSlice';
-import { setProfiles } from '@/store/profilesSlice';
-import { Profile, TermData } from '@/types';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
-// 전역 데이터 객체 선언
-declare global {
-  interface Window {
-    __PRELOADED_STATE__: {
-      terms: TermData[];
-      profiles: Profile[];
-    };
-  }
-}
-
+// 스토어의 하이드레이션 상태를 확인하는 컴포넌트
 export default function HydrateStore() {
-  const dispatch = useDispatch();
-  const initialized = useRef(false);
+  const termsCount = useSelector((state: RootState) => state.terms.terms.length);
+  const profilesCount = useSelector((state: RootState) => state.profiles.profiles.length);
+  const termsLoading = useSelector((state: RootState) => state.terms.loading);
+  const profilesLoading = useSelector((state: RootState) => state.profiles.loading);
 
+  // 디버깅을 위한 로깅
   useEffect(() => {
-    if (!initialized.current && typeof window !== 'undefined') {
-      // 윈도우 객체에서 전역 변수를 가져옴
-      const preloadedState = window.__PRELOADED_STATE__;
+    if (typeof window !== 'undefined') {
+      console.log(`Redux store state: ${ termsCount } terms, ${ profilesCount } profiles`);
+      console.log(`Loading states: terms=${ termsLoading }, profiles=${ profilesLoading }`);
 
-      // 전역 변수를 렌더링 된 페이지에 전달
-      dispatch(setTerms(preloadedState.terms));
-      dispatch(setProfiles(preloadedState.profiles));
-
-      // 메모리 문제를 방지하기 위해 전역 변수를 빈 객체로 설정
-      window.__PRELOADED_STATE__ = { terms: [], profiles: [] };
-
-      initialized.current = true;
+      if (termsCount === 0 || profilesCount === 0) {
+        console.warn('데이터가 비어 있습니다. 초기화가 제대로 되었는지 확인하세요.');
+      }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [termsCount, profilesCount, termsLoading, profilesLoading]);
 
   return null;
 }
