@@ -1,8 +1,10 @@
 'use client';
 
+import Link from 'next/link';
+import Image from 'next/image';
 import { Profile } from '@/types';
 import { Mail } from 'lucide-react';
-import Image from 'next/image';
+import { getAuthorSlug } from '@/utils/filters';
 import TooltipButton from '@/components/ui/TooltipButton';
 interface ContactClientProps {
   profile: Profile[];
@@ -14,21 +16,31 @@ const ContactClient = ({ profile }: ContactClientProps) => {
       <h2 className="w-full flex justify-center items-center text-4xl md:text-8xl font-bold text-sub mt-10 md:mt-40 mb-4 z-10">
         {'Contact Us'}
       </h2>
-      <div className="w-full flex justify-center items-center text-2xl md:text-4xl text-primary mb-8 z-10 font-tinos">
+      <Link
+        href="/"
+        className="w-full flex justify-center items-center text-2xl md:text-4xl text-primary mb-8 z-10 font-tinos"
+      >
         {'Diki : Data Wiki'}
-      </div>
+      </Link>
       <div className="w-full min-h-[30vh] flex flex-col md:flex-row justify-center items-center gap-5 md:gap-10 z-10 mb-10">
         {profile.map((p: Profile) => (
           <div
             key={p.id}
             className="flex flex-col md:flex-row justify-center items-center text-center transition-transform gap-0 md:gap-10 border w-full py-5 md:py-0 border-gray4 rounded-xl md:border-0"
           >
-            <div className='size-24 md:size-36 rounded-full md:rounded-xl flex items-center justify-center my-2 mb-4' style={{ backgroundImage: `url(${ p.thumbnail })`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <Link href={`/profiles/${ getAuthorSlug(p.name) }`}>
+              <div className='size-24 md:size-36 rounded-full md:rounded-xl flex items-center justify-center my-2 mb-4' style={{ backgroundImage: `url(${ p.thumbnail })`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            </Link>
             <div className='flex flex-col justify-center items-center md:items-start gap-1'>
-              <h2 className="text-center text-xl md:text-2xl font-semibold text-main">
+              <TooltipButton
+                tooltip={`${ p.name }님의 포스트 보기`}
+                isLink={true}
+                href={`/profiles/${ getAuthorSlug(p.name) }`}
+                className='text-center text-xl md:text-2xl font-semibold text-primary hover:text-accent hover:underline hover:underline-offset-4'
+              >
                 {p.name}
-              </h2>
-              <div className='text-[13px] md:text-base text-primary text-center font-tinos'>
+              </TooltipButton>
+              <div className='text-[13px] md:text-base text-main text-center font-tinos'>
                 {p.role}
               </div>
               <div className="flex items-center justify-center gap-4 mt-2">

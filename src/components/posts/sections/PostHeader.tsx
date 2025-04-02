@@ -2,11 +2,12 @@
 
 import { useCallback } from 'react';
 import { TermData } from '@/types';
-import { formatDate } from '@/utils/filters';
+import { formatDate, getAuthorSlug } from '@/utils/filters';
 import DifficultyLevel from './DifficultyLevel';
 import Level from '@/components/ui/Level';
 import TooltipButton from '@/components/ui/TooltipButton';
 import { Share2 } from 'lucide-react';
+
 interface PostHeaderProps {
   term: TermData
   onShare: ()=> void;
@@ -31,7 +32,6 @@ const PostHeader = ({ term, onShare }: PostHeaderProps) => {
                   >
                     <Share2 className='block md:hidden size-5 ml-1 text-gray1 hover:text-primary' />
                   </button>
-
                 </span>
               )
             }
@@ -47,7 +47,25 @@ const PostHeader = ({ term, onShare }: PostHeaderProps) => {
         </div>
       </div>
       <div className='flex justify-start gap-1 text-[13px] my-2'>
-        <span className='text-main'>{term.metadata?.authors ?? '작가 확인 안됨'}</span>
+        <span className='text-main flex flex-wrap gap-1'>
+          {term.metadata?.authors && term.metadata.authors.length > 0 ? (
+            term.metadata.authors.map((author, index) => (
+              <span key={author}>
+                <TooltipButton
+                  tooltip={`${ author }님의 포스트 보기`}
+                  isLink={true}
+                  href={`/profiles/${ getAuthorSlug(author) }`}
+                  className="text-primary hover:text-accent hover:underline"
+                >
+                  {author}
+                </TooltipButton>
+                {index < (term.metadata?.authors?.length ?? 0) - 1 && ', '}
+              </span>
+            ))
+          ) : (
+            '작가 확인 안됨'
+          )}
+        </span>
         <span className="text-light">{'•'}</span>
         <div className='flex gap-1 items-center'>
           {
