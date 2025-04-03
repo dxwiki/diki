@@ -26,11 +26,11 @@ const UsecaseSection = ({ usecase }: UsecaseSectionProps) => {
       </div>
       <div className='grid grid-cols-[auto_1fr] items-start gap-2'>
         <span className='tag-button-no-link flex justify-center rounded-lg text-sm text-sub mt-px pl-2.5 pr-[9px] bg-gray5'>
-          {'개념'}
+          {'개요'}
         </span>
         <MarkdownContent content={usecase.description ?? ''} />
         <span className='tag-button-no-link flex justify-center rounded-lg text-sm text-sub mt-px pl-2.5 pr-[9px] bg-gray5'>
-          {'예시'}
+          {'사례'}
         </span>
         <MarkdownContent content={usecase.example ?? ''} />
       </div>
