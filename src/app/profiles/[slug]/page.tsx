@@ -2,8 +2,8 @@ import { fetchProfilesData } from '@/utils/fetchData';
 import Footer from '@/components/common/Footer';
 import { dikiMetadata } from '@/constants';
 import { Metadata } from 'next';
-import PostCard from '@/components/posts/PostCard';
 import { fetchTermsByAuthor } from '@/utils/fetchData';
+import ProfileClient from '@/components/common/ProfileClient';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const profiles = await fetchProfilesData();
@@ -72,13 +72,7 @@ const ProfilePage = async ({ params }: { params: { slug: string } }) => {
         <div className="flex flex-col gap-4">
           <h1 className="text-2xl font-bold">{profile.name}{' 님의 포스트'}</h1>
           {terms.length > 0 ? (
-            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {terms.map((term) => (
-                <li key={term.id} className="transition-transform duration-300 hover:-translate-y-2">
-                  <PostCard sortType="created" term={term} />
-                </li>
-              ))}
-            </ul>
+            <ProfileClient initialTerms={terms} />
           ) : (
             <p>{'작성한 글이 없습니다.'}</p>
           )}
