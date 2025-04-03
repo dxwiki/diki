@@ -18,7 +18,7 @@ export const store = configureStore({
 });
 
 // 초기 상태를 받아 새 스토어 생성하는 함수
-export function setupStore(preloadedState?: any) {
+export function setupStore(preloadedState?: RootState) {
   return configureStore({
     reducer: rootReducer,
     preloadedState,

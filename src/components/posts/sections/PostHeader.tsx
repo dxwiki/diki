@@ -17,20 +17,20 @@ interface PostHeaderProps {
 
 const PostHeader = ({ term, onShare }: PostHeaderProps) => {
   const profiles = useSelector((state: RootState) => state.profiles.profiles);
-  const [authorSlugs, setAuthorSlugs] = useState<{[key: string]: string}>({});
+  const [authorSlugs, setAuthorSlugs] = useState<{ [key: string]: string }>({});
   const [isDataReady, setIsDataReady] = useState(false);
-  
+
   const handleShareClick = useCallback((): void => {
     onShare();
   }, [onShare]);
 
   useEffect(() => {
-    if (profiles && profiles.length > 0 && term.metadata?.authors) {
-      const slugs: {[key: string]: string} = {};
-      term.metadata.authors.forEach(author => {
+    if (profiles.length > 0 && term.metadata?.authors) {
+      const slugs: { [key: string]: string } = {};
+      term.metadata.authors.forEach((author) => {
         slugs[author] = getAuthorSlug(author);
       });
-      
+
       setAuthorSlugs(slugs);
       setIsDataReady(true);
     }
@@ -78,7 +78,7 @@ const PostHeader = ({ term, onShare }: PostHeaderProps) => {
                 <TooltipButton
                   tooltip={`${ author }님의 포스트 보기`}
                   isLink={true}
-                  href={`/profiles/${authorSlugs[author] || ''}`}
+                  href={`/profiles/${ authorSlugs[author] || '' }`}
                   className="text-primary hover:text-accent hover:underline"
                 >
                   {author}

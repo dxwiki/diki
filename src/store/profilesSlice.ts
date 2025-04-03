@@ -33,4 +33,4 @@ const profilesSlice = createSlice({
 });
 
 export const { setProfiles, setLoading, setError } = profilesSlice.actions;
-export default profilesSlice.reducer; 
+export default profilesSlice.reducer;

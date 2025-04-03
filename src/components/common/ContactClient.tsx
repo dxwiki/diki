@@ -14,13 +14,12 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 const ContactClient = () => {
   const profiles = useSelector((state: RootState) => state.profiles.profiles);
   const [isDataReady, setIsDataReady] = useState(false);
-  const profileData = profiles ?? [];
 
   useEffect(() => {
-    if (profileData && profileData.length > 0) {
+    if (profiles.length > 0) {
       setIsDataReady(true);
     }
-  }, [profileData]);
+  }, [profiles]);
 
   if (!isDataReady) {
     return (
@@ -40,21 +39,21 @@ const ContactClient = () => {
         {'Diki : Data Wiki'}
       </Link>
       <div className="w-full min-h-[30vh] flex flex-col md:flex-row justify-center items-center gap-5 md:gap-10 z-10 mb-10">
-        {profileData.map((p: Profile) => {
+        {profiles.map((p: Profile) => {
           const authorSlug = getAuthorSlug(p.name);
           return (
             <div
               key={p.id}
               className="flex flex-col md:flex-row justify-center items-center text-center transition-transform gap-0 md:gap-10 border w-full py-5 md:py-0 border-gray4 rounded-xl md:border-0"
             >
-              <Link href={`/profiles/${authorSlug}`}>
+              <Link href={`/profiles/${ authorSlug }`}>
                 <div className='size-24 md:size-36 rounded-full md:rounded-xl flex items-center justify-center my-2 mb-4' style={{ backgroundImage: `url(${ p.thumbnail })`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
               </Link>
               <div className='flex flex-col justify-center items-center md:items-start gap-1'>
                 <TooltipButton
                   tooltip={`${ p.name }님의 포스트 보기`}
                   isLink={true}
-                  href={`/profiles/${authorSlug}`}
+                  href={`/profiles/${ authorSlug }`}
                   className='text-center text-xl md:text-2xl font-semibold text-primary hover:text-accent hover:underline hover:underline-offset-4'
                 >
                   {p.name}

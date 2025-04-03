@@ -21,7 +21,7 @@ export const getAuthorSlug = (author: string): string => {
 
   const profiles = store.getState().profiles.profiles;
 
-  if (!profiles || profiles.length === 0) {
+  if (profiles.length === 0) {
     return '';
   }
   const profile = profiles.find((p: Profile) => p.name === author);
