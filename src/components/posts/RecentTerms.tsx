@@ -7,8 +7,20 @@ import { TermData } from '@/types';
 import { useEffect, useRef, useState } from 'react';
 import { Rocket } from 'lucide-react';
 
+const skeleton_count = 5;
+const skeleton_width = 110;
+
+const SkeletonItem = () => (
+  <div
+    style={{ width: `${ skeleton_width }px` }}
+    className="py-1.5 px-2.5 flex justify-center items-center rounded-lg border border-light shrink-0 bg-background animate-pulse"
+  >
+    <div className="h-[18px] w-3/4 bg-gray-200 rounded" />
+  </div>
+);
+
 export default function RecentTerms() {
-  const { terms } = useSelector((state: RootState) => state.terms);
+  const { terms, isLoading } = useSelector((state: RootState) => state.terms);
   const containerRef = useRef<HTMLDivElement>(null);
   const [visibleItems, setVisibleItems] = useState<TermData[]>([]);
 
@@ -30,9 +42,10 @@ export default function RecentTerms() {
 
       const containerWidth = containerRef.current.offsetWidth;
       const gap = 8;
+
       const desiredItemWidth = 116; // 7글자와 padding을 포함한 너비
       const maxItems = Math.floor((containerWidth + gap) / (desiredItemWidth + gap));
-      const itemWidth = Math.floor((containerWidth - ((maxItems - 1) * gap)) / maxItems);
+      const calculatedItemWidth = Math.floor((containerWidth - ((maxItems - 1) * gap)) / maxItems);
 
       setVisibleItems((prev) => {
         const newItems = recentTerms.slice(0, maxItems);
@@ -42,23 +55,20 @@ export default function RecentTerms() {
         return hasChanged ? newItems : prev;
       });
 
-      containerRef.current.style.setProperty('--item-width', `${ itemWidth }px`);
+      containerRef.current.style.setProperty('--item-width', `${ calculatedItemWidth }px`);
     };
 
-    let timeoutId: NodeJS.Timeout;
-    const debouncedCalculate = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(calculateVisibleItems, 100);
-    };
-
+    // Initial calculation
     calculateVisibleItems();
-    window.addEventListener('resize', debouncedCalculate);
+
+    window.addEventListener('resize', calculateVisibleItems);
 
     return () => {
-      window.removeEventListener('resize', debouncedCalculate);
-      clearTimeout(timeoutId);
+      window.removeEventListener('resize', calculateVisibleItems);
     };
   }, [recentTerms]);
+
+  const isLocalLoading = isLoading || (terms.length === 0);
 
   return (
     <div className='w-full space-y-1.5'>
@@ -66,19 +76,25 @@ export default function RecentTerms() {
         <Rocket className='size-4' />
         <h3 className='text-base text-sub font-semibold'>{'최신 포스트'}</h3>
       </div>
-      <div ref={containerRef} className='flex justify-between gap-1.5 overflow-hidden'>
-        {visibleItems.map((term) => (
-          <Link
-            key={term.url}
-            href={`${ term.url }`}
-            style={{ width: 'var(--item-width)' }}
-            className='py-1.5 px-2.5 flex justify-center items-center text-sub rounded-lg border border-light hover:border-primary hover:text-primary hover:font-semibold transition-colors text-[13px] md:text-sm shrink-0 bg-background'
-          >
-            <span className="overflow-hidden text-nowrap text-ellipsis">
-              {term.title?.ko}
-            </span>
-          </Link>
-        ))}
+      <div ref={containerRef} className='flex justify-between gap-2 overflow-hidden'>
+        {isLocalLoading ? (
+          Array(skeleton_count).fill(0).map((_, index) => (
+            <SkeletonItem key={`skeleton-${ index }`} />
+          ))
+        ) : (
+          visibleItems.map((term) => (
+            <Link
+              key={term.url}
+              href={`${ term.url }`}
+              style={{ width: 'var(--item-width)' }}
+              className='py-1.5 px-2.5 flex justify-center items-center text-sub rounded-lg border border-light hover:border-primary hover:text-primary hover:font-semibold transition-colors text-[13px] md:text-sm shrink-0 bg-background'
+            >
+              <span className="overflow-hidden text-nowrap text-ellipsis">
+                {term.title?.ko}
+              </span>
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );
