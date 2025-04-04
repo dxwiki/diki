@@ -61,6 +61,14 @@ const config: Config = {
           '0%': { transform: 'translateY(5px)', opacity: '0' },
           '100%': { transform: 'none', opacity: '1' },
         },
+        slideLeftToRight: {
+          '0%': { transform: 'translateX(-100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        slideRightToLeft: {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
       },
       animation: {
         slideDown: 'slideDown 0.3s ease-in-out',
@@ -68,6 +76,8 @@ const config: Config = {
         slideDownIn: 'slideDownIn 400ms ease-in-out forwards',
         intro: 'intro 500ms ease-in-out both',
         introSecond: 'intro 1100ms ease-in-out both',
+        slideLeftToRight: 'slideLeftToRight 0.2s ease-in-out',
+        slideRightToLeft: 'slideRightToLeft 0.2s ease-in-out',
       },
       typography: {
         DEFAULT: {

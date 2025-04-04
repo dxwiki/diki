@@ -52,7 +52,7 @@ const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
       //     </span>
       //   );
       default:
-        return <span className={sortTagStyle}>{formatDate(term.metadata?.updated_at || '')}</span>;
+        return <span className={sortTagStyle}>{formatDate(term.metadata?.created_at || '')}</span>;
     }
   };
 

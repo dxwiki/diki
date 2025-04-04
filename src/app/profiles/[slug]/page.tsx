@@ -3,7 +3,7 @@ import Footer from '@/components/common/Footer';
 import { dikiMetadata } from '@/constants';
 import { Metadata } from 'next';
 import { fetchTermsByAuthor } from '@/utils/fetchData';
-import ProfileClient from '@/components/common/ProfileClient';
+import ProfileClient from '@/components/profiles/ProfileClient';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const profiles = await fetchProfilesData();
@@ -57,10 +57,10 @@ const ProfilePage = async ({ params }: { params: { slug: string } }) => {
 
   if (!profile) {
     return (
-      <div className="container mx-auto py-10">
+      <>
         <h1 className="text-2xl font-bold">{'프로필을 찾을 수 없습니다'}</h1>
         <p>{'요청하신 프로필을 찾을 수 없습니다.'}</p>
-      </div>
+      </>
     );
   }
 
@@ -68,15 +68,13 @@ const ProfilePage = async ({ params }: { params: { slug: string } }) => {
 
   return (
     <>
-      <div className="container mx-auto py-10">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-bold">{profile.name}{' 님의 포스트'}</h1>
-          {terms.length > 0 ? (
-            <ProfileClient initialTerms={terms} />
-          ) : (
-            <p>{'작성한 글이 없습니다.'}</p>
-          )}
-        </div>
+      <div className="flex flex-col gap-4">
+        <h1 className="text-2xl font-bold">{profile.name}{' 님의 포스트'}</h1>
+        {terms.length > 0 ? (
+          <ProfileClient initialTerms={terms} />
+        ) : (
+          <p>{'작성한 글이 없습니다.'}</p>
+        )}
       </div>
       <div className='block sm:hidden'>
         <Footer />

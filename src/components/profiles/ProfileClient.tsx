@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import PostCard from '@/components/posts/PostCard';
+import ProfilePostCard from '@/components/profiles/ProfilePostCard';
 import { TermData } from '@/types';
 
 interface ProfileClientProps {
@@ -14,12 +14,12 @@ const ProfileClient = ({ initialTerms }: ProfileClientProps) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement>(null);
-  const ITEMS_PER_PAGE = 24;
+  const termsPerPage = 24;
 
   useEffect(() => {
     // 초기 로딩 시 첫 페이지 표시
-    setVisibleTerms(terms.slice(0, ITEMS_PER_PAGE));
-    setHasMore(terms.length > ITEMS_PER_PAGE);
+    setVisibleTerms(terms.slice(0, termsPerPage));
+    setHasMore(terms.length > termsPerPage);
   }, [terms]);
 
   useEffect(() => {
@@ -48,8 +48,8 @@ const ProfileClient = ({ initialTerms }: ProfileClientProps) => {
 
   const loadMoreItems = () => {
     const nextPage = page + 1;
-    const startIndex = (nextPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = nextPage * ITEMS_PER_PAGE;
+    const startIndex = (nextPage - 1) * termsPerPage;
+    const endIndex = nextPage * termsPerPage;
 
     if (startIndex < terms.length) {
       setVisibleTerms((prev) => [...prev, ...terms.slice(startIndex, endIndex)]);
@@ -62,16 +62,16 @@ const ProfileClient = ({ initialTerms }: ProfileClientProps) => {
 
   return (
     <>
-      <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <ul className="w-full grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {visibleTerms.map((term) => (
-          <li key={term.id} className="transition-transform duration-300 hover:-translate-y-2">
-            <PostCard sortType="created" term={term} />
+          <li key={term.id}>
+            <ProfilePostCard term={term} />
           </li>
         ))}
       </ul>
       {hasMore && (
         <div ref={loaderRef} className="flex justify-center p-4">
-          <div className="size-8 border-y-2 border-gray-500 rounded-full animate-spin" />
+          <div className="size-8 border-y-2 border-gray1 rounded-full animate-spin" />
         </div>
       )}
     </>
