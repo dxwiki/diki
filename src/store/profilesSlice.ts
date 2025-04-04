@@ -3,13 +3,13 @@ import { Profile } from '@/types';
 
 interface ProfilesState {
   profiles: Profile[];
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
 }
 
 const initialState: ProfilesState = {
   profiles: [],
-  loading: false,
+  isLoading: false,
   error: null,
 };
 
@@ -19,15 +19,15 @@ const profilesSlice = createSlice({
   reducers: {
     setProfiles: (state, action: PayloadAction<Profile[]>) => {
       state.profiles = action.payload;
-      state.loading = false;
+      state.isLoading = false;
       state.error = null;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
+      state.isLoading = action.payload;
     },
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
-      state.loading = false;
+      state.isLoading = false;
     },
   },
 });
