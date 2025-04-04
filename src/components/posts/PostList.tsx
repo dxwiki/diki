@@ -12,6 +12,7 @@ import { RootState } from '@/store';
 import { setCurrentPage, setSortType } from '@/store/pageSlice';
 import { searchTerms } from '@/utils/search';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+
 interface PaginationProps {
   itemsPerPage: number;
 }
@@ -19,16 +20,23 @@ interface PaginationProps {
 const PostList = ({ itemsPerPage }: PaginationProps) => {
   const { terms } = useSelector((state: RootState) => state.terms);
   const { sortType, sortDirection, currentPage } = useSelector((state: RootState) => state.page);
-  const searchParams = useSearchParams();
-  const [termsData, setTermsData] = useState<TermData[]>([]);
   const dispatch = useDispatch();
+  const [termsData, setTermsData] = useState<TermData[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [localLoading, setLocalLoading] = useState(true);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    if (terms.length > 0) {
+      setLocalLoading(false);
+    }
+  }, [terms.length]);
 
   useEffect(() => {
+    if (!terms.length) return;
+
+    setLocalLoading(true);
     let filteredTerms = [...terms];
 
     // 검색어 필터링
@@ -117,6 +125,7 @@ const PostList = ({ itemsPerPage }: PaginationProps) => {
     filterByDate(searchParams.get('m'), 'updated_at'); // 수정일
 
     setTermsData(filteredTerms);
+    setLocalLoading(false);
   }, [searchParams, terms, dispatch]);
 
   const sortedTermsData = [...termsData].sort((a, b) => {
@@ -154,18 +163,24 @@ const PostList = ({ itemsPerPage }: PaginationProps) => {
   const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
   const pageNumbers = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
 
+  if(localLoading) {
+    return (
+      <div className="flex justify-center items-center h-[50vh]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="w-full flex justify-between items-center mb-5">
         <h1 className='flex items-center gap-2 text-sub'>
-          {isClient ? (
+          {isClient && (
             <>
               {'검색결과'}
               <span className='text-primary font-bold'>{sortedTermsData.length}</span>
               {'/ '}{terms.length}{' 개'}
             </>
-          ) : (
-            <LoadingSpinner />
           )}
         </h1>
         <SortButtons />
