@@ -13,10 +13,8 @@ const skeleton_width = 110;
 const SkeletonItem = () => (
   <div
     style={{ width: `${ skeleton_width }px` }}
-    className="py-1.5 px-2.5 flex justify-center items-center rounded-lg border border-light shrink-0 bg-background animate-pulse"
-  >
-    <div className="h-[18px] w-3/4 bg-gray-200 rounded" />
-  </div>
+    className="h-[32px] py-1.5 px-2.5 flex justify-center items-center rounded-lg border border-light shrink-0 bg-gray5 animate-pulse"
+  />
 );
 
 export default function RecentTerms() {
