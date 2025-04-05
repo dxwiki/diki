@@ -1,6 +1,6 @@
-import { fetchProfilesData, fetchTermsByAuthor, fetchTermsByContributor } from '@/utils/fetchData';
-import { dikiMetadata } from '@/constants';
+import { fetchProfilesData, fetchTermsByContributor, fetchTermsByAuthor } from '@/utils/fetchData';
 import { Metadata } from 'next';
+import { dikiMetadata } from '@/constants';
 import ProfileClient from '@/components/profiles/ProfileClient';
 import Footer from '@/components/common/Footer';
 
@@ -16,12 +16,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   return {
-    title: `${ profile.name } 프로필`,
-    description: `${ profile.name }님의 프로필 페이지입니다.`,
+    title: `${ profile.name }의 기여(편집글)`,
+    description: `${ profile.name }님이 기여(편집)한 글을 확인할 수 있는 페이지입니다.`,
     openGraph: {
-      title: `${ profile.name } 프로필`,
-      description: `${ profile.name }님의 프로필 페이지입니다.`,
-      url: `${ dikiMetadata.url }/profiles/${ params.slug }`,
+      title: `${ profile.name }의 기여(편집글)`,
+      description: `${ profile.name }님이 기여(편집)한 글을 확인할 수 있는 페이지입니다.`,
+      url: `${ dikiMetadata.url }/profiles/${ params.slug }/contributes`,
       siteName: dikiMetadata.title,
       locale: 'ko_KR',
       type: 'website',
@@ -30,14 +30,14 @@ export async function generateMetadata({ params }: { params: { slug: string } })
           url: profile.thumbnail || dikiMetadata.thumbnailURL,
           width: 1200,
           height: 630,
-          alt: `${ profile.name } 프로필`,
+          alt: `${ profile.name }의 기여(편집글)`,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${ profile.name } 프로필`,
-      description: `${ profile.name }님의 프로필 페이지입니다.`,
+      title: `${ profile.name }의 기여(편집글)`,
+      description: `${ profile.name }님이 기여(편집)한 글을 확인할 수 있는 페이지입니다.`,
       images: [profile.thumbnail || dikiMetadata.thumbnailURL],
     },
   };
@@ -50,7 +50,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function ProfilePage({ params }: { params: { slug: string } }) {
+export default async function ContributePage({ params }: { params: { slug: string } }) {
   const profiles = await fetchProfilesData();
   const profile = profiles.find((p) => p.username === params.slug);
 
@@ -64,30 +64,20 @@ export default async function ProfilePage({ params }: { params: { slug: string }
   }
 
   // 두 데이터를 모두 가져옵니다
-  const [posts, contributions] = await Promise.all([
-    fetchTermsByAuthor(params.slug),
+  const [contributions, posts] = await Promise.all([
     fetchTermsByContributor(params.slug),
+    fetchTermsByAuthor(params.slug),
   ]);
-
-  // 중복 제거(같은 글이 작성과 기여 모두에 포함될 수 있으므로)
-  const allTerms = [...posts];
-
-  // 이미 포함되지 않은 기여 글만 추가
-  contributions.forEach((term) => {
-    if (!allTerms.some((existingTerm) => existingTerm.id === term.id)) {
-      allTerms.push(term);
-    }
-  });
 
   return (
     <>
       <div className="flex flex-col gap-5">
         <ProfileClient
-          initialTerms={allTerms}
+          initialTerms={contributions}
           username={params.slug}
-          activeTab="all"
-          postsCount={posts.length}
+          activeTab="contributes"
           contributeCount={contributions.length}
+          postsCount={posts.length}
           profile={profile}
         />
       </div>

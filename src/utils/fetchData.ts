@@ -79,23 +79,38 @@ const fetchProfilesData = async (): Promise<Profile[]> => {
   }
 };
 
-// 작성자별 글 목록을 가져오는 함수
-async function fetchTermsByAuthor(authorSlug: string) {
+type FilterType = 'authors' | 'contributors';
+
+// 사용자 관련 글 목록을 가져오는 공통 함수
+async function fetchTermsByUser(username: string, filterType: FilterType): Promise<TermData[]> {
   const profilesList = await fetchProfilesData();
-  const profile = profilesList.find((p) => p.username === authorSlug);
+  const profile = profilesList.find((p) => p.username === username);
 
   if (!profile) return [];
 
-  // 여기서는 모든 글을 가져온 후 필터링하는 방식을 사용
-  // 실제로는 DB 쿼리나 API 호출로 최적화할 수 있음
   const allTerms = await fetchTermsData();
 
-  // 작성자 ID가 authors 배열에 포함되어 있는지 확인
-  return allTerms.filter((term) =>
-    term.metadata?.authors
-    && Array.isArray(term.metadata.authors)
-    && term.metadata.authors.includes(profile.name)
-  );
+  if (filterType === 'authors') {
+    return allTerms.filter((term) =>
+      term.metadata?.authors
+      && Array.isArray(term.metadata.authors)
+      && term.metadata.authors.includes(profile.name)
+    );
+  } else {
+    return allTerms.filter((term) =>
+      term.metadata?.contributors
+      && Array.isArray(term.metadata.contributors)
+      && term.metadata.contributors.includes(username)
+    );
+  }
 }
 
-export { fetchTermsData, getTermData, getTermDataByID, fetchProfilesData, fetchTermsByAuthor };
+async function fetchTermsByAuthor(authorSlug: string): Promise<TermData[]> {
+  return fetchTermsByUser(authorSlug, 'authors');
+}
+
+async function fetchTermsByContributor(contributorSlug: string): Promise<TermData[]> {
+  return fetchTermsByUser(contributorSlug, 'contributors');
+}
+
+export { fetchTermsData, getTermData, getTermDataByID, fetchProfilesData, fetchTermsByAuthor, fetchTermsByContributor, fetchTermsByUser };

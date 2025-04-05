@@ -1,15 +1,31 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { TermData } from '@/types';
-import { formatDate } from '@/utils/filters';
+import { formatDate, getAuthorSlug } from '@/utils/filters';
 import { ChevronRight } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface ProfilePostCardProps {
   term: TermData;
 }
 
 const ProfilePostCard = ({ term }: ProfilePostCardProps) => {
+  const profiles = useSelector((state: RootState) => state.profiles.profiles);
+  const [contributorSlugs, setContributorSlugs] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    if (profiles.length > 0 && term.metadata?.contributors) {
+      const slugs: { [key: string]: string } = {};
+      term.metadata.contributors.forEach((contributor) => {
+        slugs[contributor] = getAuthorSlug(contributor);
+      });
+      setContributorSlugs(slugs);
+    }
+  }, [profiles, term.metadata?.contributors]);
+
   return (
     <Link
       href={term.url ?? 'not-found'}
@@ -35,7 +51,7 @@ const ProfilePostCard = ({ term }: ProfilePostCardProps) => {
           </span>
         </div>
 
-        <div className='grid grid-cols-[auto_1fr] items-start gap-1'>
+        <div className='grid grid-cols-[auto_1fr] items-start justify-center gap-1'>
           <span className='flex justify-center rounded-lg text-sm text-sub pl-2.5 pr-[9px] bg-gray4 border border-gray5'>
             {'발행'}
           </span>
@@ -56,8 +72,8 @@ const ProfilePostCard = ({ term }: ProfilePostCardProps) => {
               term.metadata.contributors.map((contributor, index) => (
                 <span key={contributor}>
                   <Link
-                    href={`/profiles/${ contributor }`}
-                    className="text-primary text-sm hover:text-accent hover:underline"
+                    href={`/profiles/${ contributorSlugs[contributor] || '' }`}
+                    className="flex items-center text-primary text-sm hover:text-accent hover:underline underline-offset-2"
                   >
                     {contributor}
                   </Link>
