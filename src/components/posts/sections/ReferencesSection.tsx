@@ -18,32 +18,28 @@ interface ReferencesSectionProps {
 // 색상 설정 정의
 export const colorConfig = {
   '튜토리얼': {
-    outline: 'group-hover:outline-emerald-600 dark:group-hover:outline-emerald-400',
-    text: 'text-emerald-600 dark:text-emerald-400',
-    border: 'border-emerald-600 dark:border-emerald-400',
-    decoration: 'decoration-emerald-600 dark:decoration-emerald-400',
-    titleGradient: 'bg-gradient-to-b from-main from-0% to-emerald-600 to-90% dark:to-emerald-400 bg-clip-text text-transparent',
+    outline: 'group-hover:outline-[#08BE38] dark:group-hover:outline-[#32D84C]',
+    text: 'text-[#08BE38] dark:text-[#32D84C]',
+    border: 'border-[#08BE38] dark:border-[#32D84C]',
+    decoration: 'decoration-[#08BE38] dark:decoration-[#32D84C]',
   },
   '참고서적': {
-    outline: 'group-hover:outline-orange-600 dark:group-hover:outline-orange-400',
-    text: 'text-orange-600 dark:text-orange-400',
-    border: 'border-orange-600 dark:border-orange-400',
-    decoration: 'decoration-orange-600 dark:decoration-orange-400',
-    titleGradient: 'bg-gradient-to-b from-main from-0% to-orange-600 to-90% dark:to-orange-400 bg-clip-text text-transparent',
+    outline: 'group-hover:outline-[#EE8C00] dark:group-hover:outline-[#FF9F0A]',
+    text: 'text-[#EE8C00] dark:text-[#FF9F0A]',
+    border: 'border-[#EE8C00] dark:border-[#FF9F0A]',
+    decoration: 'decoration-[#EE8C00] dark:decoration-[#FF9F0A]',
   },
   '연구논문': {
-    outline: 'group-hover:outline-rose-600 dark:group-hover:outline-rose-400',
-    text: 'text-rose-600 dark:text-rose-400',
-    border: 'border-rose-600 dark:border-rose-400',
-    decoration: 'decoration-rose-600 dark:decoration-rose-400',
-    titleGradient: 'bg-gradient-to-b from-main from-0% to-rose-600 to-90% dark:to-rose-400 bg-clip-text text-transparent',
+    outline: 'group-hover:outline-[#017AFF] dark:group-hover:outline-[#64D3FF]',
+    text: 'text-[#017AFF] dark:text-[#64D3FF]',
+    border: 'border-[#017AFF] dark:border-[#64D3FF]',
+    decoration: 'decoration-[#017AFF] dark:decoration-[#64D3FF]',
   },
   '오픈소스': {
-    outline: 'group-hover:outline-violet-600 dark:group-hover:outline-violet-400',
-    text: 'text-violet-600 dark:text-violet-400',
-    border: 'border-violet-600 dark:border-violet-400',
-    decoration: 'decoration-violet-600 dark:decoration-violet-400',
-    titleGradient: 'bg-gradient-to-b from-main from-0% to-violet-600 to-90% dark:to-violet-400 bg-clip-text text-transparent',
+    outline: 'group-hover:outline-[#AF52DF] dark:group-hover:outline-[#CD7BF8]',
+    text: 'text-[#AF52DF] dark:text-[#CD7BF8]',
+    border: 'border-[#AF52DF] dark:border-[#CD7BF8]',
+    decoration: 'decoration-[#AF52DF] dark:decoration-[#CD7BF8]',
   },
 };
 
@@ -138,7 +134,7 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
 
     return (
       <div className='flex flex-col'>
-        <strong className={`ml-1 mb-1.5 ${ colors.titleGradient }`}>{title}</strong>
+        <strong className={`ml-1 mb-1.5 ${ colors.text }`}>{title}</strong>
         {items.map((item, index) => (
           <div key={index} className={`ml-1 overflow-hidden ${ index === 0 ? 'border-t border-light' : '' }`}>
             <div
@@ -147,7 +143,7 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
                 expandedItems[section][index] ? 'border-x bg-gray5' : ''
               }`}
             >
-              <span className={`text-sm ${ colors.text } ${ expandedItems[section][index] ? '-ml-px' : 'text-main line-clamp-1' }`}>
+              <span className={`text-sm ${ colors.text } ${ expandedItems[section][index] ? '-ml-px' : 'line-clamp-1' }`}>
                 {getTitle(item)}
               </span>
               <span className='size-5'>
@@ -176,7 +172,7 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
                 </div>
                 <span className="flex justify-end">
                   {getExternalLink(item) && (
-                    <span className="text-xs text-primary font-normal p-1.5">
+                    <span className="text-xs text-gray3 font-normal p-1.5">
                       {'바로가기 →'}
                     </span>
                   )}
