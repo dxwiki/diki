@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 
 // GitHub OAuth 로그인 URL로 리다이렉트
 export async function GET() {
-  const clientId = process.env.GITHUB_CLIENT_ID;
-  const redirectUri = process.env.NEXT_PUBLIC_BASE_URL + '/api/auth/github/callback';
+  const githubClientId = process.env.GITHUB_CLIENT_ID;
 
-  const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${ clientId }&redirect_uri=${ redirectUri }`;
+  // scope 파라미터를 추가하여 이메일 권한 요청
+  const authUrl = `https://github.com/login/oauth/authorize?client_id=${ githubClientId }&scope=read:user user:email`;
 
-  return NextResponse.redirect(githubAuthUrl);
+  return NextResponse.redirect(authUrl);
 }

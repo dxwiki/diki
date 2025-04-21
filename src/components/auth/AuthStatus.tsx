@@ -3,6 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownList,
+  DropdownItem,
+} from '@/components/ui/Dropdown';
 
 interface UserInfo {
   id: number;
@@ -13,7 +19,7 @@ interface UserInfo {
 
 export default function AuthStatus() {
   const [user, setUser] = useState<UserInfo | null>(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // 쿠키에서 사용자 정보 읽기
@@ -29,6 +35,7 @@ export default function AuthStatus() {
         console.error('Failed to parse user info:', error);
       }
     }
+    setLoading(false);
   }, []);
 
   const handleLogout = async () => {
@@ -45,46 +52,46 @@ export default function AuthStatus() {
     }
   };
 
+  if (loading) {
+    return <div className="w-[80px] h-[36px]" />; // 로딩 중에는 같은 크기의 빈 공간 유지
+  }
+
   if (!user) {
     return (
-      <Link href="/login" className="px-4 py-2 text-sm font-medium rounded-md bg-accent dark:bg-secondary text-white hover:bg-opacity-90">
+      <Link href="/login" className="px-4 py-2 text-sm font-medium rounded-md bg-accent dark:bg-secondary text-white">
         {'로그인'}
       </Link>
     );
   }
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="flex items-center space-x-2 focus:outline-none"
-      >
-        <Image
-          src={user.thumbnail}
-          alt={user.name}
-          width={32}
-          height={32}
-          className="rounded-full"
-        />
-        <span className="hidden md:inline-block">{user.name}</span>
-      </button>
+    <div className="relative flex">
+      <Dropdown>
+        <DropdownTrigger>
+          <div className="flex items-center space-x-2 focus:outline-none cursor-pointer">
+            <Image src={user.thumbnail} alt="User Thumbnail" className="rounded-full" width={32} height={32} />
+            <span>{user.name}</span>
+          </div>
+        </DropdownTrigger>
 
-      {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-48 py-2 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10">
-          <Link href={`/profiles/${ user.username }`} className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
-            {'내 프로필'}
-          </Link>
-          <Link href="/create" className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
-            {'글 작성하기'}
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
-            {'로그아웃'}
-          </button>
-        </div>
-      )}
+        <DropdownList align="end">
+          <DropdownItem>
+            <Link href={`/profiles/${ user.username }`} className="w-full block">
+              {'내 프로필'}
+            </Link>
+          </DropdownItem>
+
+          <DropdownItem>
+            <Link href="/create" className="w-full block">
+              {'글 작성하기'}
+            </Link>
+          </DropdownItem>
+
+          <DropdownItem onClick={handleLogout}>
+            <span className="text-red-500">{'로그아웃'}</span>
+          </DropdownItem>
+        </DropdownList>
+      </Dropdown>
     </div>
   );
 }
