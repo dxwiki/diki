@@ -41,18 +41,19 @@ const Header = () => {
         style={{ transform: 'translateY(var(--header-transform, 0))' }}
       >
         <div className='flex justify-between items-center max-w-6xl mx-auto px-4 py-3 md:px-6 lg:px-8'>
-          <div className='flex items-center'>
-            {!isHomePage && (
-              <Link href='/' onClick={handleClickHome}>
-                <span className='h-8 flex items-center text-3xl font-bold'>
-                  <span className='text-primary'>{'D'}</span>
-                  {'iki'}
-                </span>
-              </Link>
-            )}
-          </div>
+          <AuthStatus />
 
           <div className='flex items-center gap-3'>
+            <div className='w-full flex justify-end items-center gap-3'>
+              {!isHomePage && (
+                <Link href='/' onClick={handleClickHome}>
+                  <span className='h-8 flex items-center text-3xl font-bold'>
+                    <span className='text-primary'>{'D'}</span>
+                    {'iki'}
+                  </span>
+                </Link>
+              )}
+            </div>
             <div className={`flex items-center gap-1 ${ isHomePage || isContactPage ? 'windows:pr-[5px]' : '' }`}>
               <TooltipButton
                 isLink={true}
@@ -72,7 +73,6 @@ const Header = () => {
               </TooltipButton>
               <ThemeSwitch />
             </div>
-            <AuthStatus />
           </div>
         </div>
       </header>

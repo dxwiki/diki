@@ -14,7 +14,13 @@ const Dropdown = ({ children }: { children: ReactNode }) => {
 const DropdownTrigger = ({ children }: { children: React.ReactElement }) => {
   const { toggle } = useContext(DropdownContext);
 
-  return <div onClick={toggle}>{children}</div>;
+  // 이벤트 전파를 막아 외부 클릭 핸들러와 충돌하지 않도록 함
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggle();
+  };
+
+  return <div onClick={handleClick}>{children}</div>;
 };
 
 // DropdownList 컴포넌트
@@ -30,21 +36,36 @@ const DropdownList = ({
 
   // 메뉴 외부를 클릭했을 때 닫기 위한 이벤트 핸들러
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      // 이벤트 타겟이 HTMLElement인지를 확인하여 타입 안전성 보장
-      if (event.target instanceof HTMLElement) {
-        // contentRef가 가리키는 요소 외부에서 클릭되었는지 확인
-        if (contentRef.current && !contentRef.current.contains(event.target)) {
-          close();
-        }
+    // 전역 클릭 이벤트 핸들러
+    const handleGlobalClick = (event: MouseEvent) => {
+      // contentRef가 참조하는 요소가 클릭된 것이 아니라면 드롭다운을 닫음
+      if (isOpen && contentRef.current && !contentRef.current.contains(event.target as Node)) {
+        close();
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+    // 스크롤 이벤트 핸들러
+    const handleScroll = () => {
+      if (isOpen) {
+        close();
+      }
     };
-  }, [close]);
+
+    // 이벤트 리스너 등록
+    document.addEventListener('click', handleGlobalClick, true);
+    window.addEventListener('scroll', handleScroll, true);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener('click', handleGlobalClick, true);
+      window.removeEventListener('scroll', handleScroll, true);
+    };
+  }, [isOpen, close]);
+
+  // 메뉴 내부 클릭 시 이벤트 전파 방지
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
 
   return isOpen ? (
     <div
@@ -52,7 +73,7 @@ const DropdownList = ({
       className={`animate-slideDown absolute flex flex-col p-1 z-40 mt-2 min-w-36 rounded-lg bg-background border border-secondary shadow-lg ring-1 ring-black/5 transition duration-200 ease-out ${
         align === 'end' ? 'right-0' : 'left-0'
       }`}
-      onClick={close} // 메뉴 아이템 클릭 시 메뉴를 닫기 위해 사용
+      onClick={handleMenuClick}
     >
       {children}
     </div>
@@ -71,13 +92,15 @@ const DropdownItem = ({
 }) => {
   const { close } = useContext(DropdownContext);
 
+  const handleItemClick = () => {
+    if (onClick) onClick();
+    close();
+  };
+
   return (
     <button
       className={`flex w-full justify-center items-center rounded-lg text-left text-sm text-main ${ className }`}
-      onClick={() => {
-        if (onClick) onClick();
-        close();
-      }}
+      onClick={handleItemClick}
     >
       <span className='w-full p-2 rounded-md transition-colors duration-150 ease-in-out hover:bg-background-secondary'>
         {children}

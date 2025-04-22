@@ -58,8 +58,8 @@ export default function AuthStatus() {
 
   if (!user) {
     return (
-      <Link href="/login" className="px-4 py-2 text-sm font-medium rounded-md bg-accent dark:bg-secondary text-white">
-        {'로그인'}
+      <Link href="/login" className="rounded-md text-sm text-gray1 hover:text-main">
+        {'기여하기'}
       </Link>
     );
   }
@@ -74,7 +74,7 @@ export default function AuthStatus() {
           </div>
         </DropdownTrigger>
 
-        <DropdownList align="end">
+        <DropdownList>
           <DropdownItem>
             <Link href={`/profiles/${ user.username }`} className="w-full block">
               {'내 프로필'}
