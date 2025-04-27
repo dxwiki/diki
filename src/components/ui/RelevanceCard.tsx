@@ -63,9 +63,9 @@ const RelevanceCard = ({
     >
       <div className="p-2.5 lg:p-4 flex flex-col gap-2 opacity-90 flex-1 relative z-10">
         <div className="flex justify-between items-center">
-          <span className="flex items-center font-semibold text-primary">
-            {tag}{' | '}
-            {subtitle}
+          <span className="flex items-center font-semibold">
+            <span className='sm:hidden lg:block mr-1 text-primary'>{tag}{' | '}</span>
+            <span className='text-primary'>{subtitle}</span>
           </span>
           <span className={`text-${ levelColors[score as keyof typeof levelColors] } text-xs border border-${ levelColors[score as keyof typeof levelColors] } rounded-full px-1.5 py-0.5`}>{relevance}</span>
         </div>
