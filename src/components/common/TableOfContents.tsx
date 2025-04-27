@@ -126,6 +126,8 @@ const TableOfContents = ({ title, term }: Props) => {
                 key={index}
                 href={transformToSlug(tag.internal_link)}
                 className='font-normal text-sm text-main cursor-pointer transition-colors underline underline-offset-4 decoration-light hover:text-accent hover:decoration-accent'
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 {tag.name}
               </Link>
