@@ -8,8 +8,11 @@ interface DescriptionSectionProps {
 
 const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps) => {
   return (
-    <div className="bg-gray5 border-gray4 p-6 rounded-lg shadow-xl">
-      <h2 className="text-xl font-semibold mb-4">{'전체 설명'}</h2>
+    <div className="p-2 md:p-6 border-b border-gray4">
+      <h2 className="flex items-center text-xl font-semibold mb-4">
+        <span className="text-primary mr-1">{'#'}</span>
+        {'전체 설명'}
+      </h2>
       <div className="mb-4">
         <textarea
           name="description.full"

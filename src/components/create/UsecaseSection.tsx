@@ -25,8 +25,11 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
   };
 
   return (
-    <div className="bg-gray5 border-gray4 p-6 rounded-lg shadow-xl">
-      <h2 className="text-xl font-semibold mb-4">{'사용 사례'}</h2>
+    <div className="p-2 md:p-6 border-b border-gray4">
+      <h2 className="flex items-center text-xl font-semibold mb-4">
+        <span className="text-primary mr-1">{'#'}</span>
+        {'사용 사례'}
+      </h2>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-1">{'설명'}</label>
@@ -58,7 +61,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
               type="text"
               value={newIndustry}
               onChange={(e) => setNewIndustry(e.target.value)}
-              className="flex-1 p-2 border border-gray3 rounded-md"
+              className="flex-1 p-2 border border-gray4 rounded-md"
               placeholder="산업 분야 추가"
               required
             />

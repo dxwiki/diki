@@ -8,14 +8,20 @@ interface ReferencesSectionProps {
 
 const ReferencesSection = ({ setFormData }: ReferencesSectionProps) => {
   return (
-    <div className="bg-gray5 border-gray4 p-6 rounded-lg shadow-xl">
-      <h2 className="text-xl font-semibold mb-4">{'참고 자료'}</h2>
+    <div className="p-2 md:p-6">
+      <h2 className="flex items-center text-xl font-semibold mb-4">
+        <span className="text-primary mr-1">{'#'}</span>
+        {'참고 자료'}
+      </h2>
 
       {/* 튜토리얼 */}
       <div className="mb-6">
-        <h3 className="text-lg font-medium mb-3">{'튜토리얼'}</h3>
+        <h3 className="text-lg font-medium mb-3">
+          <span className="text-primary mr-1">{'##'}</span>
+          {'튜토리얼'}
+        </h3>
         <div className="space-y-2">
-          <div className="border border-gray3 p-3 rounded-md">
+          <div className="border border-gray4 p-3 rounded-md">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium mb-1">{'제목'}</label>
@@ -78,9 +84,12 @@ const ReferencesSection = ({ setFormData }: ReferencesSectionProps) => {
 
       {/* 책 */}
       <div className="mb-6">
-        <h3 className="text-lg font-medium mb-3">{'서적'}</h3>
+        <h3 className="text-lg font-medium mb-3">
+          <span className="text-primary mr-1">{'##'}</span>
+          {'참고서적'}
+        </h3>
         <div className="space-y-2">
-          <div className="border border-gray3 p-3 rounded-md">
+          <div className="border border-gray4 p-3 rounded-md">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium mb-1">{'제목'}</label>
@@ -195,11 +204,14 @@ const ReferencesSection = ({ setFormData }: ReferencesSectionProps) => {
         </div>
       </div>
 
-      {/* 학술 자료 */}
+      {/* 연구논문 */}
       <div className="mb-6">
-        <h3 className="text-lg font-medium mb-3">{'학술 자료'}</h3>
+        <h3 className="text-lg font-medium mb-3">
+          <span className="text-primary mr-1">{'##'}</span>
+          {'연구논문'}
+        </h3>
         <div className="space-y-2">
-          <div className="border border-gray3 p-3 rounded-md">
+          <div className="border border-gray4 p-3 rounded-md">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium mb-1">{'제목'}</label>
@@ -298,9 +310,12 @@ const ReferencesSection = ({ setFormData }: ReferencesSectionProps) => {
 
       {/* 오픈소스 */}
       <div className="mb-6">
-        <h3 className="text-lg font-medium mb-3">{'오픈소스'}</h3>
+        <h3 className="text-lg font-medium mb-3">
+          <span className="text-primary mr-1">{'##'}</span>
+          {'오픈소스'}
+        </h3>
         <div className="space-y-2">
-          <div className="border border-gray3 p-3 rounded-md">
+          <div className="border border-gray4 p-3 rounded-md">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium mb-1">{'이름'}</label>

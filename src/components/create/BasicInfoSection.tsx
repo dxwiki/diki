@@ -8,8 +8,11 @@ interface BasicInfoSectionProps {
 
 const BasicInfoSection = ({ formData, handleChange }: BasicInfoSectionProps) => {
   return (
-    <div className="bg-gray5 border-gray4 p-6 rounded-lg shadow-xl">
-      <h2 className="text-xl font-semibold mb-4">{'기본 정보'}</h2>
+    <div className="p-2 md:p-6 border-b border-gray4">
+      <h2 className="flex items-center text-xl font-semibold mb-4">
+        <span className="text-primary mr-1">{'#'}</span>
+        {'기본 정보'}
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium mb-1">{'한글 제목'}</label>
