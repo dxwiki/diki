@@ -25,7 +25,7 @@ const PostPreview = ({ term }: PostPreviewProps) => {
   }, [term]);
 
   return (
-    <div className="prose block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg py-2 sm:p-4 mx-2">
+    <div className="prose block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg p-2 sm:p-4">
       <TableOfContents
         title={term.title?.ko === '' ? '제목 없음' : term.title?.ko ?? ''}
         term={term}
