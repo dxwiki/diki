@@ -59,15 +59,38 @@ export const InputFeedback = ({
 }: InputFeedbackProps) => {
   const hasError = showValidation && (!value || value.trim() === '');
   
-  if (hasError) {
-    return (
-      <p className="text-sm text-level-5 ml-1">{errorMessage}</p>
-    );
-  } else if (guidanceMessage) {
-    return (
-      <p className="text-sm text-gray2 ml-1">{guidanceMessage}</p>
-    );
-  }
+  // 에러와 안내 메시지를 모두 보여줄 수 있도록 변경
+  return (
+    <>
+      {hasError && (
+        <p className="text-sm text-level-5 ml-1">{errorMessage}</p>
+      )}
+      {guidanceMessage && (
+        <p className="text-sm text-primary ml-1">{guidanceMessage}</p>
+      )}
+    </>
+  );
+};
+
+// 기존 InputFeedback은 그대로 유지하고, 새로운 조건부 안내 메시지 컴포넌트 추가
+interface IsolatedGuidanceMessageProps {
+  value: string | undefined | null;
+  guidanceMessage: string;
+  showValidation: boolean;
+}
+
+export const IsolatedGuidanceMessage = ({
+  value,
+  guidanceMessage,
+  showValidation
+}: IsolatedGuidanceMessageProps) => {
+  const hasError = showValidation && (!value || value.trim() === '');
   
-  return null;
+  return (
+    <>
+      {hasError && guidanceMessage && (
+        <p className="text-sm text-primary ml-1">{guidanceMessage}</p>
+      )}
+    </>
+  );
 };

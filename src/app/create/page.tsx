@@ -350,8 +350,8 @@ export default function CreatePage() {
         </div>
       ) : (
         <>
-          <form onSubmit={handleSubmit} className="" noValidate>
-            <div className="h-[65vh] sm:h-[70vh] overflow-y-auto overflow-x-hidden border border-gray3 rounded-lg">
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="h-[65vh] sm:h-[73vh] overflow-y-auto overflow-x-hidden border border-gray3 rounded-lg">
               <BasicInfoSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
               <DifficultySection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
               <DescriptionSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />

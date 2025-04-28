@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, KeyboardEvent, useRef } from 'react';
 import { TermData } from '@/types/database';
 import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
+import { useFormValidation, IsolatedGuidanceMessage } from './ValidatedInput';
 
 interface TermsSectionProps {
   formData: TermData;
@@ -11,14 +12,30 @@ interface TermsSectionProps {
 
 const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   const [newTerm, setNewTerm] = useState({ term: '', description: '', internal_link: undefined as string | undefined, link_title: '' });
+  const { showValidation, setShowValidation, getInputClassName } = useFormValidation();
+  
+  const termInputRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const linkSearchRef = useRef<HTMLDivElement>(null);
+  
+  const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, nextRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLDivElement>) => {
+    if (e.nativeEvent.isComposing) return;
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      nextRef.current?.focus();
+    }
+  };
 
   const handleAddTerm = () => {
+    setShowValidation(true);
     if (newTerm.term.trim() && newTerm.description.trim()) {
       setFormData((prev) => ({
         ...prev,
         terms: [...(prev.terms || []), { ...newTerm }],
       }));
       setNewTerm({ term: '', description: '', internal_link: undefined, link_title: '' });
+      termInputRef.current?.focus();
+      setShowValidation(false);
     }
   };
 
@@ -67,29 +84,43 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
         <div className="w-full">
           <label className="block text-sm font-medium mb-1 text-gray0">{'용어'}</label>
           <input
+            ref={termInputRef}
             type="text"
             value={newTerm.term}
             onChange={(e) => setNewTerm({ ...newTerm, term: e.target.value })}
+            onKeyDown={(e) => handleInputKeyDown(e, descriptionRef)}
             className="w-full p-2 border border-gray4 rounded-md"
             placeholder="각주 또는 Diki 포스트 등 관련 용어"
+          />
+          <IsolatedGuidanceMessage
+            value={newTerm.term}
+            guidanceMessage="용어는 필수값입니다."
+            showValidation={showValidation}
           />
         </div>
         <div className="w-full">
           <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
           <textarea
+            ref={descriptionRef}
             value={newTerm.description}
             onChange={(e) => {
               setNewTerm({ ...newTerm, description: e.target.value });
               e.target.style.height = 'auto';
               e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
             }}
+            onKeyDown={(e) => handleInputKeyDown(e, linkSearchRef)}
             className="w-full p-2 border border-gray4 rounded-md h-20"
             placeholder="용어에 대한 설명"
+          />
+          <IsolatedGuidanceMessage
+            value={newTerm.description}
+            guidanceMessage="설명은 필수값입니다."
+            showValidation={showValidation}
           />
         </div>
         <div className="w-full">
           <label className="block text-sm font-medium mb-1 text-gray0">{'내부 링크 (선택)'}</label>
-          <div className="relative">
+          <div ref={linkSearchRef} className="relative">
             <InternalLinkSearch onSelect={handleLinkSelect} />
           </div>
           {newTerm.internal_link ? (

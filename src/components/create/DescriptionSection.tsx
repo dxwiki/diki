@@ -35,10 +35,10 @@ const DescriptionSection = ({ formData, handleChange, validationErrors = [] }: D
           placeholder="마크다운 형식으로 작성"
           required
         />
+        <p className="text-sm text-gray2">{'수식은 $...$ 또는 $$...$$ 형식으로 작성할 수 있습니다.'}</p>
         <InputFeedback
           value={formData.description?.full}
           errorMessage={getFieldError('전체 설명') || '전체 설명을 입력해주세요.'}
-          guidanceMessage="수식은 $...$ 또는 $$...$$ 형식으로 작성할 수 있습니다."
           showValidation={showValidation}
         />
       </div>

@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, KeyboardEvent } from 'react';
 import { TermData, References } from '@/types/database';
 import { X } from 'lucide-react';
+import { useFormValidation, IsolatedGuidanceMessage } from './ValidatedInput';
 
 interface ReferencesSectionProps {
   formData?: TermData;
@@ -9,20 +10,22 @@ interface ReferencesSectionProps {
 }
 
 const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) => {
-  // 콜백 실행 여부를 추적하기 위한 ref 추가
+  const { showValidation: showTutorialValidation, setShowValidation: setShowTutorialValidation } = useFormValidation();
+  const { showValidation: showBookValidation, setShowValidation: setShowBookValidation } = useFormValidation();
+  const { showValidation: showAcademicValidation, setShowValidation: setShowAcademicValidation } = useFormValidation();
+  const { showValidation: showOpensourceValidation, setShowValidation: setShowOpensourceValidation } = useFormValidation();
+
   const tutorialCallbackRef = useRef(false);
   const bookCallbackRef = useRef(false);
   const academicCallbackRef = useRef(false);
   const opensourceCallbackRef = useRef(false);
 
-  // 튜토리얼 상태
   const [tutorial, setTutorial] = useState<{
     title?: string;
     platform?: string;
     external_link?: string;
   }>({});
 
-  // 책 상태
   const [book, setBook] = useState<{
     title?: string;
     authors?: string[];
@@ -32,7 +35,6 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
     external_link?: string;
   }>({});
 
-  // 연구논문 상태
   const [academic, setAcademic] = useState<{
     title?: string;
     authors?: string[];
@@ -41,7 +43,6 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
     external_link?: string;
   }>({});
 
-  // 오픈소스 상태
   const [opensource, setOpensource] = useState<{
     name?: string;
     license?: string;
@@ -49,195 +50,144 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
     external_link?: string;
   }>({});
 
-  // 튜토리얼 추가 함수 - 수정된 버전
+  const tutorialTitleRef = useRef<HTMLInputElement>(null);
+  const tutorialPlatformRef = useRef<HTMLInputElement>(null);
+  const tutorialLinkRef = useRef<HTMLInputElement>(null);
+  
+  const bookTitleRef = useRef<HTMLInputElement>(null);
+  const bookAuthorsRef = useRef<HTMLInputElement>(null);
+  const bookPublisherRef = useRef<HTMLInputElement>(null);
+  const bookYearRef = useRef<HTMLInputElement>(null);
+  const bookIsbnRef = useRef<HTMLInputElement>(null);
+  const bookLinkRef = useRef<HTMLInputElement>(null);
+  
+  const academicTitleRef = useRef<HTMLInputElement>(null);
+  const academicAuthorsRef = useRef<HTMLInputElement>(null);
+  const academicYearRef = useRef<HTMLInputElement>(null);
+  const academicDoiRef = useRef<HTMLInputElement>(null);
+  const academicLinkRef = useRef<HTMLInputElement>(null);
+  
+  const opensourceNameRef = useRef<HTMLInputElement>(null);
+  const opensourceLicenseRef = useRef<HTMLInputElement>(null);
+  const opensourceDescriptionRef = useRef<HTMLTextAreaElement>(null);
+  const opensourceLinkRef = useRef<HTMLInputElement>(null);
+
+  const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, nextRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (e.nativeEvent.isComposing) return;
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      nextRef.current?.focus();
+    }
+  };
+
   const handleAddTutorial = (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log('handleAddTutorial called with:', tutorial);
+    setShowTutorialValidation(true);
 
-    if (tutorial.title?.trim()) {
-      // 현재 튜토리얼 객체 복사
+    if (tutorial.title?.trim() && tutorial.external_link?.trim()) {
       const newTutorial = { ...tutorial };
-
-      // 콜백 실행 여부 초기화
       tutorialCallbackRef.current = false;
 
-      // 상태 업데이트
       setFormData((prev) => {
-        // 이미 콜백이 실행되었으면 이전 상태 그대로 반환
-        if (tutorialCallbackRef.current) {
-          console.log('Preventing duplicate tutorial callback execution');
-          return prev;
-        }
-
-        // 콜백 실행 여부 표시
+        if (tutorialCallbackRef.current) return prev;
         tutorialCallbackRef.current = true;
 
-        console.log('setFormData (tutorials) - prev:', prev.references?.tutorials);
-
-        // 이전 references 복사 또는 초기화
         const newRefs = {
           ...(prev.references || { tutorials: [], books: [], academic: [], opensource: [] }),
         } as References;
 
-        // tutorials 배열 초기화
         if (!newRefs.tutorials) newRefs.tutorials = [];
-
-        // 새 튜토리얼 추가
         newRefs.tutorials.push(newTutorial);
 
-        console.log('setFormData (tutorials) - new:', newRefs.tutorials);
-
-        // 새 상태 반환
         return { ...prev, references: newRefs };
       });
 
-      // 입력 필드 초기화
       setTutorial({ title: '', platform: '', external_link: '' });
+      setShowTutorialValidation(false);
     }
   };
 
-  // 책 추가 함수 - 수정된 버전
   const handleAddBook = (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log('handleAddBook called with:', book);
+    setShowBookValidation(true);
 
-    if (book.title?.trim()) {
-      // 현재 책 객체 복사
+    if (book.title?.trim() && book.external_link?.trim()) {
       const newBook = { ...book };
-
-      // 콜백 실행 여부 초기화
       bookCallbackRef.current = false;
 
-      // 상태 업데이트
       setFormData((prev) => {
-        // 이미 콜백이 실행되었으면 이전 상태 그대로 반환
-        if (bookCallbackRef.current) {
-          console.log('Preventing duplicate book callback execution');
-          return prev;
-        }
-
-        // 콜백 실행 여부 표시
+        if (bookCallbackRef.current) return prev;
         bookCallbackRef.current = true;
 
-        console.log('setFormData (books) - prev:', prev.references?.books);
-
-        // 이전 references 복사 또는 초기화
         const newRefs = {
           ...(prev.references || { tutorials: [], books: [], academic: [], opensource: [] }),
         } as References;
 
-        // books 배열 초기화
         if (!newRefs.books) newRefs.books = [];
-
-        // 새 책 추가
         newRefs.books.push(newBook);
 
-        console.log('setFormData (books) - new:', newRefs.books);
-
-        // 새 상태 반환
         return { ...prev, references: newRefs };
       });
 
-      // 입력 필드 초기화
       setBook({ title: '', authors: [], publisher: '', year: '', isbn: '', external_link: '' });
+      setShowBookValidation(false);
     }
   };
 
-  // 연구논문 추가 함수 - 수정된 버전
   const handleAddAcademic = (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log('handleAddAcademic called with:', academic);
+    setShowAcademicValidation(true);
 
-    if (academic.title?.trim()) {
-      // 현재 논문 객체 복사
+    if (academic.title?.trim() && academic.external_link?.trim()) {
       const newAcademic = { ...academic };
-
-      // 콜백 실행 여부 초기화
       academicCallbackRef.current = false;
 
-      // 상태 업데이트
       setFormData((prev) => {
-        // 이미 콜백이 실행되었으면 이전 상태 그대로 반환
-        if (academicCallbackRef.current) {
-          console.log('Preventing duplicate academic callback execution');
-          return prev;
-        }
-
-        // 콜백 실행 여부 표시
+        if (academicCallbackRef.current) return prev;
         academicCallbackRef.current = true;
 
-        console.log('setFormData (academic) - prev:', prev.references?.academic);
-
-        // 이전 references 복사 또는 초기화
         const newRefs = {
           ...(prev.references || { tutorials: [], books: [], academic: [], opensource: [] }),
         } as References;
 
-        // academic 배열 초기화
         if (!newRefs.academic) newRefs.academic = [];
-
-        // 새 논문 추가
         newRefs.academic.push(newAcademic);
 
-        console.log('setFormData (academic) - new:', newRefs.academic);
-
-        // 새 상태 반환
         return { ...prev, references: newRefs };
       });
 
-      // 입력 필드 초기화
       setAcademic({ title: '', authors: [], year: '', doi: '', external_link: '' });
+      setShowAcademicValidation(false);
     }
   };
 
-  // 오픈소스 추가 함수 - 수정된 버전
   const handleAddOpensource = (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log('handleAddOpensource called with:', opensource);
+    setShowOpensourceValidation(true);
 
-    if (opensource.name?.trim()) {
-      // 현재 오픈소스 객체 복사
+    if (opensource.name?.trim() && opensource.external_link?.trim()) {
       const newOpensource = { ...opensource };
-
-      // 콜백 실행 여부 초기화
       opensourceCallbackRef.current = false;
 
-      // 상태 업데이트
       setFormData((prev) => {
-        // 이미 콜백이 실행되었으면 이전 상태 그대로 반환
-        if (opensourceCallbackRef.current) {
-          console.log('Preventing duplicate opensource callback execution');
-          return prev;
-        }
-
-        // 콜백 실행 여부 표시
+        if (opensourceCallbackRef.current) return prev;
         opensourceCallbackRef.current = true;
 
-        console.log('setFormData (opensource) - prev:', prev.references?.opensource);
-
-        // 이전 references 복사 또는 초기화
         const newRefs = {
           ...(prev.references || { tutorials: [], books: [], academic: [], opensource: [] }),
         } as References;
 
-        // opensource 배열 초기화
         if (!newRefs.opensource) newRefs.opensource = [];
-
-        // 새 오픈소스 추가
         newRefs.opensource.push(newOpensource);
 
-        console.log('setFormData (opensource) - new:', newRefs.opensource);
-
-        // 새 상태 반환
         return { ...prev, references: newRefs };
       });
 
-      // 입력 필드 초기화
       setOpensource({ name: '', license: '', description: '', external_link: '' });
+      setShowOpensourceValidation(false);
     }
   };
 
-  // 참고자료 제거 함수
   const handleRemoveTutorial = (index: number, e: React.MouseEvent) => {
     e.preventDefault();
     setFormData((prev) => {
@@ -289,13 +239,12 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
         {'참고 자료 (선택)'}
       </h2>
 
-      {/* 튜토리얼 섹션 */}
       <div className="mb-6">
         <h3 className="text-lg font-medium">
           <span className="text-primary mr-1">{'##'}</span>
           {'튜토리얼'}
         </h3>
-        {/* 추가된 튜토리얼 목록 */}
+        
         <div className="flex flex-wrap gap-2 my-2">
           {formData?.references?.tutorials?.map((item, index) => (
             <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
@@ -324,31 +273,52 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}</label>
                 <input
+                  ref={tutorialTitleRef}
                   type="text"
                   placeholder="튜토리얼 제목"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={tutorial.title || ''}
                   onChange={(e) => setTutorial({ ...tutorial, title: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, tutorialPlatformRef)}
+                />
+                <IsolatedGuidanceMessage 
+                  value={tutorial.title}
+                  guidanceMessage="관련자료 추가를 위한 제목은 필수값입니다."
+                  showValidation={showTutorialValidation}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'플랫폼'}</label>
                 <input
+                  ref={tutorialPlatformRef}
                   type="text"
                   placeholder="플랫폼 (ex. TensorFlow, PyTorch, OpenCV)"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={tutorial.platform || ''}
                   onChange={(e) => setTutorial({ ...tutorial, platform: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, tutorialLinkRef)}
                 />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}</label>
                 <input
+                  ref={tutorialLinkRef}
                   type="url"
                   placeholder="https://..."
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={tutorial.external_link || ''}
                   onChange={(e) => setTutorial({ ...tutorial, external_link: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                      e.preventDefault();
+                      handleAddTutorial(e as unknown as React.MouseEvent<Element, MouseEvent>);
+                    }
+                  }}
+                />
+                <IsolatedGuidanceMessage 
+                  value={tutorial.external_link}
+                  guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
+                  showValidation={showTutorialValidation}
                 />
               </div>
               <div className="md:col-span-2 flex justify-end">
@@ -365,13 +335,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
         </div>
       </div>
 
-      {/* 책 섹션 */}
       <div className="mb-6">
         <h3 className="text-lg font-medium">
           <span className="text-primary mr-1">{'##'}</span>
           {'참고서적'}
         </h3>
-        {/* 추가된 책 목록 */}
         <div className="flex flex-wrap gap-2 my-2">
           {formData?.references?.books?.map((item, index) => (
             <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
@@ -403,61 +371,88 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}</label>
                 <input
+                  ref={bookTitleRef}
                   type="text"
                   placeholder="책 제목"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={book.title || ''}
                   onChange={(e) => setBook({ ...book, title: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, bookAuthorsRef)}
+                />
+                <IsolatedGuidanceMessage 
+                  value={book.title}
+                  guidanceMessage="관련 자료 추가를 위한 제목은 필수값입니다."
+                  showValidation={showBookValidation}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'저자'}</label>
                 <input
+                  ref={bookAuthorsRef}
                   type="text"
                   placeholder="저자 (여러 명인 경우, 콤마로 구분)"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={book.authors?.join(', ') || ''}
                   onChange={(e) => setBook({ ...book, authors: e.target.value.split(',').map((a) => a.trim()) })}
+                  onKeyDown={(e) => handleInputKeyDown(e, bookPublisherRef)}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'출판사'}</label>
                 <input
+                  ref={bookPublisherRef}
                   type="text"
                   placeholder="출판사"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={book.publisher || ''}
                   onChange={(e) => setBook({ ...book, publisher: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, bookYearRef)}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'출판년도'}</label>
                 <input
+                  ref={bookYearRef}
                   type="text"
                   placeholder="YYYY"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={book.year || ''}
                   onChange={(e) => setBook({ ...book, year: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, bookIsbnRef)}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'ISBN'}</label>
                 <input
+                  ref={bookIsbnRef}
                   type="text"
                   placeholder="ISBN"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={book.isbn || ''}
                   onChange={(e) => setBook({ ...book, isbn: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, bookLinkRef)}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}</label>
                 <input
+                  ref={bookLinkRef}
                   type="url"
                   placeholder="https://..."
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={book.external_link || ''}
                   onChange={(e) => setBook({ ...book, external_link: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                      e.preventDefault();
+                      handleAddBook(e as unknown as React.MouseEvent<Element, MouseEvent>);
+                    }
+                  }}
+                />
+                <IsolatedGuidanceMessage 
+                  value={book.external_link}
+                  guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
+                  showValidation={showBookValidation}
                 />
               </div>
               <div className="md:col-span-2 flex justify-end">
@@ -474,13 +469,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
         </div>
       </div>
 
-      {/* 연구논문 섹션 */}
       <div className="mb-6">
         <h3 className="text-lg font-medium">
           <span className="text-primary mr-1">{'##'}</span>
           {'연구논문'}
         </h3>
-        {/* 추가된 연구논문 목록 */}
         <div className="flex flex-wrap gap-2 my-2">
           {formData?.references?.academic?.map((item, index) => (
             <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
@@ -511,51 +504,76 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}</label>
                 <input
+                  ref={academicTitleRef}
                   type="text"
                   placeholder="논문 제목"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={academic.title || ''}
                   onChange={(e) => setAcademic({ ...academic, title: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, academicAuthorsRef)}
+                />
+                <IsolatedGuidanceMessage 
+                  value={academic.title}
+                  guidanceMessage="관련 자료 추가를 위한 제목은 필수값입니다."
+                  showValidation={showAcademicValidation}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'저자'}</label>
                 <input
+                  ref={academicAuthorsRef}
                   type="text"
                   placeholder="저자 (여러 명인 경우, 콤마로 구분)"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={academic.authors?.join(', ') || ''}
                   onChange={(e) => setAcademic({ ...academic, authors: e.target.value.split(',').map((a) => a.trim()) })}
+                  onKeyDown={(e) => handleInputKeyDown(e, academicYearRef)}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'출판년도'}</label>
                 <input
+                  ref={academicYearRef}
                   type="text"
                   placeholder="YYYY"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={academic.year || ''}
                   onChange={(e) => setAcademic({ ...academic, year: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, academicDoiRef)}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'DOI'}</label>
                 <input
+                  ref={academicDoiRef}
                   type="text"
                   placeholder="DOI"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={academic.doi || ''}
                   onChange={(e) => setAcademic({ ...academic, doi: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, academicLinkRef)}
                 />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}</label>
                 <input
+                  ref={academicLinkRef}
                   type="url"
                   placeholder="https://..."
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={academic.external_link || ''}
                   onChange={(e) => setAcademic({ ...academic, external_link: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                      e.preventDefault();
+                      handleAddAcademic(e as unknown as React.MouseEvent<Element, MouseEvent>);
+                    }
+                  }}
+                />
+                <IsolatedGuidanceMessage 
+                  value={academic.external_link}
+                  guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
+                  showValidation={showAcademicValidation}
                 />
               </div>
               <div className="md:col-span-2 flex justify-end">
@@ -572,13 +590,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
         </div>
       </div>
 
-      {/* 오픈소스 섹션 */}
       <div className="mb-6">
         <h3 className="text-lg font-medium">
           <span className="text-primary mr-1">{'##'}</span>
           {'오픈소스'}
         </h3>
-        {/* 추가된 오픈소스 목록 */}
         <div className="flex flex-wrap gap-2 my-2">
           {formData?.references?.opensource?.map((item, index) => (
             <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
@@ -608,40 +624,63 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'이름'}</label>
                 <input
+                  ref={opensourceNameRef}
                   type="text"
                   placeholder="오픈소스 프로젝트 이름"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={opensource.name || ''}
                   onChange={(e) => setOpensource({ ...opensource, name: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, opensourceLicenseRef)}
+                />
+                <IsolatedGuidanceMessage 
+                  value={opensource.name}
+                  guidanceMessage="관련 자료 추가를 위한 이름은 필수값입니다."
+                  showValidation={showOpensourceValidation}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray0">{'라이센스'}</label>
                 <input
+                  ref={opensourceLicenseRef}
                   type="text"
                   placeholder="라이센스 (ex. MIT, GPL)"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={opensource.license || ''}
                   onChange={(e) => setOpensource({ ...opensource, license: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, opensourceDescriptionRef)}
                 />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
                 <textarea
+                  ref={opensourceDescriptionRef}
                   placeholder="간략한 설명"
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={opensource.description || ''}
                   onChange={(e) => setOpensource({ ...opensource, description: e.target.value })}
+                  onKeyDown={(e) => handleInputKeyDown(e, opensourceLinkRef)}
                 />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}</label>
                 <input
+                  ref={opensourceLinkRef}
                   type="url"
                   placeholder="https://..."
                   className="w-full p-2 border border-gray4 rounded-md"
                   value={opensource.external_link || ''}
                   onChange={(e) => setOpensource({ ...opensource, external_link: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                      e.preventDefault();
+                      handleAddOpensource(e as unknown as React.MouseEvent<Element, MouseEvent>);
+                    }
+                  }}
+                />
+                <IsolatedGuidanceMessage 
+                  value={opensource.external_link}
+                  guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
+                  showValidation={showOpensourceValidation}
                 />
               </div>
               <div className="md:col-span-2 flex justify-end">

@@ -1,5 +1,5 @@
 import { TermData } from '@/types/database';
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useRef } from 'react';
 import { X } from 'lucide-react';
 import { useFormValidation, InputFeedback } from './ValidatedInput';
 
@@ -12,10 +12,67 @@ interface BasicInfoSectionProps {
 const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: BasicInfoSectionProps) => {
   const [newEtcTitle, setNewEtcTitle] = useState('');
   const { getInputClassName, showValidation } = useFormValidation();
+  const [enTitleGuidance, setEnTitleGuidance] = useState<string | null>(null);
+  const [koTitleGuidance, setKoTitleGuidance] = useState<string | null>(null);
 
-  // 특정 필드에 대한 유효성 검사 오류 찾기
+  // 각 입력 필드에 대한 ref 생성
+  const koTitleRef = useRef<HTMLInputElement>(null);
+  const enTitleRef = useRef<HTMLInputElement>(null);
+  const shortDescRef = useRef<HTMLTextAreaElement>(null);
+  const etcTitleRef = useRef<HTMLInputElement>(null);
+
   const getFieldError = (fieldName: string) => {
     return validationErrors.find(err => err.includes(fieldName));
+  };
+
+  const handleEnglishTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const englishOnly = value.replace(/[^a-zA-Z\s]/g, '');
+    
+    if (value !== englishOnly) {
+      setEnTitleGuidance('영어 외의 문자는 사용할 수 없습니다');
+    } else {
+      setEnTitleGuidance(null);
+    }
+    
+    const filteredEvent = {
+      target: {
+        name: e.target.name,
+        value: englishOnly
+      }
+    } as React.ChangeEvent<HTMLInputElement>;
+    
+    handleChange(filteredEvent);
+  };
+
+  const handleKoreanTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    
+    const koreanAndEnglishOnly = value.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z\s]/g, '');
+    
+    if (value !== koreanAndEnglishOnly) {
+      setKoTitleGuidance('한국어, 영어 외의 문자는 사용할 수 없습니다. (영어 일부 인정)');
+    } else {
+      setKoTitleGuidance(null);
+    }
+    
+    const filteredEvent = {
+      target: {
+        name: e.target.name,
+        value: koreanAndEnglishOnly
+      }
+    } as React.ChangeEvent<HTMLInputElement>;
+    
+    handleChange(filteredEvent);
+  };
+
+  // 엔터 키 처리 - 다음 필드로 이동
+  const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, nextRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (e.nativeEvent.isComposing) return;
+    if (e.key === 'Enter') {
+      e.preventDefault(); // 폼 제출 방지
+      nextRef.current?.focus();
+    }
   };
 
   const handleAddEtcTitle = () => {
@@ -32,10 +89,11 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: Bas
 
       handleChange(fakeEvent);
       setNewEtcTitle('');
+      etcTitleRef.current?.focus();
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleEtcTitleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
     if (e.key === 'Enter') {
       e.preventDefault(); // 폼 제출 방지
@@ -68,10 +126,12 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: Bas
         <div>
           <label className="block text-sm font-medium mb-1 text-gray0">{'한글 제목'}</label>
           <input
+            ref={koTitleRef}
             type="text"
             name="title.ko"
             value={formData.title?.ko || ''}
-            onChange={handleChange}
+            onChange={handleKoreanTitleChange}
+            onKeyDown={(e) => handleInputKeyDown(e, enTitleRef)}
             className={getInputClassName(formData.title?.ko)}
             placeholder="포스트 한글 제목 (ex. 인공지능)"
             required
@@ -79,6 +139,7 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: Bas
           <InputFeedback
             value={formData.title?.ko}
             errorMessage={getFieldError('한글 제목') || '한글 제목을 입력해주세요.'}
+            guidanceMessage={koTitleGuidance || undefined}
             showValidation={showValidation}
           />
         </div>
@@ -86,10 +147,12 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: Bas
         <div>
           <label className="block text-sm font-medium mb-1 text-gray0">{'영문 제목'}</label>
           <input
+            ref={enTitleRef}
             type="text"
             name="title.en"
             value={formData.title?.en || ''}
-            onChange={handleChange}
+            onChange={handleEnglishTitleChange}
+            onKeyDown={(e) => handleInputKeyDown(e, shortDescRef)}
             className={getInputClassName(formData.title?.en)}
             placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
             required
@@ -97,6 +160,7 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: Bas
           <InputFeedback
             value={formData.title?.en}
             errorMessage={getFieldError('영문 제목') || '영문 제목을 입력해주세요.'}
+            guidanceMessage={enTitleGuidance || undefined}
             showValidation={showValidation}
           />
         </div>
@@ -105,6 +169,7 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: Bas
           <label className="block text-sm font-medium mb-1 text-gray0">{'짧은 설명'}</label>
           <div className="relative">
             <textarea
+              ref={shortDescRef}
               name="description.short"
               value={formData.description?.short || ''}
               onChange={(e) => {
@@ -113,6 +178,7 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: Bas
                 e.target.style.height = 'auto';
                 e.target.style.height = e.target.scrollHeight + 'px';
               }}
+              onKeyDown={(e) => handleInputKeyDown(e, etcTitleRef)}
               className={getInputClassName(formData.description?.short) + ' resize-none overflow-hidden'}
               required
               placeholder="포스트에 대한 1~2줄 짧은 설명 (100자 이내)"
@@ -138,10 +204,11 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: Bas
             <div className="flex items-end space-x-2">
               <div className="flex-1">
                 <input
+                  ref={etcTitleRef}
                   type="text"
                   value={newEtcTitle}
                   onChange={(e) => setNewEtcTitle(e.target.value)}
-                  onKeyDown={handleKeyDown}
+                  onKeyDown={handleEtcTitleKeyDown}
                   className="w-full p-2 border border-gray4 rounded-md"
                   placeholder="별칭 또는 줄임말 (ex. AI)"
                 />
