@@ -1,6 +1,7 @@
 import { TermData } from '@/types/database';
 import React, { useState, KeyboardEvent } from 'react';
 import { X } from 'lucide-react';
+import { useFormValidation } from './ValidatedInput';
 
 interface UsecaseSectionProps {
   formData: TermData;
@@ -10,6 +11,7 @@ interface UsecaseSectionProps {
 
 const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionProps) => {
   const [newIndustry, setNewIndustry] = useState('');
+  const { getInputClassName } = useFormValidation();
 
   const handleAddIndustry = () => {
     if (newIndustry.trim()) {
@@ -49,7 +51,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
               e.target.style.height = 'auto';
               e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
             }}
-            className="w-full p-2 border border-gray4 rounded-md h-20"
+            className={getInputClassName(formData.usecase?.description)}
             rows={2}
             required
             placeholder="해당 용어의 사용 사례에 대한 개요"
@@ -65,7 +67,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
               e.target.style.height = 'auto';
               e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
             }}
-            className="w-full p-2 border border-gray4 rounded-md h-20"
+            className={getInputClassName(formData.usecase?.example)}
             rows={2}
             required
             placeholder="구체적인 사용 사례"

@@ -1,6 +1,7 @@
 import { TermData } from '@/types/database';
 import React, { useState, useEffect } from 'react';
 import CreateSlider from '@/components/ui/CreateSlider';
+import { useFormValidation } from './ValidatedInput';
 
 interface RelevanceSectionProps {
   formData: TermData;
@@ -10,6 +11,7 @@ interface RelevanceSectionProps {
 
 const RelevanceSection = ({ formData, handleChange, handleCustomChange }: RelevanceSectionProps) => {
   const relevanceLevels = ['희박', '낮음', '보통', '높음', '밀접'];
+  const { getInputClassName } = useFormValidation();
 
   // 각 직무별 슬라이더 값 상태 관리 (1~5 범위 사용)
   const [analystScore, setAnalystScore] = useState<number>(formData.relevance?.analyst?.score || 1);
@@ -101,7 +103,7 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
               name="relevance.analyst.description"
               value={formData.relevance?.analyst?.description || ''}
               onChange={handleChange}
-              className="w-full min-h-[120px] p-2 border border-gray4 rounded-md"
+              className={getInputClassName(formData.relevance?.analyst?.description, 'w-full min-h-[120px] p-2 border rounded-md')}
               placeholder="데이터 분석가 직무와의 연관성에 대한 설명"
               required
             />
@@ -126,7 +128,7 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
               name="relevance.scientist.description"
               value={formData.relevance?.scientist?.description || ''}
               onChange={handleChange}
-              className="w-full min-h-[120px] p-2 border border-gray4 rounded-md"
+              className={getInputClassName(formData.relevance?.scientist?.description, 'w-full min-h-[120px] p-2 border rounded-md')}
               placeholder="데이터 과학자 직무와의 연관성에 대한 설명"
               required
             />
@@ -151,7 +153,7 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
               name="relevance.engineer.description"
               value={formData.relevance?.engineer?.description || ''}
               onChange={handleChange}
-              className="w-full min-h-[120px] p-2 border border-gray4 rounded-md"
+              className={getInputClassName(formData.relevance?.engineer?.description, 'w-full min-h-[120px] p-2 border rounded-md')}
               placeholder="데이터 엔지니어 직무와의 연관성에 대한 설명"
               required
             />

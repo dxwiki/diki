@@ -1,5 +1,6 @@
 import { TermData } from '@/types/database';
 import React from 'react';
+import { useFormValidation } from './ValidatedInput';
 
 interface DescriptionSectionProps {
   formData: TermData;
@@ -7,6 +8,8 @@ interface DescriptionSectionProps {
 }
 
 const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps) => {
+  const { getInputClassName } = useFormValidation();
+
   return (
     <div className="p-2 md:p-6 border-b border-gray3">
       <h2 className="flex items-center text-xl font-semibold mb-4">
@@ -22,7 +25,7 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
             e.target.style.height = 'auto';
             e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
           }}
-          className="w-full p-2 border border-gray4 rounded-md h-20"
+          className={getInputClassName(formData.description?.full)}
           placeholder="마크다운 형식으로 작성"
           required
         />

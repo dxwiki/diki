@@ -1,6 +1,7 @@
 import { TermData } from '@/types/database';
 import React, { useState, useEffect } from 'react';
 import CreateSlider from '@/components/ui/CreateSlider';
+import { useFormValidation } from './ValidatedInput';
 
 interface DifficultySectionProps {
   formData: TermData;
@@ -10,6 +11,7 @@ interface DifficultySectionProps {
 
 const DifficultySection = ({ formData, handleChange, handleCustomChange }: DifficultySectionProps) => {
   const levels = ['기초', '초급', '중급', '고급', '전문'];
+  const { getInputClassName } = useFormValidation();
 
   // 슬라이더 상태는 1~5 범위 사용
   const [levelValue, setLevelValue] = useState<number>(formData.difficulty?.level || 1);
@@ -58,7 +60,7 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange }: Diffi
           <textarea
             name="difficulty.description"
             value={formData.difficulty?.description || ''}
-            className="w-full p-2 border border-gray4 rounded-md h-20"
+            className={getInputClassName(formData.difficulty?.description)}
             placeholder="난이도에 대한 설명"
             required
             onChange={(e) => {

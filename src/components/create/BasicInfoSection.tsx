@@ -1,6 +1,7 @@
 import { TermData } from '@/types/database';
 import React, { useState, KeyboardEvent } from 'react';
 import { X } from 'lucide-react';
+import { useFormValidation } from './ValidatedInput';
 
 interface BasicInfoSectionProps {
   formData: TermData;
@@ -9,6 +10,7 @@ interface BasicInfoSectionProps {
 
 const BasicInfoSection = ({ formData, handleChange }: BasicInfoSectionProps) => {
   const [newEtcTitle, setNewEtcTitle] = useState('');
+  const { getInputClassName } = useFormValidation();
 
   const handleAddEtcTitle = () => {
     if (newEtcTitle.trim()) {
@@ -64,7 +66,7 @@ const BasicInfoSection = ({ formData, handleChange }: BasicInfoSectionProps) => 
             name="title.ko"
             value={formData.title?.ko || ''}
             onChange={handleChange}
-            className="w-full p-2 border border-gray4 rounded-md"
+            className={getInputClassName(formData.title?.ko)}
             placeholder="포스트 한글 제목 (ex. 인공지능)"
             required
           />
@@ -77,7 +79,7 @@ const BasicInfoSection = ({ formData, handleChange }: BasicInfoSectionProps) => 
             name="title.en"
             value={formData.title?.en || ''}
             onChange={handleChange}
-            className="w-full p-2 border border-gray4 rounded-md"
+            className={getInputClassName(formData.title?.en)}
             placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
             required
           />
@@ -95,7 +97,7 @@ const BasicInfoSection = ({ formData, handleChange }: BasicInfoSectionProps) => 
                 e.target.style.height = 'auto';
                 e.target.style.height = e.target.scrollHeight + 'px';
               }}
-              className="w-full p-2 border border-gray4 rounded-md resize-none overflow-hidden"
+              className={getInputClassName(formData.description?.short) + ' resize-none overflow-hidden'}
               required
               placeholder="포스트에 대한 1~2줄 짧은 설명 (100자 이내)"
               maxLength={100}
@@ -132,7 +134,7 @@ const BasicInfoSection = ({ formData, handleChange }: BasicInfoSectionProps) => 
               </button>
             </div>
             <p className="text-sm text-gray2 m-1">
-              {'추가 제목을 입력하면 검색 시 추가 제목으로도 검색됩니다.'}
+              {'추가 제목을 입력하면, 검색 시 추가 제목으로도 검색됩니다.'}
             </p>
           </div>
 

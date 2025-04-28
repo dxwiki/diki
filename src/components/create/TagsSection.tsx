@@ -60,7 +60,7 @@ const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
           <InternalLinkSearch onSelect={handleLinkSelect} refocus />
         </div>
       </div>
-      <p className="text-sm text-gray2 mt-1">{'포스트를 검색하여 선택하면 자동으로 추가됩니다. 추가된 포스트의 링크를 눌러 확인할 수 있습니다.'}</p>
+      <p className="text-sm text-gray2 mt-1">{'Diki 내 포스트를 검색하여 선택하면, 관련 포스트가 자동으로 추가됩니다.\n 추가된 포스트의 링크를 눌러 확인할 수 있습니다.'}</p>
     </div>
   );
 };
