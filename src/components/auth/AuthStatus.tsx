@@ -58,9 +58,10 @@ export default function AuthStatus() {
 
   if (!user) {
     return (
-      <Link href="/login" className="rounded-md text-sm text-gray1 hover:text-main">
-        {'기여하기'}
-      </Link>
+      <div />
+      // <Link href="/login" className="rounded-md text-sm text-gray1 hover:text-main">
+      //   {'기여하기'}
+      // </Link>
     );
   }
 
