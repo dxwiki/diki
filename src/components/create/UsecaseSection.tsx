@@ -16,7 +16,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
 
   // 특정 필드에 대한 유효성 검사 오류 찾기
   const getFieldError = (fieldName: string) => {
-    return validationErrors.find(err => err.includes(fieldName));
+    return validationErrors.find((err) => err.includes(fieldName));
   };
 
   const handleAddIndustry = () => {
@@ -56,7 +56,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
         <span className="text-primary mr-1">{'#'}</span>
         {'사용 사례'}
       </h2>
-      
+
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1 text-gray0">{'개요'}</label>
         <textarea
@@ -77,7 +77,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
           showValidation={showValidation}
         />
       </div>
-      
+
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1 text-gray0">{'사례'}</label>
         <textarea
@@ -98,7 +98,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
           showValidation={showValidation}
         />
       </div>
-      
+
       <div className="mb-1">
         <label className="block text-sm font-medium mb-1 text-gray0">{'관련 산업 분야 (선택)'}</label>
         <div className="flex items-end space-x-2 mb-2">
@@ -124,7 +124,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
           {'산업 분야 추가 (ex. 의료, 금융, 제조, 교통, 교육, 엔터테인먼트, 보안, 리테일, 에너지, 농업 등)'}
         </p>
       </div>
-      
+
       <div className="flex flex-wrap gap-2">
         {formData.usecase?.industries?.map((industry, index) => (
           <div key={index} className="bg-gray5 border border-gray4 rounded-lg px-3 py-1 flex items-center">

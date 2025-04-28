@@ -22,47 +22,47 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: Bas
   const etcTitleRef = useRef<HTMLInputElement>(null);
 
   const getFieldError = (fieldName: string) => {
-    return validationErrors.find(err => err.includes(fieldName));
+    return validationErrors.find((err) => err.includes(fieldName));
   };
 
   const handleEnglishTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const englishOnly = value.replace(/[^a-zA-Z\s]/g, '');
-    
+
     if (value !== englishOnly) {
       setEnTitleGuidance('영어 외의 문자는 사용할 수 없습니다');
     } else {
       setEnTitleGuidance(null);
     }
-    
+
     const filteredEvent = {
       target: {
         name: e.target.name,
-        value: englishOnly
-      }
+        value: englishOnly,
+      },
     } as React.ChangeEvent<HTMLInputElement>;
-    
+
     handleChange(filteredEvent);
   };
 
   const handleKoreanTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    
+
     const koreanAndEnglishOnly = value.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z\s]/g, '');
-    
+
     if (value !== koreanAndEnglishOnly) {
       setKoTitleGuidance('한국어, 영어 외의 문자는 사용할 수 없습니다. (영어 일부 인정)');
     } else {
       setKoTitleGuidance(null);
     }
-    
+
     const filteredEvent = {
       target: {
         name: e.target.name,
-        value: koreanAndEnglishOnly
-      }
+        value: koreanAndEnglishOnly,
+      },
     } as React.ChangeEvent<HTMLInputElement>;
-    
+
     handleChange(filteredEvent);
   };
 

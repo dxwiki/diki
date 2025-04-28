@@ -16,7 +16,7 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, validat
 
   // 특정 필드에 대한 유효성 검사 오류 찾기
   const getFieldError = (fieldName: string) => {
-    return validationErrors.find(err => err.includes(fieldName));
+    return validationErrors.find((err) => err.includes(fieldName));
   };
 
   // 슬라이더 상태는 1~5 범위 사용

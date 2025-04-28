@@ -53,20 +53,20 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
   const tutorialTitleRef = useRef<HTMLInputElement>(null);
   const tutorialPlatformRef = useRef<HTMLInputElement>(null);
   const tutorialLinkRef = useRef<HTMLInputElement>(null);
-  
+
   const bookTitleRef = useRef<HTMLInputElement>(null);
   const bookAuthorsRef = useRef<HTMLInputElement>(null);
   const bookPublisherRef = useRef<HTMLInputElement>(null);
   const bookYearRef = useRef<HTMLInputElement>(null);
   const bookIsbnRef = useRef<HTMLInputElement>(null);
   const bookLinkRef = useRef<HTMLInputElement>(null);
-  
+
   const academicTitleRef = useRef<HTMLInputElement>(null);
   const academicAuthorsRef = useRef<HTMLInputElement>(null);
   const academicYearRef = useRef<HTMLInputElement>(null);
   const academicDoiRef = useRef<HTMLInputElement>(null);
   const academicLinkRef = useRef<HTMLInputElement>(null);
-  
+
   const opensourceNameRef = useRef<HTMLInputElement>(null);
   const opensourceLicenseRef = useRef<HTMLInputElement>(null);
   const opensourceDescriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -244,7 +244,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
           <span className="text-primary mr-1">{'##'}</span>
           {'튜토리얼'}
         </h3>
-        
+
         <div className="flex flex-wrap gap-2 my-2">
           {formData?.references?.tutorials?.map((item, index) => (
             <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
@@ -281,7 +281,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   onChange={(e) => setTutorial({ ...tutorial, title: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, tutorialPlatformRef)}
                 />
-                <IsolatedGuidanceMessage 
+                <IsolatedGuidanceMessage
                   value={tutorial.title}
                   guidanceMessage="관련자료 추가를 위한 제목은 필수값입니다."
                   showValidation={showTutorialValidation}
@@ -315,7 +315,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                     }
                   }}
                 />
-                <IsolatedGuidanceMessage 
+                <IsolatedGuidanceMessage
                   value={tutorial.external_link}
                   guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
                   showValidation={showTutorialValidation}
@@ -379,7 +379,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   onChange={(e) => setBook({ ...book, title: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, bookAuthorsRef)}
                 />
-                <IsolatedGuidanceMessage 
+                <IsolatedGuidanceMessage
                   value={book.title}
                   guidanceMessage="관련 자료 추가를 위한 제목은 필수값입니다."
                   showValidation={showBookValidation}
@@ -449,7 +449,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                     }
                   }}
                 />
-                <IsolatedGuidanceMessage 
+                <IsolatedGuidanceMessage
                   value={book.external_link}
                   guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
                   showValidation={showBookValidation}
@@ -512,7 +512,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   onChange={(e) => setAcademic({ ...academic, title: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, academicAuthorsRef)}
                 />
-                <IsolatedGuidanceMessage 
+                <IsolatedGuidanceMessage
                   value={academic.title}
                   guidanceMessage="관련 자료 추가를 위한 제목은 필수값입니다."
                   showValidation={showAcademicValidation}
@@ -570,7 +570,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                     }
                   }}
                 />
-                <IsolatedGuidanceMessage 
+                <IsolatedGuidanceMessage
                   value={academic.external_link}
                   guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
                   showValidation={showAcademicValidation}
@@ -632,7 +632,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   onChange={(e) => setOpensource({ ...opensource, name: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, opensourceLicenseRef)}
                 />
-                <IsolatedGuidanceMessage 
+                <IsolatedGuidanceMessage
                   value={opensource.name}
                   guidanceMessage="관련 자료 추가를 위한 이름은 필수값입니다."
                   showValidation={showOpensourceValidation}
@@ -677,7 +677,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                     }
                   }}
                 />
-                <IsolatedGuidanceMessage 
+                <IsolatedGuidanceMessage
                   value={opensource.external_link}
                   guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
                   showValidation={showOpensourceValidation}

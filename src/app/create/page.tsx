@@ -3,7 +3,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { TermData } from '@/types/database';
-import Link from 'next/link';
 import BasicInfoSection from '@/components/create/BasicInfoSection';
 import DescriptionSection from '@/components/create/DescriptionSection';
 import TagsSection from '@/components/create/TagsSection';
@@ -164,11 +163,11 @@ export default function CreatePage() {
     if (!formData.relevance?.analyst?.description || formData.relevance.analyst.description.trim() === '') {
       errors.push('데이터 분석가 직무 연관성 설명을 입력해주세요.');
     }
-    
+
     if (!formData.relevance?.scientist?.description || formData.relevance.scientist.description.trim() === '') {
       errors.push('데이터 과학자 직무 연관성 설명을 입력해주세요.');
     }
-    
+
     if (!formData.relevance?.engineer?.description || formData.relevance.engineer.description.trim() === '') {
       errors.push('데이터 엔지니어 직무 연관성 설명을 입력해주세요.');
     }
@@ -177,7 +176,7 @@ export default function CreatePage() {
     if (!formData.usecase?.description || formData.usecase.description.trim() === '') {
       errors.push('사용 사례 개요를 입력해주세요.');
     }
-    
+
     if (!formData.usecase?.example || formData.usecase.example.trim() === '') {
       errors.push('구체적인 사용 사례를 입력해주세요.');
     }
@@ -188,12 +187,12 @@ export default function CreatePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       setError('필수 항목을 모두 입력해주세요.');
       return;
     }
-    
+
     // 모달 열기
     setIsConfirmModalOpen(true);
   };
@@ -367,7 +366,7 @@ export default function CreatePage() {
                 {error}
               </div>
             )}
-            
+
             <div className="flex justify-end space-x-4 py-4">
               <button
                 type="button"
@@ -387,7 +386,7 @@ export default function CreatePage() {
           </form>
         </>
       )}
-      
+
       {/* 확인 모달 */}
       <ConfirmModal
         isOpen={isConfirmModalOpen}
@@ -398,7 +397,7 @@ export default function CreatePage() {
         confirmText="등록하기"
         cancelText="취소"
       />
-      
+
       {/* 취소 확인 모달 */}
       <ConfirmModal
         isOpen={isCancelModalOpen}
@@ -409,7 +408,7 @@ export default function CreatePage() {
         confirmText="확인"
         cancelText="취소"
       />
-      
+
       <div className="sm:hidden">
         <Footer />
       </div>

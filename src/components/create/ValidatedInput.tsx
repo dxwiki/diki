@@ -51,14 +51,14 @@ interface InputFeedbackProps {
   showValidation: boolean;
 }
 
-export const InputFeedback = ({ 
-  value, 
-  errorMessage, 
-  guidanceMessage, 
-  showValidation 
+export const InputFeedback = ({
+  value,
+  errorMessage,
+  guidanceMessage,
+  showValidation,
 }: InputFeedbackProps) => {
   const hasError = showValidation && (!value || value.trim() === '');
-  
+
   // 에러와 안내 메시지를 모두 보여줄 수 있도록 변경
   return (
     <>
@@ -82,10 +82,10 @@ interface IsolatedGuidanceMessageProps {
 export const IsolatedGuidanceMessage = ({
   value,
   guidanceMessage,
-  showValidation
+  showValidation,
 }: IsolatedGuidanceMessageProps) => {
   const hasError = showValidation && (!value || value.trim() === '');
-  
+
   return (
     <>
       {hasError && guidanceMessage && (

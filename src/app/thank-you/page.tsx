@@ -1,21 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+// import { useEffect, useState } from 'react';
+// import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function ThankYouPage() {
-  const searchParams = useSearchParams();
-  const issueNumber = searchParams.get('issue');
-  const [issueUrl, setIssueUrl] = useState<string | null>(null);
+  // const searchParams = useSearchParams();
+  // const issueNumber = searchParams.get('issue');
+  // const [_issueUrl, setIssueUrl] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (issueNumber) {
-      // GitHub 저장소 URL 형식
-      const url = `https://github.com/${ process.env.NEXT_PUBLIC_GITHUB_REPO_OWNER }/${ process.env.NEXT_PUBLIC_GITHUB_REPO_NAME }/issues/${ issueNumber }`;
-      setIssueUrl(url);
-    }
-  }, [issueNumber]);
+  // useEffect(() => {
+  //   if (issueNumber) {
+  //     // GitHub 저장소 URL 형식
+  //     const url = `https://github.com/${ process.env.NEXT_PUBLIC_GITHUB_REPO_OWNER }/${ process.env.NEXT_PUBLIC_GITHUB_REPO_NAME }/issues/${ issueNumber }`;
+  //     setIssueUrl(url);
+  //   }
+  // }, [issueNumber]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">

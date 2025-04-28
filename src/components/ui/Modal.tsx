@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: ()=> void;
   title: string;
   children: React.ReactNode;
 }
@@ -13,9 +13,9 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
     if (isOpen) {
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = 'hidden';
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
+      document.body.style.paddingRight = `${ scrollbarWidth }px`;
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset';
       document.body.style.paddingRight = '0px';
@@ -40,7 +40,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
             <X className="size-5 text-main" />
           </button>
         </div>
-        
+
         <div>
           {children}
         </div>
@@ -51,22 +51,22 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
 
 interface ConfirmModalProps {
   isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
+  onClose: ()=> void;
+  onConfirm: ()=> void;
   title: string;
   message: string;
   confirmText?: string;
   cancelText?: string;
 }
 
-export const ConfirmModal = ({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  title, 
-  message, 
-  confirmText = '확인', 
-  cancelText = '취소' 
+export const ConfirmModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText = '확인',
+  cancelText = '취소',
 }: ConfirmModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
@@ -92,4 +92,4 @@ export const ConfirmModal = ({
       </div>
     </Modal>
   );
-}; 
+};

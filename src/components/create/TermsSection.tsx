@@ -12,12 +12,12 @@ interface TermsSectionProps {
 
 const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   const [newTerm, setNewTerm] = useState({ term: '', description: '', internal_link: undefined as string | undefined, link_title: '' });
-  const { showValidation, setShowValidation, getInputClassName } = useFormValidation();
-  
+  const { showValidation, setShowValidation } = useFormValidation();
+
   const termInputRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const linkSearchRef = useRef<HTMLDivElement>(null);
-  
+
   const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, nextRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLDivElement>) => {
     if (e.nativeEvent.isComposing) return;
     if (e.key === 'Enter') {
