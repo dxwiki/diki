@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 const errorMessages: Record<string, string> = {
   github_code_missing: 'GitHub에서 인증 코드를 받지 못했습니다.',
@@ -10,7 +11,7 @@ const errorMessages: Record<string, string> = {
   no_email: 'GitHub 계정에서 이메일을 찾을 수 없습니다.',
 };
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -54,5 +55,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-[70vh]">{'로딩 중...'}</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
