@@ -1,14 +1,20 @@
 import { TermData } from '@/types/database';
 import React from 'react';
-import { useFormValidation } from './ValidatedInput';
+import { useFormValidation, InputFeedback } from './ValidatedInput';
 
 interface DescriptionSectionProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
+  validationErrors?: string[];
 }
 
-const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps) => {
-  const { getInputClassName } = useFormValidation();
+const DescriptionSection = ({ formData, handleChange, validationErrors = [] }: DescriptionSectionProps) => {
+  const { getInputClassName, showValidation } = useFormValidation();
+
+  // 특정 필드에 대한 유효성 검사 오류 찾기
+  const getFieldError = (fieldName: string) => {
+    return validationErrors.find(err => err.includes(fieldName));
+  };
 
   return (
     <div className="p-2 md:p-6 border-b border-gray3">
@@ -29,7 +35,12 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
           placeholder="마크다운 형식으로 작성"
           required
         />
-        <p className="text-sm text-gray2">{'수식은 $...$ 또는 $$...$$ 형식으로 작성할 수 있습니다.'}</p>
+        <InputFeedback
+          value={formData.description?.full}
+          errorMessage={getFieldError('전체 설명') || '전체 설명을 입력해주세요.'}
+          guidanceMessage="수식은 $...$ 또는 $$...$$ 형식으로 작성할 수 있습니다."
+          showValidation={showValidation}
+        />
       </div>
     </div>
   );

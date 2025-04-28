@@ -1,16 +1,22 @@
 import { TermData } from '@/types/database';
 import React, { useState, KeyboardEvent } from 'react';
 import { X } from 'lucide-react';
-import { useFormValidation } from './ValidatedInput';
+import { useFormValidation, InputFeedback } from './ValidatedInput';
 
 interface BasicInfoSectionProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
+  validationErrors?: string[];
 }
 
-const BasicInfoSection = ({ formData, handleChange }: BasicInfoSectionProps) => {
+const BasicInfoSection = ({ formData, handleChange, validationErrors = [] }: BasicInfoSectionProps) => {
   const [newEtcTitle, setNewEtcTitle] = useState('');
-  const { getInputClassName } = useFormValidation();
+  const { getInputClassName, showValidation } = useFormValidation();
+
+  // 특정 필드에 대한 유효성 검사 오류 찾기
+  const getFieldError = (fieldName: string) => {
+    return validationErrors.find(err => err.includes(fieldName));
+  };
 
   const handleAddEtcTitle = () => {
     if (newEtcTitle.trim()) {
@@ -70,6 +76,11 @@ const BasicInfoSection = ({ formData, handleChange }: BasicInfoSectionProps) => 
             placeholder="포스트 한글 제목 (ex. 인공지능)"
             required
           />
+          <InputFeedback
+            value={formData.title?.ko}
+            errorMessage={getFieldError('한글 제목') || '한글 제목을 입력해주세요.'}
+            showValidation={showValidation}
+          />
         </div>
 
         <div>
@@ -82,6 +93,11 @@ const BasicInfoSection = ({ formData, handleChange }: BasicInfoSectionProps) => 
             className={getInputClassName(formData.title?.en)}
             placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
             required
+          />
+          <InputFeedback
+            value={formData.title?.en}
+            errorMessage={getFieldError('영문 제목') || '영문 제목을 입력해주세요.'}
+            showValidation={showValidation}
           />
         </div>
 
@@ -108,6 +124,11 @@ const BasicInfoSection = ({ formData, handleChange }: BasicInfoSectionProps) => 
               {`${ formData.description?.short?.length || 0 }/100`}
             </div>
           </div>
+          <InputFeedback
+            value={formData.description?.short}
+            errorMessage={getFieldError('짧은 설명') || '짧은 설명을 입력해주세요.'}
+            showValidation={showValidation}
+          />
         </div>
 
         {/* 추가 제목(etc) 입력 및 목록 */}

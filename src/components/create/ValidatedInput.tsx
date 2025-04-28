@@ -42,3 +42,32 @@ export const useFormValidation = (options: ValidationHookOptions = {}) => {
 
   return { showValidation, setShowValidation, getInputClassName };
 };
+
+// 유효성 검사 오류 또는 안내 메시지를 표시하는 컴포넌트
+interface InputFeedbackProps {
+  value: string | undefined | null;
+  errorMessage: string;
+  guidanceMessage?: string;
+  showValidation: boolean;
+}
+
+export const InputFeedback = ({ 
+  value, 
+  errorMessage, 
+  guidanceMessage, 
+  showValidation 
+}: InputFeedbackProps) => {
+  const hasError = showValidation && (!value || value.trim() === '');
+  
+  if (hasError) {
+    return (
+      <p className="text-sm text-level-5 ml-1">{errorMessage}</p>
+    );
+  } else if (guidanceMessage) {
+    return (
+      <p className="text-sm text-gray2 ml-1">{guidanceMessage}</p>
+    );
+  }
+  
+  return null;
+};
