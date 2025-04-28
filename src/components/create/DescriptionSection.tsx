@@ -8,7 +8,7 @@ interface DescriptionSectionProps {
 
 const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps) => {
   return (
-    <div className="p-2 md:p-6 border-b border-gray4">
+    <div className="p-2 md:p-6 border-b border-gray3">
       <h2 className="flex items-center text-xl font-semibold mb-4">
         <span className="text-primary mr-1">{'#'}</span>
         {'전체 설명'}
@@ -17,12 +17,16 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
         <textarea
           name="description.full"
           value={formData.description?.full || ''}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray4 rounded-md h-52"
-          placeholder="마크다운 형식으로 작성해주세요"
+          onChange={(e) => {
+            handleChange(e);
+            e.target.style.height = 'auto';
+            e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
+          }}
+          className="w-full p-2 border border-gray4 rounded-md h-20"
+          placeholder="마크다운 형식으로 작성"
           required
         />
-        <p className="text-xs text-gray2 mt-2">{'수식은 $...$ 또는 $$...$$ 형식으로 작성할 수 있습니다.'}</p>
+        <p className="text-sm text-gray2">{'수식은 $...$ 또는 $$...$$ 형식으로 작성할 수 있습니다.'}</p>
       </div>
     </div>
   );

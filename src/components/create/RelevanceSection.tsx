@@ -75,7 +75,7 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
   }, [formData.relevance?.analyst?.score, formData.relevance?.engineer?.score, formData.relevance?.scientist?.score]);
 
   return (
-    <div className="p-2 md:p-6 border-b border-gray4">
+    <div className="p-2 md:p-6 border-b border-gray3">
       <h2 className="flex items-center text-xl font-semibold mb-6">
         <span className="text-primary mr-1">{'#'}</span>
         {'직무 연관도'}
@@ -84,9 +84,9 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
       {/* sm 이상에서는 3열 그리드, 그 이하에서는 세로 배치 */}
       <div className="flex flex-col sm:grid sm:grid-cols-3 sm:gap-6">
         {/* 데이터 분석가 (DA) */}
-        <div className="mb-6 sm:mb-0 flex flex-col">
-          <div className="mb-2">
-            <h3 className="text-lg font-medium">{'데이터 분석가 (DA)'}</h3>
+        <div className="border-b border-gray4 pb-4 sm:pb-0 sm:border-0 mb-4 sm:mb-0 flex flex-col">
+          <div className="">
+            <h3 className="text-base font-medium text-gray0">{'데이터 분석가 (DA)'}</h3>
             <div className="px-3 mb-3">
               <CreateSlider
                 displayLevels={relevanceLevels}
@@ -96,22 +96,22 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
             </div>
           </div>
           <div className="grow">
-            <label className="block text-sm font-medium mb-1">{'설명'}</label>
+            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
             <textarea
               name="relevance.analyst.description"
               value={formData.relevance?.analyst?.description || ''}
               onChange={handleChange}
               className="w-full min-h-[120px] p-2 border border-gray4 rounded-md"
-              placeholder="데이터 분석가 직무와의 연관성에 대해 설명하세요"
+              placeholder="데이터 분석가 직무와의 연관성에 대한 설명"
               required
             />
           </div>
         </div>
 
         {/* 데이터 과학자 (DS) */}
-        <div className="mb-6 sm:mb-0 flex flex-col">
-          <div className="mb-2">
-            <h3 className="text-lg font-medium">{'데이터 과학자 (DS)'}</h3>
+        <div className="border-b border-gray4 pb-4 sm:pb-0 sm:border-0 mb-4 sm:mb-0 flex flex-col">
+          <div className="">
+            <h3 className="text-base font-medium text-gray0">{'데이터 과학자 (DS)'}</h3>
             <div className="px-3 mb-3">
               <CreateSlider
                 displayLevels={relevanceLevels}
@@ -121,22 +121,22 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
             </div>
           </div>
           <div className="grow">
-            <label className="block text-sm font-medium mb-1">{'설명'}</label>
+            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
             <textarea
               name="relevance.scientist.description"
               value={formData.relevance?.scientist?.description || ''}
               onChange={handleChange}
               className="w-full min-h-[120px] p-2 border border-gray4 rounded-md"
-              placeholder="데이터 과학자 직무와의 연관성에 대해 설명하세요"
+              placeholder="데이터 과학자 직무와의 연관성에 대한 설명"
               required
             />
           </div>
         </div>
 
         {/* 데이터 엔지니어 (DE) */}
-        <div className="mb-6 sm:mb-0 flex flex-col">
-          <div className="mb-2">
-            <h3 className="text-lg font-medium">{'데이터 엔지니어 (DE)'}</h3>
+        <div className="border-b border-gray4 pb-4 sm:pb-0 sm:border-0 mb-4 sm:mb-0 flex flex-col">
+          <div className="">
+            <h3 className="text-base font-medium text-gray0">{'데이터 엔지니어 (DE)'}</h3>
             <div className="px-3 mb-3">
               <CreateSlider
                 displayLevels={relevanceLevels}
@@ -146,13 +146,13 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
             </div>
           </div>
           <div className="grow">
-            <label className="block text-sm font-medium mb-1">{'설명'}</label>
+            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
             <textarea
               name="relevance.engineer.description"
               value={formData.relevance?.engineer?.description || ''}
               onChange={handleChange}
               className="w-full min-h-[120px] p-2 border border-gray4 rounded-md"
-              placeholder="데이터 엔지니어 직무와의 연관성에 대해 설명하세요"
+              placeholder="데이터 엔지니어 직무와의 연관성에 대한 설명"
               required
             />
           </div>

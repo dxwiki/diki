@@ -37,14 +37,14 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange }: Diffi
   }, [formData.difficulty?.level]);
 
   return (
-    <div className="p-2 md:p-6 border-b border-gray4">
+    <div className="p-2 md:p-6 border-b border-gray3">
       <h2 className="flex items-center text-xl font-semibold mb-4">
         <span className="text-primary mr-1">{'#'}</span>
         {'난이도'}
       </h2>
       <div className="flex flex-col sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
         <div className="">
-          <label className="text-sm font-medium">{'레벨'}</label>
+          <label className="text-sm font-medium text-gray0">{'레벨'}</label>
           <div className="px-3">
             <CreateSlider
               displayLevels={levels}
@@ -54,14 +54,18 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange }: Diffi
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium">{'설명'}</label>
+          <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
           <textarea
             name="difficulty.description"
             value={formData.difficulty?.description || ''}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray4 rounded-md"
-            placeholder="난이도에 대한 설명을 입력하세요"
+            className="w-full p-2 border border-gray4 rounded-md h-20"
+            placeholder="난이도에 대한 설명"
             required
+            onChange={(e) => {
+              handleChange(e);
+              e.target.style.height = 'auto';
+              e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
+            }}
           />
         </div>
       </div>
