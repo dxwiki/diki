@@ -37,7 +37,7 @@ const StyledSlider = styled(MUISlider)(() => ({
   },
   '& .MuiSlider-markLabel': {
     color: 'var(--gray3)',
-    fontSize: '12px',
+    fontSize: '14px',
   },
   '& .MuiSlider-markLabelActive': {
     color: 'var(--accent)',
