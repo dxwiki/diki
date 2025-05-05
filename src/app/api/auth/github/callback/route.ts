@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { firestore } from '@/libs/firebaseAdmin';
+import path from 'path';
+import fs from 'fs';
+import { Profile } from '@/types';
 
 interface GitHubEmail {
   email: string;
@@ -65,29 +68,95 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/login?error=no_email', process.env.NEXT_PUBLIC_BASE_URL || ''));
     }
 
+    // username으로 사용할 값
+    const username = userData.login;
+
+    // 기존 프로필 데이터에서 사용자 확인
+    let existingProfile: Profile | undefined;
+    let profiles: Profile[] = [];
+    let newId = 1;
+
+    try {
+      const profilesFilePath = path.join(process.cwd(), 'src', 'data', 'profiles.json');
+      if (fs.existsSync(profilesFilePath)) {
+        const profilesContent = fs.readFileSync(profilesFilePath, 'utf8');
+        profiles = JSON.parse(profilesContent) as Profile[];
+
+        // username으로 기존 프로필 찾기
+        existingProfile = profiles.find((profile) => profile.username === username);
+
+        // 가장 큰 ID 값 찾기 (새 사용자인 경우)
+        if (!existingProfile && profiles.length > 0) {
+          const maxId = Math.max(...profiles.map((profile) => profile.id));
+          newId = maxId + 1;
+        }
+      }
+    } catch (error) {
+      console.error('Error reading profiles data:', error);
+    }
+
+    // Firestore에 저장할 사용자 정보 준비
+    let firestoreData;
+
+    // 쿠키에 저장할 사용자 정보
+    let cookieUserInfo;
+
+    // 기존 프로필이 있으면 해당 데이터 사용
+    if (existingProfile) {
+      firestoreData = {
+        ...existingProfile,
+        updatedAt: new Date().toISOString(),
+      };
+
+      cookieUserInfo = {
+        id: existingProfile.id,
+        username: existingProfile.username,
+        name: existingProfile.name,
+        thumbnail: existingProfile.thumbnail,
+      };
+    }
+    // 새 사용자면 새 프로필 생성
+    else {
+      firestoreData = {
+        id: newId,
+        email: primaryEmail,
+        username: username,
+        name: userData.name || userData.login,
+        role: 'contributor', // 기본 역할
+        social: {
+          github: userData.html_url,
+        },
+        thumbnail: userData.avatar_url,
+        updatedAt: new Date().toISOString(),
+      };
+
+      cookieUserInfo = {
+        id: newId,
+        username: username,
+        name: userData.name || userData.login,
+        thumbnail: userData.avatar_url,
+      };
+    }
+
     // Firestore에 사용자 정보 저장 또는 업데이트
-    const userProfile = {
-      id: userData.id,
-      email: primaryEmail,
-      username: userData.login,
-      name: userData.name || userData.login,
-      role: 'contributor', // 기본 역할
-      social: {
-        github: userData.html_url,
-      },
-      thumbnail: userData.avatar_url,
-      updatedAt: new Date().toISOString(),
-    };
+    const userDoc = await firestore.collection('profiles').doc(username).get();
 
-    // 기존 사용자 확인
-    const userDoc = await firestore.collection('profiles').where('id', '==', userData.id).get();
-
-    if (userDoc.empty) {
-      // 새 사용자 추가
-      await firestore.collection('profiles').add(userProfile);
+    if (!userDoc.exists) {
+      // 새 사용자 추가 - 문서 ID를 username으로 설정
+      await firestore.collection('profiles').doc(username).set(firestoreData);
     } else {
       // 기존 사용자 정보 업데이트
-      await userDoc.docs[0].ref.update(userProfile);
+      if (existingProfile) {
+        // 프로필 데이터가 기존에 있으면 해당 데이터로 업데이트
+        await userDoc.ref.update(firestoreData);
+      } else {
+        // 기존 Firestore 문서는 있지만 프로필 데이터가 없는 경우
+        const existingData = userDoc.data();
+        await userDoc.ref.update({
+          ...firestoreData,
+          id: existingData?.id || newId,
+        });
+      }
     }
 
     // 쿠키에 사용자 정보 저장 (7일 유효)
@@ -100,12 +169,7 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
     });
 
-    cookieStore.set('user-info', JSON.stringify({
-      id: userData.id,
-      username: userData.login,
-      name: userData.name || userData.login,
-      thumbnail: userData.avatar_url,
-    }), {
+    cookieStore.set('user-info', JSON.stringify(cookieUserInfo), {
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7일
       httpOnly: false, // 클라이언트에서 접근 가능하도록

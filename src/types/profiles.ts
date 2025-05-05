@@ -12,4 +12,5 @@ export interface Profile {
   role: string;
   social: SocialType;
   thumbnail: string;
+  updatedAt?: string;
 }

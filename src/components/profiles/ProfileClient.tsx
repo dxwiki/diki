@@ -29,12 +29,31 @@ const ProfileClient = ({
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement>(null);
   const termsPerPage = 24;
+  const [isCurrentUser, setIsCurrentUser] = useState(false);
 
   useEffect(() => {
     // 초기 로딩 시 첫 페이지 표시
     setVisibleTerms(terms.slice(0, termsPerPage));
     setHasMore(terms.length > termsPerPage);
   }, [terms]);
+
+  // 현재 로그인한 사용자와 프로필 소유자가 같은지 확인
+  useEffect(() => {
+    const userInfoCookie = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('user-info='));
+
+    if (userInfoCookie) {
+      try {
+        const userInfo = JSON.parse(decodeURIComponent(userInfoCookie.split('=')[1]));
+        if (userInfo.username === username) {
+          setIsCurrentUser(true);
+        }
+      } catch (error) {
+        console.error('쿠키 파싱 오류:', error);
+      }
+    }
+  }, [username]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -82,42 +101,54 @@ const ProfileClient = ({
 
   return (
     <>
-      <div className='flex gap-4 items-center'>
-        <h1 className="text-xl sm:text-2xl font-bold">
-          {profile.name}
-          <span className='text-sub text-xl'>
-            {'('}{profile.username}{') 님의 프로필'}
-          </span>
-        </h1>
-        <ContactButtonWrapper
-          email={profile.email}
-          github={profile.social.github}
-          linkedin={profile.social.linkedin}
-        />
-      </div>
+      <div className='flex flex-col gap-2'>
+        <div className='flex gap-4 items-center justify-between'>
+          <h1 className="text-xl sm:text-2xl font-bold">
+            {profile.name}
+            <span className='text-sub text-xl'>
+              {'('}{profile.username}{') 님의 프로필'}
+            </span>
+          </h1>
+          <div className='flex items-center gap-3'>
+            {isCurrentUser && (
+              <Link
+                href={`/profiles/edit/${ username }`}
+                className="text-sm px-3 py-1.5 rounded-md bg-primary dark:bg-secondary text-white hover:bg-accent dark:hover:bg-background-secondary"
+              >
+                {'프로필 편집'}
+              </Link>
+            )}
+            <ContactButtonWrapper
+              email={profile.email}
+              github={profile.social.github}
+              linkedin={profile.social.linkedin}
+            />
+          </div>
+        </div>
 
-      <div className="flex space-x-2">
-        <Link
-          href={`/profiles/${ username }`}
-          className={`text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'all' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
-        >
-          {'All'}
-          {` (${ allCount })`}
-        </Link>
-        <Link
-          href={`/profiles/${ username }/posts`}
-          className={`text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'posts' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
-        >
-          {'Posts'}
-          {` (${ postsCount })`}
-        </Link>
-        <Link
-          href={`/profiles/${ username }/contributes`}
-          className={`text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'contributes' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
-        >
-          {'Contributes'}
-          {` (${ contributeCount })`}
-        </Link>
+        <div className="flex space-x-2">
+          <Link
+            href={`/profiles/${ username }`}
+            className={`text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'all' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
+          >
+            {'All'}
+            {` (${ allCount })`}
+          </Link>
+          <Link
+            href={`/profiles/${ username }/posts`}
+            className={`text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'posts' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
+          >
+            {'Posts'}
+            {` (${ postsCount })`}
+          </Link>
+          <Link
+            href={`/profiles/${ username }/contributes`}
+            className={`text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'contributes' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
+          >
+            {'Contributes'}
+            {` (${ contributeCount })`}
+          </Link>
+        </div>
       </div>
 
       {terms.length > 0 ? (
