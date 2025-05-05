@@ -13,6 +13,7 @@ interface ProfileClientProps {
   postsCount?: number;
   contributeCount?: number;
   profile: Profile;
+  isOwnProfile?: boolean;
 }
 
 const ProfileClient = ({
@@ -22,6 +23,7 @@ const ProfileClient = ({
   postsCount = 0,
   contributeCount = 0,
   profile,
+  isOwnProfile = false,
 }: ProfileClientProps) => {
   const [terms] = useState(initialTerms);
   const [visibleTerms, setVisibleTerms] = useState<TermData[]>([]);
@@ -29,7 +31,7 @@ const ProfileClient = ({
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement>(null);
   const termsPerPage = 24;
-  const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const [isCurrentUser, setIsCurrentUser] = useState(isOwnProfile);
 
   useEffect(() => {
     // 초기 로딩 시 첫 페이지 표시
@@ -39,6 +41,13 @@ const ProfileClient = ({
 
   // 현재 로그인한 사용자와 프로필 소유자가 같은지 확인
   useEffect(() => {
+    // 서버에서 전달받은 isOwnProfile 값이 있으면 사용
+    if (isOwnProfile) {
+      setIsCurrentUser(true);
+      return;
+    }
+
+    // 서버에서 전달받은 값이 없으면 클라이언트에서 쿠키 확인
     const userInfoCookie = document.cookie
       .split('; ')
       .find((row) => row.startsWith('user-info='));
@@ -53,7 +62,7 @@ const ProfileClient = ({
         console.error('쿠키 파싱 오류:', error);
       }
     }
-  }, [username]);
+  }, [username, isOwnProfile]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(

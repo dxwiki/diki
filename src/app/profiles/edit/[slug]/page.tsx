@@ -2,10 +2,54 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Profile } from '@/types';
+import { Profile, SocialType } from '@/types';
 import { ConfirmModal } from '@/components/ui/Modal';
 import Footer from '@/components/common/Footer';
 import Link from 'next/link';
+
+// 클라이언트 컴포넌트용 쿠키에서 프로필 정보 가져오는 함수
+function getClientProfileFromCookie(username: string) {
+  const userInfoCookie = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('user-info='));
+  
+  if (!userInfoCookie) return { cookieProfile: undefined, isOwnProfile: false, userInfo: null };
+  
+  try {
+    const userInfo = JSON.parse(decodeURIComponent(userInfoCookie.split('=')[1]));
+    const isOwnProfile = userInfo && userInfo.username === username;
+    
+    if (!isOwnProfile) return { cookieProfile: undefined, isOwnProfile: false, userInfo };
+    
+    // 쿠키에서 프로필 생성
+    const social: SocialType = {
+      github: userInfo.username || '',
+      linkedin: '',
+      twitter: ''
+    };
+    
+    // GitHub URL 설정
+    if (userInfo.username && !userInfo.username.includes('@')) {
+      social.github = `https://github.com/${userInfo.username}`;
+    }
+    
+    const cookieProfile: Profile = {
+      id: userInfo.id,
+      username: userInfo.username,
+      name: userInfo.name,
+      thumbnail: userInfo.thumbnail,
+      email: userInfo.email || '',
+      role: 'contributor',
+      social: social,
+      updatedAt: new Date().toISOString()
+    };
+    
+    return { cookieProfile, isOwnProfile, userInfo };
+  } catch (error) {
+    console.error('쿠키 파싱 오류:', error);
+    return { cookieProfile: undefined, isOwnProfile: false, userInfo: null };
+  }
+}
 
 export default function ProfileEditPage({ params }: { params: { slug: string } }) {
   const router = useRouter();
@@ -29,21 +73,15 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
+
   // 로그인 확인 로직
   useEffect(() => {
     try {
-      const userInfoCookie = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('user-info='));
-
-      if (userInfoCookie) {
-        const userInfoValue = userInfoCookie.split('=')[1];
-        const userInfo = JSON.parse(decodeURIComponent(userInfoValue));
+      const { isOwnProfile, userInfo } = getClientProfileFromCookie(params.slug);
+      if (userInfo) {
         setIsLoggedIn(true);
-
-        // 현재 사용자와 프로필 소유자가 같은지 확인
-        if (userInfo.username === params.slug) {
-          setIsCurrentUser(true);
+        if(userInfo.username === params.slug) {
+        setIsCurrentUser(isOwnProfile);
         }
       }
     } catch (err) {
@@ -60,27 +98,24 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
         // profiles 컬렉션에서 사용자 데이터 가져오기
         const response = await fetch(`/api/profiles/${ params.slug }`);
         if (!response.ok) {
-          // API가 없는 경우 로컬 데이터 사용
-          const localResponse = await fetch('/api/local-profiles');
-          if (!localResponse.ok) throw new Error('프로필 데이터를 가져오는데 실패했습니다.');
-
-          const profiles = await localResponse.json();
-          const foundProfile = profiles.find((p: Profile) => p.username === params.slug);
-
-          if (foundProfile) {
-            setProfile(foundProfile);
-            setFormData({
-              name: foundProfile.name,
-              role: foundProfile.role,
-              email: foundProfile.email,
-              social: {
-                github: foundProfile.social.github || '',
-                linkedin: foundProfile.social.linkedin || '',
-                twitter: foundProfile.social.twitter || '',
-              },
-            });
-            return;
-          }
+          // 먼저 쿠키에서 프로필 정보 확인
+        const { cookieProfile, isOwnProfile } = getClientProfileFromCookie(params.slug);
+        
+        // 자신의 프로필이고 쿠키에 정보가 있는 경우
+        if (isOwnProfile && cookieProfile) {
+          setProfile(cookieProfile);
+          setFormData({
+            name: cookieProfile.name,
+            role: cookieProfile.role,
+            email: cookieProfile.email,
+            social: {
+              github: cookieProfile.social.github || '',
+              linkedin: cookieProfile.social.linkedin || '',
+              twitter: cookieProfile.social.twitter || '',
+            },
+          });
+          return;
+        }
           throw new Error('프로필을 찾을 수 없습니다.');
         }
 

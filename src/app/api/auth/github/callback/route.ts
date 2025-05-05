@@ -95,6 +95,30 @@ export async function GET(request: NextRequest) {
       console.error('Error reading profiles data:', error);
     }
 
+    // Firestore 컬렉션에서 가장 큰 ID 값 확인
+    let firestoreMaxId = 0;
+
+    // Firestore에서 프로필 데이터 가져오기
+    const profilesSnapshot = await firestore.collection('profiles').get();
+    const userDoc = profilesSnapshot.docs.find((doc) => doc.id === username);
+
+    if (!existingProfile) {
+      try {
+        if (!profilesSnapshot.empty) {
+          profilesSnapshot.forEach((doc) => {
+            const profileData = doc.data();
+            if (profileData.id && typeof profileData.id === 'number') {
+              firestoreMaxId = Math.max(firestoreMaxId, profileData.id);
+            }
+          });
+          // Firestore의 최대 ID와 로컬 프로필의 최대 ID 중 더 큰 값 + 1을 사용
+          newId = Math.max(newId, firestoreMaxId + 1);
+        }
+      } catch (error) {
+        console.error('Error getting profiles from Firestore:', error);
+      }
+    }
+
     // Firestore에 저장할 사용자 정보 준비
     let firestoreData;
 
@@ -113,6 +137,7 @@ export async function GET(request: NextRequest) {
         username: existingProfile.username,
         name: existingProfile.name,
         thumbnail: existingProfile.thumbnail,
+        email: existingProfile.email,
       };
     }
     // 새 사용자면 새 프로필 생성
@@ -124,7 +149,7 @@ export async function GET(request: NextRequest) {
         name: userData.name || userData.login,
         role: 'contributor', // 기본 역할
         social: {
-          github: userData.html_url,
+          github: username,
         },
         thumbnail: userData.avatar_url,
         updatedAt: new Date().toISOString(),
@@ -135,13 +160,15 @@ export async function GET(request: NextRequest) {
         username: username,
         name: userData.name || userData.login,
         thumbnail: userData.avatar_url,
+        email: primaryEmail,
+        social: {
+          github: username,
+        },
       };
     }
 
-    // Firestore에 사용자 정보 저장 또는 업데이트
-    const userDoc = await firestore.collection('profiles').doc(username).get();
-
-    if (!userDoc.exists) {
+    // Firestore에 사용자 정보 저장 또는 업데이트 (이미 가져온 데이터 활용)
+    if (!userDoc) {
       // 새 사용자 추가 - 문서 ID를 username으로 설정
       await firestore.collection('profiles').doc(username).set(firestoreData);
     } else {
@@ -154,7 +181,7 @@ export async function GET(request: NextRequest) {
         const existingData = userDoc.data();
         await userDoc.ref.update({
           ...firestoreData,
-          id: existingData?.id || newId,
+          id: existingData.id || newId,
         });
       }
     }
