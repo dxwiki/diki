@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { TermData } from '@/types/database';
 import BasicInfoSection from '@/components/create/BasicInfoSection';
@@ -11,13 +11,19 @@ import DifficultySection from '@/components/create/DifficultySection';
 import RelevanceSection from '@/components/create/RelevanceSection';
 import UsecaseSection from '@/components/create/UsecaseSection';
 import ReferencesSection from '@/components/create/ReferencesSection';
+import EditPreview from '@/components/create/EditPreview';
+import { Dropdown, DropdownTrigger, DropdownList, DropdownItem, DropdownContext } from '@/components/ui/Dropdown';
 import { ConfirmModal } from '@/components/ui/Modal';
+import { ChevronDown } from 'lucide-react';
 import Footer from '@/components/common/Footer';
+type PreviewMode = 'none' | 'json' | 'post';
 
 export default function CreatePage() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [preview, setPreview] = useState<PreviewMode>('none');
+  const [activeTabText, setActiveTabText] = useState('포스트 작성하기');
   const [formData, setFormData] = useState<TermData>({
     title: { ko: '', en: '', etc: [] },
     description: { short: '', full: '' },
@@ -220,6 +226,21 @@ export default function CreatePage() {
     }
   };
 
+  // 미리보기 모드 전환
+  const togglePreviewMode = (mode: PreviewMode) => {
+    if (preview === mode) {
+      setPreview('none');
+      setActiveTabText('포스트 작성하기');
+    } else {
+      setPreview(mode);
+      setActiveTabText(
+        mode === 'post' ? '게시글 미리보기'
+          : mode === 'json' ? 'JSON 미리보기'
+            : '포스트 작성하기'
+      );
+    }
+  };
+
   if (loading) {
     return <div className="flex justify-center items-center min-h-[70vh]">{'로딩 중...'}</div>;
   }
@@ -228,43 +249,143 @@ export default function CreatePage() {
     return null; // useEffect에서 리다이렉트 처리
   }
 
+  // 탭 활성화 상태에 따른 클래스
+  const getTabClass = (tabMode: PreviewMode | 'edit') => {
+    const baseClass = 'text-xs sm:text-sm px-2 py-1 sm:px-4 sm:py-2 rounded-md transition-colors';
+
+    if (tabMode === 'edit') {
+      return `${ baseClass } ${ preview === 'none' ? 'bg-gray1 dark:bg-gray4 text-white' : 'text-gray2 hover:text-main hover:bg-gray4' }`;
+    }
+
+    return `${ baseClass } ${ preview === tabMode ? 'bg-gray1 dark:bg-gray4 text-white' : 'text-gray2 hover:text-main hover:bg-gray4' }`;
+  };
+
+  // 드롭다운 아이콘 컴포넌트
+  const DropdownIcon = () => {
+    const { isOpen } = useContext(DropdownContext);
+
+    return (
+      <ChevronDown className={`size-4 transition-transform duration-300 ease-in-out ${ isOpen ? 'rotate-180' : '' }`} />
+    );
+  };
+
   return (
     <div className="container mx-auto">
-      <form onSubmit={handleSubmit} noValidate>
-        <div className="h-[65vh] sm:h-[78vh] overflow-y-auto overflow-x-hidden border border-gray3 rounded-lg">
-          <BasicInfoSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
-          <DifficultySection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
-          <DescriptionSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
-          <TagsSection formData={formData} setFormData={setFormData} />
-          <TermsSection formData={formData} setFormData={setFormData} />
-          <RelevanceSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
-          <UsecaseSection formData={formData} setFormData={setFormData} handleChange={handleChange} validationErrors={validationErrors} />
-          <ReferencesSection formData={formData} setFormData={setFormData} />
+      <div className="w-full flex justify-between items-center mb-4">
+        <div className="flex items-center text-lg md:text-xl lg:text-2xl font-bold">{'새 포스트 작성'}</div>
+
+        {/* 모바일 화면 드롭다운 */}
+        <div className="sm:hidden">
+          <Dropdown>
+            <DropdownTrigger>
+              <button className="flex items-center gap-1 px-2 py-1 text-sm rounded-full border border-primary text-primary">
+                <span>{activeTabText}</span>
+                <DropdownIcon />
+              </button>
+            </DropdownTrigger>
+            <DropdownList align='end'>
+              <DropdownItem
+                onClick={() => togglePreviewMode('none')}
+                className={preview === 'none' ? 'text-primary' : ''}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span>{'포스트 작성하기'}</span>
+                  <span>{preview === 'none' ? '•' : ''}</span>
+                </div>
+              </DropdownItem>
+              <DropdownItem
+                onClick={() => togglePreviewMode('post')}
+                className={preview === 'post' ? 'text-primary' : ''}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span>{'포스트 미리보기'}</span>
+                  <span>{preview === 'post' ? '•' : ''}</span>
+                </div>
+              </DropdownItem>
+              {/* <DropdownItem
+                onClick={() => togglePreviewMode('json')}
+                className={preview === 'json' ? 'text-primary' : ''}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span>{'JSON 미리보기'}</span>
+                  <span>{preview === 'json' ? '•' : ''}</span>
+                </div>
+              </DropdownItem> */}
+            </DropdownList>
+          </Dropdown>
         </div>
 
-        {error && validationErrors.length === 0 && (
-          <div className="text-end text-level-5 rounded-lg">
-            {error}
-          </div>
-        )}
-
-        <div className="flex justify-end space-x-4 py-4">
+        <div className="hidden sm:flex space-x-2">
           <button
-            type="button"
-            onClick={() => setIsCancelModalOpen(true)}
-            className="px-4 py-2 text-gray2 rounded-md hover:text-main"
+            onClick={() => togglePreviewMode('none')}
+            className={getTabClass('edit')}
           >
-            {'작성취소'}
+            {'포스트 작성하기'}
           </button>
           <button
-            type="submit"
-            disabled={submitting}
-            className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4 disabled:opacity-50"
+            onClick={() => togglePreviewMode('post')}
+            className={getTabClass('post')}
           >
-            {submitting ? '제출 중...' : 'GitHub 이슈 등록하기'}
+            {'포스트 미리보기'}
           </button>
+          {/* <button
+            onClick={() => togglePreviewMode('json')}
+            className={getTabClass('json')}
+          >
+            {'JSON 미리보기'}
+          </button> */}
         </div>
-      </form>
+      </div>
+
+      {preview === 'json' ? (
+        <div className="bg-gray4 sm:p-4 rounded-lg">
+          <pre className="whitespace-pre-wrap overflow-y-auto overflow-x-hidden h-[73vh]">
+            {JSON.stringify(formData, null, 2)}
+          </pre>
+        </div>
+      ) : preview === 'post' ? (
+        <div className="overflow-y-auto overflow-x-hidden h-[73vh] border border-gray3 rounded-lg">
+          <EditPreview term={formData} />
+        </div>
+      ) : (
+        <>
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="h-[65vh] sm:h-[73vh] overflow-y-auto overflow-x-hidden border border-gray3 rounded-lg">
+              <BasicInfoSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
+              <DifficultySection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
+              <DescriptionSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
+              <TagsSection formData={formData} setFormData={setFormData} />
+              <TermsSection formData={formData} setFormData={setFormData} />
+              <RelevanceSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
+              <UsecaseSection formData={formData} setFormData={setFormData} handleChange={handleChange} validationErrors={validationErrors} />
+              <ReferencesSection formData={formData} setFormData={setFormData} />
+            </div>
+
+            {error && validationErrors.length === 0 && (
+              <div className="text-end text-level-5 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-4 py-4">
+              <button
+                type="button"
+                onClick={() => setIsCancelModalOpen(true)}
+                className="px-4 py-2 text-gray2 rounded-md hover:text-main"
+              >
+                {'작성취소'}
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4 disabled:opacity-50"
+              >
+                {submitting ? '제출 중...' : 'GitHub 이슈 등록하기'}
+              </button>
+            </div>
+          </form>
+        </>
+      )}
 
       {/* 확인 모달 */}
       <ConfirmModal
