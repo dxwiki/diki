@@ -12,17 +12,16 @@ interface GitHubEmail {
   visibility: string | null;
 }
 
+// github OAuth 코드 검증 및 토큰 발급
 export async function GET(request: NextRequest) {
-  // 쿼리 파라미터에서 코드 추출
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
 
   if (!code) {
     return NextResponse.redirect(new URL('/login?error=github_code_missing', process.env.NEXT_PUBLIC_BASE_URL || ''));
   }
-
+  
   try {
-    // GitHub 액세스 토큰 요청
     const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
       headers: {
@@ -81,24 +80,14 @@ export async function GET(request: NextRequest) {
       if (fs.existsSync(profilesFilePath)) {
         const profilesContent = fs.readFileSync(profilesFilePath, 'utf8');
         profiles = JSON.parse(profilesContent) as Profile[];
-
-        // username으로 기존 프로필 찾기
         existingProfile = profiles.find((profile) => profile.username === username);
-
-        // 가장 큰 ID 값 찾기 (새 사용자인 경우)
-        if (!existingProfile && profiles.length > 0) {
-          const maxId = Math.max(...profiles.map((profile) => profile.id));
-          newId = maxId + 1;
-        }
       }
     } catch (error) {
       console.error('Error reading profiles data:', error);
     }
 
-    // Firestore 컬렉션에서 가장 큰 ID 값 확인
     let firestoreMaxId = 0;
 
-    // Firestore에서 프로필 데이터 가져오기
     const profilesSnapshot = await firestore.collection('profiles').get();
     const userDoc = profilesSnapshot.docs.find((doc) => doc.id === username);
 
@@ -111,7 +100,6 @@ export async function GET(request: NextRequest) {
               firestoreMaxId = Math.max(firestoreMaxId, profileData.id);
             }
           });
-          // Firestore의 최대 ID와 로컬 프로필의 최대 ID 중 더 큰 값 + 1을 사용
           newId = Math.max(newId, firestoreMaxId + 1);
         }
       } catch (error) {
@@ -119,13 +107,9 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Firestore에 저장할 사용자 정보 준비
     let firestoreData;
-
-    // 쿠키에 저장할 사용자 정보
     let cookieUserInfo;
 
-    // 기존 프로필이 있으면 해당 데이터 사용
     if (existingProfile) {
       firestoreData = {
         ...existingProfile,
@@ -139,9 +123,7 @@ export async function GET(request: NextRequest) {
         thumbnail: existingProfile.thumbnail,
         email: existingProfile.email,
       };
-    }
-    // 새 사용자면 새 프로필 생성
-    else {
+    } else {
       firestoreData = {
         id: newId,
         email: primaryEmail,
@@ -150,6 +132,7 @@ export async function GET(request: NextRequest) {
         role: 'contributor', // 기본 역할
         social: {
           github: username,
+          linkedin: username,
         },
         thumbnail: userData.avatar_url,
         updatedAt: new Date().toISOString(),
@@ -163,21 +146,19 @@ export async function GET(request: NextRequest) {
         email: primaryEmail,
         social: {
           github: username,
+          linkedin: username,
         },
       };
     }
 
     // Firestore에 사용자 정보 저장 또는 업데이트 (이미 가져온 데이터 활용)
     if (!userDoc) {
-      // 새 사용자 추가 - 문서 ID를 username으로 설정
+      // 새 사용자 추가
       await firestore.collection('profiles').doc(username).set(firestoreData);
     } else {
-      // 기존 사용자 정보 업데이트
       if (existingProfile) {
-        // 프로필 데이터가 기존에 있으면 해당 데이터로 업데이트
         await userDoc.ref.update(firestoreData);
       } else {
-        // 기존 Firestore 문서는 있지만 프로필 데이터가 없는 경우
         const existingData = userDoc.data();
         await userDoc.ref.update({
           ...firestoreData,
@@ -190,16 +171,15 @@ export async function GET(request: NextRequest) {
     const cookieStore = cookies();
     cookieStore.set('user-token', accessToken, {
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7일
+      maxAge: 60 * 60 * 24 * 7,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
     });
-
     cookieStore.set('user-info', JSON.stringify(cookieUserInfo), {
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7일
-      httpOnly: false, // 클라이언트에서 접근 가능하도록
+      maxAge: 60 * 60 * 24 * 7,
+      httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
     });
