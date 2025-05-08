@@ -23,14 +23,14 @@ function getClientProfileFromCookie(username: string) {
     
     // 쿠키에서 프로필 생성
     const social: SocialType = {
-      github: userInfo.username || '',
+      github: '',
       linkedin: '',
       twitter: ''
     };
     
     // GitHub URL 설정
     if (userInfo.username && !userInfo.username.includes('@')) {
-      social.github = `https://github.com/${userInfo.username}`;
+      social.github = `${userInfo.username}`;
     }
     
     const cookieProfile: Profile = {
@@ -55,7 +55,6 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -73,65 +72,53 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
-
-  // 로그인 확인 로직
+  // 프로필 데이터 가져오기 및 사용자 인증 확인
   useEffect(() => {
-    try {
-      const { isOwnProfile, userInfo } = getClientProfileFromCookie(params.slug);
-      if (userInfo) {
-        setIsLoggedIn(true);
-        if(userInfo.username === params.slug) {
-        setIsCurrentUser(isOwnProfile);
-        }
-      }
-    } catch (err) {
-      console.error('쿠키 파싱 오류:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [params.slug]);
-
-  // 프로필 데이터 가져오기
-  useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileData = async () => {
       try {
-        // profiles 컬렉션에서 사용자 데이터 가져오기
-        const response = await fetch(`/api/profiles/${ params.slug }`);
-        if (!response.ok) {
-          // 먼저 쿠키에서 프로필 정보 확인
-        const { cookieProfile, isOwnProfile } = getClientProfileFromCookie(params.slug);
+        // 쿠키에서 사용자 정보 확인
+        const { cookieProfile, isOwnProfile, userInfo } = getClientProfileFromCookie(params.slug);
         
-        // 자신의 프로필이고 쿠키에 정보가 있는 경우
-        if (isOwnProfile && cookieProfile) {
-          setProfile(cookieProfile);
+        // 로그인 여부 및 본인 프로필 확인
+        if (userInfo) {
+          setIsCurrentUser(isOwnProfile);
+        }
+        
+        // profiles 컬렉션에서 사용자 데이터 가져오기 시도
+        const response = await fetch(`/api/profiles/${params.slug}`);
+        
+        if (response.ok) {
+          // API에서 데이터 가져오기 성공한 경우
+          const profileData = await response.json();
+          setProfile(profileData);
           setFormData({
-            name: cookieProfile.name,
-            role: cookieProfile.role,
-            email: cookieProfile.email,
+            name: profileData.name,
+            role: profileData.role,
+            email: profileData.email,
             social: {
-              github: cookieProfile.social.github || '',
-              linkedin: cookieProfile.social.linkedin || '',
-              twitter: cookieProfile.social.twitter || '',
+              github: profileData.social.github || '',
+              linkedin: profileData.social.linkedin || '',
+              twitter: profileData.social.twitter || '',
             },
           });
-          return;
+        } else {
+          // API 데이터가 없고, 본인 프로필이며 쿠키에 정보가 있는 경우
+          if (isOwnProfile && cookieProfile) {
+            setProfile(cookieProfile);
+            setFormData({
+              name: cookieProfile.name,
+              role: cookieProfile.role,
+              email: cookieProfile.email,
+              social: {
+                github: cookieProfile.social.github || '',
+                linkedin: cookieProfile.social.linkedin || '',
+                twitter: cookieProfile.social.twitter || '',
+              },
+            });
+          } else {
+            throw new Error('프로필을 찾을 수 없습니다.');
+          }
         }
-          throw new Error('프로필을 찾을 수 없습니다.');
-        }
-
-        // API에서 데이터 가져오기 성공한 경우
-        const profileData = await response.json();
-        setProfile(profileData);
-        setFormData({
-          name: profileData.name,
-          role: profileData.role,
-          email: profileData.email,
-          social: {
-            github: profileData.social.github || '',
-            linkedin: profileData.social.linkedin || '',
-            twitter: profileData.social.twitter || '',
-          },
-        });
       } catch (error) {
         console.error('프로필 데이터 로드 오류:', error);
         setError('프로필 데이터를 가져오는데 실패했습니다.');
@@ -140,15 +127,15 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
       }
     };
 
-    fetchProfile();
+    fetchProfileData();
   }, [params.slug]);
 
   // 권한 없는 사용자는 리다이렉트
   useEffect(() => {
-    if (!loading && (!isLoggedIn || !isCurrentUser)) {
+    if (!loading && !isCurrentUser) {
       router.push('/login?error=login_required');
     }
-  }, [loading, isLoggedIn, isCurrentUser, router]);
+  }, [loading, isCurrentUser, router]);
 
   // 입력 필드 변경 처리
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -173,8 +160,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 모달 열기
-    setIsConfirmModalOpen(true);
+    setIsConfirmModalOpen(true); // 모달 열기
   };
 
   const submitToGithub = async () => {
@@ -201,12 +187,12 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
         },
         body: JSON.stringify({
           title: {
-            ko: `${ profile.name } 프로필 수정 요청`,
-            en: `${ profile.name } Profile Edit Request`,
+            ko: `${profile.name} 프로필 수정 요청`,
+            en: `${profile.name} Profile Edit Request`,
           },
           description: {
-            short: `${ profile.name } 사용자의 프로필 정보 수정 요청입니다.`,
-            full: `${ profile.name } 사용자의 프로필 정보가 수정되었습니다. 수정된 정보를 반영해주세요.`,
+            short: `${profile.name} 사용자의 프로필 정보 수정 요청입니다.`,
+            full: `${profile.name} 사용자의 프로필 정보가 수정되었습니다. 수정된 정보를 반영해주세요.`,
           },
           metadata: {
             profile_edit: true,
@@ -222,7 +208,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
 
       const result = await response.json();
       alert('프로필 수정 요청이 성공적으로 GitHub 이슈로 등록되었습니다!');
-      router.push(`/thank-you?issue=${ result.issue_number }`);
+      router.push(`/thank-you?issue=${result.issue_number}`);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : '프로필 수정 요청 중 오류가 발생했습니다.');
     } finally {
@@ -234,7 +220,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
     return <div className="flex justify-center items-center min-h-[70vh]">{'로딩 중...'}</div>;
   }
 
-  if (!isLoggedIn || !isCurrentUser) {
+  if (!isCurrentUser) {
     return null; // useEffect에서 리다이렉트 처리
   }
 
@@ -382,7 +368,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
       <ConfirmModal
         isOpen={isCancelModalOpen}
         onClose={() => setIsCancelModalOpen(false)}
-        onConfirm={() => router.push(`/profiles/${ params.slug }`)}
+        onConfirm={() => router.push(`/profiles/${params.slug}`)}
         title="편집 취소"
         message="정말 프로필 편집을 취소하시겠습니까?"
         confirmText="확인"
