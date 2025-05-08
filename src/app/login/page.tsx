@@ -9,6 +9,7 @@ const errorMessages: Record<string, string> = {
   github_code_missing: 'GitHub에서 인증 코드를 받지 못했습니다.',
   github_auth_failed: 'GitHub 인증에 실패했습니다.',
   no_email: 'GitHub 계정에서 이메일을 찾을 수 없습니다.',
+  login_required: '로그인이 필요합니다.',
 };
 
 function LoginContent() {
