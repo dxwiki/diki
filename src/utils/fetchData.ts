@@ -94,7 +94,7 @@ async function fetchTermsByUser(username: string, filterType: FilterType): Promi
     return allTerms.filter((term) =>
       term.metadata?.authors
       && Array.isArray(term.metadata.authors)
-      && term.metadata.authors.includes(profile.name)
+      && term.metadata.authors.includes(profile.username)
     );
   } else {
     return allTerms.filter((term) =>

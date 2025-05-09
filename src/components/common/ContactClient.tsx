@@ -40,7 +40,7 @@ const ContactClient = () => {
       </Link>
       <div className="w-full min-h-[30vh] flex flex-col md:flex-row justify-center items-center gap-5 md:gap-10 z-10 mb-10">
         {profiles.map((p: Profile) => {
-          const authorSlug = getAuthorSlug(p.name);
+          const authorSlug = getAuthorSlug(p.username);
           return (
             <div
               key={p.id}

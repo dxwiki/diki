@@ -18,6 +18,7 @@ interface PostHeaderProps {
 const PostHeader = ({ term, onShare }: PostHeaderProps) => {
   const profiles = useSelector((state: RootState) => state.profiles.profiles);
   const [authorSlugs, setAuthorSlugs] = useState<{ [key: string]: string }>({});
+  const [authorNames, setAuthorNames] = useState<{ [key: string]: string }>({});
   const [isDataReady, setIsDataReady] = useState(false);
 
   const handleShareClick = useCallback((): void => {
@@ -27,11 +28,16 @@ const PostHeader = ({ term, onShare }: PostHeaderProps) => {
   useEffect(() => {
     if (profiles.length > 0 && term.metadata?.authors) {
       const slugs: { [key: string]: string } = {};
+      const names: { [key: string]: string } = {};
+
       term.metadata.authors.forEach((author) => {
+        const profile = profiles.find((p) => p.username === author);
         slugs[author] = getAuthorSlug(author);
+        names[author] = profile?.name || author;
       });
 
       setAuthorSlugs(slugs);
+      setAuthorNames(names);
       setIsDataReady(true);
     }
   }, [profiles, term.metadata?.authors]);
@@ -81,12 +87,12 @@ const PostHeader = ({ term, onShare }: PostHeaderProps) => {
             term.metadata.authors.map((author, index) => (
               <span key={author}>
                 <TooltipButton
-                  tooltip={`${ author }님의 프로필 보기`}
+                  tooltip={`${ authorNames[author] }님의 프로필 보기`}
                   isLink={true}
                   href={`/profiles/${ authorSlugs[author] || '' }`}
                   className="text-primary hover:text-accent hover:underline"
                 >
-                  {author}
+                  {authorNames[author]}
                 </TooltipButton>
                 {index < (term.metadata?.authors?.length ?? 0) - 1 && ', '}
               </span>

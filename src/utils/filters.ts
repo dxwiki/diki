@@ -24,7 +24,7 @@ export const getAuthorSlug = (author: string): string => {
   if (profiles.length === 0) {
     return '';
   }
-  const profile = profiles.find((p: Profile) => p.name === author);
+  const profile = profiles.find((p: Profile) => p.username === author);
   const username = profile?.username ?? '';
 
   // 찾은 결과를 캐시에 저장
