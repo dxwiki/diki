@@ -1,28 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { Profile } from '@/types';
-
-// GitHub 이슈 생성을 위한 인터페이스
-interface UserInfo {
-  id: number;
-  username: string;
-  name: string;
-  thumbnail: string;
-}
+import { firestore } from '@/libs/firebaseAdmin';
+import fs from 'fs';
+import path from 'path';
 
 interface ProfileEditData {
-  title: {
-    ko: string;
-    en: string;
-  };
-  description: {
-    short: string;
-    full: string;
-  };
-  metadata: {
-    profile_edit: boolean;
-    profile_data: Profile;
-  };
+  profile_data: Profile;
 }
 
 export async function POST(request: NextRequest) {
@@ -38,86 +22,90 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const userInfo = userInfoCookie ? JSON.parse(userInfoCookie) as UserInfo : null;
     const data = await request.json() as ProfileEditData;
 
-    // 데이터 유효성 검사
-    if (!data.title.ko) {
+    // Firestore에 프로필 업데이트
+    const profileRef = firestore.collection('profiles').doc(data.profile_data.username);
+    const profileDoc = await profileRef.get();
+
+    if (!profileDoc.exists) {
       return NextResponse.json(
-        { message: '필수 필드가 누락되었습니다.' },
-        { status: 400 }
+        { message: '프로필을 찾을 수 없습니다.' },
+        { status: 404 }
       );
     }
 
-    // GitHub 이슈 마크다운 본문 생성
-    const issueBody = formatIssueBody(data, userInfo);
+    // 업데이트할 데이터 준비
+    const updateData = {
+      ...data.profile_data,
+      username: profileDoc.data()?.username,
+      updatedAt: new Date().toISOString(),
+    };
 
-    // GitHub API를 통해 이슈 생성
-    const issueResponse = await fetch(
-      `https://api.github.com/repos/${ process.env.GITHUB_REPO_OWNER }/${ process.env.GITHUB_REPO_NAME }/issues`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `token ${ process.env.GITHUB_API_TOKEN }`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: `프로필 수정 요청: ${ data.title.ko }`,
-          body: issueBody,
-          labels: ['profile-edit', 'contribution'],
-        }),
+    // Firestore 업데이트
+    await profileRef.update(updateData);
+
+    // profiles.json 파일 업데이트
+    const profilesPath = path.join(process.cwd(), 'src', 'data', 'profiles.json');
+    let profiles: Profile[] = [];
+
+    try {
+      // 기존 profiles.json 파일 읽기
+      if (fs.existsSync(profilesPath)) {
+        const fileContent = fs.readFileSync(profilesPath, 'utf8');
+        profiles = JSON.parse(fileContent);
       }
-    );
 
-    if (!issueResponse.ok) {
-      const errorData = await issueResponse.json();
-      throw new Error(`GitHub API 오류: ${ errorData.message }`);
+      // 프로필 업데이트 또는 추가
+      const existingIndex = profiles.findIndex((p) => p.username === updateData.username);
+      if (existingIndex !== -1) {
+        profiles[existingIndex] = updateData;
+      } else {
+        profiles.push(updateData);
+      }
+
+      // 파일에 저장
+      fs.writeFileSync(profilesPath, JSON.stringify(profiles, null, 2));
+    } catch (error) {
+      console.error('profiles.json 업데이트 오류:', error);
+      // profiles.json 업데이트 실패는 전체 요청을 실패시키지 않음
     }
 
-    const issueData = await issueResponse.json();
+    // 쿠키 업데이트
+    if (userInfoCookie) {
+      try {
+        const userInfo = JSON.parse(userInfoCookie);
+        const updatedUserInfo = {
+          ...userInfo,
+          name: updateData.name,
+          thumbnail: updateData.thumbnail,
+          username: updateData.username,
+        };
+
+        // 쿠키 업데이트
+        cookieStore.set('user-info', JSON.stringify(updatedUserInfo), {
+          path: '/',
+          maxAge: 60 * 60 * 24 * 7, // 7일
+          httpOnly: false,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+        });
+      } catch (error) {
+        console.error('쿠키 업데이트 오류:', error);
+      }
+    }
 
     return NextResponse.json({
       success: true,
-      issue_number: issueData.number,
-      issue_url: issueData.html_url,
+      message: '프로필이 성공적으로 업데이트되었습니다.',
+      profile: updateData,
     });
   } catch (error) {
-    console.error('이슈 생성 오류:', error);
+    console.error('프로필 업데이트 오류:', error);
     const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
     return NextResponse.json(
-      { message: `이슈 생성 실패: ${ errorMessage }` },
+      { message: `프로필 업데이트 실패: ${ errorMessage }` },
       { status: 500 }
     );
   }
-}
-
-// 이슈 본문 마크다운 포맷팅 함수
-function formatIssueBody(data: ProfileEditData, userInfo: UserInfo | null): string {
-  const profileData = data.metadata.profile_data;
-
-  return `
-# 프로필 수정 요청
-
-## 수정 요청자 정보
-- 요청자: ${ userInfo?.name || '없음' } (${ userInfo?.username || '없음' })
-
-## 수정할 프로필 정보
-- 사용자 이름: ${ profileData.username || '' }
-- 이름: ${ profileData.name || '' }
-- 직무: ${ profileData.role || '' }
-- 이메일: ${ profileData.email || '' }
-
-## 소셜 미디어 정보
-- GitHub: ${ profileData.social.github || '' }
-- LinkedIn: ${ profileData.social.linkedin || '' }
-- Twitter: ${ profileData.social.twitter || '' }
-
-## 수정 내용 설명
-${ data.description.full || '' }
-
-## 전체 JSON 데이터
-\`\`\`json
-${ JSON.stringify(profileData, null, 2) }
-\`\`\`
-`;
 }

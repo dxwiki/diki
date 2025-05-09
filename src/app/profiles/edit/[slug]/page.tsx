@@ -1,38 +1,42 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Profile, SocialType } from '@/types';
 import { ConfirmModal } from '@/components/ui/Modal';
 import Footer from '@/components/common/Footer';
-import Link from 'next/link';
 
 // 클라이언트 컴포넌트용 쿠키에서 프로필 정보 가져오는 함수
 function getClientProfileFromCookie(username: string) {
   const userInfoCookie = document.cookie
     .split('; ')
     .find((row) => row.startsWith('user-info='));
-  
+
   if (!userInfoCookie) return { cookieProfile: undefined, isOwnProfile: false, userInfo: null };
-  
+
   try {
     const userInfo = JSON.parse(decodeURIComponent(userInfoCookie.split('=')[1]));
     const isOwnProfile = userInfo && userInfo.username === username;
-    
+
     if (!isOwnProfile) return { cookieProfile: undefined, isOwnProfile: false, userInfo };
-    
+
     // 쿠키에서 프로필 생성
     const social: SocialType = {
       github: '',
       linkedin: '',
-      twitter: ''
+      twitter: '',
     };
-    
+
     // GitHub URL 설정
     if (userInfo.username && !userInfo.username.includes('@')) {
-      social.github = `${userInfo.username}`;
+      social.github = `${ userInfo.username }`;
     }
-    
+
+    if (userInfo.social && userInfo.social.linkedin) {
+      social.linkedin = userInfo.social.linkedin;
+    }
+
     const cookieProfile: Profile = {
       id: userInfo.id,
       username: userInfo.username,
@@ -41,9 +45,9 @@ function getClientProfileFromCookie(username: string) {
       email: userInfo.email || '',
       role: 'contributor',
       social: social,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
-    
+
     return { cookieProfile, isOwnProfile, userInfo };
   } catch (error) {
     console.error('쿠키 파싱 오류:', error);
@@ -58,8 +62,9 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    role: '',
+    username: '',
     email: '',
+    thumbnail: '',
     social: {
       github: '',
       linkedin: '',
@@ -78,23 +83,24 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
       try {
         // 쿠키에서 사용자 정보 확인
         const { cookieProfile, isOwnProfile, userInfo } = getClientProfileFromCookie(params.slug);
-        
+
         // 로그인 여부 및 본인 프로필 확인
         if (userInfo) {
           setIsCurrentUser(isOwnProfile);
         }
-        
+
         // profiles 컬렉션에서 사용자 데이터 가져오기 시도
-        const response = await fetch(`/api/profiles/${params.slug}`);
-        
+        const response = await fetch(`/api/profiles/${ params.slug }`);
+
         if (response.ok) {
           // API에서 데이터 가져오기 성공한 경우
           const profileData = await response.json();
           setProfile(profileData);
           setFormData({
             name: profileData.name,
-            role: profileData.role,
+            username: profileData.username,
             email: profileData.email,
+            thumbnail: profileData.thumbnail,
             social: {
               github: profileData.social.github || '',
               linkedin: profileData.social.linkedin || '',
@@ -107,8 +113,9 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
             setProfile(cookieProfile);
             setFormData({
               name: cookieProfile.name,
-              role: cookieProfile.role,
+              username: cookieProfile.username,
               email: cookieProfile.email,
+              thumbnail: cookieProfile.thumbnail,
               social: {
                 github: cookieProfile.social.github || '',
                 linkedin: cookieProfile.social.linkedin || '',
@@ -163,7 +170,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
     setIsConfirmModalOpen(true); // 모달 열기
   };
 
-  const submitToGithub = async () => {
+  const updateProfile = async () => {
     setSubmitting(true);
     setError(null);
 
@@ -174,43 +181,32 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
       const updatedProfile = {
         ...profile,
         name: formData.name,
-        role: formData.role,
-        email: formData.email,
+        email: profile.email, // 이메일은 원래 값 사용
+        username: profile.username, // 사용자명은 원래 값 사용
         social: formData.social,
       };
 
-      // GitHub 이슈 생성 API 호출
+      // Firebase 프로필 업데이트 API 호출
       const response = await fetch('/api/edit-profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          title: {
-            ko: `${profile.name} 프로필 수정 요청`,
-            en: `${profile.name} Profile Edit Request`,
-          },
-          description: {
-            short: `${profile.name} 사용자의 프로필 정보 수정 요청입니다.`,
-            full: `${profile.name} 사용자의 프로필 정보가 수정되었습니다. 수정된 정보를 반영해주세요.`,
-          },
-          metadata: {
-            profile_edit: true,
-            profile_data: updatedProfile,
-          },
+          profile_data: updatedProfile,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || '프로필 수정 요청 중 오류가 발생했습니다.');
+        throw new Error(errorData.message || '프로필 수정 중 오류가 발생했습니다.');
       }
 
-      const result = await response.json();
-      alert('프로필 수정 요청이 성공적으로 GitHub 이슈로 등록되었습니다!');
-      router.push(`/thank-you?issue=${result.issue_number}`);
+      await response.json();
+      alert('프로필이 성공적으로 수정되었습니다!');
+      router.push(`/profiles/${ params.slug }`);
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : '프로필 수정 요청 중 오류가 발생했습니다.');
+      setError(error instanceof Error ? error.message : '프로필 수정 중 오류가 발생했습니다.');
     } finally {
       setSubmitting(false);
     }
@@ -236,119 +232,139 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
   }
 
   return (
-    <div className="container mx-auto">
-      <div className="w-full mb-4">
-        <h1 className="text-lg md:text-xl lg:text-2xl font-bold">{'프로필 편집'}</h1>
+    <>
+      <div className="w-full mb-2 md:mb-4">
+        <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-main">{'프로필 편집'}</h1>
       </div>
 
       <form onSubmit={handleSubmit} noValidate>
-        <div className="h-[65vh] sm:h-[73vh] overflow-y-auto overflow-x-hidden border border-gray3 rounded-lg p-6">
-          <div className="mb-6">
-            <label className="block text-main font-medium mb-2">
-              {'이름'}
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-light rounded-md focus:outline-none focus:ring-1 focus:ring-primary bg-background"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-main font-medium mb-2">
-              {'직무'}
-            </label>
-            <input
-              type="text"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-light rounded-md focus:outline-none focus:ring-1 focus:ring-primary bg-background"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-main font-medium mb-2">
-              {'이메일'}
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-light rounded-md focus:outline-none focus:ring-1 focus:ring-primary bg-background"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <h3 className="text-xl font-medium mb-4">{'소셜 미디어'}</h3>
-
-            <div className="mb-4">
+        <div className="bg-background border border-gray4 rounded-xl">
+          <div className="flex flex-col gap-2 h-[60vh] overflow-y-auto overflow-x-hidden p-6 md:p-8">
+            <div>
               <label className="block text-main font-medium mb-2">
-                {'GitHub 사용자 이름'}
+                {'이름 (한글)'}
               </label>
               <input
                 type="text"
-                name="social.github"
-                value={formData.social.github}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-light rounded-md focus:outline-none focus:ring-1 focus:ring-primary bg-background"
+                className="w-full px-4 py-3 border border-gray3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200"
+                required
+                placeholder="이름을 입력해주세요"
               />
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-main font-medium mb-2">
+                  {'닉네임'}
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  className="w-full px-4 py-3 border border-gray3 rounded-lg bg-gray4 text-gray2 cursor-not-allowed"
+                  disabled
+                />
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-main font-medium mb-2">
-                {'LinkedIn 사용자 이름'}
-              </label>
-              <input
-                type="text"
-                name="social.linkedin"
-                value={formData.social.linkedin}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-light rounded-md focus:outline-none focus:ring-1 focus:ring-primary bg-background"
-              />
+              <div>
+                <label className="block text-main font-medium mb-2">
+                  {'이메일'}
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  className="w-full px-4 py-3 border border-gray3 rounded-lg bg-gray4 text-gray2 cursor-not-allowed"
+                  disabled
+                />
+              </div>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-main font-medium mb-2">
-                {'Twitter 사용자 이름'}
-              </label>
-              <input
-                type="text"
-                name="social.twitter"
-                value={formData.social.twitter}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-light rounded-md focus:outline-none focus:ring-1 focus:ring-primary bg-background"
-              />
+            <div className="col-span-1 md:col-span-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-main font-medium mb-2">
+                    {'GitHub'}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray3">
+                      {'github.com/'}
+                    </span>
+                    <input
+                      type="text"
+                      name="social.github"
+                      value={formData.social.github}
+                      onChange={handleChange}
+                      className="w-full pl-[100px] pr-4 py-3 border border-gray3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200 placeholder:text-gray2"
+                      placeholder="username"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-main font-medium mb-2">
+                    {'LinkedIn'}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray3">
+                      {'linkedin.com/in/'}
+                    </span>
+                    <input
+                      type="text"
+                      name="social.linkedin"
+                      value={formData.social.linkedin}
+                      onChange={handleChange}
+                      className="w-full pl-[125px] pr-4 py-3 border border-gray3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200 placeholder:text-gray2"
+                      placeholder="username"
+                    />
+                  </div>
+                </div>
+
+                {/* <div>
+                  <label className="block text-main font-medium mb-2">
+                    {'Twitter'}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray3">
+                      {'twitter.com/'}
+                    </span>
+                    <input
+                      type="text"
+                      name="social.twitter"
+                      value={formData.social.twitter}
+                      onChange={handleChange}
+                      className="w-full pl-[100px] pr-4 py-3 border border-gray3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200 placeholder:text-gray2"
+                      placeholder="username"
+                    />
+                  </div>
+                </div> */}
+              </div>
             </div>
           </div>
         </div>
 
         {error && (
-          <div className="text-end text-level-5 rounded-lg">
+          <div className="mx-6 md:mx-8 -mt-2 mb-4 p-3 bg-level-5 text-level-5 rounded-lg">
             {error}
           </div>
         )}
 
-        <div className="flex justify-end space-x-4 py-4">
+        <div className="flex justify-end space-x-4 py-6">
           <button
             type="button"
             onClick={() => setIsCancelModalOpen(true)}
-            className="px-4 py-2 text-gray2 rounded-md hover:text-main"
+            className="px-4 py-2 text-gray2 rounded-lg hover:text-main transition-all duration-200"
           >
             {'취소'}
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4 disabled:opacity-50"
+            className="px-4 py-2 text-white bg-primary hover:bg-accent dark:bg-secondary dark:hover:bg-background-secondary rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? '제출 중...' : 'GitHub 이슈 등록하기'}
+            {submitting ? '제출 중...' : '프로필 수정하기'}
           </button>
         </div>
       </form>
@@ -357,10 +373,10 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
       <ConfirmModal
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
-        onConfirm={submitToGithub}
-        title="GitHub 이슈 등록"
-        message="프로필 정보 수정 내용을 GitHub 이슈로 등록하시겠습니까?"
-        confirmText="등록하기"
+        onConfirm={updateProfile}
+        title="프로필 수정"
+        message="프로필 정보를 수정하시겠습니까?"
+        confirmText="수정하기"
         cancelText="취소"
       />
 
@@ -368,16 +384,16 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
       <ConfirmModal
         isOpen={isCancelModalOpen}
         onClose={() => setIsCancelModalOpen(false)}
-        onConfirm={() => router.push(`/profiles/${params.slug}`)}
+        onConfirm={() => router.push(`/profiles/${ params.slug }`)}
         title="편집 취소"
         message="정말 프로필 편집을 취소하시겠습니까?"
         confirmText="확인"
         cancelText="취소"
       />
 
-      <div className="sm:hidden">
+      <div className="sm:hidden mt-8">
         <Footer />
       </div>
-    </div>
+    </>
   );
 }
