@@ -3,13 +3,12 @@ import { Metadata } from 'next';
 import { dikiMetadata } from '@/constants';
 import ProfileClient from '@/components/profiles/ProfileClient';
 import Footer from '@/components/common/Footer';
-import { Profile } from '@/types';
 import { getUserProfileFromCookie } from '@/utils/profileUtils';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const profiles = await fetchProfilesData();
   let profile = profiles.find((p) => p.username === params.slug);
-  
+
   // profiles.json에 없으면 쿠키에서 가져오기 시도
   if (!profile) {
     const { cookieProfile } = getUserProfileFromCookie(params.slug);
@@ -61,10 +60,10 @@ export async function generateStaticParams() {
 export default async function ContributePage({ params }: { params: { slug: string } }) {
   const profiles = await fetchProfilesData();
   let profile = profiles.find((p) => p.username === params.slug);
-  
+
   // 쿠키에서 사용자 정보 가져오기
   const { cookieProfile, isOwnProfile } = getUserProfileFromCookie(params.slug);
-  
+
   // profiles.json에 없고 쿠키에 정보가 있는 경우
   if (!profile && cookieProfile) {
     profile = cookieProfile;

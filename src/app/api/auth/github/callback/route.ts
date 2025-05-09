@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   if (!code) {
     return NextResponse.redirect(new URL('/login?error=github_code_missing', process.env.NEXT_PUBLIC_BASE_URL || ''));
   }
-  
+
   try {
     const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
