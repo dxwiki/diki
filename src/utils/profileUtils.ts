@@ -20,7 +20,6 @@ export function getUserProfileFromCookie(username: string) {
     const social: SocialType = {
       github: userInfo.username || '',
       linkedin: userInfo.username || '',
-      twitter: userInfo.username || '',
     };
 
     cookieProfile = {

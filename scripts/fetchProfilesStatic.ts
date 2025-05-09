@@ -20,7 +20,6 @@ async function fetchAndSaveProfiles() {
         social: {
           github: data.social?.github,
           linkedin: data.social?.linkedin,
-          twitter: data.social?.twitter,
         },
       } as Profile;
     });

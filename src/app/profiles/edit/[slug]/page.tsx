@@ -25,7 +25,6 @@ function getClientProfileFromCookie(username: string) {
     const social: SocialType = {
       github: '',
       linkedin: '',
-      twitter: '',
     };
 
     // GitHub URL 설정
@@ -68,7 +67,6 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
     social: {
       github: '',
       linkedin: '',
-      twitter: '',
     },
   });
 
@@ -104,7 +102,6 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
             social: {
               github: profileData.social.github || '',
               linkedin: profileData.social.linkedin || '',
-              twitter: profileData.social.twitter || '',
             },
           });
         } else {
@@ -119,7 +116,6 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
               social: {
                 github: cookieProfile.social.github || '',
                 linkedin: cookieProfile.social.linkedin || '',
-                twitter: cookieProfile.social.twitter || '',
               },
             });
           } else {
