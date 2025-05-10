@@ -31,7 +31,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
         onClick={onClose}
       />
       <div
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg p-6 z-50"
+        className="min-w-[90vw] md:min-w-[40vw] xl:min-w-[25vw] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray5 rounded-lg p-4 z-50"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
