@@ -49,12 +49,12 @@ const Toast = ({
   const bgColors = {
     success: 'bg-accent ',
     error: 'bg-level-5',
-    info: 'bg-secondary ',
+    info: 'bg-gray3 ',
   };
 
   return (
     <div
-      className={`fixed ${ positionClasses[position] } flex items-center p-3 rounded-lg shadow-md z-50 animate-slideUp ${ bgColors[type] } hover:opacity-80`}
+      className={`fixed w-full max-w-[90vw] md:max-w-[40vw] xl:max-w-[25vw] h-12 ${ positionClasses[position] } flex justify-between items-center p-3 rounded-lg shadow-lg z-50 animate-slideUp ${ bgColors[type] } hover:opacity-80`}
       role="alert"
     >
       <div className="flex items-center gap-3">
@@ -68,7 +68,7 @@ const Toast = ({
         }}
         className="ml-3 text-white"
       >
-        <X className="size-4" />
+        <X className="size-5" />
       </button>
     </div>
   );
