@@ -57,6 +57,10 @@ const config: Config = {
           '0%': { transform: 'translateY(0)', opacity: '1' },
           '100%': { transform: 'translateY(100%)', opacity: '0' },
         },
+        slideUp: {
+          '0%': { transform: 'translateY(10%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
         intro: {
           '0%': { transform: 'translateY(5px)', opacity: '0' },
           '100%': { transform: 'none', opacity: '1' },
@@ -72,10 +76,11 @@ const config: Config = {
       },
       animation: {
         slideDown: 'slideDown 0.3s ease-in-out',
-        slideDownOut: 'slideDownOut 400ms ease-in-out forwards',
-        slideDownIn: 'slideDownIn 400ms ease-in-out forwards',
-        intro: 'intro 500ms ease-in-out both',
-        introSecond: 'intro 1100ms ease-in-out both',
+        slideDownOut: 'slideDownOut 0.4s ease-in-out forwards',
+        slideDownIn: 'slideDownIn 0.4s ease-in-out forwards',
+        slideUp: 'slideUp 1s ease-in-out',
+        intro: 'intro 0.5s ease-in-out both',
+        introSecond: 'intro 1.1s ease-in-out both',
         slideLeftToRight: 'slideLeftToRight 0.2s ease-in-out',
         slideRightToLeft: 'slideRightToLeft 0.2s ease-in-out',
       },
