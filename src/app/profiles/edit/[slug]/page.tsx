@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Profile, SocialType } from '@/types';
 import { ConfirmModal } from '@/components/ui/Modal';
 import Footer from '@/components/common/Footer';
+import { useToast } from '@/layouts/ToastProvider';
 
 // 클라이언트 컴포넌트용 쿠키에서 프로필 정보 가져오는 함수
 function getClientProfileFromCookie(username: string) {
@@ -56,6 +57,7 @@ function getClientProfileFromCookie(username: string) {
 
 export default function ProfileEditPage({ params }: { params: { slug: string } }) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
@@ -199,13 +201,18 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
       }
 
       await response.json();
-      alert('프로필이 성공적으로 수정되었습니다!');
+      showToast('프로필이 성공적으로 수정되었습니다!', 'success', 5000);
       router.push(`/profiles/${ params.slug }`);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : '프로필 수정 중 오류가 발생했습니다.');
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleCancel = () => {
+    showToast('프로필 편집이 취소되었습니다.', 'info', 5000);
+    router.push(`/profiles/${ params.slug }`);
   };
 
   if (loading) {
@@ -380,7 +387,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
       <ConfirmModal
         isOpen={isCancelModalOpen}
         onClose={() => setIsCancelModalOpen(false)}
-        onConfirm={() => router.push(`/profiles/${ params.slug }`)}
+        onConfirm={handleCancel}
         title="편집 취소"
         message="정말 프로필 편집을 취소하시겠습니까?"
         confirmText="확인"
