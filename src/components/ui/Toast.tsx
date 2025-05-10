@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { CheckCircle, AlertCircle, Info, X } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'info';
@@ -12,44 +12,80 @@ interface ToastProps {
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
   onClose?: ()=> void;
   offset?: number;
+  createdAt: number; // 토스트 생성 시간
 }
 
 const Toast = ({
   message,
   type = 'success',
   duration = 5000,
-  position = 'bottom-left',
+  position = 'bottom-right',
   onClose,
   offset = 0,
+  createdAt,
 }: ToastProps) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [isFading, setIsFading] = useState(false);
   const [remainingTime, setRemainingTime] = useState(Math.ceil(duration / 1000));
   const [prevOffset, setPrevOffset] = useState(offset);
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const fadeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    timerRef.current = setTimeout(() => {
+  // 모든 타이머 정리
+  const clearTimers = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (timerRef.current) clearTimeout(timerRef.current);
+  }, []);
+
+  const closeToast = useCallback(() => {
+    setIsFading(true);
+
+    fadeTimerRef.current = setTimeout(() => {
       setIsVisible(false);
       if (onClose) onClose();
-    }, duration);
+    }, 300);
+  }, [onClose]);
+
+  useEffect(() => {
+    const elapsedTime = Date.now() - createdAt;
+    const actualDuration = Math.max(0, duration - elapsedTime);
+
+    if (actualDuration <= 0) {
+      closeToast();
+      return;
+    }
+
+    timerRef.current = setTimeout(() => {
+      closeToast();
+    }, Math.max(0, actualDuration - 200));
 
     intervalRef.current = setInterval(() => {
-      setRemainingTime((prev) => {
-        if (prev <= 1) return 0;
-        return prev - 1;
-      });
-    }, 1000);
+      const currentElapsed = Date.now() - createdAt;
+      const remainingMs = Math.max(0, duration - currentElapsed);
+      const remainingSec = Math.ceil(remainingMs / 1000);
 
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [duration, onClose]);
+      setRemainingTime(remainingSec);
+
+      if (remainingSec <= 0) {
+        closeToast();
+        clearTimers();
+      }
+    }, 200);
+
+    return clearTimers;
+  }, [duration, createdAt, closeToast, clearTimers]);
 
   useEffect(() => {
     setPrevOffset(offset);
   }, [offset]);
+
+  useEffect(() => {
+    return () => {
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+    };
+  }, []);
 
   if (!isVisible) return null;
 
@@ -61,47 +97,46 @@ const Toast = ({
   };
 
   const icons = {
-    success: <CheckCircle className="size-5 text-white" />,
-    error: <AlertCircle className="size-5 text-white" />,
-    info: <Info className="size-5 text-white" />,
+    success: <CheckCircle className="size-5" />,
+    error: <AlertCircle className="size-5" />,
+    info: <Info className="size-5" />,
   };
 
   const bgColors = {
-    success: 'bg-accent ',
-    error: 'bg-level-5',
-    info: 'bg-gray3 ',
+    success: 'text-primary border-accent',
+    error: 'text-level-5 border-level-5',
+    info: 'text-main border-gray0',
   };
 
-  // 새 토스트가 나타나거나 기존 토스트가 위로 이동할 때의 애니메이션
   const offsetStyle = {
     transform: `translateY(-${ offset }px)`,
     transition: 'transform 0.3s ease-out',
   };
 
-  const animationClass = offset === 0
-    ? 'animate-slideUp'
-    : prevOffset !== offset
-      ? 'transition-transform duration-300 ease-out'
-      : '';
+  const animationClass = isFading
+    ? 'animate-toastFadeOut'
+    : offset === 0
+      ? 'animate-slideUp'
+      : prevOffset !== offset
+        ? 'transition-transform duration-300 ease-out'
+        : '';
 
   return (
     <div
-      className={`fixed w-full max-w-[90vw] md:max-w-[40vw] xl:max-w-[25vw] h-12 ${ positionClasses[position] } flex justify-between items-center p-3 rounded-lg shadow-lg z-50 ${ animationClass } ${ bgColors[type] } hover:opacity-80`}
+      className={`fixed w-full max-w-[90vw] md:max-w-[40vw] xl:max-w-[25vw] h-12 bg-gray5 border 
+        flex justify-between items-center p-3 rounded-lg shadow-lg z-50 hover:opacity-80
+        ${ positionClasses[position] } ${ animationClass } ${ bgColors[type] }`}
       role="alert"
       style={offsetStyle}
     >
       <div className="flex items-center gap-3">
         {icons[type]}
-        <span className="text-white text-sm">{message}</span>
+        <span className="text-sm">{message}</span>
       </div>
       <div className="flex items-center">
-        <span className="text-white text-xs mr-2">{remainingTime}{'s'}</span>
+        <span className="text-xs mr-2">{remainingTime > 0 ? remainingTime : 0}{'s'}</span>
         <button
-          onClick={() => {
-            setIsVisible(false);
-            if (onClose) onClose();
-          }}
-          className="text-white"
+          onClick={closeToast}
         >
           <X className="size-5" />
         </button>
