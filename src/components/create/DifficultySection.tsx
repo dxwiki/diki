@@ -8,9 +8,10 @@ interface DifficultySectionProps {
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
   handleCustomChange?: (name: string, value: number)=> void;
   validationErrors?: string[];
+  isModal?: boolean;
 }
 
-const DifficultySection = ({ formData, handleChange, handleCustomChange, validationErrors = [] }: DifficultySectionProps) => {
+const DifficultySection = ({ formData, handleChange, handleCustomChange, validationErrors = [], isModal = false }: DifficultySectionProps) => {
   const levels = ['기초', '초급', '중급', '고급', '전문'];
   const { getInputClassName, showValidation } = useFormValidation();
 
@@ -44,12 +45,18 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, validat
     setLevelValue(formData.difficulty?.level || 1);
   }, [formData.difficulty?.level]);
 
+  const containerClasses = isModal
+    ? 'p-2'
+    : 'p-2 md:p-6 border-b border-gray3';
+
   return (
-    <div className="p-2 md:p-6 border-b border-gray3">
-      <h2 className="flex items-center text-xl font-semibold mb-4">
-        <span className="text-primary mr-1">{'#'}</span>
-        {'난이도'}
-      </h2>
+    <div className={containerClasses}>
+      {!isModal && (
+        <h2 className="flex items-center text-xl font-semibold mb-4">
+          <span className="text-primary mr-1">{'#'}</span>
+          {'난이도'}
+        </h2>
+      )}
       <div className="flex flex-col sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
         <div className="">
           <label className="text-sm font-medium text-gray0">{'레벨'}</label>
