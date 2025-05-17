@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { TermData } from '@/types/database';
 import BasicInfoSection from '@/components/create/BasicInfoSection';
@@ -12,18 +12,48 @@ import RelevanceSection from '@/components/create/RelevanceSection';
 import UsecaseSection from '@/components/create/UsecaseSection';
 import ReferencesSection from '@/components/create/ReferencesSection';
 import EditPreview from '@/components/create/EditPreview';
-import { Dropdown, DropdownTrigger, DropdownList, DropdownItem, DropdownContext } from '@/components/ui/Dropdown';
 import { ConfirmModal } from '@/components/ui/Modal';
-import { ChevronDown } from 'lucide-react';
 import Footer from '@/components/common/Footer';
-type PreviewMode = 'none' | 'json' | 'post';
+
+interface EditingSectionState {
+  basicInfo: boolean;
+  difficulty: boolean;
+  description: boolean;
+  tags: boolean;
+  terms: boolean;
+  relevance: boolean;
+  usecase: boolean;
+  references: boolean;
+  koTitle: boolean;
+  enTitle: boolean;
+  shortDesc: boolean;
+}
 
 export default function CreatePage() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [preview, setPreview] = useState<PreviewMode>('none');
-  const [activeTabText, setActiveTabText] = useState('포스트 작성하기');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+  // 각 섹션의 편집 상태를 관리하는 상태
+  const [editingSections, setEditingSections] = useState<EditingSectionState>({
+    basicInfo: false,
+    difficulty: false,
+    description: false,
+    tags: false,
+    terms: false,
+    relevance: false,
+    usecase: false,
+    references: false,
+    koTitle: false,
+    enTitle: false,
+    shortDesc: false,
+  });
+
   const [formData, setFormData] = useState<TermData>({
     title: { ko: '', en: '', etc: [] },
     description: { short: '', full: '' },
@@ -54,12 +84,6 @@ export default function CreatePage() {
     },
     publish: false,
   });
-
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // 로그인 확인 로직
   useEffect(() => {
@@ -132,6 +156,131 @@ export default function CreatePage() {
     }
   };
 
+  // 섹션 토글 함수
+  const toggleSection = (section: string) => {
+    console.log('섹션 토글 함수 호출됨:', section);
+
+    // section이 문자열이 아닌 경우 처리
+    if (typeof section !== 'string') {
+      console.error('섹션이 문자열이 아님:', section);
+      return;
+    }
+
+    // 섹션 ID에서 키로 변환
+    const getSectionKey = (id: string): keyof EditingSectionState | null => {
+      const sectionMap: Record<string, keyof EditingSectionState> = {
+        'description': 'description',
+        'terms': 'terms',
+        'tags': 'tags',
+        'relevance': 'relevance',
+        'usecase': 'usecase',
+        'references': 'references',
+        'description-section': 'description',
+        'terms-section': 'terms',
+        'tags-section': 'tags',
+        'relevance-section': 'relevance',
+        'usecase-section': 'usecase',
+        'references-section': 'references',
+        'koTitle': 'koTitle',
+        'enTitle': 'enTitle',
+        'shortDesc': 'shortDesc',
+        'difficulty': 'difficulty',
+      };
+
+      return sectionMap[id] || null;
+    };
+
+    const sectionKey = getSectionKey(section);
+    if (!sectionKey) {
+      console.error('알 수 없는 섹션 ID:', section);
+      return;
+    }
+
+    setEditingSections((prev) => {
+      // 다른 섹션들을 모두 닫고 선택한 섹션만 토글
+      const newState = Object.keys(prev).reduce((acc, key) => {
+        acc[key as keyof EditingSectionState] = false;
+        return acc;
+      }, {} as EditingSectionState);
+
+      newState[sectionKey] = !prev[sectionKey];
+      return newState;
+    });
+  };
+
+  // 섹션 유효성 검사 함수
+  const validateSection = (section: string): boolean => {
+    const errors: string[] = [];
+
+    switch (section) {
+      case 'koTitle':
+        if (!formData.title?.ko || formData.title.ko.trim() === '') {
+          errors.push('한글 제목을 입력해주세요.');
+        }
+        break;
+      case 'enTitle':
+        if (!formData.title?.en || formData.title.en.trim() === '') {
+          errors.push('영문 제목을 입력해주세요.');
+        }
+        break;
+      case 'shortDesc':
+        if (!formData.description?.short || formData.description.short.trim() === '') {
+          errors.push('짧은 설명을 입력해주세요.');
+        }
+        break;
+      case 'difficulty':
+        if (!formData.difficulty?.description || formData.difficulty.description.trim() === '') {
+          errors.push('난이도 설명을 입력해주세요.');
+        }
+        break;
+      case 'description':
+        if (!formData.description?.full || formData.description.full.trim() === '') {
+          errors.push('전체 설명을 입력해주세요.');
+        }
+        break;
+      case 'relevance':
+        if (!formData.relevance?.analyst?.description || formData.relevance.analyst.description.trim() === '') {
+          errors.push('데이터 분석가 직무 연관성 설명을 입력해주세요.');
+        }
+        if (!formData.relevance?.scientist?.description || formData.relevance.scientist.description.trim() === '') {
+          errors.push('데이터 과학자 직무 연관성 설명을 입력해주세요.');
+        }
+        if (!formData.relevance?.engineer?.description || formData.relevance.engineer.description.trim() === '') {
+          errors.push('데이터 엔지니어 직무 연관성 설명을 입력해주세요.');
+        }
+        break;
+      case 'usecase':
+        if (!formData.usecase?.description || formData.usecase.description.trim() === '') {
+          errors.push('사용 사례 개요를 입력해주세요.');
+        }
+        if (!formData.usecase?.example || formData.usecase.example.trim() === '') {
+          errors.push('구체적인 사용 사례를 입력해주세요.');
+        }
+        break;
+      default:
+        break;
+    }
+
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
+
+  // 섹션 유효성 검사 결과 처리 함수
+  const handleSectionValidated = (section: string, isValid: boolean) => {
+    if (isValid) {
+      // 유효성 검사 통과 시 섹션 닫기
+      setEditingSections((prev) => ({
+        ...prev,
+        [section]: false,
+      }));
+      // 에러 메시지 초기화
+      setValidationErrors([]);
+    } else {
+      // 유효성 검사 실패 시 에러 메시지 표시 (이미 validateSection에서 설정됨)
+      console.error('섹션 유효성 검사 실패:', section);
+    }
+  };
+
   // 폼 유효성 검사
   const validateForm = (): boolean => {
     const errors: string[] = [];
@@ -190,6 +339,45 @@ export default function CreatePage() {
 
     if (!validateForm()) {
       setError('필수 항목을 모두 입력해주세요.');
+
+      // 필수 항목 중 누락된 항목에 해당하는 섹션 자동으로 열기
+      const newEditingSections = { ...editingSections };
+
+      // 기본 정보 검증
+      if (!formData.title?.ko || formData.title.ko.trim() === '') {
+        newEditingSections.koTitle = true;
+      } else if (!formData.title.en || formData.title.en.trim() === '') {
+        newEditingSections.enTitle = true;
+      } else if (!formData.description?.short || formData.description.short.trim() === '') {
+        newEditingSections.shortDesc = true;
+      } else if (!formData.difficulty?.description || formData.difficulty.description.trim() === '') {
+        newEditingSections.difficulty = true;
+      } else if (!formData.description.full || formData.description.full.trim() === '') {
+        newEditingSections.description = true;
+      } else if (
+        !formData.relevance?.analyst?.description
+        || !formData.relevance.scientist?.description
+        || !formData.relevance.engineer?.description
+      ) {
+        newEditingSections.relevance = true;
+      } else if (
+        !formData.usecase?.description
+        || !formData.usecase.example
+      ) {
+        newEditingSections.usecase = true;
+      }
+
+      setEditingSections(newEditingSections);
+
+      // 첫 번째 오류 발생 위치로 스크롤
+      const firstErrorSection = Object.entries(newEditingSections).find(([, isOpen]) => isOpen);
+      if (firstErrorSection) {
+        const sectionElement = document.getElementById(`${ firstErrorSection[0] }-section`);
+        if (sectionElement) {
+          sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
       return;
     }
 
@@ -226,21 +414,6 @@ export default function CreatePage() {
     }
   };
 
-  // 미리보기 모드 전환
-  const togglePreviewMode = (mode: PreviewMode) => {
-    if (preview === mode) {
-      setPreview('none');
-      setActiveTabText('포스트 작성하기');
-    } else {
-      setPreview(mode);
-      setActiveTabText(
-        mode === 'post' ? '게시글 미리보기'
-          : mode === 'json' ? 'JSON 미리보기'
-            : '포스트 작성하기'
-      );
-    }
-  };
-
   if (loading) {
     return <div className="flex justify-center items-center min-h-[70vh]">{'로딩 중...'}</div>;
   }
@@ -249,143 +422,128 @@ export default function CreatePage() {
     return null; // useEffect에서 리다이렉트 처리
   }
 
-  // 탭 활성화 상태에 따른 클래스
-  const getTabClass = (tabMode: PreviewMode | 'edit') => {
-    const baseClass = 'text-xs sm:text-sm px-2 py-1 sm:px-4 sm:py-2 rounded-md transition-colors';
+  // 모달용 컴포넌트 생성
+  const renderKoreanTitleForm = () => (
+    <div className="p-2">
+      <label className="block text-sm font-medium mb-1 text-gray0">{'한글 제목'}</label>
+      <input
+        type="text"
+        name="title.ko"
+        value={formData.title?.ko || ''}
+        onChange={handleChange}
+        className="w-full p-2 border border-gray4 rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
+        placeholder="포스트 한글 제목 (ex. 인공지능)"
+        required
+      />
+      {validationErrors.find((err) => err.includes('한글 제목')) && (
+        <p className="text-level-5 text-sm mt-1">{'한글 제목을 입력해주세요.'}</p>
+      )}
+    </div>
+  );
 
-    if (tabMode === 'edit') {
-      return `${ baseClass } ${ preview === 'none' ? 'bg-gray1 dark:bg-gray4 text-white' : 'text-gray2 hover:text-main hover:bg-gray4' }`;
-    }
+  const renderEnglishTitleForm = () => (
+    <div className="p-2">
+      <label className="block text-sm font-medium mb-1 text-gray0">{'영문 제목'}</label>
+      <input
+        type="text"
+        name="title.en"
+        value={formData.title?.en || ''}
+        onChange={handleChange}
+        className="w-full p-2 border border-gray4 rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
+        placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
+        required
+      />
+      {validationErrors.find((err) => err.includes('영문 제목')) && (
+        <p className="text-level-5 text-sm mt-1">{'영문 제목을 입력해주세요.'}</p>
+      )}
+    </div>
+  );
 
-    return `${ baseClass } ${ preview === tabMode ? 'bg-gray1 dark:bg-gray4 text-white' : 'text-gray2 hover:text-main hover:bg-gray4' }`;
-  };
-
-  // 드롭다운 아이콘 컴포넌트
-  const DropdownIcon = () => {
-    const { isOpen } = useContext(DropdownContext);
-
-    return (
-      <ChevronDown className={`size-4 transition-transform duration-300 ease-in-out ${ isOpen ? 'rotate-180' : '' }`} />
-    );
-  };
+  const renderShortDescriptionForm = () => (
+    <div className="p-2">
+      <label className="block text-sm font-medium mb-1 text-gray0">{'짧은 설명'}</label>
+      <div className="relative">
+        <textarea
+          name="description.short"
+          value={formData.description?.short || ''}
+          onChange={(e) => {
+            handleChange(e);
+            // 높이 자동 조절
+            e.target.style.height = 'auto';
+            e.target.style.height = e.target.scrollHeight + 'px';
+          }}
+          className="w-full p-2 border border-gray4 rounded-md resize-none overflow-hidden focus:border-primary focus:ring-1 focus:ring-primary"
+          required
+          placeholder="포스트에 대한 1~2줄 짧은 설명 (100자 이내)"
+          maxLength={100}
+          rows={2}
+          style={{ minHeight: '60px' }}
+        />
+        <div className="absolute right-2 bottom-2 text-xs text-gray2">
+          {`${ formData.description?.short?.length || 0 }/100`}
+        </div>
+      </div>
+      {validationErrors.find((err) => err.includes('짧은 설명')) && (
+        <p className="text-level-5 text-sm mt-1">{'짧은 설명을 입력해주세요.'}</p>
+      )}
+    </div>
+  );
 
   return (
     <div className="container mx-auto">
       <div className="w-full flex justify-between items-center mb-4">
         <div className="flex items-center text-lg md:text-xl lg:text-2xl font-bold">{'새 포스트 작성'}</div>
-
-        {/* 모바일 화면 드롭다운 */}
-        <div className="sm:hidden">
-          <Dropdown>
-            <DropdownTrigger>
-              <button className="flex items-center gap-1 px-2 py-1 text-sm rounded-full border border-primary text-primary">
-                <span>{activeTabText}</span>
-                <DropdownIcon />
-              </button>
-            </DropdownTrigger>
-            <DropdownList align='end'>
-              <DropdownItem
-                onClick={() => togglePreviewMode('none')}
-                className={preview === 'none' ? 'text-primary' : ''}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span>{'포스트 작성하기'}</span>
-                  <span>{preview === 'none' ? '•' : ''}</span>
-                </div>
-              </DropdownItem>
-              <DropdownItem
-                onClick={() => togglePreviewMode('post')}
-                className={preview === 'post' ? 'text-primary' : ''}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span>{'포스트 미리보기'}</span>
-                  <span>{preview === 'post' ? '•' : ''}</span>
-                </div>
-              </DropdownItem>
-              {/* <DropdownItem
-                onClick={() => togglePreviewMode('json')}
-                className={preview === 'json' ? 'text-primary' : ''}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span>{'JSON 미리보기'}</span>
-                  <span>{preview === 'json' ? '•' : ''}</span>
-                </div>
-              </DropdownItem> */}
-            </DropdownList>
-          </Dropdown>
-        </div>
-
-        <div className="hidden sm:flex space-x-2">
+        <div className="flex justify-end space-x-4">
           <button
-            onClick={() => togglePreviewMode('none')}
-            className={getTabClass('edit')}
+            type="button"
+            onClick={() => setIsCancelModalOpen(true)}
+            className="px-4 py-2 text-gray2 rounded-md hover:text-main"
           >
-            {'포스트 작성하기'}
+            {'작성취소'}
           </button>
           <button
-            onClick={() => togglePreviewMode('post')}
-            className={getTabClass('post')}
+            type="submit"
+            disabled={submitting}
+            className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4 disabled:opacity-50"
           >
-            {'포스트 미리보기'}
+            {submitting ? '제출 중...' : 'GitHub 이슈 등록하기'}
           </button>
-          {/* <button
-            onClick={() => togglePreviewMode('json')}
-            className={getTabClass('json')}
-          >
-            {'JSON 미리보기'}
-          </button> */}
         </div>
       </div>
 
-      {preview === 'json' ? (
-        <div className="bg-gray4 sm:p-4 rounded-lg">
-          <pre className="whitespace-pre-wrap overflow-y-auto overflow-x-hidden h-[73vh]">
-            {JSON.stringify(formData, null, 2)}
-          </pre>
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="min-h-[73vh] overflow-y-auto overflow-x-hidden bg-gray5">
+          <div className="relative">
+            {/* EditPreview 컴포넌트가 섹션 클릭 이벤트를 받을 수 있도록 toggleSection 함수 전달 */}
+            <EditPreview
+              term={formData}
+              onSectionClick={toggleSection}
+              editingSections={editingSections}
+              formComponents={{
+                basicInfo: <BasicInfoSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+                difficulty: <DifficultySection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+                description: <DescriptionSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+                terms: <TermsSection formData={formData} setFormData={setFormData} />,
+                tags: <TagsSection formData={formData} setFormData={setFormData} />,
+                relevance: <RelevanceSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+                usecase: <UsecaseSection formData={formData} setFormData={setFormData} handleChange={handleChange} validationErrors={validationErrors} />,
+                references: <ReferencesSection formData={formData} setFormData={setFormData} />,
+              }}
+              renderKoreanTitleForm={renderKoreanTitleForm}
+              renderEnglishTitleForm={renderEnglishTitleForm}
+              renderShortDescriptionForm={renderShortDescriptionForm}
+              validateSection={validateSection}
+              onSectionValidated={handleSectionValidated}
+            />
+          </div>
         </div>
-      ) : preview === 'post' ? (
-        <div className="overflow-y-auto overflow-x-hidden h-[73vh] border border-gray3 rounded-lg">
-          <EditPreview term={formData} />
-        </div>
-      ) : (
-        <>
-          <form onSubmit={handleSubmit} noValidate>
-            <div className="h-[65vh] sm:h-[73vh] overflow-y-auto overflow-x-hidden border border-gray3 rounded-lg">
-              <BasicInfoSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
-              <DifficultySection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
-              <DescriptionSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
-              <TagsSection formData={formData} setFormData={setFormData} />
-              <TermsSection formData={formData} setFormData={setFormData} />
-              <RelevanceSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />
-              <UsecaseSection formData={formData} setFormData={setFormData} handleChange={handleChange} validationErrors={validationErrors} />
-              <ReferencesSection formData={formData} setFormData={setFormData} />
-            </div>
 
-            {error && validationErrors.length === 0 && (
-              <div className="text-end text-level-5 rounded-lg">
-                {error}
-              </div>
-            )}
-
-            <div className="flex justify-end space-x-4 py-4">
-              <button
-                type="button"
-                onClick={() => setIsCancelModalOpen(true)}
-                className="px-4 py-2 text-gray2 rounded-md hover:text-main"
-              >
-                {'작성취소'}
-              </button>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4 disabled:opacity-50"
-              >
-                {submitting ? '제출 중...' : 'GitHub 이슈 등록하기'}
-              </button>
-            </div>
-          </form>
-        </>
-      )}
+        {error && validationErrors.length === 0 && (
+          <div className="text-end text-level-5 rounded-lg">
+            {error}
+          </div>
+        )}
+      </form>
 
       {/* 확인 모달 */}
       <ConfirmModal
