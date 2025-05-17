@@ -31,7 +31,7 @@ export const useFormValidation = (options: ValidationHookOptions = {}) => {
 
   const getInputClassName = (
     value: string | undefined | null,
-    baseClass = 'w-full p-2 border rounded-md',
+    baseClass = 'w-full p-2 border rounded-md text-main',
     errorClass = 'border-level-5'
   ) => {
     if (showValidation && (!value || value.trim() === '')) {

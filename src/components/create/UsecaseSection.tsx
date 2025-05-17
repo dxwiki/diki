@@ -108,7 +108,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
               value={newIndustry}
               onChange={(e) => setNewIndustry(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="w-full p-2 border border-gray4 rounded-md"
+              className="w-full p-2 border border-gray4 rounded-md text-main"
               placeholder="산업 분야 입력"
             />
           </div>

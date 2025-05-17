@@ -276,7 +276,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={tutorialTitleRef}
                   type="text"
                   placeholder="튜토리얼 제목"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={tutorial.title || ''}
                   onChange={(e) => setTutorial({ ...tutorial, title: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, tutorialPlatformRef)}
@@ -293,7 +293,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={tutorialPlatformRef}
                   type="text"
                   placeholder="플랫폼 (ex. TensorFlow, PyTorch, OpenCV)"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={tutorial.platform || ''}
                   onChange={(e) => setTutorial({ ...tutorial, platform: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, tutorialLinkRef)}
@@ -305,7 +305,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={tutorialLinkRef}
                   type="url"
                   placeholder="https://..."
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={tutorial.external_link || ''}
                   onChange={(e) => setTutorial({ ...tutorial, external_link: e.target.value })}
                   onKeyDown={(e) => {
@@ -374,7 +374,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={bookTitleRef}
                   type="text"
                   placeholder="책 제목"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={book.title || ''}
                   onChange={(e) => setBook({ ...book, title: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, bookAuthorsRef)}
@@ -391,7 +391,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={bookAuthorsRef}
                   type="text"
                   placeholder="저자 (여러 명인 경우, 콤마로 구분)"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={book.authors?.join(', ') || ''}
                   onChange={(e) => setBook({ ...book, authors: e.target.value.split(',').map((a) => a.trim()) })}
                   onKeyDown={(e) => handleInputKeyDown(e, bookPublisherRef)}
@@ -403,7 +403,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={bookPublisherRef}
                   type="text"
                   placeholder="출판사"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={book.publisher || ''}
                   onChange={(e) => setBook({ ...book, publisher: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, bookYearRef)}
@@ -415,7 +415,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={bookYearRef}
                   type="text"
                   placeholder="YYYY"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={book.year || ''}
                   onChange={(e) => setBook({ ...book, year: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, bookIsbnRef)}
@@ -427,7 +427,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={bookIsbnRef}
                   type="text"
                   placeholder="ISBN"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={book.isbn || ''}
                   onChange={(e) => setBook({ ...book, isbn: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, bookLinkRef)}
@@ -439,7 +439,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={bookLinkRef}
                   type="url"
                   placeholder="https://..."
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={book.external_link || ''}
                   onChange={(e) => setBook({ ...book, external_link: e.target.value })}
                   onKeyDown={(e) => {
@@ -507,7 +507,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={academicTitleRef}
                   type="text"
                   placeholder="논문 제목"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={academic.title || ''}
                   onChange={(e) => setAcademic({ ...academic, title: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, academicAuthorsRef)}
@@ -524,7 +524,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={academicAuthorsRef}
                   type="text"
                   placeholder="저자 (여러 명인 경우, 콤마로 구분)"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={academic.authors?.join(', ') || ''}
                   onChange={(e) => setAcademic({ ...academic, authors: e.target.value.split(',').map((a) => a.trim()) })}
                   onKeyDown={(e) => handleInputKeyDown(e, academicYearRef)}
@@ -536,7 +536,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={academicYearRef}
                   type="text"
                   placeholder="YYYY"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={academic.year || ''}
                   onChange={(e) => setAcademic({ ...academic, year: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, academicDoiRef)}
@@ -548,7 +548,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={academicDoiRef}
                   type="text"
                   placeholder="DOI"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={academic.doi || ''}
                   onChange={(e) => setAcademic({ ...academic, doi: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, academicLinkRef)}
@@ -560,7 +560,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={academicLinkRef}
                   type="url"
                   placeholder="https://..."
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={academic.external_link || ''}
                   onChange={(e) => setAcademic({ ...academic, external_link: e.target.value })}
                   onKeyDown={(e) => {
@@ -627,7 +627,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={opensourceNameRef}
                   type="text"
                   placeholder="오픈소스 프로젝트 이름"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={opensource.name || ''}
                   onChange={(e) => setOpensource({ ...opensource, name: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, opensourceLicenseRef)}
@@ -644,7 +644,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={opensourceLicenseRef}
                   type="text"
                   placeholder="라이센스 (ex. MIT, GPL)"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={opensource.license || ''}
                   onChange={(e) => setOpensource({ ...opensource, license: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, opensourceDescriptionRef)}
@@ -655,7 +655,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                 <textarea
                   ref={opensourceDescriptionRef}
                   placeholder="간략한 설명"
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={opensource.description || ''}
                   onChange={(e) => setOpensource({ ...opensource, description: e.target.value })}
                   onKeyDown={(e) => handleInputKeyDown(e, opensourceLinkRef)}
@@ -667,7 +667,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                   ref={opensourceLinkRef}
                   type="url"
                   placeholder="https://..."
-                  className="w-full p-2 border border-gray4 rounded-md"
+                  className="w-full p-2 border border-gray4 rounded-md text-main"
                   value={opensource.external_link || ''}
                   onChange={(e) => setOpensource({ ...opensource, external_link: e.target.value })}
                   onKeyDown={(e) => {
