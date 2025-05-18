@@ -166,6 +166,18 @@ export default function CreatePage() {
       return;
     }
 
+    // 'close' 명령이면 모든 섹션 닫기
+    if (section === 'close') {
+      setEditingSections((prev) => {
+        const newState = { ...prev };
+        Object.keys(newState).forEach((key) => {
+          newState[key as keyof EditingSectionState] = false;
+        });
+        return newState;
+      });
+      return;
+    }
+
     // 섹션 ID에서 키로 변환
     const getSectionKey = (id: string): keyof EditingSectionState | null => {
       const sectionMap: Record<string, keyof EditingSectionState> = {
@@ -431,7 +443,7 @@ export default function CreatePage() {
         name="title.ko"
         value={formData.title?.ko || ''}
         onChange={handleChange}
-        className="w-full p-2 border border-gray4 rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
+        className="w-full p-2 border border-gray4 text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
         placeholder="포스트 한글 제목 (ex. 인공지능)"
         required
       />
@@ -449,7 +461,7 @@ export default function CreatePage() {
         name="title.en"
         value={formData.title?.en || ''}
         onChange={handleChange}
-        className="w-full p-2 border border-gray4 rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
+        className="w-full p-2 border border-gray4 text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
         placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
         required
       />
@@ -472,7 +484,7 @@ export default function CreatePage() {
             e.target.style.height = 'auto';
             e.target.style.height = e.target.scrollHeight + 'px';
           }}
-          className="w-full p-2 border border-gray4 rounded-md resize-none overflow-hidden focus:border-primary focus:ring-1 focus:ring-primary"
+          className="w-full p-2 border border-gray4 text-main rounded-md resize-none overflow-hidden focus:border-primary focus:ring-1 focus:ring-primary"
           required
           placeholder="포스트에 대한 1~2줄 짧은 설명 (100자 이내)"
           maxLength={100}
@@ -493,7 +505,7 @@ export default function CreatePage() {
     <div className="container mx-auto">
       <div className="w-full flex justify-between items-center mb-4">
         <div className="flex items-center text-lg md:text-xl lg:text-2xl font-bold">{'새 포스트 작성'}</div>
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-end space-x-2 sm:space-x-4">
           <button
             type="button"
             onClick={() => setIsCancelModalOpen(true)}
@@ -506,36 +518,34 @@ export default function CreatePage() {
             disabled={submitting}
             className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4 disabled:opacity-50"
           >
-            {submitting ? '제출 중...' : 'GitHub 이슈 등록하기'}
+            {submitting ? '제출 중...' : '등록하기'}
           </button>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} noValidate>
-        <div className="min-h-[73vh] overflow-y-auto overflow-x-hidden bg-gray5">
-          <div className="relative">
-            {/* EditPreview 컴포넌트가 섹션 클릭 이벤트를 받을 수 있도록 toggleSection 함수 전달 */}
-            <EditPreview
-              term={formData}
-              onSectionClick={toggleSection}
-              editingSections={editingSections}
-              formComponents={{
-                basicInfo: <BasicInfoSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-                difficulty: <DifficultySection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-                description: <DescriptionSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-                terms: <TermsSection formData={formData} setFormData={setFormData} />,
-                tags: <TagsSection formData={formData} setFormData={setFormData} />,
-                relevance: <RelevanceSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-                usecase: <UsecaseSection formData={formData} setFormData={setFormData} handleChange={handleChange} validationErrors={validationErrors} />,
-                references: <ReferencesSection formData={formData} setFormData={setFormData} />,
-              }}
-              renderKoreanTitleForm={renderKoreanTitleForm}
-              renderEnglishTitleForm={renderEnglishTitleForm}
-              renderShortDescriptionForm={renderShortDescriptionForm}
-              validateSection={validateSection}
-              onSectionValidated={handleSectionValidated}
-            />
-          </div>
+        <div className="relative">
+          {/* EditPreview 컴포넌트가 섹션 클릭 이벤트를 받을 수 있도록 toggleSection 함수 전달 */}
+          <EditPreview
+            term={formData}
+            onSectionClick={toggleSection}
+            editingSections={editingSections}
+            formComponents={{
+              basicInfo: <BasicInfoSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+              difficulty: <DifficultySection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+              description: <DescriptionSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+              terms: <TermsSection formData={formData} setFormData={setFormData} />,
+              tags: <TagsSection formData={formData} setFormData={setFormData} />,
+              relevance: <RelevanceSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+              usecase: <UsecaseSection formData={formData} setFormData={setFormData} handleChange={handleChange} validationErrors={validationErrors} />,
+              references: <ReferencesSection formData={formData} setFormData={setFormData} />,
+            }}
+            renderKoreanTitleForm={renderKoreanTitleForm}
+            renderEnglishTitleForm={renderEnglishTitleForm}
+            renderShortDescriptionForm={renderShortDescriptionForm}
+            validateSection={validateSection}
+            onSectionValidated={handleSectionValidated}
+          />
         </div>
 
         {error && validationErrors.length === 0 && (
