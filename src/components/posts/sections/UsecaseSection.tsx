@@ -2,7 +2,7 @@ import MarkdownContent from '@/components/posts/MarkdownContent';
 import { Usecase } from '@/types';
 
 interface UsecaseSectionProps {
-  usecase: Usecase
+  usecase: Usecase;
 }
 
 const UsecaseSection = ({ usecase }: UsecaseSectionProps) => {
