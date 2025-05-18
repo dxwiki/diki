@@ -108,24 +108,68 @@ const PostPreview = ({
   // 편집 폼 렌더링 함수
   const renderEditForm = (section: keyof EditingSectionState) => {
     if (!editingSections || !formComponents) return null;
+    if (!editingSections[section]) return null;
 
-    return editingSections[section] ? (
-      <div
-        className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {formComponents[section as keyof FormComponents]}
-        <div className="flex justify-end p-4">
-          <button
-            type="button"
-            onClick={() => handleSectionComplete(section)}
-            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+    switch (section) {
+      case 'tags':
+        return (
+          <>
+            {/* 모바일 뷰 (sm 미만): 일반 모달처럼 표시 */}
+            <div
+              className="modal-container sm:hidden absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {formComponents[section as keyof FormComponents]}
+              <div className="flex justify-end p-4">
+                <button
+                  type="button"
+                  onClick={() => handleSectionComplete(section)}
+                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+                >
+                  {'완료'}
+                </button>
+              </div>
+            </div>
+
+            {/* 데스크톱 뷰 (sm 이상): 특별한 위치에 표시 */}
+            <div
+              className="modal-container hidden sm:block fixed md:absolute inset-x-0 md:left-[180px] md:top-[295px] top-[100px] md:inset-x-auto md:w-[500px] lg:w-[600px] bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-30"
+              style={{ maxHeight: '80vh', overflowY: 'auto' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {formComponents[section as keyof FormComponents]}
+              <div className="flex justify-end p-4">
+                <button
+                  type="button"
+                  onClick={() => handleSectionComplete(section)}
+                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+                >
+                  {'완료'}
+                </button>
+              </div>
+            </div>
+          </>
+        );
+
+      default:
+        return (
+          <div
+            className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
+            onClick={(e) => e.stopPropagation()}
           >
-            {'완료'}
-          </button>
-        </div>
-      </div>
-    ) : null;
+            {formComponents[section as keyof FormComponents]}
+            <div className="flex justify-end p-4">
+              <button
+                type="button"
+                onClick={() => handleSectionComplete(section)}
+                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+              >
+                {'완료'}
+              </button>
+            </div>
+          </div>
+        );
+    }
   };
 
   return (
@@ -134,6 +178,7 @@ const PostPreview = ({
         title={term.title?.ko === '' ? '제목 없음' : term.title?.ko ?? ''}
         term={term}
         slug=""
+        onTagSectionClick={(e) => handleSectionClick('tags', e)}
       />
       <div className='text-justify relative' ref={contentRef}>
         <div className='sm:ml-5'>
@@ -352,14 +397,14 @@ const PostPreview = ({
             onClick={(e: React.MouseEvent) => handleSectionClick('terms', e)}
           >
             <RelatedTermsSection
-              terms={term.terms?.length === 0 ? [{ term: '용어없음', description: '용어를 추가해주세요.', internal_link: false }] : term.terms || []}
+              terms={term.terms?.length === 0 ? [{ term: '용어없음', description: '용어를 추가해주세요.', internal_link: '' }] : term.terms || []}
             />
             {renderEditForm('terms')}
           </div>
 
           {/* 태그 섹션 */}
           <div
-            className="p-1 relative cursor-pointer"
+            className="sm:hidden p-1 relative cursor-pointer"
             id="tags-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('tags', e)}
           >
@@ -421,7 +466,7 @@ const PostPreview = ({
           </div>
 
           {/* 사용 사례 섹션 */}
-          <section
+          <div
             className="p-1 relative cursor-pointer"
             id="usecase-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('usecase', e)}
@@ -434,10 +479,10 @@ const PostPreview = ({
               }}
             />
             {renderEditForm('usecase')}
-          </section>
+          </div>
 
           {/* 참고자료 섹션 */}
-          <div
+          <section
             className="p-1 relative cursor-pointer"
             id="references-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('references', e)}
@@ -462,9 +507,12 @@ const PostPreview = ({
               </div>
             )}
             {renderEditForm('references')}
-          </div>
+          </section>
         </div>
       </div>
+
+      {/* 태그 편집 모달을 최상위 레벨에 렌더링 */}
+      {renderEditForm('tags')}
     </div>
   );
 };
