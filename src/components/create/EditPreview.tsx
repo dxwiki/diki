@@ -377,10 +377,10 @@ const PostPreview = ({
           {renderEditForm('basicInfo')}
         </div>
 
-        <div className="space-y-6 mt-6 sm:ml-5">
+        <div className="mt-6 sm:ml-5">
           {/* 개념 설명 섹션 */}
           <div
-            className="p-1 relative cursor-pointer"
+            className="p-1 my-3 relative cursor-pointer prose-section"
             id="description-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('description', e)}
           >
@@ -392,7 +392,7 @@ const PostPreview = ({
 
           {/* 관련 용어 섹션 */}
           <div
-            className="p-1 relative cursor-pointer"
+            className="p-1 my-3 relative cursor-pointer prose-section"
             id="terms-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('terms', e)}
           >
@@ -404,7 +404,7 @@ const PostPreview = ({
 
           {/* 태그 섹션 */}
           <div
-            className="sm:hidden p-1 relative cursor-pointer"
+            className="sm:hidden p-1 my-3 relative cursor-pointer prose-section"
             id="tags-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('tags', e)}
           >
@@ -444,7 +444,7 @@ const PostPreview = ({
 
           {/* 직무 연관도 섹션 */}
           <div
-            className='p-1 relative bg-cover bg-center size-full cursor-pointer'
+            className='p-1 my-3 relative bg-cover bg-center size-full cursor-pointer prose-section'
             id="relevance-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('relevance', e)}
           >
@@ -467,7 +467,7 @@ const PostPreview = ({
 
           {/* 사용 사례 섹션 */}
           <div
-            className="p-1 relative cursor-pointer"
+            className="p-1 my-3 relative cursor-pointer prose-section"
             id="usecase-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('usecase', e)}
           >
@@ -483,7 +483,7 @@ const PostPreview = ({
 
           {/* 참고자료 섹션 */}
           <section
-            className="p-1 relative cursor-pointer"
+            className="p-1 my-3 relative cursor-pointer prose-section"
             id="references-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('references', e)}
           >
