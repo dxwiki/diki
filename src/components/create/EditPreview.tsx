@@ -10,8 +10,10 @@ import { Share2, Pencil } from 'lucide-react';
 import TooltipButton from '@/components/ui/TooltipButton';
 import Level from '@/components/ui/Level';
 import { formatDate } from '@/utils/filters';
-import React, { useEffect, useRef, ReactElement } from 'react';
+import React, { useEffect, useRef, ReactElement, useState } from 'react';
 import TableOfContents from '@/components/common/TableOfContents';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface EditingSectionState {
   basicInfo: boolean;
@@ -63,6 +65,8 @@ const PostPreview = ({
 }: PostPreviewProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const postPreviewRef = useRef<HTMLDivElement>(null);
+  const profiles = useSelector((state: RootState) => state.profiles.profiles);
+  const [authorNames, setAuthorNames] = useState<{ [key: string]: string }>({});
 
   // 각 섹션별 데이터가 유효한지 체크하는 helper 함수
   const hasData = {
@@ -84,6 +88,19 @@ const PostPreview = ({
   useEffect(() => {
     console.log(term);
   }, [term]);
+
+  useEffect(() => {
+    if (profiles.length > 0 && term.metadata?.authors) {
+      const names: { [key: string]: string } = {};
+
+      term.metadata.authors.forEach((author) => {
+        const profile = profiles.find((p) => p.username === author);
+        names[author] = profile?.name || author;
+      });
+
+      setAuthorNames(names);
+    }
+  }, [profiles, term.metadata?.authors]);
 
   // 섹션 클릭 핸들러
   const handleSectionClick = (section: string, e: React.MouseEvent) => {
@@ -228,7 +245,7 @@ const PostPreview = ({
               {term.metadata?.authors && term.metadata.authors.length > 0 ? (
                 term.metadata.authors.map((author, index) => (
                   <span key={author}>
-                    <span className="text-primary">{author}</span>
+                    <span className="text-primary">{authorNames[author] || author}</span>
                     {index < (term.metadata?.authors?.length ?? 0) - 1 && ', '}
                   </span>
                 ))
