@@ -133,7 +133,7 @@ const PostPreview = ({
           <>
             {/* 모바일 뷰 (sm 미만): 일반 모달처럼 표시 */}
             <div
-              className="modal-container sm:hidden absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
+              className="modal-container sm:hidden absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
               onClick={(e) => e.stopPropagation()}
             >
               {formComponents[section as keyof FormComponents]}
@@ -171,7 +171,7 @@ const PostPreview = ({
       default:
         return (
           <div
-            className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
+            className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
             onClick={(e) => e.stopPropagation()}
           >
             {formComponents[section as keyof FormComponents]}
@@ -198,7 +198,7 @@ const PostPreview = ({
         onTagSectionClick={(e) => handleSectionClick('tags', e)}
       />
       <div className='text-justify relative' ref={contentRef}>
-        <div className='sm:ml-5'>
+        <div className='m-2'>
           <div className="flex group cursor-pointer" id="koTitle-section">
             <span className="flex flex-wrap items-center text-3xl font-bold mb-0 group-hover:text-primary transition-colors">
               <span
@@ -314,11 +314,10 @@ const PostPreview = ({
           {/* 한글 제목 편집 폼 */}
           {editingSections?.koTitle && (
             <div
-              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
+              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
               onClick={(e) => e.stopPropagation()}
             >
-              {renderKoreanTitleForm ? renderKoreanTitleForm()
-                : (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
+              {renderKoreanTitleForm?.() || (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
               <div className="flex justify-end p-4">
                 <button
                   type="button"
@@ -334,11 +333,10 @@ const PostPreview = ({
           {/* 영문 제목 편집 폼 */}
           {editingSections?.enTitle && (
             <div
-              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
+              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
               onClick={(e) => e.stopPropagation()}
             >
-              {renderEnglishTitleForm ? renderEnglishTitleForm()
-                : (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
+              {renderEnglishTitleForm?.() || (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
               <div className="flex justify-end p-4">
                 <button
                   type="button"
@@ -354,11 +352,10 @@ const PostPreview = ({
           {/* 짧은 설명 편집 폼 */}
           {editingSections?.shortDesc && (
             <div
-              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
+              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
               onClick={(e) => e.stopPropagation()}
             >
-              {renderShortDescriptionForm ? renderShortDescriptionForm()
-                : (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
+              {renderShortDescriptionForm?.() || (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
               <div className="flex justify-end p-4">
                 <button
                   type="button"
@@ -374,7 +371,7 @@ const PostPreview = ({
           {/* 난이도 편집 폼 */}
           {editingSections?.difficulty && (
             <div
-              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
+              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
               onClick={(e) => e.stopPropagation()}
             >
               {formComponents?.difficulty && React.cloneElement(formComponents.difficulty as React.ReactElement, { isModal: true })}
@@ -394,7 +391,7 @@ const PostPreview = ({
           {renderEditForm('basicInfo')}
         </div>
 
-        <div className="mt-6 sm:ml-5">
+        <div className="mt-6">
           {/* 개념 설명 섹션 */}
           <div
             className="p-1 my-3 relative cursor-pointer prose-section"

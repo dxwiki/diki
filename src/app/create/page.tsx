@@ -82,7 +82,7 @@ export default function CreatePage() {
       academic: [],
       opensource: [],
     },
-    publish: false,
+    publish: true,
   });
 
   // 로그인 확인 로직
@@ -511,14 +511,14 @@ export default function CreatePage() {
             onClick={() => setIsCancelModalOpen(true)}
             className="px-4 py-2 text-gray2 rounded-md hover:text-main"
           >
-            {'작성취소'}
+            {'작성 취소'}
           </button>
           <button
             type="submit"
             disabled={submitting}
             className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4 disabled:opacity-50"
           >
-            {submitting ? '제출 중...' : '등록하기'}
+            {submitting ? '제출 중...' : '등록 요청하기'}
           </button>
         </div>
       </div>
