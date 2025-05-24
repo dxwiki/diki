@@ -115,3 +115,18 @@ body {
 .group-section:hover .group-section-title {
   opacity: 1;
 }
+
+.prose .prose-section {
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.prose .prose-section:first-child {
+  margin-top: 0 !important;
+}
+
+.prose .prose-section:last-child {
+  margin-bottom: 0 !important;
+}

@@ -15,12 +15,13 @@ interface Props {
   // onShare: ()=> void;
   term: TermData;
   slug: string;
+  onTagSectionClick?: (e: React.MouseEvent)=> void;
 }
 
 const HEADER_HEIGHT = 64;
 const Threshold = 10;
 
-const TableOfContents = ({ title, term }: Props) => {
+const TableOfContents = ({ title, term, onTagSectionClick }: Props) => {
   const [activeSection, setActiveSection] = useState<string>('');
   const [sections, setSections] = useState<Section[]>([]);
 
@@ -119,7 +120,12 @@ const TableOfContents = ({ title, term }: Props) => {
           ))}
         </nav>
         <div className="flex flex-col flex-wrap mt-10 gap-2">
-          <span className='text-main text-base font-bold'>{'관련 포스트'}</span>
+          <span
+            className={`text-main text-base font-bold ${ onTagSectionClick ? 'cursor-pointer hover:text-primary' : '' }`}
+            onClick={onTagSectionClick}
+          >
+            {'관련 포스트'}
+          </span>
           {term.tags?.map((tag: Tags, index: number) => (
             tag.internal_link ? (
               <Link

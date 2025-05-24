@@ -2,7 +2,7 @@
 import Link from 'next/link';
 
 interface TooltipButtonProps {
-  onClick?: ()=> void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   tooltip?: string;
   children: React.ReactNode;
   isLink?: boolean;
