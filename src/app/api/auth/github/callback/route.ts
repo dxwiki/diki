@@ -16,6 +16,8 @@ interface GitHubEmail {
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
+  const state = searchParams.get('state');
+  const isSignupFlow = state === 'signup';
 
   if (!code) {
     return NextResponse.redirect(new URL('/login?error=github_code_missing', process.env.NEXT_PUBLIC_BASE_URL || ''));
@@ -39,7 +41,8 @@ export async function GET(request: NextRequest) {
 
     if (tokenData.error) {
       console.error('GitHub OAuth error:', tokenData.error);
-      return NextResponse.redirect(new URL(`/login?error=${ tokenData.error }`, process.env.NEXT_PUBLIC_BASE_URL || ''));
+      const errorRoute = isSignupFlow ? '/signup' : '/login';
+      return NextResponse.redirect(new URL(`${ errorRoute }?error=${ tokenData.error }`, process.env.NEXT_PUBLIC_BASE_URL || ''));
     }
 
     const accessToken = tokenData.access_token;
@@ -64,7 +67,8 @@ export async function GET(request: NextRequest) {
     const primaryEmail = emailData.find((email: GitHubEmail) => email.primary)?.email || emailData[0]?.email;
 
     if (!primaryEmail) {
-      return NextResponse.redirect(new URL('/login?error=no_email', process.env.NEXT_PUBLIC_BASE_URL || ''));
+      const errorRoute = isSignupFlow ? '/signup' : '/login';
+      return NextResponse.redirect(new URL(`${ errorRoute }?error=no_email`, process.env.NEXT_PUBLIC_BASE_URL || ''));
     }
 
     // username으로 사용할 값
@@ -91,7 +95,16 @@ export async function GET(request: NextRequest) {
     const profilesSnapshot = await firestore.collection('profiles').get();
     const userDoc = profilesSnapshot.docs.find((doc) => doc.id === username);
 
-    if (!existingProfile) {
+    // 회원가입/로그인 구분 처리
+    if (isSignupFlow && (userDoc || existingProfile)) {
+      // 회원가입 시도했는데 이미 사용자가 존재하는 경우
+      return NextResponse.redirect(new URL('/login?error=user_already_exists', process.env.NEXT_PUBLIC_BASE_URL || ''));
+    } else if (!isSignupFlow && !userDoc && !existingProfile) {
+      // 로그인 시도했는데 사용자가 존재하지 않는 경우
+      return NextResponse.redirect(new URL('/signup?error=user_not_found', process.env.NEXT_PUBLIC_BASE_URL || ''));
+    }
+
+    if (!existingProfile && !userDoc) {
       try {
         if (!profilesSnapshot.empty) {
           profilesSnapshot.forEach((doc) => {
@@ -110,20 +123,26 @@ export async function GET(request: NextRequest) {
     let firestoreData;
     let cookieUserInfo;
 
-    if (existingProfile) {
+    if (existingProfile || userDoc) {
+      // 기존 사용자 정보 업데이트
       firestoreData = {
-        ...existingProfile,
+        ...(existingProfile || (userDoc ? userDoc.data() : {})),
         updatedAt: new Date().toISOString(),
       };
 
       cookieUserInfo = {
-        id: existingProfile.id,
-        username: existingProfile.username,
-        name: existingProfile.name,
-        thumbnail: existingProfile.thumbnail,
-        email: existingProfile.email,
+        id: existingProfile?.id || (userDoc ? userDoc.data().id : newId),
+        username: existingProfile?.username || username,
+        name: existingProfile?.name || userData.name || userData.login,
+        thumbnail: existingProfile?.thumbnail || userData.avatar_url,
+        email: existingProfile?.email || primaryEmail,
+        social: existingProfile?.social || {
+          github: username,
+          linkedin: username,
+        },
       };
     } else {
+      // 신규 사용자 정보 생성
       firestoreData = {
         id: newId,
         email: primaryEmail,
@@ -151,7 +170,7 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    // Firestore에 사용자 정보 저장 또는 업데이트 (이미 가져온 데이터 활용)
+    // Firestore에 사용자 정보 저장 또는 업데이트
     if (!userDoc) {
       // 새 사용자 추가
       await firestore.collection('profiles').doc(username).set(firestoreData);
@@ -188,6 +207,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_BASE_URL || ''));
   } catch (error) {
     console.error('GitHub OAuth error:', error);
-    return NextResponse.redirect(new URL('/login?error=github_auth_failed', process.env.NEXT_PUBLIC_BASE_URL || ''));
+    const errorRoute = isSignupFlow ? '/signup' : '/login';
+    return NextResponse.redirect(new URL(`${ errorRoute }?error=github_auth_failed`, process.env.NEXT_PUBLIC_BASE_URL || ''));
   }
 }
