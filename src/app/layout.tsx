@@ -9,7 +9,6 @@ import Header from '@/components/common/Header';
 import SiteVerification from '@/components/meta/SiteVerification';
 import GoogleAdSense from '@/components/meta/GoogleAdSense';
 import GoogleAnalytics from '@/components/meta/GoogleAnalytics';
-import CanonicalTag from '@/components/meta/CanonicalTag';
 import KakaoSDK from '@/components/meta/KakaoSDK';
 import AmpAdScript from '@/components/meta/AmpAdScript';
 import JsonLdScripts from '@/components/meta/JsonLdScripts';
@@ -64,7 +63,6 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
         <SiteVerification />
         <GoogleAdSense />
         <GoogleAnalytics />
-        <CanonicalTag />
         <KakaoSDK />
         <AmpAdScript />
         <JsonLdScripts />
