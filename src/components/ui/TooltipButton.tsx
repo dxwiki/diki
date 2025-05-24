@@ -8,17 +8,18 @@ interface TooltipButtonProps {
   isLink?: boolean;
   href?: string;
   className?: string;
+  ariaLabel?: string;
 }
 
-const TooltipButton = ({ onClick, tooltip, children, isLink = false, href, className }: TooltipButtonProps) => {
+const TooltipButton = ({ onClick, tooltip, children, isLink = false, href, className, ariaLabel }: TooltipButtonProps) => {
   return (
     <div className="relative group flex items-end">
       {isLink ? (
-        <Link href={href!} className={`${ className }`}>
+        <Link href={href!} className={`${ className }`} aria-label={ariaLabel}>
           {children}
         </Link>
       ) : (
-        <button onClick={onClick} className={`${ className }`}>
+        <button onClick={onClick} className={`${ className }`} aria-label={ariaLabel}>
           {children}
         </button>
       )}

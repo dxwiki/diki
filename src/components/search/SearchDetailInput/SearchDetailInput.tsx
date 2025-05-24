@@ -225,7 +225,7 @@ const SearchDetailInput = () => {
               href="/"
               className='flex items-center justify-center size-11 rounded-full hover:bg-gray3'
             >
-              <ChevronLeft className='size-5' />
+              <ChevronLeft className='size-5' aria-label='이전 페이지로 이동' />
             </Link>
           </div>
           <div className="w-full grid grid-cols-[3fr_1fr] lg:grid-cols-[3.5fr_1.6fr_2fr_2.5fr] items-center">

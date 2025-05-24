@@ -46,7 +46,7 @@ const Header = () => {
           <div className='flex items-center gap-3'>
             <div className='w-full flex justify-end items-center gap-3'>
               {!isHomePage && (
-                <Link href='/' onClick={handleClickHome}>
+                <Link href='/' onClick={handleClickHome} aria-label='홈으로 이동'>
                   <span className='h-8 flex items-center text-3xl font-bold'>
                     <span className='text-primary'>{'D'}</span>
                     {'iki'}
@@ -60,6 +60,7 @@ const Header = () => {
                 href='/posts'
                 tooltip='검색'
                 className='rounded-md p-2 hover:bg-background-secondary'
+                ariaLabel='검색하기'
               >
                 <Search className='size-4' />
               </TooltipButton>
@@ -68,6 +69,7 @@ const Header = () => {
                 href='/contact'
                 tooltip='문의'
                 className='rounded-md p-2 hover:bg-background-secondary'
+                ariaLabel='문의하기'
               >
                 <Send className='size-4' />
               </TooltipButton>

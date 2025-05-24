@@ -28,7 +28,7 @@ const ThemeSwitch = () => {
   if (!mounted) return null;
 
   const ThemeItem = ({ newTheme, Icon, label }: DropdownItemProps) => (
-    <DropdownItem onClick={() => setTheme(newTheme)}>
+    <DropdownItem onClick={() => setTheme(newTheme)} aria-label={`${ label } 테마 선택`}>
       <div className='flex w-full items-center justify-between'>
         <div className='p-2 flex items-center gap-2'>
           <Icon width={14} />
@@ -41,7 +41,7 @@ const ThemeSwitch = () => {
 
   return (
     <Dropdown>
-      <TooltipButton tooltip='테마'>
+      <TooltipButton tooltip='테마' ariaLabel='테마 변경'>
         <DropdownTrigger>
           <div className='flex rounded-md p-2 hover:bg-background-secondary cursor-pointer'>
             <Sun className='size-4 text-main dark:hidden' />

@@ -85,10 +85,12 @@ const DropdownItem = ({
   children,
   onClick,
   className,
+  ariaLabel,
 }: {
   children: ReactNode;
   onClick?: ()=> void;
   className?: string;
+  ariaLabel?: string;
 }) => {
   const { close } = useContext(DropdownContext);
 
@@ -101,6 +103,7 @@ const DropdownItem = ({
     <div
       className={`w-full rounded-md transition-colors duration-150 ease-in-out text-sm hover:bg-background-secondary cursor-pointer ${ className }`}
       onClick={handleItemClick}
+      aria-label={ariaLabel}
     >
       {children}
     </div>

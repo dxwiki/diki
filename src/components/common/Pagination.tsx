@@ -25,6 +25,7 @@ const Pagination = ({ currentPage, totalPages, pageNumbers, setCurrentPage }: Pa
         className={`px-2 py-1 rounded-md hover:bg-background-secondary text-gray1 hover:text-main ${
           currentPage === 1 ? 'text-gray4 pointer-events-none' : ''
         }`}
+        aria-label='이전 페이지로 이동'
       >
         <ChevronLeft className='size-4' />
       </button>
@@ -47,6 +48,7 @@ const Pagination = ({ currentPage, totalPages, pageNumbers, setCurrentPage }: Pa
         className={`px-2 py-1 rounded-md hover:bg-background-secondary text-gray1 hover:text-main ${
           currentPage === totalPages ? 'text-gray4 pointer-events-none' : ''
         }`}
+        aria-label='다음 페이지로 이동'
       >
         <ChevronRight className='size-4' />
       </button>
