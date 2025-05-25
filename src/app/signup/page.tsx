@@ -63,7 +63,7 @@ function SignupContent() {
           <div>
             <PrivacyPolicy onCheckChange={handlePrivacyCheckChange} isChecked={privacyChecked} />
             {showPrivacyWarning && (
-              <p className="text-xs text-primary mt-1">{'개인정보 처리방침에 동의해주세요'}</p>
+              <p className="text-xs text-primary mt-1">{'개인정보 처리방침을 확인하고 끝까지 스크롤해 주세요.'}</p>
             )}
           </div>
 
