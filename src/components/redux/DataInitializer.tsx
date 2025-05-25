@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setTerms } from '@/store/termsSlice';
 import { setProfiles } from '@/store/profilesSlice';
+import { checkAuth } from '@/store/authSlice';
 import { getServerTermsData, getServerProfilesData } from '@/app/actions';
 
 export default function DataInitializer() {
@@ -32,6 +33,9 @@ export default function DataInitializer() {
         if (profiles.length > 0) {
           dispatch(setProfiles(profiles));
         }
+
+        // 인증 상태 초기화
+        dispatch(checkAuth());
 
         setIsInitialized(true);
         // console.log(`데이터 초기화 완료: ${ terms.length }개 용어, ${ profiles.length }개 프로필`);
