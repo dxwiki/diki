@@ -7,11 +7,11 @@ import { Suspense } from 'react';
 import PrivacyPolicy from '@/components/common/PrivacyPolicy';
 
 const errorMessages: Record<string, string> = {
-  github_code_missing: 'GitHub에서 인증 코드를 받지 못했습니다. 관리자에게 문의해주세요.',
-  github_auth_failed: 'GitHub 인증에 실패했습니다. 관리자에게 문의해주세요.',
-  no_email: 'GitHub 계정에서 이메일을 찾을 수 없습니다. 관리자에게 문의해주세요.',
-  privacy_required: '개인정보 처리방침 동의가 필요합니다. 관리자에게 문의해주세요.',
-  user_already_exists: '이미 가입된 사용자입니다. 로그인을 진행해주세요.',
+  github_code_missing: 'GitHub에서 인증 코드를 받지 못했습니다.',
+  github_auth_failed: 'GitHub 인증에 실패했습니다.',
+  no_email: 'GitHub 계정에서 이메일을 찾을 수 없습니다.',
+  privacy_required: '개인정보 처리방침 동의가 필요합니다.',
+  user_already_exists: '이미 가입된 사용자입니다.',
 };
 
 function SignupContent() {
@@ -38,7 +38,7 @@ function SignupContent() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh]">
-      <div className="w-full max-w-lg p-4 md:p-8 space-y-6 bg-white dark:bg-black dark:border dark:border-accent rounded-lg shadow-md">
+      <div className="w-full max-w-xl p-4 md:p-8 space-y-6 bg-white dark:bg-black dark:border dark:border-accent rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center">
           <span className="text-primary">
             {'D'}
@@ -47,7 +47,7 @@ function SignupContent() {
         </h1>
 
         {errorMsg && (
-          <div className="p-2.5 mb-4 text-red-700 bg-red-100 dark:bg-red-900 dark:text-red-200 rounded-lg">
+          <div className="p-2.5 mb-4 text-center text-red-700 bg-red-100 dark:bg-red-900 dark:text-red-200 rounded-lg">
             {errorMsg}
           </div>
         )}
@@ -69,11 +69,11 @@ function SignupContent() {
 
           <a
             href="/api/auth/github?signup=true"
-            className={`flex items-center justify-center w-full px-4 py-2 space-x-3 font-bold ${
+            className={`flex items-center justify-center w-full px-4 py-3 space-x-3 font-bold ${
               privacyChecked
                 ? 'bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary text-white'
                 : 'bg-gray3 dark:bg-gray4 cursor-not-allowed text-main'
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray1 transition-colors`}
+            } rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray1 transition-colors`}
             onClick={(e) => {
               if (!privacyChecked) {
                 e.preventDefault();

@@ -6,12 +6,12 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 const errorMessages: Record<string, string> = {
-  github_code_missing: 'GitHub에서 인증 코드를 받지 못했습니다. 관리자에게 문의해주세요.',
-  github_auth_failed: 'GitHub 인증에 실패했습니다. 관리자에게 문의해주세요.',
-  no_email: 'GitHub 계정에서 이메일을 찾을 수 없습니다. 관리자에게 문의해주세요.',
+  github_code_missing: 'GitHub에서 인증 코드를 받지 못했습니다.',
+  github_auth_failed: 'GitHub 인증에 실패했습니다.',
+  no_email: 'GitHub 계정에서 이메일을 찾을 수 없습니다.',
   login_required: '로그인이 필요합니다.',
   user_not_found: '가입되지 않은 사용자입니다. 회원가입을 진행해주세요.',
-  user_already_exists: '이미 가입된 사용자입니다. 로그인을 진행해주세요.',
+  user_already_exists: '이미 가입된 사용자입니다.',
 };
 
 function LoginContent() {
@@ -38,7 +38,7 @@ function LoginContent() {
         </h1>
 
         {errorMsg && (
-          <div className="p-2.5 mb-4 text-red-700 bg-red-100 dark:bg-red-900 dark:text-red-200 rounded-lg">
+          <div className="p-2.5 mb-4 text-center text-red-700 bg-red-100 dark:bg-red-900 dark:text-red-200 rounded-lg">
             {errorMsg}
           </div>
         )}
