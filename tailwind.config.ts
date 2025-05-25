@@ -81,6 +81,11 @@ const config: Config = {
           '0%': { transform: 'translateX(100%)', opacity: '0' },
           '100%': { transform: 'translateX(0)', opacity: '1' },
         },
+        staggeredBounce: {
+          '0%, 100%': { transform: 'translateY(0)', opacity: '0.5' },
+          '40%': { transform: 'translateY(5px)', opacity: '0.7' },
+          '60%': { transform: 'translateY(5px)', opacity: '1' },
+        },
       },
       animation: {
         slideDown: 'slideDown 0.3s ease-in-out',
@@ -93,6 +98,8 @@ const config: Config = {
         introSecond: 'intro 1.1s ease-in-out both',
         slideLeftToRight: 'slideLeftToRight 0.2s ease-in-out',
         slideRightToLeft: 'slideRightToLeft 0.2s ease-in-out',
+        bounceArrow1: 'staggeredBounce 1.5s ease-in-out infinite',
+        bounceArrow2: 'staggeredBounce 1.5s ease-in-out infinite 0.2s',
       },
       typography: {
         DEFAULT: {
@@ -209,6 +216,11 @@ const config: Config = {
     'border-level-3',
     'border-level-4',
     'border-level-5',
+    'animate-bounceArrow',
+    'animate-bounceArrow1',
+    'animate-bounceArrow2',
+    'animate-bounceArrow3',
+    'animate-fadeInOut',
   ],
 
 };

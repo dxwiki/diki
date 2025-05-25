@@ -104,7 +104,7 @@ export default function PrivacyPolicy({ onCheckChange, isChecked, onScrolledToBo
       </div>
 
       <div
-        className={`mt-3 overflow-hidden transition-all duration-300 ease-in-out ${ isExpanded ? 'opacity-100' : 'opacity-0' }`}
+        className={`mt-3 overflow-hidden transition-all duration-300 ease-in-out ${ isExpanded ? 'opacity-100' : 'opacity-0' } relative`}
         style={{ height: height ? `${ height }px` : '0px' }}
       >
         <div
@@ -198,6 +198,17 @@ export default function PrivacyPolicy({ onCheckChange, isChecked, onScrolledToBo
             <p className="pl-3">{'요청은 서비스 내 문의 채널 또는 이메일(dxwiki.team@gmail.com)을 통해 가능합니다.'}</p>
           </div>
         </div>
+
+        {/* 스크롤 유도 화살표 */}
+        {isExpanded && !hasScrolledToBottom && (
+          <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center justify-center pointer-events-none">
+            <div className="absolute bg-background-secondary px-3 pt-0.5 pb-2 rounded-full opacity-70 z-0 w-12 h-10"></div>
+            <div className="flex flex-col items-center justify-center px-3 pt-0.5 pb-2 z-10">
+              <ChevronDown className="text-primary animate-bounceArrow1" size={20} />
+              <ChevronDown className="text-primary animate-bounceArrow2 -mt-3" size={20} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
