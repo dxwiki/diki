@@ -6,13 +6,13 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 interface PrivacyPolicyProps {
   onCheckChange: (checked: boolean)=> void;
   isChecked: boolean;
+  onScrolledToBottom?: (scrolled: boolean)=> void;
 }
 
-export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolicyProps) {
+export default function PrivacyPolicy({ onCheckChange, isChecked, onScrolledToBottom }: PrivacyPolicyProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
-  const [autoCheckApplied, setAutoCheckApplied] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const policyContentRef = useRef<HTMLDivElement>(null);
 
@@ -28,14 +28,12 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
 
       if (isAtBottom && !hasScrolledToBottom) {
         setHasScrolledToBottom(true);
-
-        if (!autoCheckApplied && !isChecked) {
-          onCheckChange(true);
-          setAutoCheckApplied(true);
+        if (onScrolledToBottom) {
+          onScrolledToBottom(true);
         }
       }
     }
-  }, [hasScrolledToBottom, autoCheckApplied, isChecked, onCheckChange]);
+  }, [hasScrolledToBottom, onScrolledToBottom]);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -54,45 +52,29 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
     }
   }, [isExpanded, checkScrollPosition]);
 
-  useEffect(() => {
-    if (!isChecked) {
-      setAutoCheckApplied(false);
-    }
-  }, [isChecked]);
-
   return (
     <div className="w-full">
-      <div
-        className="flex items-center space-x-2 cursor-pointer"
-        onClick={() => {
-          if (!isExpanded) {
-            toggleExpand();
-          }
-        }}
-      >
+      <div className="flex items-center space-x-2 cursor-pointer">
         <input
           type="checkbox"
           id="privacy-check"
           checked={isChecked}
           onChange={(e) => {
-            if (hasScrolledToBottom) {
-              onCheckChange(e.target.checked);
-            } else if (!isExpanded) {
-              toggleExpand();
-            }
+            onCheckChange(e.target.checked);
           }}
           className="size-4 accent-primary cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
-            if (!hasScrolledToBottom) {
-              e.preventDefault();
-            }
           }}
         />
         <label
           htmlFor="privacy-check"
           className="text-sm text-main cursor-pointer grow"
-          onClick={(e) => e.stopPropagation()}
+          onClick={() => {
+            if (!isExpanded) {
+              setIsExpanded(true);
+            }
+          }}
         >
           {'[필수] 개인정보 처리방침'}
         </label>
@@ -214,12 +196,6 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
               <li className="mb-1">{'삭제 및 처리 정지 요청'}</li>
             </ul>
             <p className="pl-3">{'요청은 서비스 내 문의 채널 또는 이메일(dxwiki.team@gmail.com)을 통해 가능합니다.'}</p>
-
-            <div className="mt-6 mb-2 text-center">
-              {hasScrolledToBottom && (
-                <p className="text-primary text-sm mt-1">{'스크롤을 완료하셨습니다. 자동으로 동의 처리됩니다.'}</p>
-              )}
-            </div>
           </div>
         </div>
       </div>
