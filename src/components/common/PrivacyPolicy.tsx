@@ -13,7 +13,6 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const [autoCheckApplied, setAutoCheckApplied] = useState(false);
-  const [showWarning, setShowWarning] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const policyContentRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +28,6 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
 
       if (isAtBottom && !hasScrolledToBottom) {
         setHasScrolledToBottom(true);
-        setShowWarning(false);
 
         if (!autoCheckApplied && !isChecked) {
           onCheckChange(true);
@@ -62,23 +60,6 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
     }
   }, [isChecked]);
 
-  useEffect(() => {
-    const signupContainer = document.querySelector('.signup-container');
-    if (signupContainer) {
-      if (isExpanded) {
-        signupContainer.classList.add('expanded-policy');
-      } else {
-        signupContainer.classList.remove('expanded-policy');
-      }
-    }
-
-    return () => {
-      if (signupContainer) {
-        signupContainer.classList.remove('expanded-policy');
-      }
-    };
-  }, [isExpanded]);
-
   return (
     <div className="w-full">
       <div
@@ -105,9 +86,6 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
             e.stopPropagation();
             if (!hasScrolledToBottom) {
               e.preventDefault();
-              setShowWarning(true);
-            } else {
-              setShowWarning(false);
             }
           }}
         />
@@ -122,7 +100,6 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
           onClick={(e) => {
             e.stopPropagation();
             toggleExpand();
-            setShowWarning(false);
           }}
           className="text-main hover:text-primary transition-colors"
           aria-label={isExpanded ? '개인정보 처리방침 닫기' : '개인정보 처리방침 열기'}
@@ -143,10 +120,6 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
           }
         </button>
       </div>
-
-      {showWarning && (
-        <p className="text-xs text-primary mt-1 ml-6">{'개인정보 처리방침을 끝까지 확인해야 체크 가능합니다'}</p>
-      )}
 
       <div
         className={`mt-3 overflow-hidden transition-all duration-300 ease-in-out ${ isExpanded ? 'opacity-100' : 'opacity-0' }`}

@@ -38,7 +38,7 @@ function SignupContent() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh]">
-      <div className="w-full max-w-xl p-4 md:p-8 space-y-6 bg-white dark:bg-black dark:border dark:border-accent rounded-lg shadow-md signup-container">
+      <div className="w-full max-w-xl p-4 md:p-8 space-y-6 bg-white dark:bg-black dark:border dark:border-accent rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center">
           <span className="text-primary">
             {'D'}

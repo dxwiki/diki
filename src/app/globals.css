@@ -112,14 +112,6 @@ body {
   }
 }
 
-.signup-container {
-  transition: max-width 0.5s ease, width 0.5s ease;
-}
-
-.expanded-policy {
-  max-width: 100% !important;
-}
-
 .group-section:hover .group-section-title {
   opacity: 1;
 }
