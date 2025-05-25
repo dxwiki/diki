@@ -201,8 +201,8 @@ export default function PrivacyPolicy({ onCheckChange, isChecked, onScrolledToBo
 
         {/* 스크롤 유도 화살표 */}
         {isExpanded && !hasScrolledToBottom && (
-          <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center justify-center pointer-events-none">
-            <div className="absolute bg-background-secondary px-3 pt-0.5 pb-2 rounded-full opacity-70 z-0 w-12 h-10"></div>
+          <div className="absolute bottom-4 inset-x-0 flex flex-col items-center justify-center pointer-events-none">
+            <div className="absolute bg-background-secondary px-3 pt-0.5 pb-2 rounded-full opacity-70 z-0 w-12 h-10" />
             <div className="flex flex-col items-center justify-center px-3 pt-0.5 pb-2 z-10">
               <ChevronDown className="text-primary animate-bounceArrow1" size={20} />
               <ChevronDown className="text-primary animate-bounceArrow2 -mt-3" size={20} />

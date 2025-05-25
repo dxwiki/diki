@@ -69,8 +69,8 @@ function SignupContent() {
           </div>
 
           <div>
-            <PrivacyPolicy 
-              onCheckChange={handlePrivacyCheckChange} 
+            <PrivacyPolicy
+              onCheckChange={handlePrivacyCheckChange}
               isChecked={privacyChecked}
               onScrolledToBottom={handleScrolledToBottom}
             />
