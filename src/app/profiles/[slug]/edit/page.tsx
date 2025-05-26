@@ -76,6 +76,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
   const [error, setError] = useState<string | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // 프로필 데이터 가져오기 및 사용자 인증 확인
   useEffect(() => {
@@ -215,6 +216,36 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
     router.push(`/profiles/${ params.slug }`);
   };
 
+  const handleDeleteAccount = async () => {
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      if (!profile) throw new Error('프로필 정보를 찾을 수 없습니다.');
+
+      const response = await fetch('/api/delete-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: profile.username,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '회원탈퇴 중 오류가 발생했습니다.');
+      }
+
+      await response.json();
+      router.push('/good-bye');
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : '회원탈퇴 중 오류가 발생했습니다.');
+      setSubmitting(false);
+    }
+  };
+
   if (loading) {
     return <div className="flex justify-center items-center min-h-[70vh]">{'로딩 중...'}</div>;
   }
@@ -324,25 +355,6 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                     />
                   </div>
                 </div>
-
-                {/* <div>
-                  <label className="block text-main font-medium mb-2">
-                    {'Twitter'}
-                  </label>
-                  <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray3">
-                      {'twitter.com/'}
-                    </span>
-                    <input
-                      type="text"
-                      name="social.twitter"
-                      value={formData.social.twitter}
-                      onChange={handleChange}
-                      className="w-full pl-[100px] pr-4 py-3 border border-gray3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200 placeholder:text-gray2"
-                      placeholder="username"
-                    />
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>
@@ -354,21 +366,30 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
           </div>
         )}
 
-        <div className="flex justify-end space-x-4 py-6">
+        <div className="flex justify-between space-x-4 py-6">
           <button
             type="button"
-            onClick={() => setIsCancelModalOpen(true)}
-            className="px-4 py-2 text-gray2 rounded-lg hover:text-main transition-all duration-200"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="px-4 py-2 text-level-5 hover:bg-red-700 dark:hover:bg-red-900 hover:text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {'취소'}
+            {submitting ? '제출 중...' : '회원 탈퇴'}
           </button>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="px-4 py-2 text-white bg-primary hover:bg-accent dark:bg-secondary dark:hover:bg-background-secondary rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {submitting ? '제출 중...' : '프로필 수정하기'}
-          </button>
+          <div>
+            <button
+              type="button"
+              onClick={() => setIsCancelModalOpen(true)}
+              className="px-4 py-2 text-gray2 rounded-lg hover:text-main transition-all duration-200"
+            >
+              {'취소'}
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="px-4 py-2 text-white bg-primary hover:bg-accent dark:bg-secondary dark:hover:bg-background-secondary rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {submitting ? '제출 중...' : '프로필 수정하기'}
+            </button>
+          </div>
         </div>
       </form>
 
@@ -392,6 +413,18 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
         message="정말 프로필 편집을 취소하시겠습니까?"
         confirmText="확인"
         cancelText="취소"
+      />
+
+      {/* 회원탈퇴 확인 모달 */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteAccount}
+        title="회원 탈퇴"
+        message="정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없으며, 작성하신 글은 비공개 처리됩니다."
+        confirmText="탈퇴하기"
+        cancelText="취소"
+        confirmButtonClass="text-red-500 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-100"
       />
 
       <div className="sm:hidden mt-8">

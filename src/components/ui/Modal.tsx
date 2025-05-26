@@ -57,6 +57,7 @@ interface ConfirmModalProps {
   message: string;
   confirmText?: string;
   cancelText?: string;
+  confirmButtonClass?: string;
 }
 
 export const ConfirmModal = ({
@@ -67,6 +68,7 @@ export const ConfirmModal = ({
   message,
   confirmText = '확인',
   cancelText = '취소',
+  confirmButtonClass = 'bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary',
 }: ConfirmModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
@@ -85,7 +87,7 @@ export const ConfirmModal = ({
             onConfirm();
             onClose();
           }}
-          className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4"
+          className={`px-4 py-2 text-white ${ confirmButtonClass } rounded-md border-gray4`}
         >
           {confirmText}
         </button>
