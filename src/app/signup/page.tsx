@@ -26,7 +26,7 @@ function SignupContent() {
     if (error && errorMessages[error]) {
       setErrorMsg(errorMessages[error]);
     } else if (error) {
-      setErrorMsg(`회원가입 오류: ${ error }`);
+      setErrorMsg('회원가입과 관련해 오류가 발생했습니다. 다시 시도해 주세요.');
     }
   }, [error]);
 

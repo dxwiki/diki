@@ -23,7 +23,7 @@ function LoginContent() {
     if (error && errorMessages[error]) {
       setErrorMsg(errorMessages[error]);
     } else if (error) {
-      setErrorMsg(`인증 오류: ${ error }`);
+      setErrorMsg('인증 오류가 발생했습니다. 다시 로그인 해주세요.');
     }
   }, [error]);
 
