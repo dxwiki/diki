@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { TermData } from '@/types/database';
-import BasicInfoSection from '@/components/create/BasicInfoSection';
-import DescriptionSection from '@/components/create/DescriptionSection';
-import TagsSection from '@/components/create/TagsSection';
-import TermsSection from '@/components/create/TermsSection';
-import DifficultySection from '@/components/create/DifficultySection';
-import RelevanceSection from '@/components/create/RelevanceSection';
-import UsecaseSection from '@/components/create/UsecaseSection';
-import ReferencesSection from '@/components/create/ReferencesSection';
+import BasicInfoEdit from '@/components/create/BasicInfoEdit';
+import DescriptionEdit from '@/components/create/DescriptionEdit';
+import TagsEdit from '@/components/create/TagsEdit';
+import TermsEdit from '@/components/create/TermsEdit';
+import DifficultyEdit from '@/components/create/DifficultyEdit';
+import RelevanceEdit from '@/components/create/RelevanceEdit';
+import UsecaseEdit from '@/components/create/UsecaseEdit';
+import ReferencesEdit from '@/components/create/ReferencesEdit';
 import EditPreview from '@/components/create/EditPreview';
 import { ConfirmModal } from '@/components/ui/Modal';
 import Footer from '@/components/common/Footer';
@@ -539,14 +539,14 @@ export default function CreatePage() {
             onSectionClick={toggleSection}
             editingSections={editingSections}
             formComponents={{
-              basicInfo: <BasicInfoSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-              difficulty: <DifficultySection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-              description: <DescriptionSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-              terms: <TermsSection formData={formData} setFormData={setFormData} />,
-              tags: <TagsSection formData={formData} setFormData={setFormData} />,
-              relevance: <RelevanceSection formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-              usecase: <UsecaseSection formData={formData} setFormData={setFormData} handleChange={handleChange} validationErrors={validationErrors} />,
-              references: <ReferencesSection formData={formData} setFormData={setFormData} />,
+              basicInfo: <BasicInfoEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+              difficulty: <DifficultyEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+              description: <DescriptionEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+              terms: <TermsEdit formData={formData} setFormData={setFormData} />,
+              tags: <TagsEdit formData={formData} setFormData={setFormData} />,
+              relevance: <RelevanceEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+              usecase: <UsecaseEdit formData={formData} setFormData={setFormData} handleChange={handleChange} validationErrors={validationErrors} />,
+              references: <ReferencesEdit formData={formData} setFormData={setFormData} />,
             }}
             renderKoreanTitleForm={renderKoreanTitleForm}
             renderEnglishTitleForm={renderEnglishTitleForm}
