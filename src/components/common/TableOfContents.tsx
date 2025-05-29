@@ -17,12 +17,13 @@ interface Props {
   slug: string;
   onTagSectionClick?: (e: React.MouseEvent)=> void;
   tagsClassName?: string;
+  isEditMode?: boolean;
 }
 
 const HEADER_HEIGHT = 64;
 const Threshold = 10;
 
-const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName }: Props) => {
+const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName, isEditMode = false }: Props) => {
   const [activeSection, setActiveSection] = useState<string>('');
   const [sections, setSections] = useState<Section[]>([]);
 
@@ -36,6 +37,20 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName }: Prop
         text: heading?.textContent?.replace('#', '').trim() ?? '',
       };
     });
+
+    if (isEditMode) {
+      const requiredSections = ['개념', '관련 용어', '직무 연관도', '사용 사례', '참고 자료'];
+
+      requiredSections.forEach((section) => {
+        const hasSection = sectionData.some((item) => item.text === section);
+        if (!hasSection) {
+          sectionData.push({
+            id: section,
+            text: section,
+          });
+        }
+      });
+    }
 
     setSections(sectionData);
 
@@ -78,7 +93,7 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName }: Prop
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [isEditMode]);
 
   const scrollToSection = useCallback((sectionId: string): void => {
     const sectionSelector = 'section h2';
@@ -104,7 +119,13 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName }: Prop
             <div
               key={section.id}
               className={`cursor-pointer transition-colors underline underline-offset-4 decoration-light hover:text-accent hover:decoration-accent
-                  ${ activeSection === section.text ? 'text-primary font-medium decoration-primary' : 'text-sub' }
+                  ${
+            isEditMode
+              ? 'text-sub'
+              : activeSection === section.text
+                ? 'text-primary font-medium decoration-primary'
+                : 'text-sub'
+            }
                 `}
               onClick={() => scrollToSection(section.id)}
               role="button"
@@ -120,10 +141,9 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName }: Prop
             </div>
           ))}
         </nav>
-        <div className={`flex flex-col flex-wrap mt-10 gap-2 p-1 -m-1 ${ tagsClassName || '' }`}>
+        <div className={`flex flex-col flex-wrap mt-10 gap-2 p-1 -m-1 ${ tagsClassName || '' } ${ onTagSectionClick ? 'cursor-pointer group' : '' }`} onClick={onTagSectionClick}>
           <span
-            className={`text-main text-base font-bold ${ onTagSectionClick ? 'cursor-pointer hover:text-primary' : '' }`}
-            onClick={onTagSectionClick}
+            className={`text-main text-base font-bold ${ onTagSectionClick ? 'cursor-pointer group-hover:text-primary' : '' }`}
           >
             {'관련 포스트'}
           </span>
@@ -135,6 +155,7 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName }: Prop
                 className='font-normal text-sm text-main cursor-pointer transition-colors underline underline-offset-4 decoration-light hover:text-accent hover:decoration-accent'
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
               >
                 {tag.name}
               </Link>
@@ -145,7 +166,7 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName }: Prop
             )
           ))}
           {(!term.tags || term.tags.length === 0) && (
-            <span className="text-sub italic text-sm">{'태그를 추가해주세요.'}</span>
+            <span className="text-sub text-sm">{'관련 포스트 없음'}</span>
           )}
         </div>
       </div>

@@ -284,7 +284,8 @@ const PostPreview = ({
         term={term}
         slug=""
         onTagSectionClick={(e) => handleSectionClick('tags', e)}
-        tagsClassName={getSectionClassName('tags')}
+        tagsClassName={getSectionClassName('tags', 'rounded-lg')}
+        isEditMode={true}
       />
       <div className='text-justify relative' ref={contentRef}>
         <div className='sm:ml-5'>
