@@ -14,6 +14,7 @@ import ReferencesSection from '@/components/create/ReferencesSection';
 import EditPreview from '@/components/create/EditPreview';
 import { ConfirmModal } from '@/components/ui/Modal';
 import Footer from '@/components/common/Footer';
+import { useToast } from '@/layouts/ToastProvider';
 
 interface EditingSectionState {
   basicInfo: boolean;
@@ -31,6 +32,7 @@ interface EditingSectionState {
 
 export default function CreatePage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -38,6 +40,7 @@ export default function CreatePage() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   // 각 섹션의 편집 상태를 관리하는 상태
   const [editingSections, setEditingSections] = useState<EditingSectionState>({
@@ -82,7 +85,7 @@ export default function CreatePage() {
       academic: [],
       opensource: [],
     },
-    publish: true,
+    publish: false,
   });
 
   // 로그인 확인 로직
@@ -222,6 +225,13 @@ export default function CreatePage() {
 
   // 섹션 유효성 검사 함수
   const validateSection = (section: string): boolean => {
+    const errors = getSectionValidationErrors(section);
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
+
+  // 섹션별 유효성 검사 에러 가져오기
+  const getSectionValidationErrors = (section: string): string[] => {
     const errors: string[] = [];
 
     switch (section) {
@@ -269,28 +279,20 @@ export default function CreatePage() {
           errors.push('구체적인 사용 사례를 입력해주세요.');
         }
         break;
+      case 'tags':
+        // 태그는 필수가 아님
+        break;
+      case 'terms':
+        // 용어는 필수가 아님
+        break;
+      case 'references':
+        // 참고자료는 필수가 아님
+        break;
       default:
         break;
     }
 
-    setValidationErrors(errors);
-    return errors.length === 0;
-  };
-
-  // 섹션 유효성 검사 결과 처리 함수
-  const handleSectionValidated = (section: string, isValid: boolean) => {
-    if (isValid) {
-      // 유효성 검사 통과 시 섹션 닫기
-      setEditingSections((prev) => ({
-        ...prev,
-        [section]: false,
-      }));
-      // 에러 메시지 초기화
-      setValidationErrors([]);
-    } else {
-      // 유효성 검사 실패 시 에러 메시지 표시 (이미 validateSection에서 설정됨)
-      console.error('섹션 유효성 검사 실패:', section);
-    }
+    return errors;
   };
 
   // 폼 유효성 검사
@@ -349,8 +351,13 @@ export default function CreatePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 폼 제출 상태 설정
+    setFormSubmitted(true);
+
     if (!validateForm()) {
       setError('필수 항목을 모두 입력해주세요.');
+      // 토스트 메시지 표시
+      showToast('필수 요소를 모두 채워주세요.', 'error');
 
       // 필수 항목 중 누락된 항목에 해당하는 섹션 자동으로 열기
       const newEditingSections = { ...editingSections };
@@ -511,19 +518,20 @@ export default function CreatePage() {
             onClick={() => setIsCancelModalOpen(true)}
             className="px-4 py-2 text-gray2 rounded-md hover:text-main"
           >
-            {'작성 취소'}
+            {'작성취소'}
           </button>
           <button
             type="submit"
+            form="createForm"
             disabled={submitting}
             className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4 disabled:opacity-50"
           >
-            {submitting ? '제출 중...' : '등록 요청하기'}
+            {submitting ? '제출 중...' : '등록하기'}
           </button>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate>
+      <form id="createForm" onSubmit={handleSubmit} noValidate>
         <div className="relative">
           {/* EditPreview 컴포넌트가 섹션 클릭 이벤트를 받을 수 있도록 toggleSection 함수 전달 */}
           <EditPreview
@@ -544,7 +552,8 @@ export default function CreatePage() {
             renderEnglishTitleForm={renderEnglishTitleForm}
             renderShortDescriptionForm={renderShortDescriptionForm}
             validateSection={validateSection}
-            onSectionValidated={handleSectionValidated}
+            getSectionValidationErrors={getSectionValidationErrors}
+            formSubmitted={formSubmitted}
           />
         </div>
 

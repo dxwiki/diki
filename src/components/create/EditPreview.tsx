@@ -6,8 +6,7 @@ import RelevanceSection from '../posts/sections/RelevanceSection';
 import RelatedTermsSection from '../posts/sections/RelatedTermsSection';
 import UsecaseSection from '../posts/sections/UsecaseSection';
 import ReferencesSection from '../posts/sections/ReferencesSection';
-import { Share2, Pencil } from 'lucide-react';
-import TooltipButton from '@/components/ui/TooltipButton';
+import { X } from 'lucide-react';
 import Level from '@/components/ui/Level';
 import { formatDate } from '@/utils/filters';
 import React, { useEffect, useRef, ReactElement, useState } from 'react';
@@ -49,7 +48,8 @@ interface PostPreviewProps {
   renderEnglishTitleForm?: ()=> React.ReactNode;
   renderShortDescriptionForm?: ()=> React.ReactNode;
   validateSection?: (section: string)=> boolean;
-  onSectionValidated?: (section: string, isValid: boolean)=> void;
+  getSectionValidationErrors?: (section: string)=> string[];
+  formSubmitted?: boolean;
 }
 
 const PostPreview = ({
@@ -61,18 +61,21 @@ const PostPreview = ({
   renderEnglishTitleForm,
   renderShortDescriptionForm,
   validateSection,
-  onSectionValidated,
+  getSectionValidationErrors,
+  formSubmitted = false,
 }: PostPreviewProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const postPreviewRef = useRef<HTMLDivElement>(null);
   const profiles = useSelector((state: RootState) => state.profiles.profiles);
   const [authorNames, setAuthorNames] = useState<{ [key: string]: string }>({});
+  const [sectionErrors, setSectionErrors] = useState<{ [key: string]: string[] }>({});
 
   // 각 섹션별 데이터가 유효한지 체크하는 helper 함수
   const hasData = {
     basicInfo: term.title?.ko || term.title?.en,
     description: term.description?.full,
     terms: Array.isArray(term.terms) && term.terms.length > 0,
+    tags: Array.isArray(term.tags) && term.tags.length > 0,
     relevance:
       term.relevance?.analyst?.description
       || term.relevance?.engineer?.description
@@ -112,14 +115,37 @@ const PostPreview = ({
     }
   };
 
-  // 섹션 완료 핸들러
-  const handleSectionComplete = (section: string) => {
-    if (validateSection && onSectionValidated) {
-      const isValid = validateSection(section);
-      onSectionValidated(section, isValid);
-    } else if (onSectionClick) {
+  // X 버튼 클릭 핸들러
+  const handleCloseSection = (section: string) => {
+    if (validateSection && getSectionValidationErrors) {
+      const errors = getSectionValidationErrors(section);
+      if (errors.length > 0) {
+        setSectionErrors({ ...sectionErrors, [section]: errors });
+        return;
+      }
+    }
+
+    // 에러가 없으면 섹션 닫기
+    setSectionErrors({ ...sectionErrors, [section]: [] });
+    if (onSectionClick) {
       onSectionClick(section);
     }
+  };
+
+  // 섹션별 에러 메시지 렌더링
+  const renderSectionErrors = (section: string) => {
+    const errors = sectionErrors[section];
+    if (!errors || errors.length === 0) return null;
+
+    return (
+      <div className="px-4 pb-2">
+        {errors.map((error, index) => (
+          <p key={index} className="text-level-5 text-sm mt-1">
+            {error}
+          </p>
+        ))}
+      </div>
+    );
   };
 
   // 편집 폼 렌더링 함수
@@ -133,19 +159,21 @@ const PostPreview = ({
           <>
             {/* 모바일 뷰 (sm 미만): 일반 모달처럼 표시 */}
             <div
-              className="modal-container sm:hidden absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
+              className="modal-container sm:hidden absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
               onClick={(e) => e.stopPropagation()}
             >
-              {formComponents[section as keyof FormComponents]}
-              <div className="flex justify-end p-4">
+              <div className="flex justify-between items-center p-4 border-b border-gray4">
+                <h3 className="text-lg font-semibold text-main">{'태그 편집'}</h3>
                 <button
                   type="button"
-                  onClick={() => handleSectionComplete(section)}
-                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+                  onClick={() => handleCloseSection(section)}
+                  className="p-1 hover:bg-gray4 rounded-lg transition-colors"
                 >
-                  {'완료'}
+                  <X className="size-5 text-gray1" />
                 </button>
               </div>
+              {renderSectionErrors(section)}
+              {formComponents[section as keyof FormComponents]}
             </div>
 
             {/* 데스크톱 뷰 (sm 이상): 특별한 위치에 표시 */}
@@ -154,88 +182,132 @@ const PostPreview = ({
               style={{ maxHeight: '80vh', overflowY: 'auto' }}
               onClick={(e) => e.stopPropagation()}
             >
-              {formComponents[section as keyof FormComponents]}
-              <div className="flex justify-end p-4">
+              <div className="flex justify-between items-center p-4 border-b border-gray4">
+                <h3 className="text-lg font-semibold text-main">{'태그 편집'}</h3>
                 <button
                   type="button"
-                  onClick={() => handleSectionComplete(section)}
-                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+                  onClick={() => handleCloseSection(section)}
+                  className="p-1 hover:bg-gray4 rounded-lg transition-colors"
                 >
-                  {'완료'}
+                  <X className="size-5 text-gray1" />
                 </button>
               </div>
+              {renderSectionErrors(section)}
+              {formComponents[section as keyof FormComponents]}
             </div>
           </>
         );
 
       default:
+        // 섹션별 제목 설정
+        const sectionTitles: { [key: string]: string } = {
+          basicInfo: '기본 정보',
+          difficulty: '난이도',
+          description: '개념 설명',
+          terms: '관련 용어',
+          relevance: '직무 연관도',
+          usecase: '사용 사례',
+          references: '참고자료',
+          koTitle: '한글 제목',
+          enTitle: '영문 제목',
+          shortDesc: '짧은 설명',
+        };
+
         return (
           <div
-            className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
+            className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
             onClick={(e) => e.stopPropagation()}
           >
-            {formComponents[section as keyof FormComponents]}
-            <div className="flex justify-end p-4">
+            <div className="flex justify-between items-center p-4 border-b border-gray4">
+              <h3 className="text-lg font-semibold text-main">{sectionTitles[section] || '편집'}</h3>
               <button
                 type="button"
-                onClick={() => handleSectionComplete(section)}
-                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+                onClick={() => handleCloseSection(section)}
+                className="p-1 hover:bg-gray4 rounded-lg transition-colors"
               >
-                {'완료'}
+                <X className="size-5 text-gray1" />
               </button>
             </div>
+            {renderSectionErrors(section)}
+            {formComponents[section as keyof FormComponents]}
           </div>
         );
+    }
+  };
+
+  // 섹션 hover 스타일 클래스 생성
+  const getSectionClassName = (section: string, baseClass: string = '') => {
+    const isEditing = editingSections && editingSections[section as keyof EditingSectionState];
+
+    // 섹션별 필수 필드 검증 함수
+    const isInvalid = (): boolean => {
+      if (!validateSection) return false;
+
+      switch (section) {
+        case 'koTitle':
+          return !term.title?.ko || term.title.ko.trim() === '';
+        case 'enTitle':
+          return !term.title?.en || term.title.en.trim() === '';
+        case 'shortDesc':
+          return !term.description?.short || term.description.short.trim() === '';
+        case 'difficulty':
+          return !term.difficulty?.description || term.difficulty.description.trim() === '';
+        case 'description':
+          return !term.description?.full || term.description.full.trim() === '';
+        case 'relevance':
+          return !term.relevance?.analyst?.description
+            || !term.relevance.scientist?.description
+            || !term.relevance.engineer?.description;
+        case 'usecase':
+          return !term.usecase?.description || !term.usecase.example;
+        default:
+          return false;
+      }
+    };
+
+    // 필수 필드가 비어있으면 빨간색 테두리 적용 (폼 제출 시에만)
+    const hasError = formSubmitted && isInvalid();
+
+    if (isEditing) {
+      return `${ baseClass } outline outline-2 outline-dashed outline-primary`;
+    } else if (hasError) {
+      return `${ baseClass } outline outline-2 outline-dashed outline-level-5`;
+    } else {
+      return `${ baseClass } hover:outline hover:outline-2 hover:outline-dashed hover:outline-primary`;
     }
   };
 
   return (
     <div className="prose h-[68vh] sm:h-[calc(100vh-230px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg p-2 sm:p-4 border border-gray4" ref={postPreviewRef}>
       <TableOfContents
-        title={term.title?.ko === '' ? '제목 없음' : term.title?.ko ?? ''}
+        title={term.title?.ko === '' ? '한글 제목' : term.title?.ko ?? ''}
         term={term}
         slug=""
         onTagSectionClick={(e) => handleSectionClick('tags', e)}
+        tagsClassName={getSectionClassName('tags')}
       />
       <div className='text-justify relative' ref={contentRef}>
-        <div className='m-2'>
-          <div className="flex group cursor-pointer" id="koTitle-section">
+        <div className='sm:ml-5'>
+          <div
+            className="flex group cursor-pointer"
+            id="koTitle-section"
+            onClick={(e: React.MouseEvent) => handleSectionClick('koTitle', e)}
+          >
             <span className="flex flex-wrap items-center text-3xl font-bold mb-0 group-hover:text-primary transition-colors">
               <span
-                className='text-main relative group/title'
+                className={getSectionClassName('koTitle', 'text-main relative p-1 -m-1 rounded')}
               >
-                <span className="relative inline-block">
-                  {term.title?.ko === '' ? '제목 없음' : term.title?.ko}
-                  <span className="absolute inset-0 flex items-center justify-center bg-background/80 opacity-0 group-hover/title:opacity-100 transition-opacity">
-                    <TooltipButton
-                      tooltip="한글 제목 수정"
-                      className="text-gray1 hover:text-primary"
-                      onClick={(e: React.MouseEvent) => handleSectionClick('koTitle', e)}
-                    >
-                      <Pencil className='size-5' />
-                    </TooltipButton>
-                  </span>
-                </span>
+                {term.title?.ko === '' ? '한글 제목' : term.title?.ko}
               </span>
               <span
-                className='text-main break-all group/entitle relative'
+                className={getSectionClassName('enTitle', 'text-main break-all relative p-1 -m-1 rounded')}
                 id="enTitle-section"
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  handleSectionClick('enTitle', e);
+                }}
               >
-                <span className="relative inline-block">
-                  {'('}{term.title?.en === '' ? '영문 제목 없음' : term.title?.en}{')'}
-                  <span className="absolute inset-0 flex items-center justify-center bg-background/80 opacity-0 group-hover/entitle:opacity-100 transition-opacity">
-                    <TooltipButton
-                      tooltip="영문 제목 수정"
-                      className="text-gray1 hover:text-primary"
-                      onClick={(e: React.MouseEvent) => handleSectionClick('enTitle', e)}
-                    >
-                      <Pencil className='size-5' />
-                    </TooltipButton>
-                  </span>
-                </span>
-                <div className='relative top-[2px] inline-block ml-1 text-gray1 hover:text-primary'>
-                  <Share2 className='size-6' />
-                </div>
+                {'('}{term.title?.en === '' ? '영문 제목' : term.title?.en}{')'}
               </span>
               <span className='inline-flex items-center' />
             </span>
@@ -255,135 +327,116 @@ const PostPreview = ({
             </span>
             <span className="text-light">{'•'}</span>
             <div className='flex gap-1 items-center'>
-              {
-                term.metadata?.created_at ? (
-                  <span>{formatDate(term.metadata.created_at ?? '')}{' 발행'}</span>
-                ) : (
-                  <span>{'발행일 확인 안됨'}</span>
-                )
-              }
-              {term.metadata?.updated_at && (
-                <>
-                  <span className="text-light">{'•'}</span>
-                  <span>{formatDate(term.metadata.updated_at ?? '')}{' 수정'}</span>
-                </>
-              )}
+              <span>{formatDate(term.metadata?.created_at ?? '')}{' 발행'}</span>
+              <span className="text-light">{'•'}</span>
+              <span>{formatDate(term.metadata?.updated_at ?? '')}{' 수정'}</span>
             </div>
           </div>
           <div
-            className='flex items-center gap-2 my-1 group'
+            className={getSectionClassName('shortDesc', 'flex items-center gap-2 my-1 group p-1 -m-1 rounded cursor-pointer')}
             id="shortDesc-section"
+            onClick={(e: React.MouseEvent) => handleSectionClick('shortDesc', e)}
           >
             <Level level={0} />
-            <div className='my-0.5 relative group/shortdesc'>
-              <span className="relative inline-block">
-                {term.description?.short || '짧은 설명 없음'}
-                <span className="absolute inset-0 flex items-center justify-center bg-background/80 opacity-0 group-hover/shortdesc:opacity-100 transition-opacity">
-                  <TooltipButton
-                    tooltip="짧은 설명 수정"
-                    className="text-gray1 hover:text-primary"
-                    onClick={(e: React.MouseEvent) => handleSectionClick('shortDesc', e)}
-                  >
-                    <Pencil className='size-5' />
-                  </TooltipButton>
-                </span>
-              </span>
+            <div className='my-0.5 text-main'>
+              {term.description?.short || '짧은 설명 없음'}
             </div>
           </div>
           <div
-            className='flex items-center gap-2 my-1 group'
+            className={getSectionClassName('difficulty', 'flex items-center gap-2 my-1 group p-1 -m-1 rounded cursor-pointer')}
             id="difficulty-section"
+            onClick={(e: React.MouseEvent) => handleSectionClick('difficulty', e)}
           >
             <Level level={Number(term.difficulty?.level)} />
-            <div className='my-0.5 relative group/difficulty'>
-              <span className="relative inline-block">
-                {term.difficulty?.description || '난이도 설명 없음'}
-                <span className="absolute inset-0 flex items-center justify-center bg-background/80 opacity-0 group-hover/difficulty:opacity-100 transition-opacity">
-                  <TooltipButton
-                    tooltip="난이도 수정"
-                    className="text-gray1 hover:text-primary"
-                    onClick={(e: React.MouseEvent) => handleSectionClick('difficulty', e)}
-                  >
-                    <Pencil className='size-5' />
-                  </TooltipButton>
-                </span>
-              </span>
+            <div className='my-0.5 text-main'>
+              {term.difficulty?.description || '난이도 설명 없음'}
             </div>
           </div>
 
           {/* 한글 제목 편집 폼 */}
           {editingSections?.koTitle && (
             <div
-              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
+              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
               onClick={(e) => e.stopPropagation()}
             >
-              {renderKoreanTitleForm?.() || (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
-              <div className="flex justify-end p-4">
+              <div className="flex justify-between items-center p-4 border-b border-gray4">
+                <h3 className="text-lg font-semibold text-main">{'한글 제목'}</h3>
                 <button
                   type="button"
-                  onClick={() => handleSectionComplete('koTitle')}
-                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+                  onClick={() => handleCloseSection('koTitle')}
+                  className="p-1 hover:bg-gray4 rounded-lg transition-colors"
                 >
-                  {'완료'}
+                  <X className="size-5 text-gray1" />
                 </button>
               </div>
+              {renderSectionErrors('koTitle')}
+              {renderKoreanTitleForm ? renderKoreanTitleForm()
+                : (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
             </div>
           )}
 
           {/* 영문 제목 편집 폼 */}
           {editingSections?.enTitle && (
             <div
-              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
+              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
               onClick={(e) => e.stopPropagation()}
             >
-              {renderEnglishTitleForm?.() || (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
-              <div className="flex justify-end p-4">
+              <div className="flex justify-between items-center p-4 border-b border-gray4">
+                <h3 className="text-lg font-semibold text-main">{'영문 제목'}</h3>
                 <button
                   type="button"
-                  onClick={() => handleSectionComplete('enTitle')}
-                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+                  onClick={() => handleCloseSection('enTitle')}
+                  className="p-1 hover:bg-gray4 rounded-lg transition-colors"
                 >
-                  {'완료'}
+                  <X className="size-5 text-gray1" />
                 </button>
               </div>
+              {renderSectionErrors('enTitle')}
+              {renderEnglishTitleForm ? renderEnglishTitleForm()
+                : (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
             </div>
           )}
 
           {/* 짧은 설명 편집 폼 */}
           {editingSections?.shortDesc && (
             <div
-              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
+              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
               onClick={(e) => e.stopPropagation()}
             >
-              {renderShortDescriptionForm?.() || (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
-              <div className="flex justify-end p-4">
+              <div className="flex justify-between items-center p-4 border-b border-gray4">
+                <h3 className="text-lg font-semibold text-main">{'짧은 설명'}</h3>
                 <button
                   type="button"
-                  onClick={() => handleSectionComplete('shortDesc')}
-                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+                  onClick={() => handleCloseSection('shortDesc')}
+                  className="p-1 hover:bg-gray4 rounded-lg transition-colors"
                 >
-                  {'완료'}
+                  <X className="size-5 text-gray1" />
                 </button>
               </div>
+              {renderSectionErrors('shortDesc')}
+              {renderShortDescriptionForm ? renderShortDescriptionForm()
+                : (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
             </div>
           )}
 
           {/* 난이도 편집 폼 */}
           {editingSections?.difficulty && (
             <div
-              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg rounded-lg z-20"
+              className="modal-container absolute inset-x-0 bg-gray5 border border-gray4 animate-slideDown shadow-lg mt-2 rounded-lg z-20"
               onClick={(e) => e.stopPropagation()}
             >
-              {formComponents?.difficulty && React.cloneElement(formComponents.difficulty as React.ReactElement, { isModal: true })}
-              <div className="flex justify-end p-4">
+              <div className="flex justify-between items-center p-4 border-b border-gray4">
+                <h3 className="text-lg font-semibold text-main">{'난이도'}</h3>
                 <button
                   type="button"
-                  onClick={() => handleSectionComplete('difficulty')}
-                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors"
+                  onClick={() => handleCloseSection('difficulty')}
+                  className="p-1 hover:bg-gray4 rounded-lg transition-colors"
                 >
-                  {'완료'}
+                  <X className="size-5 text-gray1" />
                 </button>
               </div>
+              {renderSectionErrors('difficulty')}
+              {formComponents?.difficulty && React.cloneElement(formComponents.difficulty as React.ReactElement, { isModal: true })}
             </div>
           )}
 
@@ -391,10 +444,10 @@ const PostPreview = ({
           {renderEditForm('basicInfo')}
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 sm:ml-5">
           {/* 개념 설명 섹션 */}
           <div
-            className="p-1 my-3 relative cursor-pointer prose-section"
+            className={getSectionClassName('description', 'p-1 my-3 relative cursor-pointer prose-section rounded')}
             id="description-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('description', e)}
           >
@@ -406,7 +459,7 @@ const PostPreview = ({
 
           {/* 관련 용어 섹션 */}
           <div
-            className="p-1 my-3 relative cursor-pointer prose-section"
+            className={getSectionClassName('terms', 'p-1 my-3 relative cursor-pointer prose-section rounded')}
             id="terms-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('terms', e)}
           >
@@ -418,7 +471,7 @@ const PostPreview = ({
 
           {/* 태그 섹션 */}
           <div
-            className="sm:hidden p-1 my-3 relative cursor-pointer prose-section"
+            className={getSectionClassName('tags', 'sm:hidden p-1 my-3 relative cursor-pointer prose-section rounded')}
             id="tags-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('tags', e)}
           >
@@ -458,7 +511,7 @@ const PostPreview = ({
 
           {/* 직무 연관도 섹션 */}
           <div
-            className='p-1 my-3 relative bg-cover bg-center size-full cursor-pointer prose-section'
+            className={getSectionClassName('relevance', 'p-1 my-3 relative bg-cover bg-center size-full cursor-pointer prose-section rounded')}
             id="relevance-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('relevance', e)}
           >
@@ -481,7 +534,7 @@ const PostPreview = ({
 
           {/* 사용 사례 섹션 */}
           <div
-            className="p-1 my-3 relative cursor-pointer prose-section"
+            className={getSectionClassName('usecase', 'p-1 my-3 relative cursor-pointer prose-section rounded')}
             id="usecase-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('usecase', e)}
           >
@@ -497,7 +550,7 @@ const PostPreview = ({
 
           {/* 참고자료 섹션 */}
           <section
-            className="p-1 my-3 relative cursor-pointer prose-section"
+            className={getSectionClassName('references', 'p-1 my-3 relative cursor-pointer prose-section rounded')}
             id="references-section"
             onClick={(e: React.MouseEvent) => handleSectionClick('references', e)}
           >

@@ -16,12 +16,13 @@ interface Props {
   term: TermData;
   slug: string;
   onTagSectionClick?: (e: React.MouseEvent)=> void;
+  tagsClassName?: string;
 }
 
 const HEADER_HEIGHT = 64;
 const Threshold = 10;
 
-const TableOfContents = ({ title, term, onTagSectionClick }: Props) => {
+const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName }: Props) => {
   const [activeSection, setActiveSection] = useState<string>('');
   const [sections, setSections] = useState<Section[]>([]);
 
@@ -119,7 +120,7 @@ const TableOfContents = ({ title, term, onTagSectionClick }: Props) => {
             </div>
           ))}
         </nav>
-        <div className="flex flex-col flex-wrap mt-10 gap-2">
+        <div className={`flex flex-col flex-wrap mt-10 gap-2 p-1 -m-1 ${ tagsClassName || '' }`}>
           <span
             className={`text-main text-base font-bold ${ onTagSectionClick ? 'cursor-pointer hover:text-primary' : '' }`}
             onClick={onTagSectionClick}
@@ -143,6 +144,9 @@ const TableOfContents = ({ title, term, onTagSectionClick }: Props) => {
               </span>
             )
           ))}
+          {(!term.tags || term.tags.length === 0) && (
+            <span className="text-sub italic text-sm">{'태그를 추가해주세요.'}</span>
+          )}
         </div>
       </div>
     </div>
