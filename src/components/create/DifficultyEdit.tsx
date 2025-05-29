@@ -47,16 +47,10 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, validat
 
   const containerClasses = isModal
     ? 'p-2'
-    : 'p-2 md:p-6 border-b border-gray3';
+    : 'p-2';
 
   return (
     <div className={containerClasses}>
-      {!isModal && (
-        <h2 className="flex items-center text-xl font-semibold mb-4">
-          <span className="text-primary mr-1">{'#'}</span>
-          {'난이도'}
-        </h2>
-      )}
       <div className="flex flex-col sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
         <div className="">
           <label className="text-sm font-medium text-gray0">{'레벨'}</label>

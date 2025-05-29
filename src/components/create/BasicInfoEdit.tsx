@@ -324,16 +324,10 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [], isMod
 
   const containerClasses = isModal
     ? 'p-2'
-    : 'p-2 md:p-6 border-b border-gray3';
+    : 'p-2';
 
   return (
     <div className={containerClasses}>
-      {!isModal && (
-        <h2 className="flex items-center text-xl font-semibold mb-4">
-          <span className="text-primary mr-1">{'#'}</span>
-          {'기본 정보'}
-        </h2>
-      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <KoreanTitleInput
           formData={formData}

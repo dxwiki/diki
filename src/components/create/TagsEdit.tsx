@@ -23,7 +23,7 @@ const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
   };
 
   return (
-    <div className="p-2 md:p-6 border-b border-gray3">
+    <div className="p-2">
       <h2 className="flex items-center text-xl font-semibold mb-2">
         <span className="text-primary mr-1">{'#'}</span>
         {'관련 포스트 (선택)'}

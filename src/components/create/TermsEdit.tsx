@@ -44,11 +44,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   };
 
   return (
-    <div className="p-2 md:p-6 border-b border-gray3">
-      <h2 className="flex items-center text-xl font-semibold mb-2">
-        <span className="text-primary mr-1">{'#'}</span>
-        {'관련 용어'}
-      </h2>
+    <div className="p-2">
       {formData.terms && formData.terms.length > 0 && (
         <div className="my-2">
           <div className="flex flex-wrap gap-2">

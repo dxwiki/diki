@@ -261,12 +261,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
   };
 
   return (
-    <div className="p-2 md:p-6" ref={containerRef}>
-      <h2 className="flex items-center text-xl font-semibold mb-4">
-        <span className="text-primary mr-1">{'#'}</span>
-        {'참고 자료 (선택)'}
-      </h2>
-
+    <div className="p-2" ref={containerRef}>
       {/* 탭 내비게이션 */}
       <div className="flex border-b border-gray4 mb-4">
         <button

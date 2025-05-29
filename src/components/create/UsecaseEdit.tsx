@@ -51,14 +51,9 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
   };
 
   return (
-    <div className="p-2 md:p-6 border-b border-gray3">
-      <h2 className="flex items-center text-xl font-semibold mb-4">
-        <span className="text-primary mr-1">{'#'}</span>
-        {'사용 사례'}
-      </h2>
-
+    <div className="p-2">
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1 text-gray0">{'개요'}</label>
+        <label className="block text-sm font-medium mb-1 text-gray0">{'[필수] 개요'}</label>
         <textarea
           name="usecase.description"
           value={formData.usecase?.description || ''}
@@ -79,7 +74,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1 text-gray0">{'사례'}</label>
+        <label className="block text-sm font-medium mb-1 text-gray0">{'[필수] 사례'}</label>
         <textarea
           name="usecase.example"
           value={formData.usecase?.example || ''}
