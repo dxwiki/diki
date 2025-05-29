@@ -21,7 +21,9 @@ const PostDetail = async ({ term, slug, lastTermId }: Props) => {
       term={term}
       slug={slug}
     >
-      <DescriptionSection description={term.description?.full ?? ''} />
+      <div className='mt-10'>
+        <DescriptionSection description={term.description?.full ?? ''} />
+      </div>
       <RelatedTermsSection terms={term.terms ?? []} />
       <RelevanceSection
         analyst={term.relevance?.analyst ?? { score: 0, description: '' }}

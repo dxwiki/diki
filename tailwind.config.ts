@@ -109,11 +109,6 @@ const config: Config = {
               marginBottom: '0.75rem',
               lineHeight: '1.7',
             },
-            section: {
-              marginTop: '4rem',
-              marginBottom: '4rem',
-            },
-
             '.prose :where(h1):not(:where([class~="not-prose"],[class~="not-prose"] *))': {
               color: 'var(--accent)',
               fontFamily: 'var(--font-noto)',
