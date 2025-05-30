@@ -91,7 +91,7 @@ const InternalLinkSearch = ({ onSelect, refocus = false }: InternalLinkSearchPro
             onChange={(e) => handleSearch(e.target.value)}
             onFocus={() => setIsModalOpen(true)}
             onBlur={handleBlur}
-            className="w-full outline-none text-main"
+            className="w-full outline-none text-main bg-background"
           />
           {searchQuery && (
             <X
@@ -139,8 +139,8 @@ const InternalLinkSearch = ({ onSelect, refocus = false }: InternalLinkSearchPro
             <div className="p-4 border-t border-gray4">
               <p className="text-gray1 text-sm mb-2">{'검색 팁'}</p>
               <ul className="text-sm text-gray2 space-y-1">
-                <li>{'• '}{'정확한 키워드로 검색해보세요'}</li>
-                <li>{'• '}{'관련 내부 페이지를 링크할 수 있습니다'}</li>
+                <li>{'정확한 키워드로 검색해보세요'}</li>
+                <li>{'관련 내부 페이지를 링크할 수 있습니다'}</li>
               </ul>
             </div>
           )}
