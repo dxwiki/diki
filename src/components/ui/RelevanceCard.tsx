@@ -1,5 +1,3 @@
-import '@/app/style/card.css';
-
 interface CardComponentProps {
   score: number;
   description: string;
@@ -69,26 +67,6 @@ const RelevanceCard = ({
           </span>
           <span className={`text-${ levelColors[score as keyof typeof levelColors] } text-xs border border-${ levelColors[score as keyof typeof levelColors] } rounded-full px-1.5 py-0.5`}>{relevance}</span>
         </div>
-        {/* <div className="w-full flex">
-          {[1, 2, 3, 4, 5].map((level) => (
-            <div key={level} className="flex-1 flex flex-col items-center">
-              <span
-                className={`text-center text-xs mb-0.5 font-semibold ${ level === score
-                  ? `text-${ levelColors[level as keyof typeof levelColors] }`
-                  : 'opacity-0'
-                }`}
-              >
-                {level === score ? relevance : '-'}
-              </span>
-              <div
-                className={`h-2 w-full ${ level < 5
-                  ? `bg-gradient-to-r from-${ levelColors[level as keyof typeof levelColors] } to-${ levelColors[(level + 1) as keyof typeof levelColors] }`
-                  : `bg-${ levelColors[level as keyof typeof levelColors] }`
-                } ${ level === 1 ? 'rounded-l-full' : '' } ${ level === 5 ? 'rounded-r-full' : '' }`}
-              />
-            </div>
-          ))}
-        </div> */}
         <div className="card-description text-sub text-sm font-semibold">{description}</div>
       </div>
     </div>
