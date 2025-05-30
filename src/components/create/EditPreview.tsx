@@ -194,18 +194,35 @@ const PostPreview = ({
         <button
           type="button"
           onClick={() => handleCloseSection(section)}
-          className="flex items-center gap-1 p-1.5 pl-3 text-main hover:bg-gray4 rounded-lg transition-colors"
+          className="w-full flex justify-center items-center gap-1 p-1.5 m-2 text-main bg-gray5 hover:bg-gray4 rounded-lg transition-colors"
         >
-          {'편집기 닫기'}
+          {'닫기'}
           <X className="size-5 text-gray1" />
         </button>
       </div>
     );
 
+    // 특정 섹션에 대한 컨텐츠 렌더링
+    const renderContent = () => {
+      switch (section) {
+        case 'koTitle':
+          return renderKoreanTitleForm ? renderKoreanTitleForm()
+            : (formComponents.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }));
+        case 'enTitle':
+          return renderEnglishTitleForm ? renderEnglishTitleForm()
+            : (formComponents.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }));
+        case 'shortDesc':
+          return renderShortDescriptionForm ? renderShortDescriptionForm()
+            : (formComponents.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }));
+        default:
+          return formComponents[section as keyof FormComponents];
+      }
+    };
+
     return (
-      <div className="m-1 p-1 border-t border-primary border-dashed mt-2 animate-slideDown">
+      <div className={`m-1 p-1 mt-2 animate-slideDown ${ section === 'koTitle' || section === 'enTitle' ? '' : 'border-t border-primary border-dashed' } ${ section === 'tags' ? 'border-t border-primary border-dashed sm:border-t-0' : '' }`}>
         {closeButton}
-        {formComponents[section as keyof FormComponents]}
+        {renderContent()}
         {renderSectionErrors(section)}
       </div>
     );
@@ -248,45 +265,17 @@ const PostPreview = ({
             </span>
           </div>
 
-          {/* 한글 제목 편집 폼 - 모달 스타일 유지 */}
+          {/* 한글 제목 편집 폼 */}
           {editingSections?.koTitle && (
-            <div className="border border-gray4 rounded-lg bg-gray5 mt-2 mb-4 shadow-sm animate-slideDown">
-              <div className="flex justify-between items-center p-2 border-b border-gray4">
-                <h3 className="text-base font-semibold text-main">{'한글 제목'}</h3>
-                <button
-                  type="button"
-                  onClick={() => handleCloseSection('koTitle')}
-                  className="p-1 hover:bg-gray4 rounded-lg transition-colors"
-                >
-                  <X className="size-4 text-gray1" />
-                </button>
-              </div>
-              {renderSectionErrors('koTitle')}
-              <div className="p-2">
-                {renderKoreanTitleForm ? renderKoreanTitleForm()
-                  : (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
-              </div>
+            <div className="relative outline outline-2 outline-primary rounded-lg">
+              {renderInlineEditForm('koTitle')}
             </div>
           )}
 
-          {/* 영문 제목 편집 폼 - 모달 스타일 유지 */}
+          {/* 영문 제목 편집 폼 */}
           {editingSections?.enTitle && (
-            <div className="border border-gray4 rounded-lg bg-gray5 mt-2 mb-4 shadow-sm animate-slideDown">
-              <div className="flex justify-between items-center p-2 border-b border-gray4">
-                <h3 className="text-base font-semibold text-main">{'영문 제목'}</h3>
-                <button
-                  type="button"
-                  onClick={() => handleCloseSection('enTitle')}
-                  className="p-1 hover:bg-gray4 rounded-lg transition-colors"
-                >
-                  <X className="size-4 text-gray1" />
-                </button>
-              </div>
-              {renderSectionErrors('enTitle')}
-              <div className="p-2">
-                {renderEnglishTitleForm ? renderEnglishTitleForm()
-                  : (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }))}
-              </div>
+            <div className="relative outline outline-2 outline-primary rounded-lg">
+              {renderInlineEditForm('enTitle')}
             </div>
           )}
 
@@ -323,24 +312,7 @@ const PostPreview = ({
                   {term.description?.short || '짧은 설명 없음'}
                 </div>
               </div>
-              {editingSections?.shortDesc && (
-                <div className="border border-gray4 rounded-lg bg-gray5 mt-2 mb-4 shadow-sm animate-slideDown">
-                  <div className="flex justify-between items-center p-2 border-b border-gray4">
-                    <button
-                      type="button"
-                      onClick={() => handleCloseSection('shortDesc')}
-                      className="p-1 hover:bg-gray4 rounded-lg transition-colors"
-                    >
-                      <X className="size-4 text-gray1" />
-                    </button>
-                  </div>
-                  {renderSectionErrors('shortDesc')}
-                  <div className="p-2">
-                    {renderShortDescriptionForm ? renderShortDescriptionForm()
-                      : (formComponents?.basicInfo && React.cloneElement(formComponents.basicInfo, { isModal: true }))}
-                  </div>
-                </div>
-              )}
+              {editingSections?.shortDesc && renderInlineEditForm('shortDesc')}
             </div>
           </div>
 
@@ -414,7 +386,7 @@ const PostPreview = ({
                       </div>
                     ) : (
                       <div className="relative group/tags inline-block">
-                        <p className="text-sub italic">{'관련 포스트를 추가해주세요.'}</p>
+                        <p className="text-sub">{'관련 포스트를 추가해주세요.'}</p>
                       </div>
                     )}
                   </div>
@@ -487,7 +459,7 @@ const PostPreview = ({
                       />
                     ) : (
                       <div className="relative group/references inline-block">
-                        <p className="text-sub italic">
+                        <p className="text-sub">
                           {'내용이 없습니다.'}
                         </p>
                       </div>
@@ -504,22 +476,9 @@ const PostPreview = ({
 
       {/* 데스크톱 태그 편집 (사이드바) */}
       {editingSections?.tags && (
-        <div className="hidden md:block absolute left-[200px] top-[400px] w-3/5">
-          <div className="border border-gray4 rounded-lg bg-gray5 shadow-sm animate-slideDown">
-            <div className="flex justify-between items-center p-2 border-b border-gray4">
-              <h3 className="text-base font-semibold text-main">{'관련 포스트'}</h3>
-              <button
-                type="button"
-                onClick={() => handleCloseSection('tags')}
-                className="p-1 hover:bg-gray4 rounded-lg transition-colors"
-              >
-                <X className="size-4 text-gray1" />
-              </button>
-            </div>
-            {renderSectionErrors('tags')}
-            <div className="p-2">
-              {formComponents?.tags}
-            </div>
+        <div className="hidden md:block absolute left-[12px] top-[420px] w-3/5">
+          <div className="outline outline-2 outline-primary rounded-lg bg-background">
+            {renderInlineEditForm('tags')}
           </div>
         </div>
       )}

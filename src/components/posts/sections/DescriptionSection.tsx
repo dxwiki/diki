@@ -17,7 +17,7 @@ const DescriptionSection = ({ description }: DescriptionSectionProps) => {
           <MarkdownContent content={description} />
         </MathJaxProvider>
       ) : (
-        <p className="text-sub italic">{'내용이 없습니다.'}</p>
+        <p className="text-sub">{'내용이 없습니다.'}</p>
       )}
     </section>
   );

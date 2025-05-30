@@ -91,7 +91,7 @@ const InternalLinkSearch = ({ onSelect, refocus = false }: InternalLinkSearchPro
             onChange={(e) => handleSearch(e.target.value)}
             onFocus={() => setIsModalOpen(true)}
             onBlur={handleBlur}
-            className="w-full outline-none text-main bg-background"
+            className="w-full outline-none text-main bg-white dark:bg-background"
           />
           {searchQuery && (
             <X
