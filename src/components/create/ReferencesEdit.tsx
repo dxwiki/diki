@@ -2,7 +2,6 @@ import Link from 'next/link';
 import React, { useState, useRef, KeyboardEvent, useEffect } from 'react';
 import { TermData, References } from '@/types/database';
 import { X } from 'lucide-react';
-import { useFormValidation, IsolatedGuidanceMessage } from './ValidatedInput';
 
 interface ReferencesSectionProps {
   formData?: TermData;
@@ -14,11 +13,6 @@ type ReferenceTab = 'tutorial' | 'book' | 'academic' | 'opensource';
 const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) => {
   const [activeTab, setActiveTab] = useState<ReferenceTab>('tutorial');
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const { showValidation: showTutorialValidation, setShowValidation: setShowTutorialValidation } = useFormValidation();
-  const { showValidation: showBookValidation, setShowValidation: setShowBookValidation } = useFormValidation();
-  const { showValidation: showAcademicValidation, setShowValidation: setShowAcademicValidation } = useFormValidation();
-  const { showValidation: showOpensourceValidation, setShowValidation: setShowOpensourceValidation } = useFormValidation();
 
   const tutorialCallbackRef = useRef(false);
   const bookCallbackRef = useRef(false);
@@ -106,7 +100,6 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
 
   const handleAddTutorial = (e: React.MouseEvent) => {
     e.preventDefault();
-    setShowTutorialValidation(true);
 
     if (tutorial.title?.trim() && tutorial.external_link?.trim()) {
       const newTutorial = { ...tutorial };
@@ -127,13 +120,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
       });
 
       setTutorial({ title: '', platform: '', external_link: '' });
-      setShowTutorialValidation(false);
     }
   };
 
   const handleAddBook = (e: React.MouseEvent) => {
     e.preventDefault();
-    setShowBookValidation(true);
 
     if (book.title?.trim() && book.external_link?.trim()) {
       const newBook = { ...book };
@@ -154,13 +145,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
       });
 
       setBook({ title: '', authors: [], publisher: '', year: '', isbn: '', external_link: '' });
-      setShowBookValidation(false);
     }
   };
 
   const handleAddAcademic = (e: React.MouseEvent) => {
     e.preventDefault();
-    setShowAcademicValidation(true);
 
     if (academic.title?.trim() && academic.external_link?.trim()) {
       const newAcademic = { ...academic };
@@ -181,13 +170,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
       });
 
       setAcademic({ title: '', authors: [], year: '', doi: '', external_link: '' });
-      setShowAcademicValidation(false);
     }
   };
 
   const handleAddOpensource = (e: React.MouseEvent) => {
     e.preventDefault();
-    setShowOpensourceValidation(true);
 
     if (opensource.name?.trim() && opensource.external_link?.trim()) {
       const newOpensource = { ...opensource };
@@ -208,7 +195,6 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
       });
 
       setOpensource({ name: '', license: '', description: '', external_link: '' });
-      setShowOpensourceValidation(false);
     }
   };
 
@@ -256,7 +242,8 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
     });
   };
 
-  const handleTabChange = (tab: ReferenceTab) => {
+  const handleTabChange = (e: React.MouseEvent, tab: ReferenceTab) => {
+    e.preventDefault();
     setActiveTab(tab);
   };
 
@@ -265,25 +252,25 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
       {/* 탭 내비게이션 */}
       <div className="flex border-b border-gray4 mb-4">
         <button
-          onClick={() => handleTabChange('tutorial')}
+          onClick={(e) => handleTabChange(e, 'tutorial')}
           className={`px-4 py-2 ${ activeTab === 'tutorial' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
         >
           {'튜토리얼'}
         </button>
         <button
-          onClick={() => handleTabChange('book')}
+          onClick={(e) => handleTabChange(e, 'book')}
           className={`px-4 py-2 ${ activeTab === 'book' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
         >
           {'참고서적'}
         </button>
         <button
-          onClick={() => handleTabChange('academic')}
+          onClick={(e) => handleTabChange(e, 'academic')}
           className={`px-4 py-2 ${ activeTab === 'academic' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
         >
           {'연구논문'}
         </button>
         <button
-          onClick={() => handleTabChange('opensource')}
+          onClick={(e) => handleTabChange(e, 'opensource')}
           className={`px-4 py-2 ${ activeTab === 'opensource' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
         >
           {'오픈소스'}
@@ -331,11 +318,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setTutorial({ ...tutorial, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, tutorialPlatformRef)}
                     />
-                    <IsolatedGuidanceMessage
-                      value={tutorial.title}
-                      guidanceMessage="관련자료 추가를 위한 제목은 필수값입니다."
-                      showValidation={showTutorialValidation}
-                    />
+                    <p className="text-sm text-primary ml-1">{'관련자료 추가를 위한 제목은 필수값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'플랫폼'}</label>
@@ -365,11 +348,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <IsolatedGuidanceMessage
-                      value={tutorial.external_link}
-                      guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
-                      showValidation={showTutorialValidation}
-                    />
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필수값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
@@ -428,11 +407,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setBook({ ...book, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, bookAuthorsRef)}
                     />
-                    <IsolatedGuidanceMessage
-                      value={book.title}
-                      guidanceMessage="관련 자료 추가를 위한 제목은 필수값입니다."
-                      showValidation={showBookValidation}
-                    />
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 제목은 필수값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'저자'}</label>
@@ -498,11 +473,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <IsolatedGuidanceMessage
-                      value={book.external_link}
-                      guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
-                      showValidation={showBookValidation}
-                    />
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필수값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
@@ -560,11 +531,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setAcademic({ ...academic, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, academicAuthorsRef)}
                     />
-                    <IsolatedGuidanceMessage
-                      value={academic.title}
-                      guidanceMessage="관련 자료 추가를 위한 제목은 필수값입니다."
-                      showValidation={showAcademicValidation}
-                    />
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 제목은 필수값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'저자'}</label>
@@ -618,11 +585,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <IsolatedGuidanceMessage
-                      value={academic.external_link}
-                      guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
-                      showValidation={showAcademicValidation}
-                    />
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필수값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
@@ -679,11 +642,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setOpensource({ ...opensource, name: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, opensourceLicenseRef)}
                     />
-                    <IsolatedGuidanceMessage
-                      value={opensource.name}
-                      guidanceMessage="관련 자료 추가를 위한 이름은 필수값입니다."
-                      showValidation={showOpensourceValidation}
-                    />
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 이름은 필수값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'라이센스'}</label>
@@ -724,11 +683,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <IsolatedGuidanceMessage
-                      value={opensource.external_link}
-                      guidanceMessage="관련 자료 추가를 위한 링크는 필수값입니다."
-                      showValidation={showOpensourceValidation}
-                    />
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필수값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button

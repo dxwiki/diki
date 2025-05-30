@@ -221,9 +221,9 @@ const PostPreview = ({
 
     return (
       <div className={`m-1 p-1 mt-2 animate-slideDown ${ section === 'koTitle' || section === 'enTitle' ? '' : 'border-t border-primary border-dashed' } ${ section === 'tags' ? 'border-t border-primary border-dashed sm:border-t-0' : '' }`}>
-        {closeButton}
         {renderContent()}
         {renderSectionErrors(section)}
+        {closeButton}
       </div>
     );
   };
@@ -449,7 +449,7 @@ const PostPreview = ({
                       <div className="flex items-center group-hover:text-primary transition-colors">
                         <h2>
                           <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
-                          {'참고자료'}
+                          {'참고 자료'}
                         </h2>
                       </div>
                     )}
