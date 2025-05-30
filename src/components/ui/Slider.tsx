@@ -1,53 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Slider as MUISlider, styled } from '@mui/material';
+import BaseSlider from './BaseSlider';
 
 interface SliderProps {
   displayLevels: string[];
   range: [number, number];
   onRangeChange: (newRange: [number, number])=> void;
 }
-
-// Styled MUI Slider component
-const StyledSlider = styled(MUISlider)(() => ({
-  color: 'var(--primary)',
-  height: 3,
-  '& .MuiSlider-thumb': {
-    height: 12,
-    width: 12,
-    margin:0,
-    backgroundColor: 'var(--primary)',
-    '&:focus, &:hover, &.Mui-active': {
-      boxShadow: '0 0 0 8px var(--primary-opacity)',
-    },
-  },
-  '& .MuiSlider-rail': {
-    backgroundColor: 'var(--gray4)',
-    opacity: 1,
-  },
-  '& .MuiSlider-track': {
-    height: 3,
-  },
-  '& .MuiSlider-mark': {
-    backgroundColor: 'var(--gray3)',
-
-  },
-  '& .MuiSlider-markActive': {
-    backgroundColor: 'var(--gray4)',
-  },
-  '& .MuiSlider-markLabel': {
-    color: 'var(--gray3)',
-    fontSize: '12px',
-  },
-  '& .MuiSlider-markLabelActive': {
-    color: 'var(--accent)',
-  },
-  '& .css-swtyag-MuiSlider-markLabel, .css-1qb795b-MuiSlider-markLabel': {
-    fontFamily: 'Pretendard',
-    top: '25px',
-  },
-}));
 
 const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
   // 슬라이더 range를 0-100 범위로 변환
@@ -94,11 +54,10 @@ const Slider = ({ displayLevels, range, onRangeChange }: SliderProps) => {
 
   return (
     <div className="relative w-full">
-      <StyledSlider
+      <BaseSlider
         value={sliderValue}
         onChange={handleChange}
         onChangeCommitted={handleChangeCommitted}
-        // valueLabelDisplay="off"
         marks={marks}
         min={0}
         max={100}

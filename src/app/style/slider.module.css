@@ -1,0 +1,68 @@
+/* MUI Slider 커스텀 스타일 */
+.customMuiSlider {
+  color: var(--primary);
+  height: 3px;
+}
+
+/* thumb 스타일 */
+.customMuiSlider :global(.MuiSlider-thumb),
+.customMuiSlider :global([class*="MuiSlider-thumb"]) {
+  height: 12px;
+  width: 12px;
+  margin: 0;
+  background-color: var(--primary);
+}
+
+.customMuiSlider :global(.MuiSlider-thumb:focus),
+.customMuiSlider :global(.MuiSlider-thumb:hover),
+.customMuiSlider :global(.MuiSlider-thumb.Mui-active),
+.customMuiSlider :global([class*="MuiSlider-thumb"]:focus),
+.customMuiSlider :global([class*="MuiSlider-thumb"]:hover),
+.customMuiSlider :global([class*="MuiSlider-thumb"].Mui-active) {
+  box-shadow: 0 0 0 8px var(--primary-opacity);
+}
+
+/* rail 스타일 */
+.customMuiSlider :global(.MuiSlider-rail),
+.customMuiSlider :global([class*="MuiSlider-rail"]) {
+  background-color: var(--gray4);
+  opacity: 1;
+}
+
+/* track 스타일 */
+.customMuiSlider :global(.MuiSlider-track),
+.customMuiSlider :global([class*="MuiSlider-track"]) {
+  height: 3px;
+  background-color: var(--primary);
+}
+
+/* 특정 클래스에 대한 직접 스타일링 */
+.customMuiSlider :global(.css-xvk2i-MuiSlider-track) {
+  background-color: none;
+  border: 0;
+}
+
+/* mark 스타일 */
+.customMuiSlider :global(.MuiSlider-mark),
+.customMuiSlider :global([class*="MuiSlider-mark"]:not([class*="Label"])) {
+  background-color: var(--gray3);
+}
+
+.customMuiSlider :global(.MuiSlider-markActive),
+.customMuiSlider :global([class*="MuiSlider-markActive"]) {
+  background-color: var(--gray4);
+}
+
+/* markLabel 스타일 */
+.customMuiSlider :global(.MuiSlider-markLabel),
+.customMuiSlider :global([class*="MuiSlider-markLabel"]) {
+  color: var(--gray3);
+  font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
+  top: 25px;
+}
+
+.customMuiSlider :global(.MuiSlider-markLabelActive),
+.customMuiSlider :global([class*="MuiSlider-markLabelActive"]) {
+  color: var(--accent);
+} 

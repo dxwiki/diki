@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Slider as MUISlider, styled } from '@mui/material';
+import { useState, useEffect, useMemo } from 'react';
+import BaseSlider from './BaseSlider';
 
 interface CreateSliderProps {
   displayLevels: string[];
@@ -9,59 +9,22 @@ interface CreateSliderProps {
   onChange: (newValue: number)=> void; // 1~5 범위의 값을 반환
 }
 
-// Styled MUI Slider component
-const StyledSlider = styled(MUISlider)(() => ({
-  color: 'var(--primary)',
-  height: 3,
-  '& .MuiSlider-thumb': {
-    height: 12,
-    width: 12,
-    margin: 0,
-    backgroundColor: 'var(--primary)',
-    '&:focus, &:hover, &.Mui-active': {
-      boxShadow: '0 0 0 8px var(--primary-opacity)',
-    },
-  },
-  '& .MuiSlider-rail': {
-    backgroundColor: 'var(--gray4)',
-    opacity: 1,
-  },
-  '& .MuiSlider-track': {
-    height: 3,
-  },
-  '& .MuiSlider-mark': {
-    backgroundColor: 'var(--gray3)',
-  },
-  '& .MuiSlider-markActive': {
-    backgroundColor: 'var(--gray4)',
-  },
-  '& .MuiSlider-markLabel': {
-    color: 'var(--gray3)',
-    fontSize: '14px',
-  },
-  '& .MuiSlider-markLabelActive': {
-    color: 'var(--accent)',
-  },
-  '& .css-swtyag-MuiSlider-markLabel, .css-1qb795b-MuiSlider-markLabel': {
-    fontFamily: 'Pretendard',
-    top: '25px',
-  },
-}));
-
 const CreateSlider = ({ displayLevels, value, onChange }: CreateSliderProps) => {
   const displayIndex = value - 1;
   const [sliderValue, setSliderValue] = useState<number>(
     ((displayIndex) / (displayLevels.length - 1)) * 100
   );
+  const [dragValue, setDragValue] = useState<number | null>(null);
 
-  const marks = displayLevels.map((level, index) => ({
+  // 마크와 스텝 값 메모이제이션
+  const marks = useMemo(() => displayLevels.map((level, index) => ({
     value: (index / (displayLevels.length - 1)) * 100,
     label: level,
-  }));
+  })), [displayLevels]);
 
-  const stepValues = displayLevels.map((_, index) =>
+  const stepValues = useMemo(() => displayLevels.map((_, index) =>
     (index / (displayLevels.length - 1)) * 100
-  );
+  ), [displayLevels]);
 
   // 외부 값 변경 시 내부 값 업데이트
   useEffect(() => {
@@ -71,6 +34,15 @@ const CreateSlider = ({ displayLevels, value, onChange }: CreateSliderProps) => 
 
   const handleChange = (_event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
+      setDragValue(newValue);
+    }
+  };
+
+  // 드래그 완료 시 처리
+  const handleChangeCommitted = (_event: React.SyntheticEvent | Event, newValue: number | number[]) => {
+    if (typeof newValue === 'number') {
+      setDragValue(null);
+
       const closestStep = stepValues.reduce((prev, curr) =>
         Math.abs(curr - newValue) < Math.abs(prev - newValue) ? curr : prev
       );
@@ -87,9 +59,10 @@ const CreateSlider = ({ displayLevels, value, onChange }: CreateSliderProps) => 
 
   return (
     <div className="relative w-full">
-      <StyledSlider
-        value={sliderValue}
+      <BaseSlider
+        value={dragValue !== null ? dragValue : sliderValue}
         onChange={handleChange}
+        onChangeCommitted={handleChangeCommitted}
         marks={marks}
         min={0}
         max={100}
