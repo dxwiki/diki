@@ -16,6 +16,8 @@ interface GitHubEmail {
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
+  const state = searchParams.get('state');
+  const isSignupFlow = state === 'signup';
 
   if (!code) {
     return NextResponse.redirect(new URL('/login?error=github_code_missing', process.env.NEXT_PUBLIC_BASE_URL || ''));
@@ -39,7 +41,8 @@ export async function GET(request: NextRequest) {
 
     if (tokenData.error) {
       console.error('GitHub OAuth error:', tokenData.error);
-      return NextResponse.redirect(new URL(`/login?error=${ tokenData.error }`, process.env.NEXT_PUBLIC_BASE_URL || ''));
+      const errorRoute = isSignupFlow ? '/signup' : '/login';
+      return NextResponse.redirect(new URL(`${ errorRoute }?error=${ tokenData.error }`, process.env.NEXT_PUBLIC_BASE_URL || ''));
     }
 
     const accessToken = tokenData.access_token;
@@ -64,7 +67,8 @@ export async function GET(request: NextRequest) {
     const primaryEmail = emailData.find((email: GitHubEmail) => email.primary)?.email || emailData[0]?.email;
 
     if (!primaryEmail) {
-      return NextResponse.redirect(new URL('/login?error=no_email', process.env.NEXT_PUBLIC_BASE_URL || ''));
+      const errorRoute = isSignupFlow ? '/signup' : '/login';
+      return NextResponse.redirect(new URL(`${ errorRoute }?error=no_email`, process.env.NEXT_PUBLIC_BASE_URL || ''));
     }
 
     // username으로 사용할 값
@@ -73,7 +77,6 @@ export async function GET(request: NextRequest) {
     // 기존 프로필 데이터에서 사용자 확인
     let existingProfile: Profile | undefined;
     let profiles: Profile[] = [];
-    let newId = 1;
 
     try {
       const profilesFilePath = path.join(process.cwd(), 'src', 'data', 'profiles.json');
@@ -86,85 +89,104 @@ export async function GET(request: NextRequest) {
       console.error('Error reading profiles data:', error);
     }
 
-    let firestoreMaxId = 0;
-
     const profilesSnapshot = await firestore.collection('profiles').get();
     const userDoc = profilesSnapshot.docs.find((doc) => doc.id === username);
 
-    if (!existingProfile) {
-      try {
-        if (!profilesSnapshot.empty) {
-          profilesSnapshot.forEach((doc) => {
-            const profileData = doc.data();
-            if (profileData.id && typeof profileData.id === 'number') {
-              firestoreMaxId = Math.max(firestoreMaxId, profileData.id);
-            }
-          });
-          newId = Math.max(newId, firestoreMaxId + 1);
-        }
-      } catch (error) {
-        console.error('Error getting profiles from Firestore:', error);
-      }
+    // 회원가입/로그인 구분 처리
+    if (isSignupFlow && (userDoc || existingProfile)) {
+      // 회원가입 시도했는데 이미 사용자가 존재하는 경우
+      return NextResponse.redirect(new URL('/login?error=user_already_exists', process.env.NEXT_PUBLIC_BASE_URL || ''));
+    } else if (!isSignupFlow && !userDoc && !existingProfile) {
+      // 로그인 시도했는데 사용자가 존재하지 않는 경우 - 회원가입으로 리다이렉트하고 OAuth 연결 중단
+      return NextResponse.redirect(new URL('/signup?error=user_not_found', process.env.NEXT_PUBLIC_BASE_URL || ''));
     }
 
     let firestoreData;
     let cookieUserInfo;
+    let newId = 1;
 
-    if (existingProfile) {
+    if (existingProfile || userDoc) {
+      // 기존 사용자 정보 업데이트
       firestoreData = {
-        ...existingProfile,
+        ...(existingProfile || (userDoc ? userDoc.data() : {})),
         updatedAt: new Date().toISOString(),
       };
 
       cookieUserInfo = {
-        id: existingProfile.id,
-        username: existingProfile.username,
-        name: existingProfile.name,
-        thumbnail: existingProfile.thumbnail,
-        email: existingProfile.email,
+        id: existingProfile?.id || (userDoc ? userDoc.data().id : newId),
+        username: existingProfile?.username || username,
+        name: existingProfile?.name || userData.name || userData.login,
+        thumbnail: existingProfile?.thumbnail || userData.avatar_url,
+        email: existingProfile?.email || primaryEmail,
+        social: existingProfile?.social || {
+          github: username,
+          linkedin: username,
+        },
+      };
+    } else if (isSignupFlow) {
+      // 회원가입 플로우에서만 신규 사용자 정보 생성
+
+      // 신규 사용자 ID 계산
+      let firestoreMaxId = 0;
+      if (!profilesSnapshot.empty) {
+        profilesSnapshot.forEach((doc) => {
+          const profileData = doc.data();
+          if (profileData.id && typeof profileData.id === 'number') {
+            firestoreMaxId = Math.max(firestoreMaxId, profileData.id);
+          }
+        });
+        newId = Math.max(newId, firestoreMaxId + 1);
+      }
+
+      firestoreData = {
+        id: newId,
+        email: primaryEmail,
+        username: username,
+        name: userData.name || userData.login,
+        role: 'contributor',
+        social: {
+          github: username,
+          linkedin: username,
+        },
+        thumbnail: userData.avatar_url,
+        updatedAt: new Date().toISOString(),
+      };
+
+      cookieUserInfo = {
+        id: newId,
+        username: username,
+        name: userData.name || userData.login,
+        thumbnail: userData.avatar_url,
+        email: primaryEmail,
+        social: {
+          github: username,
+          linkedin: username,
+        },
       };
     } else {
-      firestoreData = {
-        id: newId,
-        email: primaryEmail,
-        username: username,
-        name: userData.name || userData.login,
-        role: 'contributor', // 기본 역할
-        social: {
-          github: username,
-          linkedin: username,
-        },
-        thumbnail: userData.avatar_url,
-        updatedAt: new Date().toISOString(),
-      };
-
-      cookieUserInfo = {
-        id: newId,
-        username: username,
-        name: userData.name || userData.login,
-        thumbnail: userData.avatar_url,
-        email: primaryEmail,
-        social: {
-          github: username,
-          linkedin: username,
-        },
-      };
+      // 로그인 플로우인데 여기까지 왔다면 오류 (이미 위에서 처리했지만 안전장치)
+      return NextResponse.redirect(new URL('/signup?error=user_not_found', process.env.NEXT_PUBLIC_BASE_URL || ''));
     }
 
-    // Firestore에 사용자 정보 저장 또는 업데이트 (이미 가져온 데이터 활용)
-    if (!userDoc) {
-      // 새 사용자 추가
-      await firestore.collection('profiles').doc(username).set(firestoreData);
-    } else {
-      if (existingProfile) {
-        await userDoc.ref.update(firestoreData);
+    // Firestore에 사용자 정보 저장 또는 업데이트
+    if (existingProfile || userDoc) {
+      // 기존 사용자 업데이트
+      if (!userDoc) {
+        await firestore.collection('profiles').doc(username).set(firestoreData);
       } else {
-        const existingData = userDoc.data();
-        await userDoc.ref.update({
-          ...firestoreData,
-          id: existingData.id || newId,
-        });
+        if (existingProfile) {
+          await userDoc.ref.update(firestoreData);
+        } else {
+          const existingData = userDoc.data();
+          await userDoc.ref.update({
+            ...firestoreData,
+            id: existingData.id || newId,
+          });
+        }
       }
+    } else if (isSignupFlow) {
+      // 회원가입 플로우에서만 새 사용자 추가
+      await firestore.collection('profiles').doc(username).set(firestoreData);
     }
 
     // 쿠키에 사용자 정보 저장 (7일 유효)
@@ -188,6 +210,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_BASE_URL || ''));
   } catch (error) {
     console.error('GitHub OAuth error:', error);
-    return NextResponse.redirect(new URL('/login?error=github_auth_failed', process.env.NEXT_PUBLIC_BASE_URL || ''));
+    const errorRoute = isSignupFlow ? '/signup' : '/login';
+    return NextResponse.redirect(new URL(`${ errorRoute }?error=github_auth_failed`, process.env.NEXT_PUBLIC_BASE_URL || ''));
   }
 }

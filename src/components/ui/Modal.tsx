@@ -55,8 +55,10 @@ interface ConfirmModalProps {
   onConfirm: ()=> void;
   title: string;
   message: string;
+  submessage?: string;
   confirmText?: string;
   cancelText?: string;
+  confirmButtonClass?: string;
 }
 
 export const ConfirmModal = ({
@@ -65,13 +67,16 @@ export const ConfirmModal = ({
   onConfirm,
   title,
   message,
+  submessage,
   confirmText = '확인',
   cancelText = '취소',
+  confirmButtonClass = 'px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4',
 }: ConfirmModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
-      <div className="mb-5 text-sub">
+      <div className="flex flex-col gap-0.5 mb-5 text-main">
         {message}
+        <p className="text-gray1">{submessage}</p>
       </div>
       <div className="flex justify-end space-x-2">
         <button
@@ -85,7 +90,7 @@ export const ConfirmModal = ({
             onConfirm();
             onClose();
           }}
-          className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4"
+          className={`${ confirmButtonClass }`}
         >
           {confirmText}
         </button>

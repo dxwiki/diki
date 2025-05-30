@@ -76,6 +76,8 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
   const [error, setError] = useState<string | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [nameError, setNameError] = useState(false);
 
   // 프로필 데이터 가져오기 및 사용자 인증 확인
   useEffect(() => {
@@ -146,6 +148,10 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
+    if (name === 'name' && value.trim() !== '') {
+      setNameError(false);
+    }
+
     if (name.includes('.')) {
       const parts = name.split('.');
       if (parts.length === 2) {
@@ -165,6 +171,13 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 이름 필드 유효성 검사
+    if (!formData.name.trim()) {
+      setNameError(true);
+      return;
+    }
+
     setIsConfirmModalOpen(true); // 모달 열기
   };
 
@@ -215,6 +228,36 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
     router.push(`/profiles/${ params.slug }`);
   };
 
+  const handleDeleteAccount = async () => {
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      if (!profile) throw new Error('프로필 정보를 찾을 수 없습니다.');
+
+      const response = await fetch('/api/delete-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: profile.username,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '회원탈퇴 중 오류가 발생했습니다.');
+      }
+
+      await response.json();
+      router.push('/good-bye');
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : '회원탈퇴 중 오류가 발생했습니다.');
+      setSubmitting(false);
+    }
+  };
+
   if (loading) {
     return <div className="flex justify-center items-center min-h-[70vh]">{'로딩 중...'}</div>;
   }
@@ -236,26 +279,30 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
 
   return (
     <>
-      <div className="w-full mb-2 md:mb-4">
-        <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-main">{'프로필 편집'}</h1>
+      <div className="w-full mt-10 mb-2 md:mb-4">
+        <h1 className="text-xl lg:text-2xl font-bold text-main">{'프로필 편집'}</h1>
+        <p className="text-gray2">{'실제 데이터는 매일 자정(00:00)에 업데이트됩니다. 자정 이전에 수정된 내용은 반영되지 않을 수 있습니다.'}</p>
       </div>
 
       <form onSubmit={handleSubmit} noValidate>
-        <div className="bg-background border border-gray4 rounded-xl">
-          <div className="flex flex-col gap-2 h-[60vh] overflow-y-auto overflow-x-hidden p-6 md:p-8">
+        <div className="bg-background sm:border sm:border-gray4 rounded-xl">
+          <div className="flex flex-col gap-4 sm:gap-6 sm:h-[60vh] sm:overflow-y-auto overflow-x-hidden mt-10 sm:mt-0 p-1.5 sm:p-6 md:p-8">
             <div>
-              <label className="block text-main font-medium mb-2">
-                {'이름 (한글)'}
+              <label className="block text-primary font-medium mb-2">
+                {'이름(한글)'}
               </label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200"
+                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200 ${ nameError ? 'border-level-5' : 'border-gray3' }`}
                 required
                 placeholder="이름을 입력해주세요"
               />
+              <p className={`text-sm p-1 ${ nameError ? 'text-level-5' : 'text-gray2' }`}>
+                {nameError ? '이름은 필수 입력값입니다.' : '포스트 작성 및 다른 포스트에 기여 시 표시되는 이름입니다.'}
+              </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -269,6 +316,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                   className="w-full px-4 py-3 border border-gray3 rounded-lg bg-gray4 text-gray2 cursor-not-allowed"
                   disabled
                 />
+                <p className="text-gray2 text-sm p-1">{'github 닉네임으로 설정되며, 수정하실 수 없습니다.'}</p>
               </div>
 
               <div>
@@ -282,13 +330,14 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                   className="w-full px-4 py-3 border border-gray3 rounded-lg bg-gray4 text-gray2 cursor-not-allowed"
                   disabled
                 />
+                <p className="text-gray2 text-sm p-1">{'github 이메일로 설정되며, 수정하실 수 없습니다.'}</p>
               </div>
             </div>
 
             <div className="col-span-1 md:col-span-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-main font-medium mb-2">
+                  <label className="block text-primary font-medium mb-2">
                     {'GitHub'}
                   </label>
                   <div className="relative">
@@ -304,10 +353,11 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                       placeholder="username"
                     />
                   </div>
+                  <p className="text-gray2 text-sm p-1">{'github 닉네임으로 초기값이 설정됩니다.'}</p>
                 </div>
 
                 <div>
-                  <label className="block text-main font-medium mb-2">
+                  <label className="block text-primary font-medium mb-2">
                     {'LinkedIn'}
                   </label>
                   <div className="relative">
@@ -323,26 +373,8 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                       placeholder="username"
                     />
                   </div>
+                  <p className="text-gray2 text-sm p-1">{'github 닉네임으로 초기값이 설정됩니다.'}</p>
                 </div>
-
-                {/* <div>
-                  <label className="block text-main font-medium mb-2">
-                    {'Twitter'}
-                  </label>
-                  <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray3">
-                      {'twitter.com/'}
-                    </span>
-                    <input
-                      type="text"
-                      name="social.twitter"
-                      value={formData.social.twitter}
-                      onChange={handleChange}
-                      className="w-full pl-[100px] pr-4 py-3 border border-gray3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200 placeholder:text-gray2"
-                      placeholder="username"
-                    />
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>
@@ -354,21 +386,30 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
           </div>
         )}
 
-        <div className="flex justify-end space-x-4 py-6">
+        <div className="flex justify-between space-x-2 sm:space-x-4 mt-10 sm:mt-0 py-6">
           <button
             type="button"
-            onClick={() => setIsCancelModalOpen(true)}
-            className="px-4 py-2 text-gray2 rounded-lg hover:text-main transition-all duration-200"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="px-4 py-2 text-level-5 hover:bg-red-700 dark:hover:bg-red-900 hover:text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {'취소'}
+            {submitting ? '제출 중...' : '회원 탈퇴'}
           </button>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="px-4 py-2 text-white bg-primary hover:bg-accent dark:bg-secondary dark:hover:bg-background-secondary rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {submitting ? '제출 중...' : '프로필 수정하기'}
-          </button>
+          <div className="flex gap-2 sm:gap-4">
+            <button
+              type="button"
+              onClick={() => setIsCancelModalOpen(true)}
+              className="px-4 py-2 text-gray2 rounded-lg hover:text-main transition-all duration-200"
+            >
+              {'취소'}
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="px-4 py-2 text-white bg-primary hover:bg-accent dark:bg-secondary dark:hover:bg-background-secondary rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {submitting ? '제출 중...' : '프로필 수정하기'}
+            </button>
+          </div>
         </div>
       </form>
 
@@ -392,6 +433,19 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
         message="정말 프로필 편집을 취소하시겠습니까?"
         confirmText="확인"
         cancelText="취소"
+      />
+
+      {/* 회원탈퇴 확인 모달 */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteAccount}
+        title="회원 탈퇴"
+        message="정말 탈퇴하시겠습니까?"
+        submessage="이 작업은 되돌릴 수 없으며, 작성하신 글은 비공개 처리됩니다."
+        confirmText="탈퇴하기"
+        cancelText="취소"
+        confirmButtonClass="px-4 py-2 text-level-5 hover:bg-red-700 dark:hover:bg-red-900 hover:text-white rounded-lg"
       />
 
       <div className="sm:hidden mt-8">

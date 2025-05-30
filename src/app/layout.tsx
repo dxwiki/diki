@@ -1,4 +1,3 @@
-import Script from 'next/script';
 import type { Metadata } from 'next';
 import './globals.css';
 import './assets/font/font.css';
@@ -10,6 +9,10 @@ import Header from '@/components/common/Header';
 import SiteVerification from '@/components/meta/SiteVerification';
 import GoogleAdSense from '@/components/meta/GoogleAdSense';
 import GoogleAnalytics from '@/components/meta/GoogleAnalytics';
+import KakaoSDK from '@/components/meta/KakaoSDK';
+import AmpAdScript from '@/components/meta/AmpAdScript';
+import JsonLdScripts from '@/components/meta/JsonLdScripts';
+import MicrosoftClarity from '@/components/meta/MicrosoftClarity';
 import ReduxProvider from '@/components/redux/ReduxProvider';
 import DataInitializer from '@/components/redux/DataInitializer';
 import Footer from '@/components/common/Footer';
@@ -60,47 +63,10 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
         <SiteVerification />
         <GoogleAdSense />
         <GoogleAnalytics />
-        <link rel="canonical" href={dikiMetadata.url} />
-        <Script
-          src="https://t1.kakaocdn.net/kakao_js_sdk/2.6.0/kakao.min.js"
-          strategy="afterInteractive"
-        />
-        <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              'name': dikiMetadata.title,
-              'url': dikiMetadata.url,
-              'description': dikiMetadata.description,
-              'potentialAction': {
-                '@type': 'SearchAction',
-                'target': {
-                  '@type': 'EntryPoint',
-                  'urlTemplate': `${ dikiMetadata.url }/posts?q={search_term_string}`,
-                },
-                'query-input': 'required name=search_term_string',
-              },
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Organization',
-              'name': dikiMetadata.title,
-              'url': dikiMetadata.url,
-              'logo': `${ dikiMetadata.url }/logo.png`,
-              'sameAs': [
-                'https://github.com/dxwiki/diki',
-              ],
-            }),
-          }}
-        />
+        <KakaoSDK />
+        <AmpAdScript />
+        <JsonLdScripts />
+        <MicrosoftClarity />
       </head>
       <body
         className={`${ fontCoding.variable } ${ fontTinos.variable } overflow-x-hidden overflow-y-auto`}

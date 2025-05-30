@@ -5,6 +5,8 @@ import ProfilePostCard from '@/components/profiles/ProfilePostCard';
 import { TermData, Profile } from '@/types';
 import Link from 'next/link';
 import ContactButtonWrapper from './ContactButtonWrapper';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface ProfileClientProps {
   initialTerms: TermData[];
@@ -33,6 +35,8 @@ const ProfileClient = ({
   const termsPerPage = 24;
   const [isCurrentUser, setIsCurrentUser] = useState(isOwnProfile);
 
+  const { user } = useSelector((state: RootState) => state.auth);
+
   useEffect(() => {
     // 초기 로딩 시 첫 페이지 표시
     setVisibleTerms(terms.slice(0, termsPerPage));
@@ -47,22 +51,11 @@ const ProfileClient = ({
       return;
     }
 
-    // 서버에서 전달받은 값이 없으면 클라이언트에서 쿠키 확인
-    const userInfoCookie = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('user-info='));
-
-    if (userInfoCookie) {
-      try {
-        const userInfo = JSON.parse(decodeURIComponent(userInfoCookie.split('=')[1]));
-        if (userInfo.username === username) {
-          setIsCurrentUser(true);
-        }
-      } catch (error) {
-        console.error('쿠키 파싱 오류:', error);
-      }
+    // Redux 상태에서 사용자 정보 확인
+    if (user && user.username === username) {
+      setIsCurrentUser(true);
     }
-  }, [username, isOwnProfile]);
+  }, [username, isOwnProfile, user]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -121,7 +114,7 @@ const ProfileClient = ({
           <div className='flex items-center gap-3'>
             {isCurrentUser && (
               <Link
-                href={`/profiles/edit/${ username }`}
+                href={`/profiles/${ username }/edit`}
                 className="text-sm px-3 py-1.5 rounded-md bg-primary dark:bg-secondary text-white hover:bg-accent dark:hover:bg-background-secondary"
               >
                 {'프로필 편집'}

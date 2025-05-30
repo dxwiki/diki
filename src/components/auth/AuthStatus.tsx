@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -9,58 +9,25 @@ import {
   DropdownList,
   DropdownItem,
 } from '@/components/ui/Dropdown';
-
-interface UserInfo {
-  id: number;
-  username: string;
-  name: string;
-  thumbnail: string;
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { checkAuth, logout } from '@/store/authSlice';
 
 export default function AuthStatus() {
-  const [user, setUser] = useState<UserInfo | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const updateUserInfo = () => {
-    const userInfoCookie = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('user-info='));
-
-    if (userInfoCookie) {
-      try {
-        const userInfo = JSON.parse(decodeURIComponent(userInfoCookie.split('=')[1]));
-        setUser(userInfo);
-      } catch (error) {
-        console.error('Failed to parse user info:', error);
-      }
-    }
-    setLoading(false);
-  };
+  const dispatch = useDispatch();
+  const { user, loading, isLoggedIn } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    updateUserInfo();
-
-    // 쿠키 변경 감지
-    const handleStorageChange = () => {
-      updateUserInfo();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    document.addEventListener('visibilitychange', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      document.removeEventListener('visibilitychange', handleStorageChange);
-    };
-  }, []);
+    // 컴포넌트가 마운트될 때 인증 상태 확인
+    dispatch(checkAuth());
+  }, [dispatch]);
 
   const handleLogout = async () => {
     try {
       const response = await fetch('/api/auth/logout', { method: 'POST' });
       if (response.ok) {
-        // 쿠키 삭제 후 페이지 새로고침
-        document.cookie = 'user-info=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-        document.cookie = 'user-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        // Redux 상태 업데이트
+        dispatch(logout());
         window.location.reload();
       }
     } catch (error) {
@@ -72,13 +39,8 @@ export default function AuthStatus() {
     return <div className="w-[80px] h-[36px]" />; // 로딩 중에는 같은 크기의 빈 공간 유지
   }
 
-  if (!user) {
-    return (
-      <div />
-      // <Link href="/login" className="rounded-md text-sm text-gray1 hover:text-main">
-      //   {'기여하기'}
-      // </Link>
-    );
+  if (!isLoggedIn || !user) {
+    return null;
   }
 
   return (
@@ -94,13 +56,13 @@ export default function AuthStatus() {
         <DropdownList>
           <DropdownItem>
             <Link href={`/profiles/${ user.username }`} className="p-2 block w-full">
-              {'내 프로필'}
+              {'내가 쓴 글'}
             </Link>
           </DropdownItem>
 
           <DropdownItem>
-            <Link href="/create" className="p-2 block w-full">
-              {'포스트 작성하기'}
+            <Link href={`/profiles/${ user.username }/edit`} className="p-2 block w-full">
+              {'프로필 편집'}
             </Link>
           </DropdownItem>
 
