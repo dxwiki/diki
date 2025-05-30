@@ -1,8 +1,7 @@
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import BaseDatePicker from '@/components/ui/BaseDatePicker';
 
 interface ModifiedDateFilterProps {
   activeModal: string | null | undefined;
@@ -94,7 +93,7 @@ const ModifiedDateFilter = ({
       {activeModal === 'modifiedDate' && (
         <div className="filter-modal absolute top-full right-0 mt-2 w-64 border border-primary bg-background shadow-lg dark:shadow-gray5 rounded-lg p-3.5 z-10">
           <div className="flex justify-center">
-            <DatePicker
+            <BaseDatePicker
               selected={startDate}
               onChange={handleDatePickerChange}
               startDate={startDate}

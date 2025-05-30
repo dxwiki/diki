@@ -5,7 +5,6 @@ import Footer from '@/components/common/Footer';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { dikiMetadata } from '@/constants';
 import { Metadata } from 'next';
-import '@/app/style/datepicker.css';
 
 export function generateMetadata(): Metadata {
   return {

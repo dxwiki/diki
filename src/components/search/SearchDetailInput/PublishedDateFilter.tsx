@@ -1,8 +1,7 @@
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import BaseDatePicker from '@/components/ui/BaseDatePicker';
 
 interface PublishedDateFilterProps {
   activeModal: string | null | undefined;
@@ -98,7 +97,7 @@ const PublishedDateFilter = ({
           {/* <div className="text-sm font-medium mb-2.5">{publishedDateRange[0]?.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
           <div className="text-sm font-medium mb-2.5">{publishedDateRange[1]?.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</div> */}
           <div className="flex justify-center">
-            <DatePicker
+            <BaseDatePicker
               selected={startDate}
               onChange={handleDatePickerChange}
               startDate={startDate}
