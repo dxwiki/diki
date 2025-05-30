@@ -27,7 +27,7 @@
     // "no-unused-vars": "warn",
     "tailwindcss/no-custom-classname": "off",
     "tailwindcss/classnames-order": "off",
-    "@typescript-eslint/no-unnecessary-condition": "warn",
+    // "@typescript-eslint/no-unnecessary-condition": "warn",
     "@stylistic/semi": "warn",
     "@stylistic/quotes": ["warn", "single"],
     "@stylistic/indent": ["warn", 2],

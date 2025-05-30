@@ -552,7 +552,6 @@ export default function CreatePage() {
             renderEnglishTitleForm={renderEnglishTitleForm}
             renderShortDescriptionForm={renderShortDescriptionForm}
             validateSection={validateSection}
-            getSectionValidationErrors={getSectionValidationErrors}
             formSubmitted={formSubmitted}
           />
         </div>

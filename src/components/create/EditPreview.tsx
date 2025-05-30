@@ -326,7 +326,6 @@ const PostPreview = ({
               {editingSections?.shortDesc && (
                 <div className="border border-gray4 rounded-lg bg-gray5 mt-2 mb-4 shadow-sm animate-slideDown">
                   <div className="flex justify-between items-center p-2 border-b border-gray4">
-                    <h3 className="text-base font-semibold text-main">{'짧은 설명'}</h3>
                     <button
                       type="button"
                       onClick={() => handleCloseSection('shortDesc')}
@@ -419,7 +418,9 @@ const PostPreview = ({
                       </div>
                     )}
                   </div>
-                  {editingSections?.tags && <div className="md:hidden">{renderInlineEditForm('tags')}</div>}
+                  <div className="md:hidden">
+                    {renderInlineEditForm('tags')}
+                  </div>
                 </div>
               </div>
 
