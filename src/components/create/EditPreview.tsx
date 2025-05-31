@@ -163,6 +163,29 @@ const PostPreview = ({
     }
   }, [onSectionClick]);
 
+  // ESC 키 이벤트 핸들러 추가
+  useEffect(() => {
+    if (!editingSections) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        const openSection = Object.keys(editingSections).find(
+          (section) => editingSections[section as keyof EditingSectionState]
+        );
+        
+        if (openSection && onSectionClick) {
+          onSectionClick(openSection);
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [editingSections, onSectionClick]);
+
   // 섹션별 에러 메시지 렌더링
   const renderSectionErrors = useCallback((section: string): React.ReactNode => {
     const errors = sectionErrors[section];
