@@ -18,12 +18,13 @@ interface Props {
   onTagSectionClick?: (e: React.MouseEvent)=> void;
   tagsClassName?: string;
   isEditMode?: boolean;
+  isPreview?: boolean;
 }
 
 const HEADER_HEIGHT = 64;
 const Threshold = 10;
 
-const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName, isEditMode = false }: Props) => {
+const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName, isEditMode = false, isPreview = false }: Props) => {
   const [activeSection, setActiveSection] = useState<string>('');
   const [sections, setSections] = useState<Section[]>([]);
 
@@ -152,7 +153,11 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName, isEdit
               <Link
                 key={index}
                 href={transformToSlug(tag.internal_link)}
-                className='font-normal text-sm text-main cursor-pointer transition-colors underline underline-offset-4 decoration-light hover:text-accent hover:decoration-accent'
+                className={`font-normal text-sm text-main transition-colors underline underline-offset-4 decoration-light ${
+                  isPreview
+                    ? 'cursor-pointer hover:text-accent hover:decoration-accent'
+                    : 'cursor-not-allowed pointer-events-none text-gray2'
+                }`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}

@@ -280,14 +280,26 @@ const PostPreview = ({
 
   return (
     <div className="prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg p-2 sm:p-4 border border-gray4" ref={postPreviewRef}>
-      <TableOfContents
-        title={term.title?.ko === '' ? '한글 제목' : term.title?.ko ?? ''}
-        term={term}
-        slug=""
-        onTagSectionClick={(e) => handleSectionClick('tags', e)}
-        tagsClassName={getSectionClassName('tags', 'rounded-lg')}
-        isEditMode={true}
-      />
+      <div className="relative">
+        <TableOfContents
+          title={term.title?.ko === '' ? '한글 제목' : term.title?.ko ?? ''}
+          term={term}
+          slug=""
+          onTagSectionClick={(e) => handleSectionClick('tags', e)}
+          tagsClassName={getSectionClassName('tags', 'rounded-lg')}
+          isEditMode={true}
+          isPreview={isPreview}
+        />
+
+        {/* 데스크톱 태그 편집 (사이드바) */}
+        {editingSections?.tags && (
+          <div className="hidden md:block absolute top-[336px] left-[196px] min-w-[54vw] z-20 shadow-lg">
+            <div className="outline outline-1 outline-primary rounded-lg bg-background p-2">
+              {renderInlineEditForm('tags')}
+            </div>
+          </div>
+        )}
+      </div>
       <div className='text-justify relative' ref={contentRef}>
         <div className='sm:ml-5'>
           {/* 한글/영문 제목 섹션 */}
@@ -523,17 +535,7 @@ const PostPreview = ({
             </div>
           </div>
         </div>
-
       </div>
-
-      {/* 데스크톱 태그 편집 (사이드바) */}
-      {editingSections?.tags && (
-        <div className="hidden md:block absolute left-[205px] top-[345px] w-3/5">
-          <div className="outline outline-1 outline-primary rounded-lg bg-background">
-            {renderInlineEditForm('tags')}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
