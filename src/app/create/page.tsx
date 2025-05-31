@@ -41,6 +41,7 @@ export default function CreatePage() {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
 
   // 각 섹션의 편집 상태를 관리하는 상태
   const [editingSections, setEditingSections] = useState<EditingSectionState>({
@@ -223,6 +224,58 @@ export default function CreatePage() {
     });
   };
 
+  // 미리보기 모드 토글 함수
+  const togglePreviewMode = () => {
+    setIsPreview(!isPreview);
+    // 미리보기 모드에서는 모든 섹션 편집 닫기
+    if (!isPreview) {
+      setEditingSections((prev) => {
+        const newState = { ...prev };
+        Object.keys(newState).forEach((key) => {
+          newState[key as keyof EditingSectionState] = false;
+        });
+        return newState;
+      });
+    }
+  };
+
+  // 폼 필드 유효성 검사 조건을 하나의 객체로 정의
+  const validationRules = {
+    koTitle: (data: TermData) => !data.title?.ko || data.title.ko.trim() === '',
+    enTitle: (data: TermData) => !data.title?.en || data.title.en.trim() === '',
+    shortDesc: (data: TermData) => !data.description?.short || data.description.short.trim() === '',
+    difficulty: (data: TermData) => !data.difficulty?.description || data.difficulty.description.trim() === '',
+    description: (data: TermData) => !data.description?.full || data.description.full.trim() === '',
+    relevance: (data: TermData) => (
+      !data.relevance?.analyst?.description
+      || !data.relevance?.scientist?.description
+      || !data.relevance?.engineer?.description
+    ),
+    usecase: (data: TermData) => !data.usecase?.description || !data.usecase?.example,
+    // 태그와 용어, 참고자료는 필수가 아님
+    tags: () => false,
+    terms: () => false,
+    references: () => false,
+  };
+
+  // 에러 메시지 맵
+  const errorMessages = {
+    koTitle: '한글 제목을 입력해주세요.',
+    enTitle: '영문 제목을 입력해주세요.',
+    shortDesc: '짧은 설명을 입력해주세요.',
+    difficulty: '난이도 설명을 입력해주세요.',
+    description: '전체 설명을 입력해주세요.',
+    relevance: [
+      '데이터 분석가 직무 연관성 설명을 입력해주세요.',
+      '데이터 과학자 직무 연관성 설명을 입력해주세요.',
+      '데이터 엔지니어 직무 연관성 설명을 입력해주세요.',
+    ],
+    usecase: [
+      '사용 사례 개요를 입력해주세요.',
+      '구체적인 사용 사례를 입력해주세요.',
+    ],
+  };
+
   // 섹션 유효성 검사 함수
   const validateSection = (section: string): boolean => {
     const errors = getSectionValidationErrors(section);
@@ -234,62 +287,16 @@ export default function CreatePage() {
   const getSectionValidationErrors = (section: string): string[] => {
     const errors: string[] = [];
 
-    switch (section) {
-      case 'koTitle':
-        if (!formData.title?.ko || formData.title.ko.trim() === '') {
-          errors.push('한글 제목을 입력해주세요.');
-        }
-        break;
-      case 'enTitle':
-        if (!formData.title?.en || formData.title.en.trim() === '') {
-          errors.push('영문 제목을 입력해주세요.');
-        }
-        break;
-      case 'shortDesc':
-        if (!formData.description?.short || formData.description.short.trim() === '') {
-          errors.push('짧은 설명을 입력해주세요.');
-        }
-        break;
-      case 'difficulty':
-        if (!formData.difficulty?.description || formData.difficulty.description.trim() === '') {
-          errors.push('난이도 설명을 입력해주세요.');
-        }
-        break;
-      case 'description':
-        if (!formData.description?.full || formData.description.full.trim() === '') {
-          errors.push('전체 설명을 입력해주세요.');
-        }
-        break;
-      case 'relevance':
-        if (!formData.relevance?.analyst?.description || formData.relevance.analyst.description.trim() === '') {
-          errors.push('데이터 분석가 직무 연관성 설명을 입력해주세요.');
-        }
-        if (!formData.relevance?.scientist?.description || formData.relevance.scientist.description.trim() === '') {
-          errors.push('데이터 과학자 직무 연관성 설명을 입력해주세요.');
-        }
-        if (!formData.relevance?.engineer?.description || formData.relevance.engineer.description.trim() === '') {
-          errors.push('데이터 엔지니어 직무 연관성 설명을 입력해주세요.');
-        }
-        break;
-      case 'usecase':
-        if (!formData.usecase?.description || formData.usecase.description.trim() === '') {
-          errors.push('사용 사례 개요를 입력해주세요.');
-        }
-        if (!formData.usecase?.example || formData.usecase.example.trim() === '') {
-          errors.push('구체적인 사용 사례를 입력해주세요.');
-        }
-        break;
-      case 'tags':
-        // 태그는 필수가 아님
-        break;
-      case 'terms':
-        // 용어는 필수가 아님
-        break;
-      case 'references':
-        // 참고자료는 필수가 아님
-        break;
-      default:
-        break;
+    // 유효성 검사 규칙이 있고 해당 섹션이 유효하지 않은 경우
+    if (section in validationRules && validationRules[section as keyof typeof validationRules](formData)) {
+      const errorMessage = errorMessages[section as keyof typeof errorMessages];
+
+      // 에러 메시지가 배열인 경우 (relevance, usecase)
+      if (Array.isArray(errorMessage)) {
+        errors.push(...errorMessage);
+      } else if (errorMessage) {
+        errors.push(errorMessage);
+      }
     }
 
     return errors;
@@ -299,50 +306,15 @@ export default function CreatePage() {
   const validateForm = (): boolean => {
     const errors: string[] = [];
 
-    // 기본 정보 검증
-    if (!formData.title?.ko || formData.title.ko.trim() === '') {
-      errors.push('한글 제목을 입력해주세요.');
-    }
+    // 모든 필수 섹션에 대해 유효성 검사 수행
+    Object.keys(validationRules).forEach((section) => {
+      if (section === 'tags' || section === 'terms' || section === 'references') return; // 필수 아님
 
-    if (!formData.title?.en || formData.title.en.trim() === '') {
-      errors.push('영문 제목을 입력해주세요.');
-    }
-
-    if (!formData.description?.short || formData.description.short.trim() === '') {
-      errors.push('짧은 설명을 입력해주세요.');
-    }
-
-    // 난이도 설명 검증
-    if (!formData.difficulty?.description || formData.difficulty.description.trim() === '') {
-      errors.push('난이도 설명을 입력해주세요.');
-    }
-
-    // 전체 설명 검증
-    if (!formData.description?.full || formData.description.full.trim() === '') {
-      errors.push('전체 설명을 입력해주세요.');
-    }
-
-    // 직무 연관도 설명 검증
-    if (!formData.relevance?.analyst?.description || formData.relevance.analyst.description.trim() === '') {
-      errors.push('데이터 분석가 직무 연관성 설명을 입력해주세요.');
-    }
-
-    if (!formData.relevance?.scientist?.description || formData.relevance.scientist.description.trim() === '') {
-      errors.push('데이터 과학자 직무 연관성 설명을 입력해주세요.');
-    }
-
-    if (!formData.relevance?.engineer?.description || formData.relevance.engineer.description.trim() === '') {
-      errors.push('데이터 엔지니어 직무 연관성 설명을 입력해주세요.');
-    }
-
-    // 사용 사례 검증
-    if (!formData.usecase?.description || formData.usecase.description.trim() === '') {
-      errors.push('사용 사례 개요를 입력해주세요.');
-    }
-
-    if (!formData.usecase?.example || formData.usecase.example.trim() === '') {
-      errors.push('구체적인 사용 사례를 입력해주세요.');
-    }
+      const sectionErrors = getSectionValidationErrors(section);
+      if (sectionErrors.length > 0) {
+        errors.push(...sectionErrors);
+      }
+    });
 
     setValidationErrors(errors);
     return errors.length === 0;
@@ -362,28 +334,14 @@ export default function CreatePage() {
       // 필수 항목 중 누락된 항목에 해당하는 섹션 자동으로 열기
       const newEditingSections = { ...editingSections };
 
-      // 기본 정보 검증
-      if (!formData.title?.ko || formData.title.ko.trim() === '') {
-        newEditingSections.koTitle = true;
-      } else if (!formData.title.en || formData.title.en.trim() === '') {
-        newEditingSections.enTitle = true;
-      } else if (!formData.description?.short || formData.description.short.trim() === '') {
-        newEditingSections.shortDesc = true;
-      } else if (!formData.difficulty?.description || formData.difficulty.description.trim() === '') {
-        newEditingSections.difficulty = true;
-      } else if (!formData.description.full || formData.description.full.trim() === '') {
-        newEditingSections.description = true;
-      } else if (
-        !formData.relevance?.analyst?.description
-        || !formData.relevance.scientist?.description
-        || !formData.relevance.engineer?.description
-      ) {
-        newEditingSections.relevance = true;
-      } else if (
-        !formData.usecase?.description
-        || !formData.usecase.example
-      ) {
-        newEditingSections.usecase = true;
+      // 첫 번째 에러가 있는 섹션 찾기
+      for (const section of Object.keys(validationRules)) {
+        if (section === 'tags' || section === 'terms' || section === 'references') continue; // 필수 아님
+
+        if (validationRules[section as keyof typeof validationRules](formData)) {
+          newEditingSections[section as keyof EditingSectionState] = true;
+          break; // 첫 번째 에러가 있는 섹션만 열기
+        }
       }
 
       setEditingSections(newEditingSections);
@@ -512,23 +470,6 @@ export default function CreatePage() {
     <div className="container mx-auto">
       <div className="w-full flex justify-between items-center mb-4">
         <div className="flex items-center text-lg md:text-xl lg:text-2xl font-bold">{'새 포스트 작성'}</div>
-        <div className="flex justify-end space-x-2 sm:space-x-4">
-          <button
-            type="button"
-            onClick={() => setIsCancelModalOpen(true)}
-            className="px-4 py-2 text-gray2 rounded-md hover:text-main"
-          >
-            {'작성취소'}
-          </button>
-          <button
-            type="submit"
-            form="createForm"
-            disabled={submitting}
-            className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4 disabled:opacity-50"
-          >
-            {submitting ? '제출 중...' : '등록하기'}
-          </button>
-        </div>
       </div>
 
       <form id="createForm" onSubmit={handleSubmit} noValidate>
@@ -536,7 +477,7 @@ export default function CreatePage() {
           {/* EditPreview 컴포넌트가 섹션 클릭 이벤트를 받을 수 있도록 toggleSection 함수 전달 */}
           <EditPreview
             term={formData}
-            onSectionClick={toggleSection}
+            onSectionClick={isPreview ? undefined : toggleSection}
             editingSections={editingSections}
             formComponents={{
               basicInfo: <BasicInfoEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
@@ -553,6 +494,7 @@ export default function CreatePage() {
             renderShortDescriptionForm={renderShortDescriptionForm}
             validateSection={validateSection}
             formSubmitted={formSubmitted}
+            isPreview={isPreview}
           />
         </div>
 
@@ -562,6 +504,35 @@ export default function CreatePage() {
           </div>
         )}
       </form>
+
+      <div className="flex justify-between space-x-2 sm:space-x-4 space-y-2 sm:space-y-4">
+        <button
+          type="button"
+          onClick={() => setIsCancelModalOpen(true)}
+          className="px-4 py-2 text-level-5 hover:bg-red-700 dark:hover:bg-red-900 hover:text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {'작성 취소'}
+        </button>
+        <div className="flex space-x-2">
+          <button
+            type="button"
+            onClick={togglePreviewMode}
+            className={`px-4 py-2 rounded-md ${ isPreview
+              ? 'text-primary hover:text-accent'
+              : 'text-gray2 hover:text-main' }`}
+          >
+            {isPreview ? '편집하기' : '미리보기'}
+          </button>
+          <button
+            type="submit"
+            form="createForm"
+            disabled={submitting}
+            className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4 disabled:opacity-50"
+          >
+            {submitting ? '제출 중...' : '등록하기'}
+          </button>
+        </div>
+      </div>
 
       {/* 확인 모달 */}
       <ConfirmModal

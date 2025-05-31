@@ -49,6 +49,7 @@ interface PostPreviewProps {
   renderShortDescriptionForm?: ()=> React.ReactNode;
   validateSection?: (section: string)=> boolean;
   formSubmitted?: boolean;
+  isPreview?: boolean;
 }
 
 const PostPreview = ({
@@ -61,6 +62,7 @@ const PostPreview = ({
   renderShortDescriptionForm,
   validateSection,
   formSubmitted = false,
+  isPreview = false,
 }: PostPreviewProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const postPreviewRef = useRef<HTMLDivElement>(null);
@@ -141,45 +143,93 @@ const PostPreview = ({
   const getSectionClassName = (section: string, baseClass: string = '') => {
     const isEditing = editingSections && editingSections[section as keyof EditingSectionState];
 
-    // 섹션별 필수 필드 검증 함수
-    const isInvalid = (): boolean => {
-      if (!validateSection) return false;
+    // 미리보기 모드이면 모든 스타일 적용 안함
+    if (isPreview) {
+      return baseClass;
+    }
 
+    // 섹션의 상태 확인 (비어있음, 에러, 콘텐츠 있음)
+    const getSectionStatus = (): 'empty' | 'error' | 'filled' => {
+      // 폼 제출 시에만 에러 확인
+      if (formSubmitted && validateSection) {
+        switch (section) {
+          case 'koTitle':
+            if (!term.title?.ko || term.title.ko.trim() === '') return 'error';
+            break;
+          case 'enTitle':
+            if (!term.title?.en || term.title.en.trim() === '') return 'error';
+            break;
+          case 'shortDesc':
+            if (!term.description?.short || term.description.short.trim() === '') return 'error';
+            break;
+          case 'difficulty':
+            if (!term.difficulty?.description || term.difficulty.description.trim() === '') return 'error';
+            break;
+          case 'description':
+            if (!term.description?.full || term.description.full.trim() === '') return 'error';
+            break;
+          case 'relevance':
+            if (!term.relevance?.analyst?.description
+                || !term.relevance?.scientist?.description
+                || !term.relevance?.engineer?.description) return 'error';
+            break;
+          case 'usecase':
+            if (!term.usecase?.description || !term.usecase?.example) return 'error';
+            break;
+        }
+      }
+
+      // 섹션에 내용이 있는지 확인
       switch (section) {
         case 'koTitle':
-          return !term.title?.ko || term.title.ko.trim() === '';
+          return term.title?.ko && term.title.ko.trim() !== '' ? 'filled' : 'empty';
         case 'enTitle':
-          return !term.title?.en || term.title.en.trim() === '';
+          return term.title?.en && term.title.en.trim() !== '' ? 'filled' : 'empty';
         case 'shortDesc':
-          return !term.description?.short || term.description.short.trim() === '';
+          return term.description?.short && term.description.short.trim() !== '' ? 'filled' : 'empty';
         case 'difficulty':
-          return !term.difficulty?.description || term.difficulty.description.trim() === '';
+          return term.difficulty?.description && term.difficulty.description.trim() !== '' ? 'filled' : 'empty';
         case 'description':
-          return !term.description?.full || term.description.full.trim() === '';
+          return term.description?.full && term.description.full.trim() !== '' ? 'filled' : 'empty';
+        case 'tags':
+          return Array.isArray(term.tags) && term.tags.length > 0 ? 'filled' : 'empty';
+        case 'terms':
+          return Array.isArray(term.terms) && term.terms.length > 0 ? 'filled' : 'empty';
         case 'relevance':
-          return !term.relevance?.analyst?.description
-            || !term.relevance.scientist?.description
-            || !term.relevance.engineer?.description;
+          return term.relevance?.analyst?.description
+                && term.relevance.scientist?.description
+                && term.relevance.engineer?.description ? 'filled' : 'empty';
         case 'usecase':
-          return !term.usecase?.description || !term.usecase.example;
+          return term.usecase?.description && term.usecase?.example ? 'filled' : 'empty';
+        case 'references':
+          return (Array.isArray(term.references?.tutorials) && term.references.tutorials.length > 0)
+                || (Array.isArray(term.references?.books) && term.references.books.length > 0)
+                || (Array.isArray(term.references?.academic) && term.references.academic.length > 0)
+                || (Array.isArray(term.references?.opensource) && term.references.opensource.length > 0) ? 'filled' : 'empty';
         default:
-          return false;
+          return 'empty';
       }
     };
 
-    // 필수 필드가 비어있으면 빨간색 테두리 적용 (폼 제출 시에만)
-    const hasError = formSubmitted && isInvalid();
+    const status = getSectionStatus();
 
+    // 편집 중인 경우
     if (isEditing) {
       // 한글/영문 제목은 모달 스타일 유지
       if (section === 'koTitle' || section === 'enTitle') {
-        return `${ baseClass } outline outline-2 outline-primary rounded-lg`;
+        return `${ baseClass } outline outline-1 outline-primary rounded-lg`;
       }
-      return `${ baseClass } outline outline-2 outline-primary`;
-    } else if (hasError) {
-      return `${ baseClass } outline outline-2 outline-dashed outline-level-5`;
-    } else {
-      return `${ baseClass } hover:outline hover:outline-2 hover:outline-dashed hover:outline-primary`;
+      return `${ baseClass } outline outline-1 outline-primary`;
+    }
+
+    // 상태에 따른 스타일 적용
+    switch (status) {
+      case 'error':
+        return `${ baseClass } outline outline-1 outline-dashed outline-level-5`;
+      case 'empty':
+        return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary`;
+      case 'filled':
+        return `${ baseClass } hover:outline hover:outline-1 hover:outline-dashed hover:outline-primary`;
     }
   };
 
@@ -229,7 +279,7 @@ const PostPreview = ({
   };
 
   return (
-    <div className="prose h-[68vh] sm:h-[calc(100vh-230px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg p-2 sm:p-4 border border-gray4" ref={postPreviewRef}>
+    <div className="prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg p-2 sm:p-4 border border-gray4" ref={postPreviewRef}>
       <TableOfContents
         title={term.title?.ko === '' ? '한글 제목' : term.title?.ko ?? ''}
         term={term}
@@ -244,7 +294,7 @@ const PostPreview = ({
           <div
             className="flex group cursor-pointer"
           >
-            <span className="flex flex-wrap items-center gap-2 text-3xl font-bold mb-0 transition-colors">
+            <span className={`flex flex-wrap items-center text-3xl font-bold mb-0 transition-colors ${ isPreview ? '' : ' gap-2' }`}>
               <span
                 id="koTitle-section"
                 onClick={(e: React.MouseEvent) => handleSectionClick('koTitle', e)}
@@ -267,14 +317,14 @@ const PostPreview = ({
 
           {/* 한글 제목 편집 폼 */}
           {editingSections?.koTitle && (
-            <div className="relative outline outline-2 outline-primary rounded-lg">
+            <div className="relative outline outline-1 outline-primary rounded-lg">
               {renderInlineEditForm('koTitle')}
             </div>
           )}
 
           {/* 영문 제목 편집 폼 */}
           {editingSections?.enTitle && (
-            <div className="relative outline outline-2 outline-primary rounded-lg">
+            <div className="relative outline outline-1 outline-primary rounded-lg">
               {renderInlineEditForm('enTitle')}
             </div>
           )}
@@ -300,24 +350,24 @@ const PostPreview = ({
             </div>
           </div>
 
-          {/* 짧은 설명 */}
-          <div className="relative">
-            <div
-              className={getSectionClassName('shortDesc', 'flex flex-col gap-2 group p-1 rounded cursor-pointer')}
-              id="shortDesc-section"
-            >
-              <div className='flex items-center gap-2' onClick={(e: React.MouseEvent) => handleSectionClick('shortDesc', e)}>
-                <Level level={0} />
-                <div className='my-0.5 text-main'>
-                  {term.description?.short || '짧은 설명 없음'}
+          <div className={`flex flex-col ${ isPreview ? '' : 'gap-2' }`}>
+            {/* 짧은 설명 */}
+            <div className="relative">
+              <div
+                className={getSectionClassName('shortDesc', 'flex flex-col gap-2 group p-1 rounded cursor-pointer')}
+                id="shortDesc-section"
+              >
+                <div className='flex items-center gap-2' onClick={(e: React.MouseEvent) => handleSectionClick('shortDesc', e)}>
+                  <Level level={0} />
+                  <div className='my-0.5 text-main'>
+                    {term.description?.short || '짧은 설명 없음'}
+                  </div>
                 </div>
+                {editingSections?.shortDesc && renderInlineEditForm('shortDesc')}
               </div>
-              {editingSections?.shortDesc && renderInlineEditForm('shortDesc')}
             </div>
-          </div>
 
-          {/* 난이도 */}
-          <div className="relative">
+            {/* 난이도 */}
             <div
               className={getSectionClassName('difficulty', 'flex flex-col gap-2 group p-1 rounded cursor-pointer')}
               id="difficulty-section"
@@ -328,9 +378,11 @@ const PostPreview = ({
                   {term.difficulty?.description || '난이도 설명 없음'}
                 </div>
               </div>
-
               {editingSections?.difficulty && renderInlineEditForm('difficulty')}
             </div>
+          </div>
+
+          <div className="relative">
             <div className="mt-6 flex flex-col gap-16">
               {/* 개념 설명 섹션 */}
               <div id="description-section" className="relative">
@@ -477,7 +529,7 @@ const PostPreview = ({
       {/* 데스크톱 태그 편집 (사이드바) */}
       {editingSections?.tags && (
         <div className="hidden md:block absolute left-[12px] top-[420px] w-3/5">
-          <div className="outline outline-2 outline-primary rounded-lg bg-background">
+          <div className="outline outline-1 outline-primary rounded-lg bg-background">
             {renderInlineEditForm('tags')}
           </div>
         </div>
