@@ -9,7 +9,7 @@ import ReferencesSection from '../posts/sections/ReferencesSection';
 import { X } from 'lucide-react';
 import Level from '@/components/ui/Level';
 import { formatDate } from '@/utils/filters';
-import React, { useEffect, useRef, ReactElement, useState } from 'react';
+import React, { useEffect, useRef, ReactElement, useState, useCallback } from 'react';
 import TableOfContents from '@/components/common/TableOfContents';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -106,25 +106,25 @@ const PostPreview = ({
   }, [profiles, term.metadata?.authors]);
 
   // 섹션 클릭 핸들러
-  const handleSectionClick = (section: string, e: React.MouseEvent) => {
+  const handleSectionClick = useCallback((section: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (onSectionClick) {
       onSectionClick(section);
     }
-  };
+  }, [onSectionClick]);
 
   // X 버튼 클릭 핸들러
-  const handleCloseSection = (section: string) => {
-    setSectionErrors({ ...sectionErrors, [section]: [] });
+  const handleCloseSection = useCallback((section: string) => {
+    setSectionErrors((prev) => ({ ...prev, [section]: [] }));
     if (onSectionClick) {
       onSectionClick(section);
     }
-  };
+  }, [onSectionClick]);
 
   // 섹션별 에러 메시지 렌더링
-  const renderSectionErrors = (section: string): React.ReactNode => {
+  const renderSectionErrors = useCallback((section: string): React.ReactNode => {
     const errors = sectionErrors[section];
     if (!errors || errors.length === 0) return null;
 
@@ -137,10 +137,10 @@ const PostPreview = ({
         ))}
       </div>
     );
-  };
+  }, [sectionErrors]);
 
   // 섹션 hover 스타일 클래스 생성
-  const getSectionClassName = (section: string, baseClass: string = '') => {
+  const getSectionClassName = useCallback((section: string, baseClass: string = '') => {
     const isEditing = editingSections && editingSections[section as keyof EditingSectionState];
 
     // 미리보기 모드이면 모든 스타일 적용 안함
@@ -241,10 +241,10 @@ const PostPreview = ({
       case 'filled':
         return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
     }
-  };
+  }, [editingSections, formSubmitted, isPreview, term, validateSection]);
 
   // 섹션 내부에 편집 폼 렌더링
-  const renderInlineEditForm = (section: keyof EditingSectionState) => {
+  const renderInlineEditForm = useCallback((section: keyof EditingSectionState) => {
     if (!editingSections || !formComponents) return null;
     if (!editingSections[section]) return null;
 
@@ -285,7 +285,7 @@ const PostPreview = ({
         {closeButton}
       </div>
     );
-  };
+  }, [editingSections, formComponents, handleCloseSection, renderKoreanTitleForm, renderEnglishTitleForm, renderShortDescriptionForm, renderSectionErrors]);
 
   return (
     <div className="prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg p-2 sm:p-4 border border-gray4" ref={postPreviewRef}>
