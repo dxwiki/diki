@@ -176,6 +176,20 @@ const PostPreview = ({
           case 'usecase':
             if (!term.usecase?.description || !term.usecase?.example) return 'error';
             break;
+          case 'tags':
+            if (!Array.isArray(term.tags) || term.tags.length === 0) return 'error';
+            break;
+          case 'terms':
+            if (!Array.isArray(term.terms) || term.terms.length === 0) return 'error';
+            break;
+          case 'references':
+            const hasTutorials = Array.isArray(term.references?.tutorials) && term.references.tutorials.length > 0;
+            const hasBooks = Array.isArray(term.references?.books) && term.references.books.length > 0;
+            const hasAcademic = Array.isArray(term.references?.academic) && term.references.academic.length > 0;
+            const hasOpensource = Array.isArray(term.references?.opensource) && term.references.opensource.length > 0;
+
+            if (!(hasTutorials || hasBooks || hasAcademic || hasOpensource)) return 'error';
+            break;
         }
       }
 

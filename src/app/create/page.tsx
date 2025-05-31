@@ -252,10 +252,15 @@ export default function CreatePage() {
       || !data.relevance?.engineer?.description
     ),
     usecase: (data: TermData) => !data.usecase?.description || !data.usecase?.example,
-    // 태그와 용어, 참고자료는 필수가 아님
-    tags: () => false,
-    terms: () => false,
-    references: () => false,
+    tags: (data: TermData) => !Array.isArray(data.tags) || data.tags.length === 0,
+    terms: (data: TermData) => !Array.isArray(data.terms) || data.terms.length === 0,
+    references: (data: TermData) => {
+      const hasTutorials = Array.isArray(data.references?.tutorials) && data.references.tutorials.length > 0;
+      const hasBooks = Array.isArray(data.references?.books) && data.references.books.length > 0;
+      const hasAcademic = Array.isArray(data.references?.academic) && data.references.academic.length > 0;
+      const hasOpensource = Array.isArray(data.references?.opensource) && data.references.opensource.length > 0;
+      return !(hasTutorials || hasBooks || hasAcademic || hasOpensource);
+    },
   };
 
   // 에러 메시지 맵
@@ -274,6 +279,9 @@ export default function CreatePage() {
       '사용 사례 개요를 입력해주세요.',
       '구체적인 사용 사례를 입력해주세요.',
     ],
+    tags: '관련 포스트를 하나 이상 추가해주세요.',
+    terms: '관련 용어를 하나 이상 추가해주세요.',
+    references: '참고 자료를 하나 이상 추가해주세요.',
   };
 
   // 섹션 유효성 검사 함수
@@ -308,8 +316,6 @@ export default function CreatePage() {
 
     // 모든 필수 섹션에 대해 유효성 검사 수행
     Object.keys(validationRules).forEach((section) => {
-      if (section === 'tags' || section === 'terms' || section === 'references') return; // 필수 아님
-
       const sectionErrors = getSectionValidationErrors(section);
       if (sectionErrors.length > 0) {
         errors.push(...sectionErrors);
@@ -327,34 +333,8 @@ export default function CreatePage() {
     setFormSubmitted(true);
 
     if (!validateForm()) {
-      setError('필수 항목을 모두 입력해주세요.');
-      // 토스트 메시지 표시
-      showToast('필수 요소를 모두 채워주세요.', 'error');
-
-      // 필수 항목 중 누락된 항목에 해당하는 섹션 자동으로 열기
-      const newEditingSections = { ...editingSections };
-
-      // 첫 번째 에러가 있는 섹션 찾기
-      for (const section of Object.keys(validationRules)) {
-        if (section === 'tags' || section === 'terms' || section === 'references') continue; // 필수 아님
-
-        if (validationRules[section as keyof typeof validationRules](formData)) {
-          newEditingSections[section as keyof EditingSectionState] = true;
-          break; // 첫 번째 에러가 있는 섹션만 열기
-        }
-      }
-
-      setEditingSections(newEditingSections);
-
-      // 첫 번째 오류 발생 위치로 스크롤
-      const firstErrorSection = Object.entries(newEditingSections).find(([, isOpen]) => isOpen);
-      if (firstErrorSection) {
-        const sectionElement = document.getElementById(`${ firstErrorSection[0] }-section`);
-        if (sectionElement) {
-          sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
-
+      setError('붉은 점선으로 된 항목을 모두 채워주세요.');
+      showToast('붉은 점선으로 된 항목을 모두 채워주세요.', 'error');
       return;
     }
 
