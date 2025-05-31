@@ -10,7 +10,7 @@ const errorMessages: Record<string, string> = {
   github_auth_failed: 'GitHub 인증에 실패했습니다.',
   no_email: 'GitHub 계정에서 이메일을 찾을 수 없습니다.',
   login_required: '로그인이 필요합니다.',
-  user_not_found: '가입되지 않은 사용자입니다. 회원가입을 진행해주세요.',
+  user_not_found: '가입되지 않은 사용자입니다. 회원가입을 진행해 주세요.',
   user_already_exists: '이미 가입된 사용자입니다.',
 };
 
@@ -23,7 +23,7 @@ function LoginContent() {
     if (error && errorMessages[error]) {
       setErrorMsg(errorMessages[error]);
     } else if (error) {
-      setErrorMsg('인증 오류가 발생했습니다. 다시 로그인 해주세요.');
+      setErrorMsg('인증 오류가 발생했습니다. 다시 로그인 해 주세요.');
     }
   }, [error]);
 

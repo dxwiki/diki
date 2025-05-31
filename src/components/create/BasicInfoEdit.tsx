@@ -76,7 +76,7 @@ const KoreanTitleInput = ({
       />
       <InputFeedback
         value={formData.title?.ko}
-        errorMessage={getFieldError('한글 제목') || '한글 제목을 입력해주세요.'}
+        errorMessage={getFieldError('한글 제목') || '한글 제목을 입력하세요.'}
         guidanceMessage={koTitleGuidance || undefined}
         showValidation={showValidation}
       />
@@ -141,7 +141,7 @@ const EnglishTitleInput = ({
       />
       <InputFeedback
         value={formData.title?.en}
-        errorMessage={getFieldError('영문 제목') || '영문 제목을 입력해주세요.'}
+        errorMessage={getFieldError('영문 제목') || '영문 제목을 입력하세요.'}
         guidanceMessage={enTitleGuidance || undefined}
         showValidation={showValidation}
       />
@@ -197,7 +197,7 @@ const ShortDescriptionInput = ({
       </div>
       <InputFeedback
         value={formData.description?.short}
-        errorMessage={getFieldError('짧은 설명') || '짧은 설명을 입력해주세요.'}
+        errorMessage={getFieldError('짧은 설명') || '짧은 설명을 입력하세요.'}
         showValidation={showValidation}
       />
     </div>

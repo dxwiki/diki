@@ -265,23 +265,23 @@ export default function CreatePage() {
 
   // 에러 메시지 맵
   const errorMessages = {
-    koTitle: '한글 제목을 입력해주세요.',
-    enTitle: '영문 제목을 입력해주세요.',
-    shortDesc: '짧은 설명을 입력해주세요.',
-    difficulty: '난이도 설명을 입력해주세요.',
-    description: '전체 설명을 입력해주세요.',
+    koTitle: '한글 제목을 입력하세요.',
+    enTitle: '영문 제목을 입력하세요.',
+    shortDesc: '짧은 설명을 입력하세요.',
+    difficulty: '난이도 설명을 입력하세요.',
+    description: '전체 설명을 입력하세요.',
     relevance: [
-      '데이터 분석가 직무 연관성 설명을 입력해주세요.',
-      '데이터 과학자 직무 연관성 설명을 입력해주세요.',
-      '데이터 엔지니어 직무 연관성 설명을 입력해주세요.',
+      '데이터 분석가 직무 연관성 설명을 입력하세요.',
+      '데이터 과학자 직무 연관성 설명을 입력하세요.',
+      '데이터 엔지니어 직무 연관성 설명을 입력하세요.',
     ],
     usecase: [
-      '사용 사례 개요를 입력해주세요.',
-      '구체적인 사용 사례를 입력해주세요.',
+      '사용 사례 개요를 입력하세요.',
+      '구체적인 사용 사례를 입력하세요.',
     ],
-    tags: '관련 포스트를 하나 이상 추가해주세요.',
-    terms: '관련 용어를 하나 이상 추가해주세요.',
-    references: '참고 자료를 하나 이상 추가해주세요.',
+    tags: '관련 포스트를 하나 이상 추가하세요.',
+    terms: '관련 용어를 하나 이상 추가하세요.',
+    references: '참고 자료를 하나 이상 추가하세요.',
   };
 
   // 섹션 유효성 검사 함수
@@ -393,7 +393,7 @@ export default function CreatePage() {
         required
       />
       {validationErrors.find((err) => err.includes('한글 제목')) && (
-        <p className="text-level-5 text-sm mt-1">{'한글 제목을 입력해주세요.'}</p>
+        <p className="text-level-5 text-sm mt-1">{'한글 제목을 입력하세요.'}</p>
       )}
     </div>
   );
@@ -411,7 +411,7 @@ export default function CreatePage() {
         required
       />
       {validationErrors.find((err) => err.includes('영문 제목')) && (
-        <p className="text-level-5 text-sm mt-1">{'영문 제목을 입력해주세요.'}</p>
+        <p className="text-level-5 text-sm mt-1">{'영문 제목을 입력하세요.'}</p>
       )}
     </div>
   );
@@ -441,7 +441,7 @@ export default function CreatePage() {
         </div>
       </div>
       {validationErrors.find((err) => err.includes('짧은 설명')) && (
-        <p className="text-level-5 text-sm mt-1">{'짧은 설명을 입력해주세요.'}</p>
+        <p className="text-level-5 text-sm mt-1">{'짧은 설명을 입력하세요.'}</p>
       )}
     </div>
   );

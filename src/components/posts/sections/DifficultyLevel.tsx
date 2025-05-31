@@ -22,7 +22,7 @@ const DifficultyLevel = ({ level, description }: DifficultyLevelProps) => {
             </div>
           ) : (
             <div className='markdown-text-sub'>
-              <span>{'난이도 설명 없음'}</span>
+              <span>{'난이도 설명을 입력하세요.'}</span>
             </div>
           )
         }

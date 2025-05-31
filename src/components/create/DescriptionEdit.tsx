@@ -34,7 +34,7 @@ const DescriptionSection = ({ formData, handleChange, validationErrors = [] }: D
         <p className="text-sm text-gray2">{'수식은 `$...$` 또는 `$$...$$` 형식으로 작성할 수 있습니다.'}</p>
         <InputFeedback
           value={formData.description?.full}
-          errorMessage={getFieldError('전체 설명') || '전체 설명을 입력해주세요.'}
+          errorMessage={getFieldError('전체 설명') || '전체 설명을 입력하세요.'}
           showValidation={showValidation}
         />
       </div>

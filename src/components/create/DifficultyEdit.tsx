@@ -78,7 +78,7 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, validat
           />
           <InputFeedback
             value={formData.difficulty?.description}
-            errorMessage={getFieldError('난이도 설명') || '난이도 설명을 입력해주세요.'}
+            errorMessage={getFieldError('난이도 설명') || '난이도 설명을 입력하세요.'}
             showValidation={showValidation}
           />
         </div>

@@ -12,7 +12,7 @@ const errorMessages: Record<string, string> = {
   no_email: 'GitHub 계정에서 이메일을 찾을 수 없습니다.',
   privacy_required: '개인정보 처리방침 동의가 필요합니다.',
   user_already_exists: '이미 가입된 사용자입니다.',
-  user_not_found: '등록되지 않은 사용자입니다. 회원가입을 먼저 진행해주세요.',
+  user_not_found: '등록되지 않은 사용자입니다. 회원가입을 먼저 진행해 주세요.',
 };
 
 function SignupContent() {

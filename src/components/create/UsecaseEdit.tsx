@@ -53,7 +53,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
   return (
     <div className="p-2">
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1 text-gray0">{'[필수] 개요'}</label>
+        <label className="block text-sm font-medium mb-1 text-gray0">{'개요'}</label>
         <textarea
           name="usecase.description"
           value={formData.usecase?.description || ''}
@@ -74,7 +74,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1 text-gray0">{'[필수] 사례'}</label>
+        <label className="block text-sm font-medium mb-1 text-gray0">{'사례'}</label>
         <textarea
           name="usecase.example"
           value={formData.usecase?.example || ''}
@@ -89,7 +89,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
         />
         <InputFeedback
           value={formData.usecase?.example}
-          errorMessage={getFieldError('구체적인 사용 사례') || '구체적인 사용 사례를 입력해주세요.'}
+          errorMessage={getFieldError('구체적인 사용 사례') || '구체적인 사용 사례를 입력하세요.'}
           showValidation={showValidation}
         />
       </div>
@@ -104,7 +104,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
               onChange={(e) => setNewIndustry(e.target.value)}
               onKeyDown={handleKeyDown}
               className="w-full p-2 border border-gray4 rounded-md text-main"
-              placeholder="산업 분야 입력"
+              placeholder="산업 분야 (ex. 모든 산업 분야, 의료, 금융, 제조, 교통, 교육, 엔터테인먼트, 보안, 리테일, 에너지, 농업 등)"
             />
           </div>
           <button
@@ -116,7 +116,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
           </button>
         </div>
         <p className="text-sm text-gray2 mb-2">
-          {'산업 분야 추가 (ex. 의료, 금융, 제조, 교통, 교육, 엔터테인먼트, 보안, 리테일, 에너지, 농업 등)'}
+          {'Enter 키 또는 [추가] 버튼을 눌러 산업 분야를 추가할 수 있습니다.'}
         </p>
       </div>
 

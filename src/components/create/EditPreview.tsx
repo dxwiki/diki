@@ -386,7 +386,7 @@ const PostPreview = ({
                 <div className='flex items-center gap-2' onClick={(e: React.MouseEvent) => handleSectionClick('shortDesc', e)}>
                   <Level level={0} />
                   <div className='text-main'>
-                    {term.description?.short || '짧은 설명 없음'}
+                    {term.description?.short || '짧은 설명을 입력하세요.'}
                   </div>
                 </div>
                 {editingSections?.shortDesc && renderInlineEditForm('shortDesc')}
@@ -401,7 +401,7 @@ const PostPreview = ({
               <div className='flex items-center gap-2' onClick={(e: React.MouseEvent) => handleSectionClick('difficulty', e)}>
                 <Level level={Number(term.difficulty?.level)} />
                 <div className='my-0.5 text-main'>
-                  {term.difficulty?.description || '난이도 설명 없음'}
+                  {term.difficulty?.description || '난이도 설명을 입력하세요.'}
                 </div>
               </div>
               {editingSections?.difficulty && renderInlineEditForm('difficulty')}
@@ -431,7 +431,7 @@ const PostPreview = ({
                 >
                   <div className="cursor-pointer" onClick={(e: React.MouseEvent) => handleSectionClick('terms', e)}>
                     <RelatedTermsSection
-                      terms={term.terms?.length === 0 ? [{ term: '용어없음', description: '용어를 추가해주세요.', internal_link: '' }] : term.terms || []}
+                      terms={term.terms?.length === 0 ? [{ term: '용어없음', description: '용어를 추가하세요.', internal_link: '' }] : term.terms || []}
                     />
                   </div>
                   {editingSections?.terms && renderInlineEditForm('terms')}
@@ -464,7 +464,7 @@ const PostPreview = ({
                       </div>
                     ) : (
                       <div className="relative group/tags inline-block">
-                        <p className="text-sub">{'관련 포스트를 추가해주세요.'}</p>
+                        <p className="text-sub">{'관련 포스트를 추가하세요.'}</p>
                       </div>
                     )}
                   </div>
@@ -483,15 +483,15 @@ const PostPreview = ({
                     <RelevanceSection
                       analyst={{
                         score: term.relevance?.analyst?.score ?? 1,
-                        description: term.relevance?.analyst?.description || '데이터 분석가를 위한 설명을 입력하세요',
+                        description: term.relevance?.analyst?.description || '데이터 분석가를 위한 설명을 입력하세요.',
                       }}
                       engineer={{
                         score: term.relevance?.engineer?.score ?? 1,
-                        description: term.relevance?.engineer?.description || '데이터 엔지니어를 위한 설명을 입력하세요',
+                        description: term.relevance?.engineer?.description || '데이터 엔지니어를 위한 설명을 입력하세요.',
                       }}
                       scientist={{
                         score: term.relevance?.scientist?.score ?? 1,
-                        description: term.relevance?.scientist?.description || '데이터 과학자를 위한 설명을 입력하세요',
+                        description: term.relevance?.scientist?.description || '데이터 과학자를 위한 설명을 입력하세요.',
                       }}
                     />
                   </div>
@@ -508,8 +508,8 @@ const PostPreview = ({
                     <UsecaseSection
                       usecase={{
                         industries: term.usecase?.industries || [],
-                        example: term.usecase?.example || '클릭하여 내용을 입력하세요.',
-                        description: term.usecase?.description || '클릭하여 내용을 입력하세요.',
+                        example: term.usecase?.example || '사용 사례를 입력하세요.',
+                        description: term.usecase?.description || '사용 사례에 대한 개요를 입력하세요.',
                       }}
                     />
                   </div>
@@ -538,7 +538,7 @@ const PostPreview = ({
                     ) : (
                       <div className="relative group/references inline-block">
                         <p className="text-sub">
-                          {'내용이 없습니다.'}
+                          {'참고 자료를 1개 이상 추가하세요.'}
                         </p>
                       </div>
                     )}

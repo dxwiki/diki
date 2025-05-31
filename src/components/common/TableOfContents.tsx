@@ -171,7 +171,7 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName, isEdit
             )
           ))}
           {(!term.tags || term.tags.length === 0) && (
-            <span className="text-sub text-sm">{'관련 포스트 없음'}</span>
+            <span className="text-sub text-sm">{'관련 포스트를 추가하세요.'}</span>
           )}
         </div>
       </div>

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React, { useState, KeyboardEvent, useRef } from 'react';
 import { TermData } from '@/types/database';
-import { X } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
 import { useFormValidation, IsolatedGuidanceMessage } from './ValidatedInput';
 
@@ -132,13 +132,19 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             </div>
           )}
         </div>
-        <button
-          type="button"
-          onClick={handleAddTerm}
-          className="px-4 py-2 text-main border border-gray4 bg-gray4 hover:text-white hover:bg-gray3 rounded-md"
-        >
-          {'용어 추가'}
-        </button>
+        <div className="w-full flex justify-end items-center gap-1.5">
+          <span className="text-sm text-primary">
+            {'내용을 입력한 뒤, 용어 추가 버튼을 반드시 눌러주세요.'}
+          </span>
+          <ArrowRight className="size-4 text-primary" />
+          <button
+            type="button"
+            onClick={handleAddTerm}
+            className="shrink-0 px-4 py-2 text-main border border-gray4 bg-gray4 hover:text-white hover:bg-gray3 rounded-md"
+          >
+            {'용어 추가'}
+          </button>
+        </div>
       </div>
 
     </div>
