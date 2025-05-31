@@ -49,7 +49,7 @@ const Header = () => {
         style={{ transform: 'translateY(var(--header-transform, 0))' }}
       >
         <div className='flex justify-between items-center max-w-6xl mx-auto px-4 py-3 md:px-6 lg:px-8'>
-          <div className='flex items-center gap-3 opacity-0'>
+          <div className='flex items-center gap-3'>
             <AuthStatus />
             <Link
               href={isLoggedIn ? '/create' : '/login'}
