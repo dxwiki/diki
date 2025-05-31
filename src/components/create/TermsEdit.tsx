@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React, { useState, KeyboardEvent, useRef } from 'react';
 import { TermData } from '@/types/database';
-import { X, ArrowRight } from 'lucide-react';
+import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
 import { useFormValidation, IsolatedGuidanceMessage } from './ValidatedInput';
 
@@ -40,7 +40,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   };
 
   const handleLinkSelect = (url: string, title: string) => {
-    setNewTerm((prev) => ({ ...prev, internal_link: url, link_title: title }));
+    setNewTerm((prev) => ({ ...prev, internal_link: url, link_title: title, term: title }));
   };
 
   return (
@@ -83,10 +83,11 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             ref={termInputRef}
             type="text"
             value={newTerm.term}
-            onChange={(e) => setNewTerm({ ...newTerm, term: e.target.value })}
+            onChange={(e) => !newTerm.internal_link && setNewTerm({ ...newTerm, term: e.target.value })}
             onKeyDown={(e) => handleInputKeyDown(e, descriptionRef)}
-            className="w-full p-2 border border-gray4 text-main rounded-md"
+            className={`w-full p-2 border border-gray4 text-main rounded-md ${ newTerm.internal_link ? 'bg-gray5 cursor-not-allowed' : '' }`}
             placeholder="각주 또는 Diki 포스트 등 관련 용어"
+            readOnly={!!newTerm.internal_link}
           />
           <IsolatedGuidanceMessage
             value={newTerm.term}
@@ -125,22 +126,29 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
               <Link href={newTerm.internal_link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate">
                 {newTerm.link_title}
               </Link>
+              <button
+                type="button"
+                onClick={() => setNewTerm((prev) => ({ ...prev, internal_link: undefined, link_title: '' }))}
+                className="ml-1 text-level-5 hover:opacity-80"
+              >
+                <X className="size-4" />
+              </button>
             </div>
           ) : (
             <div className="mt-2 text-sm text-gray2">
-              {'링크를 선택하면, 독자가 해당 용어 클릭 시 링크로 이동할 수 있습니다.'}
+              {'링크 선택 시, 용어는 링크 제목으로 자동 변경됩니다.'}
             </div>
           )}
         </div>
-        <div className="w-full flex justify-end items-center gap-1.5">
-          <span className="text-sm text-primary">
-            {'내용을 입력한 뒤, 용어 추가 버튼을 반드시 눌러주세요.'}
-          </span>
-          <ArrowRight className="size-4 text-primary" />
+        <div className="w-full flex justify-end">
           <button
             type="button"
             onClick={handleAddTerm}
-            className="shrink-0 px-4 py-2 text-main border border-gray4 bg-gray4 hover:text-white hover:bg-gray3 rounded-md"
+            className={`px-4 py-2 rounded-md ${
+              newTerm.term.trim() && newTerm.description.trim()
+                ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'
+                : 'text-main bg-gray4 hover:text-white hover:bg-gray3'
+            }`}
           >
             {'용어 추가'}
           </button>
