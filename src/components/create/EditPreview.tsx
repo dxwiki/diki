@@ -225,11 +225,11 @@ const PostPreview = ({
     // 상태에 따른 스타일 적용
     switch (status) {
       case 'error':
-        return `${ baseClass } outline outline-1 outline-dashed outline-level-5 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
+        return `${ baseClass } outline outline-1 outline-dashed outline-level-5 bg-gray5 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
       case 'empty':
-        return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
+        return `${ baseClass } outline outline-1 outline-dashed outline-gray3 bg-gray5 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
       case 'filled':
-        return `${ baseClass } hover:outline hover:outline-1 hover:outline-dashed hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
+        return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
     }
   };
 
