@@ -103,9 +103,9 @@ const Toast = ({
   };
 
   const bgColors = {
-    success: 'text-primary border-accent',
-    error: 'text-level-5 border-level-5',
-    info: 'text-main border-gray0',
+    success: 'bg-primary dark:bg-secondary text-white',
+    error: 'bg-level-5 text-white border-level-5',
+    info: 'bg-gray0 text-white',
   };
 
   const offsetStyle = {
@@ -123,7 +123,7 @@ const Toast = ({
 
   return (
     <div
-      className={`fixed w-full max-w-[90vw] md:max-w-[40vw] xl:max-w-[25vw] h-12 bg-gray5 border 
+      className={`fixed w-full max-w-[90vw] md:max-w-[40vw] xl:max-w-[25vw] h-12
         flex justify-between items-center p-3 rounded-lg shadow-lg z-50 hover:opacity-80
         ${ positionClasses[position] } ${ animationClass } ${ bgColors[type] }`}
       role="alert"
