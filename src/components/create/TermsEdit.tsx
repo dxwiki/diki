@@ -120,12 +120,15 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             <InternalLinkSearch onSelect={handleLinkSelect} />
           </div>
           {newTerm.internal_link ? (
-            <div className="mt-2 text-sm text-primary">
-              {`선택된 Diki 내부 링크: ${ newTerm.link_title || newTerm.internal_link }`}
+            <div className="flex items-center gap-1 mt-2 text-sm text-primary">
+              {'선택된 Diki 내부 링크:'}
+              <Link href={newTerm.internal_link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate">
+                {newTerm.link_title}
+              </Link>
             </div>
           ) : (
             <div className="mt-2 text-sm text-gray2">
-              {'링크를 선택하지 않으면 용어 설명에 링크가 표시되지 않습니다. (미리보기 참고)'}
+              {'링크를 선택하면, 독자가 해당 용어 클릭 시 링크로 이동할 수 있습니다.'}
             </div>
           )}
         </div>
