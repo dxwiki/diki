@@ -18,6 +18,9 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
   const bookCallbackRef = useRef(false);
   const academicCallbackRef = useRef(false);
   const opensourceCallbackRef = useRef(false);
+  
+  // 탭 변경 시 첫 렌더링 여부를 추적하기 위한 ref
+  const isFirstRender = useRef(true);
 
   const [tutorial, setTutorial] = useState<{
     title?: string;
@@ -246,6 +249,40 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
     e.preventDefault();
     setActiveTab(tab);
   };
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      tutorialTitleRef.current?.focus();
+    }, 50);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    
+    const timer = setTimeout(() => {
+      switch (activeTab) {
+        case 'tutorial':
+          tutorialTitleRef.current?.focus();
+          break;
+        case 'book':
+          bookTitleRef.current?.focus();
+          break;
+        case 'academic':
+          academicTitleRef.current?.focus();
+          break;
+        case 'opensource':
+          opensourceNameRef.current?.focus();
+          break;
+      }
+    }, 50);
+    
+    return () => clearTimeout(timer);
+  }, [activeTab]);
 
   return (
     <div className="p-2" ref={containerRef}>

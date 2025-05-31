@@ -2,21 +2,22 @@
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { useState, useEffect, useRef, KeyboardEvent } from 'react';
+import { useState, useEffect, useRef, KeyboardEvent, RefObject } from 'react';
 import { Search, X } from 'lucide-react';
 import { searchTerms } from '@/utils/search';
 import { TermData } from '@/types';
 
 interface InternalLinkSearchProps {
   onSelect: (url: string, title: string)=> void;
-  refocus?: boolean; // 선택 후 다시 포커스할지 여부
+  refocus?: boolean; 
+  inputRef?: RefObject<HTMLInputElement>; 
 }
 
-const InternalLinkSearch = ({ onSelect, refocus = false }: InternalLinkSearchProps) => {
+const InternalLinkSearch = ({ onSelect, refocus = false, inputRef }: InternalLinkSearchProps) => {
   const { terms } = useSelector((state: RootState) => state.terms);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const internalInputRef = useRef<HTMLInputElement>(null);
   const suggestionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const [placeholder, setPlaceholder] = useState('검색어 입력해주세요');
@@ -24,6 +25,7 @@ const InternalLinkSearch = ({ onSelect, refocus = false }: InternalLinkSearchPro
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const debounceDelay = 300;
   let searchTimeout: NodeJS.Timeout;
+  const finalInputRef = inputRef || internalInputRef;
 
   useEffect(() => {
     setPlaceholder(terms.length ? `Diki 내 ${ terms.length }개의 포스트 검색` : '검색어 입력해주세요');
@@ -63,7 +65,9 @@ const InternalLinkSearch = ({ onSelect, refocus = false }: InternalLinkSearchPro
   };
 
   const handleClickX = () => {
-    inputRef.current?.focus();
+    if (finalInputRef.current) {
+      finalInputRef.current.focus();
+    }
     setSearchQuery('');
   };
 
@@ -85,15 +89,15 @@ const InternalLinkSearch = ({ onSelect, refocus = false }: InternalLinkSearchPro
 
     if (refocus) {
       setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.focus();
+        if (finalInputRef.current) {
+          finalInputRef.current.focus();
           setIsModalOpen(true);
         }
       }, 50);
     } else {
       // 선택 후 blur 처리
-      if (inputRef.current) {
-        inputRef.current.blur();
+      if (finalInputRef.current) {
+        finalInputRef.current.blur();
       }
     }
   };
@@ -129,7 +133,7 @@ const InternalLinkSearch = ({ onSelect, refocus = false }: InternalLinkSearchPro
           <Search className="text-primary size-5 shrink-0 mr-2" />
           <input
             type="text"
-            ref={inputRef}
+            ref={finalInputRef}
             value={searchQuery}
             placeholder={placeholder}
             onChange={(e) => handleSearch(e.target.value)}
@@ -137,6 +141,7 @@ const InternalLinkSearch = ({ onSelect, refocus = false }: InternalLinkSearchPro
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             className="w-full outline-none text-main bg-white dark:bg-background"
+            data-search-input
           />
           {searchQuery && (
             <X
