@@ -52,8 +52,8 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, validat
   return (
     <div className={containerClasses}>
       <div className="flex flex-col sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
-        <div className="">
-          <label className="text-sm font-medium text-gray0">{'레벨'}</label>
+        <div>
+          <label className="text-sm font-medium text-gray0">{'난이도'}</label>
           <div className="px-3">
             <CreateSlider
               displayLevels={levels}
@@ -63,7 +63,7 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, validat
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
+          <label className="block text-sm font-medium mb-1 text-gray0">{'난이도 설명'}</label>
           <textarea
             name="difficulty.description"
             value={formData.difficulty?.description || ''}

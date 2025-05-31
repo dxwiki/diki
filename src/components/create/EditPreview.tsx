@@ -225,11 +225,11 @@ const PostPreview = ({
     // 상태에 따른 스타일 적용
     switch (status) {
       case 'error':
-        return `${ baseClass } outline outline-1 outline-dashed outline-level-5`;
+        return `${ baseClass } outline outline-1 outline-dashed outline-level-5 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
       case 'empty':
-        return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary`;
+        return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
       case 'filled':
-        return `${ baseClass } hover:outline hover:outline-1 hover:outline-dashed hover:outline-primary`;
+        return `${ baseClass } hover:outline hover:outline-1 hover:outline-dashed hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
     }
   };
 
@@ -298,12 +298,12 @@ const PostPreview = ({
               <span
                 id="koTitle-section"
                 onClick={(e: React.MouseEvent) => handleSectionClick('koTitle', e)}
-                className={getSectionClassName('koTitle', 'text-main hover:text-primary relative p-1 rounded')}
+                className={getSectionClassName('koTitle', 'text-main relative p-1 rounded')}
               >
                 {term.title?.ko === '' ? '한글 제목' : term.title?.ko}
               </span>
               <span
-                className={getSectionClassName('enTitle', 'text-main hover:text-primary break-all relative p-1 rounded')}
+                className={getSectionClassName('enTitle', 'text-main break-all relative p-1 rounded')}
                 id="enTitle-section"
                 onClick={(e: React.MouseEvent) => {
                   handleSectionClick('enTitle', e);
@@ -359,7 +359,7 @@ const PostPreview = ({
               >
                 <div className='flex items-center gap-2' onClick={(e: React.MouseEvent) => handleSectionClick('shortDesc', e)}>
                   <Level level={0} />
-                  <div className='my-0.5 text-main'>
+                  <div className='text-main'>
                     {term.description?.short || '짧은 설명 없음'}
                   </div>
                 </div>
@@ -383,7 +383,7 @@ const PostPreview = ({
           </div>
 
           <div className="relative">
-            <div className="mt-6 flex flex-col gap-16">
+            <div className={`mt-6 flex flex-col gap-16 ${ isPreview ? 'gap-16' : 'gap-8' }`}>
               {/* 개념 설명 섹션 */}
               <div id="description-section" className="relative">
                 <div
@@ -528,7 +528,7 @@ const PostPreview = ({
 
       {/* 데스크톱 태그 편집 (사이드바) */}
       {editingSections?.tags && (
-        <div className="hidden md:block absolute left-[12px] top-[420px] w-3/5">
+        <div className="hidden md:block absolute left-[205px] top-[345px] w-3/5">
           <div className="outline outline-1 outline-primary rounded-lg bg-background">
             {renderInlineEditForm('tags')}
           </div>

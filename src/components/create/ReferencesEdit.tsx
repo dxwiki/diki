@@ -282,11 +282,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
         {/* 튜토리얼 탭 컨텐츠 */}
         {activeTab === 'tutorial' && (
           <div className="mb-6">
-            <div className="flex flex-wrap gap-2 my-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {formData?.references?.tutorials?.map((item, index) => (
-                <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
+                <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4 mb-2">
                   <div className="flex justify-between items-start">
-                    <span className="font-medium">{item.title}</span>
+                    <span className="font-medium truncate">{item.title}</span>
                     <button
                       type="button"
                       onClick={(e) => handleRemoveTutorial(index, e)}
@@ -368,11 +368,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
         {/* 참고서적 탭 컨텐츠 */}
         {activeTab === 'book' && (
           <div className="mb-6">
-            <div className="flex flex-wrap gap-2 my-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {formData?.references?.books?.map((item, index) => (
-                <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
+                <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4 mb-2">
                   <div className="flex justify-between items-start">
-                    <span className="font-medium">{item.title}</span>
+                    <span className="font-medium truncate">{item.title}</span>
                     <button
                       type="button"
                       onClick={(e) => handleRemoveBook(index, e)}
@@ -493,11 +493,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
         {/* 연구논문 탭 컨텐츠 */}
         {activeTab === 'academic' && (
           <div className="mb-6">
-            <div className="flex flex-wrap gap-2 my-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {formData?.references?.academic?.map((item, index) => (
-                <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
+                <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4 mb-2">
                   <div className="flex justify-between items-start">
-                    <span className="font-medium">{item.title}</span>
+                    <span className="font-medium truncate">{item.title}</span>
                     <button
                       type="button"
                       onClick={(e) => handleRemoveAcademic(index, e)}
@@ -605,11 +605,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
         {/* 오픈소스 탭 컨텐츠 */}
         {activeTab === 'opensource' && (
           <div className="mb-6">
-            <div className="flex flex-wrap gap-2 my-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {formData?.references?.opensource?.map((item, index) => (
-                <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
+                <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4 mb-2">
                   <div className="flex justify-between items-start">
-                    <span className="font-medium">{item.name}</span>
+                    <span className="font-medium truncate">{item.name}</span>
                     <button
                       type="button"
                       onClick={(e) => handleRemoveOpensource(index, e)}

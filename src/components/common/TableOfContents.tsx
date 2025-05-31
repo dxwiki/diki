@@ -143,7 +143,7 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName, isEdit
         </nav>
         <div className={`flex flex-col flex-wrap mt-10 gap-2 p-1 -m-1 ${ tagsClassName || '' } ${ onTagSectionClick ? 'cursor-pointer group' : '' }`} onClick={onTagSectionClick}>
           <span
-            className={`text-main text-base font-bold ${ onTagSectionClick ? 'cursor-pointer group-hover:text-primary' : '' }`}
+            className='text-main text-base font-bold'
           >
             {'관련 포스트'}
           </span>

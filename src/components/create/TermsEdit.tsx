@@ -47,11 +47,11 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
     <div className="p-2">
       {formData.terms && formData.terms.length > 0 && (
         <div className="my-2">
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {formData.terms.map((term, index) => (
               <div key={index} className="bg-gray5 border border-gray4 rounded-lg p-3 flex flex-col">
                 <div className="flex justify-between items-start">
-                  <span className="font-medium">{term.term}</span>
+                  <span className="font-medium truncate">{term.term}</span>
                   <button
                     type="button"
                     onClick={() => {
