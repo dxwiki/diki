@@ -90,7 +90,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
           />
           <IsolatedGuidanceMessage
             value={newTerm.term}
-            guidanceMessage="용어는 필수값입니다."
+            guidanceMessage="용어는 필숫값입니다."
             showValidation={showValidation}
           />
         </div>
@@ -110,7 +110,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
           />
           <IsolatedGuidanceMessage
             value={newTerm.description}
-            guidanceMessage="설명은 필수값입니다."
+            guidanceMessage="설명은 필숫값입니다."
             showValidation={showValidation}
           />
         </div>

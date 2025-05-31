@@ -318,7 +318,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setTutorial({ ...tutorial, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, tutorialPlatformRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련자료 추가를 위한 제목은 필수값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'관련자료 추가를 위한 제목은 필숫값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'플랫폼'}</label>
@@ -348,7 +348,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필수값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필숫값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
@@ -407,7 +407,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setBook({ ...book, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, bookAuthorsRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 제목은 필수값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 제목은 필숫값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'저자'}</label>
@@ -473,7 +473,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필수값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필숫값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
@@ -531,7 +531,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setAcademic({ ...academic, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, academicAuthorsRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 제목은 필수값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 제목은 필숫값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'저자'}</label>
@@ -585,7 +585,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필수값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필숫값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
@@ -642,7 +642,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setOpensource({ ...opensource, name: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, opensourceLicenseRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 이름은 필수값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 이름은 필숫값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'라이센스'}</label>
@@ -683,7 +683,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필수값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필숫값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
