@@ -229,11 +229,7 @@ const PostPreview = ({
 
     // 편집 중인 경우
     if (isEditing) {
-      // 한글/영문 제목은 모달 스타일 유지
-      if (section === 'koTitle' || section === 'enTitle') {
-        return `${ baseClass } outline outline-1 outline-primary rounded-lg`;
-      }
-      return `${ baseClass } outline outline-1 outline-primary`;
+      return `${ baseClass } outline outline-2 outline-primary`;
     }
 
     // 상태에 따른 스타일 적용
@@ -252,7 +248,6 @@ const PostPreview = ({
     if (!editingSections || !formComponents) return null;
     if (!editingSections[section]) return null;
 
-    // 닫기 버튼
     const closeButton = (
       <div className="flex justify-end">
         <button
@@ -308,7 +303,7 @@ const PostPreview = ({
         {/* 데스크톱 태그 편집 (사이드바) */}
         {editingSections?.tags && (
           <div className="hidden md:block absolute top-[336px] left-[196px] min-w-[54vw] z-20 shadow-lg">
-            <div className="outline outline-1 outline-primary rounded-lg bg-background p-2">
+            <div className="outline outline-2 outline-primary rounded-lg bg-background p-2">
               {renderInlineEditForm('tags')}
             </div>
           </div>
@@ -343,14 +338,14 @@ const PostPreview = ({
 
           {/* 한글 제목 편집 폼 */}
           {editingSections?.koTitle && (
-            <div className="relative outline outline-1 outline-primary rounded-lg">
+            <div className="relative outline outline-2 outline-primary rounded-lg">
               {renderInlineEditForm('koTitle')}
             </div>
           )}
 
           {/* 영문 제목 편집 폼 */}
           {editingSections?.enTitle && (
-            <div className="relative outline outline-1 outline-primary rounded-lg">
+            <div className="relative outline outline-2 outline-primary rounded-lg">
               {renderInlineEditForm('enTitle')}
             </div>
           )}
@@ -518,7 +513,7 @@ const PostPreview = ({
               </div>
 
               {/* 참고자료 섹션 */}
-              <div id="references-section" className="relative">
+              <div id="references-section" className="relative mb-16">
                 <div
                   className={getSectionClassName('references', 'flex flex-col p-1 my-3 prose-section rounded')}
                 >
