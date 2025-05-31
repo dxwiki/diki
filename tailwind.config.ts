@@ -195,6 +195,45 @@ const config: Config = {
             '.prose mjx-c.mjx-c30::before': {
               paddingRight: '0.7rem !important',
             },
+            '.markdown-blockquote': {
+              backgroundColor: 'var(--gray5)',
+              borderLeft: '4px solid var(--primary)',
+              padding: '0.5rem 1rem',
+              margin: '0.5rem 0',
+              borderRadius: '0.25rem 0 0 0.25rem',
+              color: 'var(--gray0)',
+              fontStyle: 'normal',
+            },
+            '.markdown-table': {
+              borderCollapse: 'collapse',
+              width: '100%',
+              margin: '0.8rem 0',
+              tableLayout: 'auto',
+            },
+            '.markdown-table th, .markdown-table td': {
+              border: '1px solid var(--border)',
+              padding: '0.5rem',
+              textAlign: 'left',
+            },
+            '.markdown-table th:first-child, .markdown-table td:first-child': {
+              width: '1%',
+              padding: '0 1.5rem',
+              minWidth: '100px',
+              textAlign: 'center',
+              whiteSpace: 'nowrap',
+            },
+            '.markdown-table th:not(:first-child), .markdown-table td:not(:first-child)': {
+              width: 'auto',
+              paddingLeft: '1.5rem',
+            },
+            '.markdown-table th': {
+              border: '0',
+              fontWeight: '600',
+            },
+            '.list': {
+              marginLeft: '1.5rem',
+              marginBottom: '0.5rem',
+            },
           },
         },
       },
@@ -216,6 +255,14 @@ const config: Config = {
     'animate-bounceArrow2',
     'animate-bounceArrow3',
     'animate-fadeInOut',
+    'markdown-blockquote',
+    'markdown-table',
+    'markdown-math-block',
+    'markdown-math-inline',
+    'br-gap',
+    'list',
+    'list-disc',
+    'list-decimal',
   ],
 
 };

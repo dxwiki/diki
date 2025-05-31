@@ -8,26 +8,60 @@ import { MathJaxProvider } from './MathJaxProvider';
 function parseMarkdownSegment(segment: string) {
   let html = segment;
 
-  // 리스트 처리 (br 처리 전에 먼저 실행)
-  html = html.replace(/(?:^|\n|<br>)\s*(\d+)\.\s*(.+?)(?=\n|<br>|$)/g, '<li class="list-decimal">$2</li>');
+  html = html.replace(/\n/g, '<br>');
+
+  // 표 처리
+  html = html.replace(/\|(.+)\|/g, (match) => {
+    const rows = match.split('<br>').filter((row) => row.trim().startsWith('|'));
+    if (rows.length < 2) return match; // 최소 2줄(헤더+내용) 필요
+
+    let tableHtml = '<table class="markdown-table">';
+    let isHeader = true;
+
+    rows.forEach((row) => {
+      // 구분선 확인 (|---|---|)
+      if (row.match(/\|\s*[-:]+\s*\|/)) return;
+
+      const cells = row.split('|').filter((cell) => cell !== '');
+      if (cells.length === 0) return;
+
+      tableHtml += '<tr>';
+      cells.forEach((cell) => {
+        if (isHeader) {
+          tableHtml += `<th>${ cell.trim() }</th>`;
+        } else {
+          tableHtml += `<td>${ cell.trim() }</td>`;
+        }
+      });
+      tableHtml += '</tr>';
+
+      isHeader = false;
+    });
+
+    tableHtml += '</table>';
+    return tableHtml;
+  });
+
+  // 인용구 처리
+  html = html.replace(/(?:^|<br>)>\s*(.+?)(?=<br>|$)/g, '<blockquote class="markdown-blockquote font-tinos">$1</blockquote>');
+  // 여러 줄 인용구
+  html = html.replace(/(<\/blockquote>)(?:\s*<div class="br-gap"><\/div>)?\s*<blockquote class="markdown-blockquote font-tinos">/g, '<div class="br-gap"></div>');
+
+  // 리스트 처리 (br 처리 후에 실행)
+  html = html.replace(/(?:^|<br>)\s*(\d+)\.\s*(.+?)(?=<br>|$)/g, '<li class="list-decimal">$2</li>');
   html = html.replace(/(<li class="list-decimal">.+?<\/li>(?:\s*<li class="list-decimal">.+?<\/li>)*)/g, '<ol class="list">$1</ol>');
-  html = html.replace(/(?:^|\n|<br>)\s*-\s*(.+?)(?=\n|<br>|$)/g, '<li class="list-disc">$1</li>');
+  html = html.replace(/(?:^|<br>)\s*-\s*(.+?)(?=<br>|$)/g, '<li class="list-disc">$1</li>');
   html = html.replace(/(<li class="list-disc">.+?<\/li>(?:\s*<li class="list-disc">.+?<\/li>)*)/g, '<ul class="list">$1</ul>');
 
-  // br 처리는 리스트 처리 후에 실행
+  // 모든 br에 대해 br-gap 추가
   html = html.replace(/<br\s*\/?>/gi, '<div class="br-gap"></div>');
 
   // Bold / Italic / Inline code / 링크
   html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
-  // 문단 처리
-  // html = html
-  //   .split('\n\n')
-  //   .map((paragraph) => (paragraph.trim() ? `${ paragraph.trim() }` : ''))
-  //   .join('');
   return html;
 }
 
