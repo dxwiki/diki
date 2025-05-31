@@ -318,7 +318,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setTutorial({ ...tutorial, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, tutorialPlatformRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련자료 추가를 위한 제목은 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'튜토리얼 추가를 위한 제목은 필숫값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'플랫폼'}</label>
@@ -348,15 +348,19 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'튜토리얼 추가를 위한 링크는 필숫값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
                       type="button"
                       onClick={handleAddTutorial}
-                      className="px-4 py-2 text-main border border-gray4 bg-gray4 hover:text-white hover:bg-gray3 rounded-md"
+                      className={`px-4 py-2 rounded-md ${
+                        tutorial.title?.trim() && tutorial.external_link?.trim()
+                          ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'
+                          : 'text-main bg-gray4 hover:text-white hover:bg-gray3'
+                      }`}
                     >
-                      {'추가'}
+                      {'튜토리얼 추가'}
                     </button>
                   </div>
                 </div>
@@ -407,7 +411,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setBook({ ...book, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, bookAuthorsRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 제목은 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'참고서적 추가를 위한 제목은 필숫값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'저자'}</label>
@@ -473,15 +477,19 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'참고서적 추가를 위한 링크는 필숫값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
                       type="button"
                       onClick={handleAddBook}
-                      className="px-4 py-2 text-main border border-gray4 bg-gray4 hover:text-white hover:bg-gray3 rounded-md"
+                      className={`px-4 py-2 rounded-md ${
+                        book.title?.trim() && book.external_link?.trim()
+                          ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'
+                          : 'text-main bg-gray4 hover:text-white hover:bg-gray3'
+                      }`}
                     >
-                      {'추가'}
+                      {'참고서적 추가'}
                     </button>
                   </div>
                 </div>
@@ -531,7 +539,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setAcademic({ ...academic, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, academicAuthorsRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 제목은 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'연구논문 추가를 위한 제목은 필숫값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'저자'}</label>
@@ -585,15 +593,19 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'연구논문 추가를 위한 링크는 필숫값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
                       type="button"
                       onClick={handleAddAcademic}
-                      className="px-4 py-2 text-main border border-gray4 bg-gray4 hover:text-white hover:bg-gray3 rounded-md"
+                      className={`px-4 py-2 rounded-md ${
+                        academic.title?.trim() && academic.external_link?.trim()
+                          ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'
+                          : 'text-main bg-gray4 hover:text-white hover:bg-gray3'
+                      }`}
                     >
-                      {'추가'}
+                      {'연구논문 추가'}
                     </button>
                   </div>
                 </div>
@@ -642,7 +654,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setOpensource({ ...opensource, name: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, opensourceLicenseRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 이름은 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'오픈소스 프로젝트 추가를 위한 이름은 필숫값입니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'라이센스'}</label>
@@ -683,15 +695,19 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'관련 자료 추가를 위한 링크는 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'오픈소스 프로젝트 추가를 위한 링크는 필숫값입니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
                       type="button"
                       onClick={handleAddOpensource}
-                      className="px-4 py-2 text-main border border-gray4 bg-gray4 hover:text-white hover:bg-gray3 rounded-md"
+                      className={`px-4 py-2 rounded-md ${
+                        opensource.name?.trim() && opensource.external_link?.trim()
+                          ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'
+                          : 'text-main bg-gray4 hover:text-white hover:bg-gray3'
+                      }`}
                     >
-                      {'추가'}
+                      {'오픈소스 추가'}
                     </button>
                   </div>
                 </div>
