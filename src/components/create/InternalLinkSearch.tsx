@@ -9,8 +9,8 @@ import { TermData } from '@/types';
 
 interface InternalLinkSearchProps {
   onSelect: (url: string, title: string)=> void;
-  refocus?: boolean; 
-  inputRef?: RefObject<HTMLInputElement>; 
+  refocus?: boolean;
+  inputRef?: RefObject<HTMLInputElement>;
 }
 
 const InternalLinkSearch = ({ onSelect, refocus = false, inputRef }: InternalLinkSearchProps) => {

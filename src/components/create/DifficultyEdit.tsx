@@ -68,7 +68,7 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, validat
             name="difficulty.description"
             value={formData.difficulty?.description || ''}
             className={getInputClassName(formData.difficulty?.description)}
-            placeholder="난이도에 대한 설명"
+            placeholder="난이도에 대한 설명을 작성하세요."
             required
             onChange={(e) => {
               handleChange(e);
@@ -78,7 +78,7 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, validat
           />
           <InputFeedback
             value={formData.difficulty?.description}
-            errorMessage={getFieldError('난이도 설명') || '난이도 설명을 입력하세요.'}
+            errorMessage={getFieldError('난이도 설명') || '난이도에 대한 설명을 작성하세요.'}
             showValidation={showValidation}
           />
         </div>

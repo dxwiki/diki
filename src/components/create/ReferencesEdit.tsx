@@ -18,7 +18,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
   const bookCallbackRef = useRef(false);
   const academicCallbackRef = useRef(false);
   const opensourceCallbackRef = useRef(false);
-  
+
   // 탭 변경 시 첫 렌더링 여부를 추적하기 위한 ref
   const isFirstRender = useRef(true);
 
@@ -249,21 +249,21 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
     e.preventDefault();
     setActiveTab(tab);
   };
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       tutorialTitleRef.current?.focus();
     }, 50);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
-    
+
     const timer = setTimeout(() => {
       switch (activeTab) {
         case 'tutorial':
@@ -280,7 +280,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
           break;
       }
     }, 50);
-    
+
     return () => clearTimeout(timer);
   }, [activeTab]);
 
@@ -355,7 +355,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setTutorial({ ...tutorial, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, tutorialPlatformRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'튜토리얼 추가를 위한 제목은 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'튜토리얼을 추가하려면 반드시 제목을 작성해야 합니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'플랫폼'}</label>
@@ -385,7 +385,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'튜토리얼 추가를 위한 링크는 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'튜토리얼을 추가하려면 반드시 링크를 작성해야 합니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
@@ -448,7 +448,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setBook({ ...book, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, bookAuthorsRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'참고서적 추가를 위한 제목은 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'참고서적을 추가하려면 반드시 제목을 작성해야 합니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'저자'}</label>
@@ -514,7 +514,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'참고서적 추가를 위한 링크는 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'참고서적을 추가하려면 반드시 링크를 작성해야 합니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
@@ -576,7 +576,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setAcademic({ ...academic, title: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, academicAuthorsRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'연구논문 추가를 위한 제목은 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'연구논문을 추가하려면 반드시 제목을 작성해야 합니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'저자'}</label>
@@ -630,7 +630,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'연구논문 추가를 위한 링크는 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'연구논문을 추가하려면 반드시 링크를 작성해야 합니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button
@@ -691,7 +691,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       onChange={(e) => setOpensource({ ...opensource, name: e.target.value })}
                       onKeyDown={(e) => handleInputKeyDown(e, opensourceLicenseRef)}
                     />
-                    <p className="text-sm text-primary ml-1">{'오픈소스 프로젝트 추가를 위한 이름은 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'오픈소스 프로젝트를 추가하려면 반드시 이름을 작성해야 합니다.'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray0">{'라이센스'}</label>
@@ -732,7 +732,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                         }
                       }}
                     />
-                    <p className="text-sm text-primary ml-1">{'오픈소스 프로젝트 추가를 위한 링크는 필숫값입니다.'}</p>
+                    <p className="text-sm text-primary ml-1">{'오픈소스 프로젝트를 추가하려면 반드시 링크를 작성해야 합니다.'}</p>
                   </div>
                   <div className="md:col-span-2 flex justify-end">
                     <button

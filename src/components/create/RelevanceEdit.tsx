@@ -109,7 +109,7 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange, validati
                 e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
               }}
               className={getInputClassName(formData.relevance?.analyst?.description, 'w-full min-h-[120px] p-2 border rounded-md text-main')}
-              placeholder="데이터 분석가 직무와의 연관성에 대한 설명"
+              placeholder="데이터 분석가의 연관성에 대해 작성하세요."
               required
             />
             <InputFeedback
@@ -143,7 +143,7 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange, validati
                 e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
               }}
               className={getInputClassName(formData.relevance?.scientist?.description, 'w-full min-h-[120px] p-2 border rounded-md text-main')}
-              placeholder="데이터 과학자 직무와의 연관성에 대한 설명"
+              placeholder="데이터 과학자의 연관성에 대해 작성하세요."
               required
             />
             <InputFeedback
@@ -177,7 +177,7 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange, validati
                 e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
               }}
               className={getInputClassName(formData.relevance?.engineer?.description, 'w-full min-h-[120px] p-2 border rounded-md text-main')}
-              placeholder="데이터 엔지니어 직무와의 연관성에 대한 설명"
+              placeholder="데이터 엔지니어의 연관성에 대해 작성하세요."
               required
             />
             <InputFeedback

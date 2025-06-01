@@ -11,17 +11,17 @@ interface TagsSectionProps {
 
 const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchInputRef.current) {
         searchInputRef.current.focus();
       }
     }, 50);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   const handleLinkSelect = (url: string, title: string) => {
     const tagToAdd = {
       name: title,
@@ -36,11 +36,11 @@ const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
 
   return (
     <div className="p-2">
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {formData.tags?.map((tag, index) => (
           <div key={index} className="bg-gray5 border border-gray4 rounded-lg px-3 py-1 flex flex-col items-center mb-2">
             <div className="w-full flex justify-between items-start">
-              <span>{tag.name}</span>
+              <span className="font-medium truncate">{tag.name}</span>
               <button
                 type="button"
                 onClick={() => {
@@ -55,8 +55,8 @@ const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
               </button>
             </div>
             {tag.internal_link && (
-              <Link href={tag.internal_link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline truncate">
-                {`링크: ${ tag.internal_link }`}
+              <Link href={tag.internal_link} target="_blank" rel="noopener noreferrer" className="w-full text-sm text-primary hover:underline truncate">
+                {`${ tag.internal_link }`}
               </Link>
             )}
           </div>

@@ -7,12 +7,11 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 interface DescriptionSectionProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
-  validationErrors?: string[];
 }
 
-const DescriptionSection = ({ formData, handleChange, validationErrors = [] }: DescriptionSectionProps) => {
+const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps) => {
   const { getInputClassName, showValidation } = useFormValidation();
-  const [isGuideOpen, setIsGuideOpen] = useState(true);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
   const guideContentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number | null>(null);
 
@@ -26,15 +25,11 @@ const DescriptionSection = ({ formData, handleChange, validationErrors = [] }: D
     setIsGuideOpen(!isGuideOpen);
   };
 
-  const getFieldError = (fieldName: string) => {
-    return validationErrors.find((err) => err.includes(fieldName));
-  };
-
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleChange(e);
 
     e.target.style.height = 'auto';
-    e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
+    e.target.style.height = `calc(${ e.target.scrollHeight }px)`;
   };
 
   const tips = () => {
@@ -54,7 +49,7 @@ const DescriptionSection = ({ formData, handleChange, validationErrors = [] }: D
         <div
           ref={guideContentRef}
           className="overflow-hidden transition-all duration-300 ease-in-out"
-          style={{ height: isGuideOpen ? (contentHeight ? `calc(${ contentHeight }px + 0.5rem)` : 'auto') : '0px' }}
+          style={{ height: isGuideOpen ? (contentHeight ? `${ contentHeight }px` : 'auto') : '0px' }}
         >
           <div className={`grid grid-cols-[auto_1fr] items-center gap-px bg-gray4 text-sm ${ isGuideOpen ? 'animate-slideDown' : '' }`}>
             <div className="bg-background flex justify-center items-center text-sub h-full px-2 border-t border-gray4 font-bold">{'문법'}</div>
@@ -74,49 +69,53 @@ const DescriptionSection = ({ formData, handleChange, validationErrors = [] }: D
 
             <div className="bg-background flex items-center text-sub h-full px-2">{'`인라인 코드`'}</div>
             <div className="flex items-center gap-2 bg-background py-1 px-2">
-              <MarkdownContent content="`인라인 코드`는 백틱을 단어에 감싸 사용합니다." />
+              <MarkdownContent content="`인라인 코드`는 억음 부호(`)을 단어에 감싸 사용합니다." />
             </div>
 
             <div className="bg-background flex items-center text-sub h-full px-2">{'- 목록'}</div>
             <div className="flex items-center gap-2 bg-background py-1 px-2">
-              <MarkdownContent content="- 목록은 하이픈을 사용합니다.<br> - 다음 목록은 줄바꿈으로 구분됩니다." />
+              <MarkdownContent content="- 목록은 하이픈(-)을 사용합니다.<br> - 다음 목록은 줄바꿈으로 구분됩니다." />
             </div>
 
-            <div className="bg-background flex items-center text-sub h-full px-2">{'1. 번호목록'}</div>
+            <div className="bg-background flex items-center text-sub h-full px-2">{'1. 번호 목록'}</div>
             <div className="flex items-center gap-2 bg-background py-1 px-2">
-              <MarkdownContent content="1. 번호목록은 숫자를 사용합니다.<br> 2. 다음 목록은 줄바꿈으로 구분됩니다." />
+              <MarkdownContent content="1. 번호 목록은 숫자를 사용합니다.<br> 2. 다음 목록은 줄바꿈으로 구분됩니다." />
             </div>
 
-            <div className="bg-background flex items-center text-sub h-full px-2">{'\$인라인 수식\$'}</div>
+            <div className="bg-background flex items-center text-sub h-full px-2">
+              <MarkdownContent content="\$인라인 수식\$" />
+            </div>
             <div className="flex items-center gap-2 bg-background py-1 px-2">
-              <MarkdownContent content="달러 기호를 사용하여 $E=mc^2$ 와 같이 인라인 수식을 만들 수 있습니다." />
+              <MarkdownContent content="달러 기호(\$)를 사용하여 $E=mc^2$ 와 같이 인라인 수식을 만들 수 있습니다." />
             </div>
 
-            <div className="bg-background flex items-center text-sub h-full px-2">{'\$\$블록 수식\$\$'}</div>
+            <div className="bg-background flex items-center text-sub h-full px-2">
+              <MarkdownContent content="\$\$블록 수식\$\$" />
+            </div>
             <div className="flex items-center gap-2 bg-background py-1 px-2">
-              <MarkdownContent content="$$Z=10$$ 달러 기호 2개는 한 줄을 차지하는 수식이 됩니다." />
+              <MarkdownContent content="$$Z=10$$ 달러 기호 2개(\$\$)는 한 줄을 차지하는 수식이 됩니다." />
             </div>
 
-            <div className="bg-background flex items-center text-sub h-full px-2">{'[링크텍스트](URL)'}</div>
+            <div className="bg-background flex items-center text-sub h-full px-2">{'[링크 텍스트](URL)'}</div>
             <div className="flex items-center gap-2 bg-background py-1 px-2">
               <MarkdownContent content="[diki.kr](https://diki.kr)와 같이 대괄호에 링크 텍스트를, 소괄호에 URL을 넣어 링크를 만듭니다." />
             </div>
 
             <div className="bg-background flex items-center text-sub h-full px-2">{'> 인용구'}</div>
             <div className="flex items-center gap-2 bg-background py-1 px-2 font-tinos">
-              <MarkdownContent content="> 인용구는 '>' 기호로 시작하는 줄로 작성합니다.<br>> `> 인용구 + 줄바꿈 + > 인용구` 와 같이 사용하여 여러 줄도 가능합니다." />
+              <MarkdownContent content="> 인용구는 오른쪽 꺽쇠 기호(>)를 사용합니다.<br>> `> 인용구 + 줄바꿈 + > 인용구` 와 같이 사용하여 여러 줄도 가능합니다." />
             </div>
 
             <div className="size-full bg-background flex flex-col justify-center items-center text-sub px-2 border-b border-gray4">
-              <span>{'| 표 | 만들기 |'}</span>
-              <span>{'| --- | --- |'}</span>
-              <span>{'| 내용1 | 내용2 |'}</span>
+              <span className="w-full">{'| 제목1 | 제목2 |'}</span>
+              <span className="w-full tracking-[0.135rem]">{'| --- | --- |'}</span>
+              <span className="w-full">{'| 내용1 | 내용2 |'}</span>
             </div>
             <div className="flex items-center gap-2 bg-background py-1 px-2 border-b border-gray4">
-              <MarkdownContent content="| 항목1 | 항목2 |<br>| --- | --- |<br>| 내용1 | 내용2 | <br> Markdown 형식으로 표를 만들 수 있습니다. 첫 번째 열은 자동으로 중앙 정렬됩니다." />
+              <MarkdownContent content="|  제목1  |  제목2  |<br>| ---- | ---- |<br>|  내용1  |  내용2  |<br><br>Markdown 형식으로 표를 만들 수 있습니다. 첫 번째 열은 자동으로 중앙 정렬됩니다." />
             </div>
           </div>
-          <p className="text-gray3 text-end text-sm">{'이미지 등 추가 기능은 추후 추가 예정'}</p>
+          <p className="text-gray3 text-end text-sm my-1">{'이미지 첨부 등의 기능은 추후 추가될 예정입니다.'}</p>
         </div>
       </div>
     );
@@ -130,13 +129,13 @@ const DescriptionSection = ({ formData, handleChange, validationErrors = [] }: D
           value={formData.description?.full || ''}
           onChange={handleDescriptionChange}
           className={getInputClassName(formData.description?.full)}
-          placeholder="마크다운 형식으로 작성"
+          placeholder="마크다운 형식으로 작성하세요."
           required
           rows={6}
         />
         <InputFeedback
           value={formData.description?.full}
-          errorMessage={getFieldError('전체 설명') || '전체 설명을 입력하세요.'}
+          errorMessage="본문을 입력하세요."
           showValidation={showValidation}
         />
         {tips()}

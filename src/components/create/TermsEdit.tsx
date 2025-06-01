@@ -86,7 +86,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             onChange={(e) => !newTerm.internal_link && setNewTerm({ ...newTerm, term: e.target.value })}
             onKeyDown={(e) => handleInputKeyDown(e, descriptionRef)}
             className={`w-full p-2 border border-gray4 text-main rounded-md ${ newTerm.internal_link ? 'bg-gray5 cursor-not-allowed' : '' }`}
-            placeholder="각주 또는 Diki 포스트 등 관련 용어"
+            placeholder="각주 또는 포스트와 관련된 용어를 작성하세요."
             readOnly={!!newTerm.internal_link}
           />
           <IsolatedGuidanceMessage
@@ -107,7 +107,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             }}
             onKeyDown={(e) => handleInputKeyDown(e, linkSearchRef)}
             className="w-full p-2 border border-gray4 text-main rounded-md h-20"
-            placeholder="용어에 대한 설명"
+            placeholder="용어에 대한 설명을 작성하세요."
           />
           <IsolatedGuidanceMessage
             value={newTerm.description}
@@ -136,7 +136,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             </div>
           ) : (
             <div className="mt-2 text-sm text-gray2">
-              {'링크 선택 시, 용어는 링크 제목으로 자동 변경됩니다.'}
+              {'내부 링크를 선택하면 용어는 링크 제목으로 자동 변경됩니다.'}
             </div>
           )}
         </div>

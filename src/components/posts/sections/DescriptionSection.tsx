@@ -17,7 +17,7 @@ const DescriptionSection = ({ description }: DescriptionSectionProps) => {
           <MarkdownContent content={description} />
         </MathJaxProvider>
       ) : (
-        <p className="text-sub">{'개념(긴 설명)을 입력하세요.'}</p>
+        <p className="text-sub">{'본문을 작성하세요.'}</p>
       )}
     </section>
   );

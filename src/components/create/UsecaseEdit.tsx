@@ -63,7 +63,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
             e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
           }}
           className={getInputClassName(formData.usecase?.description)}
-          placeholder="해당 용어의 사용 사례에 대한 개요"
+          placeholder="포스트 내용의 사용 사례에 대한 개요를 작성하세요."
           required
         />
         <InputFeedback
@@ -84,7 +84,7 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
             e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
           }}
           className={getInputClassName(formData.usecase?.example)}
-          placeholder="구체적인 사용 사례"
+          placeholder="구체적인 사용 사례를 작성하세요."
           required
         />
         <InputFeedback
@@ -103,8 +103,8 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
               value={newIndustry}
               onChange={(e) => setNewIndustry(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="w-full p-2 border border-gray4 rounded-md text-main"
-              placeholder="산업 분야 (ex. 모든 산업 분야, 의료, 금융, 제조, 교통, 교육, 엔터테인먼트, 보안, 리테일, 에너지, 농업 등)"
+              className="w-full p-2 border border-gray4 rounded-md text-main truncate"
+              placeholder="산업 분야 (ex. 모든 산업 분야, 의료, 금융, 제조, 교통, 교육, 보안, 리테일, 에너지, 농업 등)"
             />
           </div>
           <button

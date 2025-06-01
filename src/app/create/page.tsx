@@ -273,7 +273,7 @@ export default function CreatePage() {
     koTitle: '한글 제목을 입력하세요.',
     enTitle: '영문 제목을 입력하세요.',
     shortDesc: '짧은 설명을 입력하세요.',
-    difficulty: '난이도 설명을 입력하세요.',
+    difficulty: '난이도에 대한 설명을 입력하세요.',
     description: '전체 설명을 입력하세요.',
     relevance: [
       '데이터 분석가 직무 연관성 설명을 입력하세요.',
@@ -436,7 +436,7 @@ export default function CreatePage() {
           }}
           className="w-full p-2 border border-gray4 text-main rounded-md resize-none overflow-hidden focus:border-primary focus:ring-1 focus:ring-primary"
           required
-          placeholder="포스트에 대한 1~2줄 짧은 설명 (100자 이내)"
+          placeholder="포스트에 대한 간단한 설명을 작성하세요."
           maxLength={100}
           rows={2}
           style={{ minHeight: '60px' }}
@@ -454,30 +454,30 @@ export default function CreatePage() {
   // ETC 제목 폼 렌더링
   const renderEtcTitleForm = () => {
     const currentEtcArray = Array.isArray(formData.title?.etc) ? formData.title.etc : [];
-    
+
     const handleAddKeyword = () => {
       if (newEtcKeyword.trim()) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           title: {
             ...prev.title,
-            etc: [...(prev.title?.etc || []), newEtcKeyword.trim()]
-          }
+            etc: [...(prev.title?.etc || []), newEtcKeyword.trim()],
+          },
         }));
         setNewEtcKeyword('');
       }
     };
-    
+
     const handleRemoveKeyword = (index: number) => {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         title: {
           ...prev.title,
-          etc: (prev.title?.etc || []).filter((_, i) => i !== index)
-        }
+          etc: (prev.title?.etc || []).filter((_, i) => i !== index),
+        },
       }));
     };
-    
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.nativeEvent.isComposing) return;
       if (e.key === 'Enter') {
@@ -485,7 +485,7 @@ export default function CreatePage() {
         handleAddKeyword();
       }
     };
-    
+
     return (
       <div className="p-2">
         <label className="block text-sm font-medium mb-1 text-gray0">
@@ -513,7 +513,7 @@ export default function CreatePage() {
         <p className="text-sm text-gray2 mb-2">
           {'Enter 키 또는 [추가] 버튼을 눌러 키워드를 추가할 수 있습니다. 이 키워드들은 포스트에 표시되지 않지만 검색에 사용됩니다.'}
         </p>
-        
+
         <div className="flex flex-wrap gap-2 mt-4">
           {currentEtcArray.map((keyword, index) => (
             <div key={index} className="bg-gray5 border border-gray4 rounded-lg px-3 py-1 flex items-center text-main">
@@ -548,7 +548,7 @@ export default function CreatePage() {
             formComponents={{
               basicInfo: <BasicInfoEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
               difficulty: <DifficultyEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-              description: <DescriptionEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+              description: <DescriptionEdit formData={formData} handleChange={handleChange} />,
               terms: <TermsEdit formData={formData} setFormData={setFormData} />,
               tags: <TagsEdit formData={formData} setFormData={setFormData} />,
               relevance: <RelevanceEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
