@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           title: `새 포스트 추가 요청: ${ data.title.ko }`,
           body: issueBody,
-          labels: ['documentation', 'contribution'],
+          labels: ['new-post', userInfo?.username || 'username 확인 안됨'],
         }),
       }
     );
@@ -144,9 +144,9 @@ ${ data.terms?.length === 0 ? '관련 용어 없음' : '' }
 - 산업 분야: ${ (data.usecase?.industries || []).join(', ') }
 
 ## 참고 자료
-- 참고 자료 1: ${ data.references || '' }
+- 참고 자료: ${ data.references || '' }
 
-## 태그
+## 태그(관련 포스트)
 ${ (data.tags || []).map((tag) => `- ${ tag.name || '' }`).join('\n') }
 
 ## 전체 JSON 데이터
