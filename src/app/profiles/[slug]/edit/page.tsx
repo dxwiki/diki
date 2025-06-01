@@ -442,7 +442,11 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
         onConfirm={handleDeleteAccount}
         title="회원 탈퇴"
         message="정말 탈퇴하시겠습니까?"
-        submessage="이 작업은 되돌릴 수 없으며, 작성하신 글은 비공개 처리됩니다."
+        submessage={(
+          <p className="text-level-5">
+            {'이 작업은 되돌릴 수 없으며, 작성하신 글은 비공개 처리됩니다.'}
+          </p>
+        )}
         confirmText="탈퇴하기"
         cancelText="취소"
         confirmButtonClass="px-4 py-2 text-level-5 hover:bg-red-700 dark:hover:bg-red-900 hover:text-white rounded-lg"
