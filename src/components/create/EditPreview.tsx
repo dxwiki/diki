@@ -598,7 +598,7 @@ const PostPreview = ({
                     <UsecaseSection
                       usecase={{
                         industries: term.usecase?.industries || [],
-                        example: term.usecase?.example || '사용 사례를 작성하세요.',
+                        example: term.usecase?.example || '구체적인 사용 사례를 작성하세요.',
                         description: term.usecase?.description || '사용 사례에 대한 개요를 작성하세요.',
                       }}
                     />
