@@ -62,14 +62,22 @@ function parseMarkdownSegment(segment: string) {
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
+  // 리터럴 달러 기호 처리 (텍스트에서 달러 기호를 표시하기 위한 처리)
+  html = html.replace(/\\\\?\$/g, '&#36;');
+
   return html;
 }
 
 // 수식/텍스트 분리 함수
 function splitContentIntoSegments(text: string) {
+  // 이스케이프된 달러 기호는 임시 토큰으로 치환
+  const escapedText = text.replace(/\\\$/g, '{{ESCAPED_DOLLAR}}');
+
   const regex = /(\${2}[\s\S]+?\${2}|\$[\s\S]+?\$)/g;
-  const segments = text.split(regex).filter((segment) => segment.trim() !== '');
-  return segments;
+  const segments = escapedText.split(regex).filter((segment) => segment.trim() !== '');
+
+  // 임시 토큰을 다시 이스케이프된 달러 기호로 변환
+  return segments.map((segment) => segment.replace(/{{ESCAPED_DOLLAR}}/g, '\\$'));
 }
 
 interface MarkdownContentProps {
