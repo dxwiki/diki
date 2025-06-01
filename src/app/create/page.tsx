@@ -213,7 +213,7 @@ export default function CreatePage() {
 
   // 섹션 토글 함수
   const toggleSection = (section: string) => {
-    console.log('섹션 토글 함수 호출됨:', section);
+    // console.log('섹션 토글 함수 호출됨:', section);
 
     // section이 문자열이 아닌 경우 처리
     if (typeof section !== 'string') {

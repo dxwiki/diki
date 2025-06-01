@@ -107,9 +107,9 @@ const PostPreview = ({
       || (Array.isArray(term.references?.opensource) && term.references.opensource.length > 0),
   };
 
-  useEffect(() => {
-    console.log(term);
-  }, [term]);
+  // useEffect(() => {
+  //   console.log(term);
+  // }, [term]);
 
   useEffect(() => {
     if (profiles.length > 0 && term.metadata?.authors) {

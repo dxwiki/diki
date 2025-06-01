@@ -17,7 +17,7 @@ const fetchTermsData = async (): Promise<TermData[]> => {
     if (fileExists) {
       const fileContent = fs.readFileSync(filePath, 'utf8');
       terms = JSON.parse(fileContent);
-      if(!terms.length) console.log('데이터가 존재하지 않음');
+      // if(!terms.length) console.log('데이터가 존재하지 않음');
       store.dispatch(setTerms(terms));
       store.dispatch(setTermsLoading(false));
 
@@ -61,7 +61,7 @@ const fetchProfilesData = async (): Promise<Profile[]> => {
     if (fileExists) {
       const fileContent = fs.readFileSync(filePath, 'utf8');
       profiles = JSON.parse(fileContent);
-      if(!profiles.length) console.log('프로필 데이터가 존재하지 않음');
+      // if(!profiles.length) console.log('프로필 데이터가 존재하지 않음');
       store.dispatch(setProfiles(profiles));
       store.dispatch(setProfilesLoading(false));
 
