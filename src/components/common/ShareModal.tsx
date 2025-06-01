@@ -101,7 +101,7 @@ const ShareModal = ({ isOpen, onClose }: ShareModalProps) => {
         onClick={onClose}
       />
       <div
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-lg p-6 w-80 z-50"
+        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg p-6 w-80 z-50 bg-gray5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
