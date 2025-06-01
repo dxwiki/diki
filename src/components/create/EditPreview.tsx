@@ -26,6 +26,7 @@ interface EditingSectionState {
   koTitle: boolean;
   enTitle: boolean;
   shortDesc: boolean;
+  etcTitle: boolean;
 }
 
 interface FormComponents {
@@ -47,6 +48,7 @@ interface PostPreviewProps {
   renderKoreanTitleForm?: ()=> React.ReactNode;
   renderEnglishTitleForm?: ()=> React.ReactNode;
   renderShortDescriptionForm?: ()=> React.ReactNode;
+  renderEtcTitleForm?: ()=> React.ReactNode;
   validateSection?: (section: string)=> boolean;
   formSubmitted?: boolean;
   isPreview?: boolean;
@@ -60,6 +62,7 @@ const PostPreview = ({
   renderKoreanTitleForm,
   renderEnglishTitleForm,
   renderShortDescriptionForm,
+  renderEtcTitleForm,
   validateSection,
   formSubmitted = false,
   isPreview = false,
@@ -74,6 +77,7 @@ const PostPreview = ({
   const sectionRefs = useRef<{[key: string]: HTMLElement | null}>({
     koTitle: null,
     enTitle: null,
+    etcTitle: null,
     shortDesc: null,
     difficulty: null,
     description: null,
@@ -262,6 +266,8 @@ const PostPreview = ({
           return term.title?.ko && term.title.ko.trim() !== '' ? 'filled' : 'empty';
         case 'enTitle':
           return term.title?.en && term.title.en.trim() !== '' ? 'filled' : 'empty';
+        case 'etcTitle':
+          return Array.isArray(term.title?.etc) && term.title.etc.length > 0 ? 'filled' : 'empty';
         case 'shortDesc':
           return term.description?.short && term.description.short.trim() !== '' ? 'filled' : 'empty';
         case 'difficulty':
@@ -333,6 +339,9 @@ const PostPreview = ({
         case 'enTitle':
           return renderEnglishTitleForm ? renderEnglishTitleForm()
             : (formComponents.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }));
+        case 'etcTitle':
+          return renderEtcTitleForm ? renderEtcTitleForm()
+            : (formComponents.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }));
         case 'shortDesc':
           return renderShortDescriptionForm ? renderShortDescriptionForm()
             : (formComponents.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }));
@@ -344,14 +353,14 @@ const PostPreview = ({
     return (
       <div 
         ref={(el) => { sectionRefs.current[section] = el; }}
-        className={`m-1 p-1 mt-2 animate-slideDown ${ section === 'koTitle' || section === 'enTitle' ? '' : 'border-t border-primary border-dashed' } ${ section === 'tags' ? 'border-t border-primary border-dashed sm:border-t-0' : '' }`}
+        className={`m-1 p-1 mt-2 animate-slideDown ${ section === 'koTitle' || section === 'enTitle' || section === 'etcTitle' ? '' : 'border-t border-primary border-dashed' } ${ section === 'tags' ? 'border-t border-primary border-dashed sm:border-t-0' : '' }`}
       >
         {renderContent()}
         {renderSectionErrors(section)}
         {closeButton}
       </div>
     );
-  }, [editingSections, formComponents, handleCloseSection, renderKoreanTitleForm, renderEnglishTitleForm, renderShortDescriptionForm, renderSectionErrors]);
+  }, [editingSections, formComponents, handleCloseSection, renderKoreanTitleForm, renderEnglishTitleForm, renderEtcTitleForm, renderShortDescriptionForm, renderSectionErrors]);
 
   return (
     <div className="prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg p-2 sm:p-4 border border-gray4" ref={postPreviewRef}>
@@ -398,6 +407,19 @@ const PostPreview = ({
               >
                 {'('}{term.title?.en === '' ? '영문 제목' : term.title?.en}{')'}
               </span>
+              {!isPreview && (
+                <button
+                  className={`${getSectionClassName('etcTitle', 'inline-flex items-center px-2 py-1 text-xs rounded-lg transition-colors')} border-t-0`}
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    handleSectionClick('etcTitle', e);
+                  }}
+                >
+                  {Array.isArray(term.title?.etc) && term.title.etc.length > 0 
+                    ? `검색 키워드 (${term.title.etc.length})` 
+                    : '검색 키워드'}
+                </button>
+              )}
               <span className='inline-flex items-center' />
             </span>
           </div>
@@ -413,6 +435,13 @@ const PostPreview = ({
           {editingSections?.enTitle && (
             <div className="relative outline outline-2 outline-primary rounded-lg">
               {renderInlineEditForm('enTitle')}
+            </div>
+          )}
+
+          {/* Etc 제목 편집 폼 */}
+          {editingSections?.etcTitle && (
+            <div className="relative outline outline-2 outline-primary rounded-lg">
+              {renderInlineEditForm('etcTitle')}
             </div>
           )}
 
