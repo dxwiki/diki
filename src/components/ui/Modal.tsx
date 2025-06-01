@@ -34,7 +34,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
         className="min-w-[90vw] md:min-w-[40vw] xl:min-w-[25vw] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray5 rounded-lg p-4 z-50"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center border-b border-gray3 pb-2 mb-4">
           <span className="text-lg font-semibold text-main">{title}</span>
           <button onClick={onClose} className="p-1">
             <X className="size-5 text-main" />
@@ -55,7 +55,7 @@ interface ConfirmModalProps {
   onConfirm: ()=> void;
   title: string;
   message: string;
-  submessage?: string;
+  submessage?: string | React.ReactNode;
   confirmText?: string;
   cancelText?: string;
   confirmButtonClass?: string;
@@ -74,9 +74,9 @@ export const ConfirmModal = ({
 }: ConfirmModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
-      <div className="flex flex-col gap-0.5 mb-5 text-main">
+      <div className="flex flex-col gap-0.5 mb-4 text-main">
         {message}
-        <p className="text-gray1">{submessage}</p>
+        {typeof submessage === 'string' ? <p className="text-gray1">{submessage}</p> : submessage}
       </div>
       <div className="flex justify-end space-x-2">
         <button
