@@ -105,7 +105,7 @@ const Toast = ({
   const bgColors = {
     success: 'bg-primary dark:bg-secondary text-white',
     error: 'bg-level-5 text-white border-level-5',
-    info: 'bg-gray0 text-white',
+    info: 'bg-gray2 dark:bg-gray4 border border-white text-white',
   };
 
   const offsetStyle = {

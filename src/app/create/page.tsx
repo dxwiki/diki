@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { TermData } from '@/types/database';
 import BasicInfoEdit from '@/components/create/BasicInfoEdit';
@@ -15,7 +15,7 @@ import EditPreview from '@/components/create/EditPreview';
 import { ConfirmModal } from '@/components/ui/Modal';
 import Footer from '@/components/common/Footer';
 import { useToast } from '@/layouts/ToastProvider';
-import { X } from 'lucide-react';
+import { X, Save, Upload } from 'lucide-react';
 
 interface EditingSectionState {
   basicInfo: boolean;
@@ -41,6 +41,7 @@ export default function CreatePage() {
   const [error, setError] = useState<string | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
@@ -92,6 +93,52 @@ export default function CreatePage() {
     },
     publish: false,
   });
+
+  // 로컬 스토리지에 폼 데이터 저장
+  const saveFormData = useCallback(() => {
+    try {
+      localStorage.setItem('diki-create-form-data', JSON.stringify(formData));
+      showToast('작성 중인 내용이 브라우저에 저장되었습니다.', 'info');
+    } catch (error) {
+      console.error('로컬 스토리지 저장 오류:', error);
+      showToast('저장 중 오류가 발생했습니다.');
+    }
+  }, [formData, showToast]);
+
+  // 로컬 스토리지에서 폼 데이터 불러오기
+  const loadFormData = useCallback(() => {
+    try {
+      const savedData = localStorage.getItem('diki-create-form-data');
+      if (savedData) {
+        const parsedData = JSON.parse(savedData) as TermData;
+        setFormData(parsedData);
+        setIsLoadModalOpen(false);
+        showToast('마지막으로 작성한 내용을 불러왔습니다.', 'success');
+      } else {
+        showToast('저장된 내용이 없습니다.');
+      }
+    } catch (error) {
+      console.error('로컬 스토리지 불러오기 오류:', error);
+      showToast('불러오기 중 오류가 발생했습니다.');
+    }
+  }, [showToast]);
+
+  // 자동 저장 기능 구현
+  useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      if (isLoggedIn && !formSubmitted) {
+        try {
+          localStorage.setItem('diki-create-form-data', JSON.stringify(formData));
+          showToast('작성 중인 내용이 자동으로 브라우저에 저장되었습니다.', 'info');
+        } catch (error) {
+          console.error('로컬 스토리지 저장 오류:', error);
+          showToast('저장 중 오류가 발생했습니다.');
+        }
+      }
+    }, 180000); // 3분마다 자동 저장
+
+    return () => clearInterval(autoSaveInterval);
+  }, [formData, isLoggedIn, formSubmitted, showToast]);
 
   // 로그인 확인 로직
   useEffect(() => {
@@ -368,6 +415,9 @@ export default function CreatePage() {
 
       const result = await response.json();
       alert('문서가 성공적으로 GitHub 이슈로 등록되었습니다!');
+
+      // 제출 성공 시 로컬 스토리지에서 데이터 삭제
+      localStorage.removeItem('diki-create-form-data');
       router.push(`/thank-you?issue=${ result.issue_number }`);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : '문서 제출 중 오류가 발생했습니다.');
@@ -536,6 +586,26 @@ export default function CreatePage() {
     <div className="container mx-auto">
       <div className="w-full flex justify-between items-center mb-4">
         <div className="flex items-center text-lg md:text-xl lg:text-2xl font-bold">{'새 포스트 작성'}</div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={saveFormData}
+            className="flex items-center px-3 py-1.5 rounded-md hover:bg-gray4 text-sm text-gray0"
+            title="현재 작성 중인 내용을 브라우저에 임시저장합니다"
+          >
+            <Save size={16} className="mr-1" />
+            {'임시저장'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsLoadModalOpen(true)}
+            className="flex items-center px-3 py-1.5 rounded-md bg-gray3 hover:bg-gray2 text-sm text-white"
+            title="브라우저에 마지막으로 임시저장한 내용을 불러옵니다"
+          >
+            <Upload size={16} className="mr-1" />
+            {'불러오기'}
+          </button>
+        </div>
       </div>
 
       <form id="createForm" onSubmit={handleSubmit} noValidate>
@@ -587,8 +657,8 @@ export default function CreatePage() {
             type="button"
             onClick={togglePreviewMode}
             className={`px-4 py-2 rounded-md ${ isPreview
-              ? 'text-primary hover:text-accent'
-              : 'text-gray2 hover:text-main' }`}
+              ? 'text-primary hover:bg-gray4'
+              : 'text-gray0 hover:bg-gray4' }`}
           >
             {isPreview ? '편집하기' : '미리보기'}
           </button>
@@ -618,10 +688,34 @@ export default function CreatePage() {
       <ConfirmModal
         isOpen={isCancelModalOpen}
         onClose={() => setIsCancelModalOpen(false)}
-        onConfirm={() => router.push('/')}
+        onConfirm={() => {
+          localStorage.removeItem('diki-create-form-data');
+          router.push('/');
+        }}
         title="작성 취소"
-        message="정말 작성을 취소하시겠습니까?"
+        message="정말 작성을 취소하시겠습니까? 저장된 내용도 삭제됩니다."
         confirmText="확인"
+        cancelText="취소"
+      />
+
+      {/* 불러오기 확인 모달 */}
+      <ConfirmModal
+        isOpen={isLoadModalOpen}
+        onClose={() => setIsLoadModalOpen(false)}
+        onConfirm={loadFormData}
+        title="저장된 내용 불러오기"
+        message="이전에 저장한 내용을 불러오시겠습니까? 현재 작성 중인 내용은 사라집니다."
+        submessage={(
+          <div>
+            <p className="text-sm text-gray2 mt-2">
+              {'- 저장된 내용은 현재 사용 중인 기기와 브라우저에서만 불러올 수 있습니다.'}
+            </p>
+            <p className="text-sm text-gray2">
+              {'- 다른 컴퓨터나 모바일 기기에서 저장한 내용은 여기서 볼 수 없습니다.'}
+            </p>
+          </div>
+        )}
+        confirmText="불러오기"
         cancelText="취소"
       />
 
