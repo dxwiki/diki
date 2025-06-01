@@ -49,7 +49,7 @@ export default function AuthStatus() {
         <DropdownTrigger>
           <div className="flex items-center space-x-2 focus:outline-none cursor-pointer">
             <Image src={user.thumbnail} alt="User Thumbnail" className="rounded-full" width={32} height={32} />
-            <span className="hidden sm:block">{user.name}</span>
+            <span className="font-bold hidden sm:block">{user.name}</span>
           </div>
         </DropdownTrigger>
 
