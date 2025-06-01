@@ -53,10 +53,10 @@ const Header = () => {
             <AuthStatus />
             <Link
               href={isLoggedIn ? '/create' : '/login'}
-              className='rounded-full px-3 py-1 text-white bg-primary hover:bg-accent dark:bg-secondary dark:hover:bg-background-secondary'
-              aria-label='새 포스트 작성하기'
+              className='rounded-full px-3 py-1 text-main hover:text-primary hover:bg-gray4 transition-all duration-300'
+              aria-label='기여하기(새 포스트 작성)'
             >
-              {'새 포스트\r'}
+              {'기여하기\r'}
             </Link>
           </div>
 
