@@ -6,11 +6,10 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 interface PrivacyPolicyProps {
   onCheckChange: (checked: boolean)=> void;
   isChecked: boolean;
-  onScrolledToBottom?: (scrolled: boolean)=> void;
 }
 
-export default function PrivacyPolicy({ onCheckChange, isChecked, onScrolledToBottom }: PrivacyPolicyProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolicyProps) {
+  const [isExpanded, setIsExpanded] = useState(true);
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -28,12 +27,9 @@ export default function PrivacyPolicy({ onCheckChange, isChecked, onScrolledToBo
 
       if (isAtBottom && !hasScrolledToBottom) {
         setHasScrolledToBottom(true);
-        if (onScrolledToBottom) {
-          onScrolledToBottom(true);
-        }
       }
     }
-  }, [hasScrolledToBottom, onScrolledToBottom]);
+  }, [hasScrolledToBottom]);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -70,13 +66,11 @@ export default function PrivacyPolicy({ onCheckChange, isChecked, onScrolledToBo
         <label
           htmlFor="privacy-check"
           className="text-sm text-main cursor-pointer grow"
-          onClick={() => {
-            if (!isExpanded) {
-              setIsExpanded(true);
-            }
-          }}
         >
-          {'[필수] 개인정보 처리방침'}
+          <span className="text-accent dark:text-primary">
+            {'[필수]'}
+          </span>
+          {' 개인정보 처리방침'}
         </label>
         <button
           onClick={(e) => {
@@ -104,16 +98,16 @@ export default function PrivacyPolicy({ onCheckChange, isChecked, onScrolledToBo
       </div>
 
       <div
-        className={`mt-3 overflow-hidden transition-all duration-300 ease-in-out ${ isExpanded ? 'opacity-100' : 'opacity-0' } relative`}
-        style={{ height: height ? `${ height }px` : '0px' }}
+        className={`mt-3 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100' : 'opacity-0'} relative`}
+        style={{ height: height ? `${height}px` : '0px' }}
       >
         <div
           ref={contentRef}
-          className={`p-2 md:p-6 bg-gray5 rounded-md text-sm ${ isExpanded ? 'animate-slideDown' : '' }`}
+          className={`p-2 md:p-6 bg-gray5 rounded-md text-sm ${isExpanded ? 'animate-slideDown' : ''}`}
         >
           <div
             ref={policyContentRef}
-            className="privacy-policy-content overflow-y-auto max-h-64 md:max-h-96"
+            className="privacy-policy-content overflow-y-auto h-64 md:h-80"
           >
             <h2 className="text-center text-lg font-bold mb-4">{'개인정보 처리방침'}</h2>
             <p className="my-2">
@@ -197,7 +191,7 @@ export default function PrivacyPolicy({ onCheckChange, isChecked, onScrolledToBo
               <li className="mb-1">{'오류 등이 있을 경우 정정 요청'}</li>
               <li className="mb-1">{'삭제 및 처리 정지 요청'}</li>
             </ul>
-            <p className="pl-3">{'요청은 서비스 내 문의 채널 또는 이메일(dxwiki.team@gmail.com)을 통해 가능합니다.'}</p>
+            <p className="pl-3">{'요청은 서비스 내 문의 채널 또는 이메일(diki.datawiki@gmail.com)을 통해 가능합니다.'}</p>
           </div>
         </div>
 
