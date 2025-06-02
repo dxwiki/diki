@@ -443,6 +443,13 @@ export default function CreatePage() {
         name="title.ko"
         value={formData.title?.ko || ''}
         onChange={handleChange}
+        onKeyDown={(e) => {
+          if (e.nativeEvent.isComposing) return;
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            toggleSection('enTitle');
+          }
+        }}
         className="w-full p-2 border border-gray4 text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
         placeholder="포스트 한글 제목 (ex. 인공지능)"
         required
@@ -461,6 +468,13 @@ export default function CreatePage() {
         name="title.en"
         value={formData.title?.en || ''}
         onChange={handleChange}
+        onKeyDown={(e) => {
+          if (e.nativeEvent.isComposing) return;
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            toggleSection('shortDesc');
+          }
+        }}
         className="w-full p-2 border border-gray4 text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
         placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
         required
@@ -483,6 +497,13 @@ export default function CreatePage() {
             // 높이 자동 조절
             e.target.style.height = 'auto';
             e.target.style.height = e.target.scrollHeight + 'px';
+          }}
+          onKeyDown={(e) => {
+            if (e.nativeEvent.isComposing) return;
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              toggleSection('difficulty');
+            }
           }}
           className="w-full p-2 border border-gray4 text-main rounded-md resize-none overflow-hidden focus:border-primary focus:ring-1 focus:ring-primary"
           required
