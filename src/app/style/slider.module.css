@@ -32,8 +32,9 @@
 /* track 스타일 */
 .customMuiSlider :global(.MuiSlider-track),
 .customMuiSlider :global([class*="MuiSlider-track"]) {
-  height: 3px;
+  height: 4px;
   background-color: var(--primary);
+  border: 0;
 }
 
 /* 특정 클래스에 대한 직접 스타일링 */
