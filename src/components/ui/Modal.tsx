@@ -70,7 +70,7 @@ export const ConfirmModal = ({
   submessage,
   confirmText = '확인',
   cancelText = '취소',
-  confirmButtonClass = 'px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4',
+  confirmButtonClass = 'px-2 py-1 sm:px-4 sm:py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4',
 }: ConfirmModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
