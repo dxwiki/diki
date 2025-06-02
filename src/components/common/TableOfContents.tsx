@@ -154,7 +154,7 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName, isEdit
                 key={index}
                 href={transformToSlug(tag.internal_link)}
                 className={`font-normal text-sm text-main transition-colors underline underline-offset-4 decoration-light ${
-                  isPreview
+                  isPreview || !isEditMode
                     ? 'cursor-pointer hover:text-accent hover:decoration-accent'
                     : 'cursor-not-allowed pointer-events-none text-gray2'
                 }`}
