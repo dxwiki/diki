@@ -7,6 +7,13 @@ import { dikiMetadata } from '../src/constants';
 
     const text = 'User-agent: *\n'
                  + 'Allow: /\n'
+                 + 'Disallow: /create/\n'
+                 + 'Disallow: /login/\n'
+                 + 'Disallow: /signup/\n'
+                 + 'Disallow: /good-bye/\n'
+                 + 'Disallow: /thank-you/\n'
+                 + 'Disallow: /profiles/*/posts/\n'
+                 + 'Disallow: /profiles/*/contributes/\n'
                  + `Sitemap: ${ siteUrl }/sitemap.xml\n`;
 
     return text;
