@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import { dikiMetadata } from '@/constants';
-import AdContainer from '@/components/common/AdContainer';
+// import AdContainer from '@/components/common/AdContainer';
 
 export function generateMetadata(): Metadata {
   return {
@@ -60,13 +60,13 @@ export default async function Home() {
           <div className='w-full absolute top-20'>
             <RecentTerms />
           </div>
-          <div className='w-full absolute top-48'>
+          {/* <div className='w-full absolute top-48'>
             <AdContainer
               slot="7776882810"
               format="auto"
               className="w-full min-h-[160px]"
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </>
