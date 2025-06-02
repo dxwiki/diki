@@ -123,23 +123,21 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
 
   return (
     <div className="p-2">
-      <div className="mb-4">
-        <textarea
-          name="description.full"
-          value={formData.description?.full || ''}
-          onChange={handleDescriptionChange}
-          className={getInputClassName(formData.description?.full)}
-          placeholder="마크다운 형식으로 작성하세요."
-          required
-          rows={6}
-        />
-        <InputFeedback
-          value={formData.description?.full}
-          errorMessage="본문을 입력하세요."
-          showValidation={showValidation}
-        />
-        {tips()}
-      </div>
+      <textarea
+        name="description.full"
+        value={formData.description?.full || ''}
+        onChange={handleDescriptionChange}
+        className={getInputClassName(formData.description?.full)}
+        placeholder="마크다운 형식으로 작성하세요."
+        required
+        rows={6}
+      />
+      <InputFeedback
+        value={formData.description?.full}
+        errorMessage="본문을 입력하세요."
+        showValidation={showValidation}
+      />
+      {tips()}
     </div>
   );
 };
