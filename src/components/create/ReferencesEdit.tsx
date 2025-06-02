@@ -290,25 +290,25 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
       <div className="flex border-b border-gray4 mb-4">
         <button
           onClick={(e) => handleTabChange(e, 'tutorial')}
-          className={`px-4 py-2 ${ activeTab === 'tutorial' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
+          className={`px-4 py-2 text-sm ${ activeTab === 'tutorial' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
         >
           {'튜토리얼'}
         </button>
         <button
           onClick={(e) => handleTabChange(e, 'book')}
-          className={`px-4 py-2 ${ activeTab === 'book' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
+          className={`px-4 py-2 text-sm ${ activeTab === 'book' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
         >
           {'참고서적'}
         </button>
         <button
           onClick={(e) => handleTabChange(e, 'academic')}
-          className={`px-4 py-2 ${ activeTab === 'academic' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
+          className={`px-4 py-2 text-sm ${ activeTab === 'academic' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
         >
           {'연구논문'}
         </button>
         <button
           onClick={(e) => handleTabChange(e, 'opensource')}
-          className={`px-4 py-2 ${ activeTab === 'opensource' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
+          className={`px-4 py-2 text-sm ${ activeTab === 'opensource' ? 'border-b-2 border-primary text-primary font-medium' : 'text-gray0' }`}
         >
           {'오픈소스'}
         </button>
