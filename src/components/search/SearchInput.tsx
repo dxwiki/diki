@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
 import { setSearchQuery, resetSearchState } from '@/store/searchSlice';
 import { setCurrentPage, setSortType } from '@/store/pageSlice';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Search, X } from 'lucide-react';
 import SearchTip from '@/components/search/SearchTip';
 import { useRouter } from 'next/navigation';
@@ -21,6 +21,9 @@ const SearchInput = () => {
   const [placeholder, setPlaceholder] = useState('검색어 입력해주세요');
   const router = useRouter();
   const [recommendedTerms, setRecommendedTerms] = useState<TermData[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const suggestionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
   const SUGGESTION_COUNT = 6;
   const debounceDelay = 300;
   let searchTimeout: NodeJS.Timeout;
@@ -37,7 +40,32 @@ const SearchInput = () => {
   }, [terms.length]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    setSelectedIndex(-1);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    suggestionRefs.current = suggestionRefs.current.slice(0, recommendedTerms.length);
+  }, [recommendedTerms]);
+
+  useEffect(() => {
+    if (selectedIndex >= 0 && suggestionRefs.current[selectedIndex] && containerRef.current) {
+      const selectedElement = suggestionRefs.current[selectedIndex];
+      const container = containerRef.current;
+
+      const selectedRect = selectedElement.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+
+      if (selectedRect.top < containerRect.top) {
+        selectedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+      else if (selectedRect.bottom > containerRect.bottom) {
+        selectedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+  }, [selectedIndex]);
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: globalThis.KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         if (isModalOpen) {
@@ -49,8 +77,8 @@ const SearchInput = () => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, [isModalOpen]);
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -61,10 +89,30 @@ const SearchInput = () => {
     }, 0);
   };
 
-  const redirect = (e: React.KeyboardEvent<HTMLInputElement>, term: string) => {
-    if (e.key === 'Enter') {
-      dispatch(setSearchQuery(term));
-      router.push(`/posts?q=${ term.trim().split(' ').join('+') }`);
+  const handleKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (!searchQuery || recommendedTerms.length === 0) {
+      if (e.key === 'Enter') {
+        dispatch(setSearchQuery(searchQuery));
+        router.push(`/posts?q=${ searchQuery.trim().split(' ').join('+') }`);
+      }
+      return;
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev < recommendedTerms.length - 1 ? prev + 1 : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : recommendedTerms.length - 1));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedIndex >= 0) {
+        const selectedTerm = recommendedTerms[selectedIndex];
+        handleSuggestionClick(selectedTerm);
+      } else {
+        dispatch(setSearchQuery(searchQuery));
+        router.push(`/posts?q=${ searchQuery.trim().split(' ').join('+') }`);
+      }
     }
   };
 
@@ -84,13 +132,13 @@ const SearchInput = () => {
     }, debounceDelay);
   };
 
-  // const handleSuggestionClick = (term: TermData) => {
-  //   const query = term.title?.ko || term.title?.en || '';
-  //   dispatch(setSearchQuery(query));
-  //   dispatch(setSearchedTerms([term]));
-  //   setIsModalOpen(false);
-  //   router.push(`/posts?q=${ query.trim().split(' ').join('+') }`);
-  // };
+  const handleSuggestionClick = (term: TermData) => {
+    const query = term.title?.ko || term.title?.en || '';
+    dispatch(setSearchQuery(query));
+    dispatch(setSearchedTerms([term]));
+    setIsModalOpen(false);
+    router.push(term.url ?? '/not-found');
+  };
 
   return (
     <div className="relative w-full">
@@ -114,7 +162,7 @@ const SearchInput = () => {
             onChange={(e) => handleSearch(e.target.value)}
             onFocus={() => setIsModalOpen(true)}
             onBlur={handleBlur}
-            onKeyDown={(e) => redirect(e, searchQuery)}
+            onKeyDown={handleKeyDown}
             className="w-full p-2 mr-2 outline-none text-main bg-background"
           />
           {searchQuery && (
@@ -129,17 +177,22 @@ const SearchInput = () => {
           <div className="w-full suggestions-modal">
             {searchQuery ? (
               recommendedTerms.length > 0 ? (
-                <div className="flex flex-col">
+                <div ref={containerRef} className="flex flex-col max-h-60 overflow-y-auto">
                   {recommendedTerms.map((term, index) => (
                     <div
                       key={term.id}
+                      ref={(el) => {
+                        suggestionRefs.current[index] = el;
+                      }}
                       onMouseDown={(e) => {
                         e.preventDefault();
-                        router.push(term.url ?? '/not-found');
+                        handleSuggestionClick(term);
                       }}
+                      onMouseEnter={() => setSelectedIndex(index)}
                       className={`
                         flex items-center px-4 py-2 hover:bg-gray4 cursor-pointer
                         ${ index === recommendedTerms.length - 1 ? 'rounded-b-[21px]' : '' }
+                        ${ selectedIndex === index ? 'bg-gray4' : '' }
                       `}
                     >
                       <Search className="text-gray1 size-4 mr-2 shrink-0" />
