@@ -128,7 +128,7 @@ const InternalLinkSearch = ({ onSelect, refocus = false, inputRef }: InternalLin
 
   return (
     <div className="w-full">
-      <div className="w-full p-2 border border-gray4 rounded-md focus-within:border-primary bg-white dark:bg-background">
+      <div className="w-full p-2 border border-gray4 rounded-md focus-within:border-primary bg-white dark:bg-gray5">
         <div className="flex items-center">
           <Search className="text-primary size-5 shrink-0 mr-2" />
           <input
@@ -140,7 +140,7 @@ const InternalLinkSearch = ({ onSelect, refocus = false, inputRef }: InternalLin
             onFocus={() => setIsModalOpen(true)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="w-full outline-none text-main bg-white dark:bg-background"
+            className="w-full outline-none text-main bg-white dark:bg-gray5"
             data-search-input
           />
           {searchQuery && (

@@ -110,6 +110,14 @@ body {
   ::-webkit-resizer {
     display: none;
   }
+
+  input, textarea {
+    background-color: white;
+  }
+  
+  .dark input, .dark textarea {
+    background-color: var(--gray5);
+  }
 }
 
 .group-section:hover .group-section-title {
