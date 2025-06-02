@@ -98,12 +98,12 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
       </div>
 
       <div
-        className={`mt-3 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100' : 'opacity-0'} relative`}
-        style={{ height: height ? `${height}px` : '0px' }}
+        className={`mt-3 overflow-hidden transition-all duration-300 ease-in-out ${ isExpanded ? 'opacity-100' : 'opacity-0' } relative`}
+        style={{ height: height ? `${ height }px` : '0px' }}
       >
         <div
           ref={contentRef}
-          className={`p-2 md:p-6 bg-gray5 rounded-md text-sm ${isExpanded ? 'animate-slideDown' : ''}`}
+          className={`p-2 md:p-6 bg-gray5 rounded-md text-sm ${ isExpanded ? 'animate-slideDown' : '' }`}
         >
           <div
             ref={policyContentRef}
