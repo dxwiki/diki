@@ -59,12 +59,12 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
 
             <div className="bg-background flex items-center text-sub h-full px-2">{'**굵은 텍스트**'}</div>
             <div className="flex items-center gap-2 bg-background py-1 px-2">
-              <MarkdownContent content="**굵은 텍스트**는 별표 2개를 단어에 감싸 사용합니다." />
+              <MarkdownContent content="**굵은 텍스트**는 별표 2개(**)를 단어에 감싸 사용합니다." />
             </div>
 
             <div className="bg-background flex items-center text-sub h-full px-2">{'*기울임 텍스트*'}</div>
             <div className="flex items-center gap-2 bg-background py-1 px-2">
-              <MarkdownContent content="*기울임 텍스트*는 별표를 단어에 감싸 사용합니다." />
+              <MarkdownContent content="*기울임 텍스트*는 별표(*)를 단어에 감싸 사용합니다." />
             </div>
 
             <div className="bg-background flex items-center text-sub h-full px-2">{'`인라인 코드`'}</div>
