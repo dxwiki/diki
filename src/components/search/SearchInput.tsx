@@ -163,7 +163,7 @@ const SearchInput = () => {
             onFocus={() => setIsModalOpen(true)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="w-full p-2 mr-2 outline-none text-main bg-background"
+            className="w-full p-2 mr-2 outline-none text-main !bg-background"
           />
           {searchQuery && (
             <X

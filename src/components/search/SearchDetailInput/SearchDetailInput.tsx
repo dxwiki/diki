@@ -244,7 +244,7 @@ const SearchDetailInput = () => {
                 onChange={(e) => dispatch(setSearchQuery(e.target.value))}
                 onKeyDown={(e) => redirect(e, searchQuery)}
                 placeholder={placeholder}
-                className="bg-transparent focus:outline-none placeholder:text-gray1 text-main"
+                className="!bg-background focus:outline-none placeholder:text-gray1 text-main"
               />
             </div>
 
