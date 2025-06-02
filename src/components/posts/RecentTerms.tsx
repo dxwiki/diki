@@ -72,7 +72,7 @@ export default function RecentTerms() {
     <div className='w-full space-y-1.5'>
       <div className='flex items-center gap-1 sm:gap-1.5'>
         <Rocket className='size-4' />
-        <h3 className='text-base text-sub font-semibold'>{'최신 포스트'}</h3>
+        <span className='text-base text-sub font-semibold'>{'최신 포스트'}</span>
       </div>
       <div ref={containerRef} className='flex justify-between gap-2 overflow-hidden'>
         {isLocalLoading ? (
