@@ -107,15 +107,15 @@ const ProfileClient = ({
         <div className='flex gap-4 items-center justify-between'>
           <h1 className="text-xl sm:text-2xl font-bold">
             {profile.name}
-            <span className='text-sub text-xl'>
-              {'('}{profile.username}{') 님의 프로필'}
+            <span className='text-sub text-base sm:text-xl'>
+              {'('}{profile.username}{') 님'}
             </span>
           </h1>
-          <div className='flex items-center gap-3'>
+          <div className='flex flex-col sm:flex-row items-center gap-3'>
             {isCurrentUser && (
               <Link
                 href={`/profiles/${ username }/edit`}
-                className="text-sm px-3 py-1.5 rounded-md bg-primary dark:bg-secondary text-white hover:bg-accent dark:hover:bg-background-secondary"
+                className="text-sm w-[120px] text-center sm:w-auto px-3 py-1.5 rounded-md bg-primary dark:bg-secondary text-white hover:bg-accent dark:hover:bg-background-secondary"
               >
                 {'프로필 편집'}
               </Link>
@@ -131,21 +131,21 @@ const ProfileClient = ({
         <div className="flex space-x-2">
           <Link
             href={`/profiles/${ username }`}
-            className={`text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'all' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
+            className={`text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'all' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
           >
             {'All'}
             {` (${ allCount })`}
           </Link>
           <Link
             href={`/profiles/${ username }/posts`}
-            className={`text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'posts' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
+            className={`text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'posts' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
           >
             {'Posts'}
             {` (${ postsCount })`}
           </Link>
           <Link
             href={`/profiles/${ username }/contributes`}
-            className={`text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'contributes' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
+            className={`text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'contributes' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
           >
             {'Contributes'}
             {` (${ contributeCount })`}

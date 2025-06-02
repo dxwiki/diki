@@ -285,8 +285,8 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
       </div>
 
       <form onSubmit={handleSubmit} noValidate>
-        <div className="bg-background sm:border sm:border-gray4 rounded-xl">
-          <div className="flex flex-col gap-4 sm:gap-6 sm:h-[60vh] sm:overflow-y-auto overflow-x-hidden mt-10 sm:mt-0 p-1.5 sm:p-6 md:p-8">
+        <div className="bg-background border border-gray4 rounded-xl">
+          <div className="flex flex-col gap-4 sm:gap-6 sm:h-[60vh] sm:overflow-y-auto overflow-x-hidden my-10 sm:my-0 p-1.5 sm:p-6 md:p-8">
             <div>
               <label className="block text-primary font-medium mb-2">
                 {'이름(한글)'}
@@ -313,7 +313,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                   type="text"
                   name="username"
                   value={formData.username}
-                  className="w-full px-4 py-3 border border-gray3 rounded-lg bg-gray4 text-gray2 cursor-not-allowed"
+                  className="w-full px-4 py-3 border border-gray4 rounded-lg !bg-gray4 text-gray2 cursor-not-allowed"
                   disabled
                 />
                 <p className="text-gray2 text-sm p-1">{'github 닉네임으로 설정되며, 수정하실 수 없습니다.'}</p>
@@ -327,7 +327,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                   type="email"
                   name="email"
                   value={formData.email}
-                  className="w-full px-4 py-3 border border-gray3 rounded-lg bg-gray4 text-gray2 cursor-not-allowed"
+                  className="w-full px-4 py-3 border border-gray4 rounded-lg !bg-gray4 text-gray2 cursor-not-allowed"
                   disabled
                 />
                 <p className="text-gray2 text-sm p-1">{'github 이메일로 설정되며, 수정하실 수 없습니다.'}</p>
@@ -353,7 +353,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                       placeholder="username"
                     />
                   </div>
-                  <p className="text-gray2 text-sm p-1">{'github 닉네임으로 초기값이 설정됩니다.'}</p>
+                  <p className="text-gray2 text-sm p-1">{'github 닉네임으로 기본값이 설정됩니다.'}</p>
                 </div>
 
                 <div>
@@ -373,7 +373,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                       placeholder="username"
                     />
                   </div>
-                  <p className="text-gray2 text-sm p-1">{'github 닉네임으로 초기값이 설정됩니다.'}</p>
+                  <p className="text-gray2 text-sm p-1">{'github 닉네임으로 기본값이 설정됩니다.'}</p>
                 </div>
               </div>
             </div>
@@ -390,7 +390,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
           <button
             type="button"
             onClick={() => setIsDeleteModalOpen(true)}
-            className="px-4 py-2 text-level-5 hover:bg-red-700 dark:hover:bg-red-900 hover:text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base text-level-5 hover:bg-red-700 dark:hover:bg-red-900 hover:text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? '제출 중...' : '회원 탈퇴'}
           </button>
@@ -398,14 +398,14 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
             <button
               type="button"
               onClick={() => setIsCancelModalOpen(true)}
-              className="px-4 py-2 text-gray2 rounded-lg hover:text-main transition-all duration-200"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base text-gray2 rounded-lg hover:text-main transition-all duration-200"
             >
               {'취소'}
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-4 py-2 text-white bg-primary hover:bg-accent dark:bg-secondary dark:hover:bg-background-secondary rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base text-white bg-primary hover:bg-accent dark:bg-secondary dark:hover:bg-background-secondary rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? '제출 중...' : '프로필 수정하기'}
             </button>
