@@ -24,7 +24,7 @@ export default function ThankYouPage() {
 
         <div className="py-4">
           <p className="mb- text-sub">
-            {'작성하신 포스트가 Github Issue(비공개)에 등록되었으며'}
+            {'작성하신 포스트가 Github Issue(비공개 레포지토리)에 등록되었으며'}
             <br />
             {'내부 검토 후 반영될 예정입니다.'}
           </p>
@@ -55,7 +55,7 @@ export default function ThankYouPage() {
             href="/create"
             className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4"
           >
-            {'새 포스트 작성하기'}
+            {'다른 포스트 작성하기'}
           </Link>
         </div>
       </div>
