@@ -91,7 +91,7 @@ export default function CreatePage() {
       academic: [],
       opensource: [],
     },
-    publish: false,
+    publish: true,
   });
 
   // 로컬 스토리지에 폼 데이터 저장
