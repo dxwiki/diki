@@ -56,15 +56,15 @@ export default function AuthStatus() {
         <DropdownList>
           <DropdownItem>
             <Link href={`/profiles/${ user.username }`} className="p-2 block w-full">
-              {'내가 쓴 글'}
+              {'내 프로필'}
             </Link>
           </DropdownItem>
 
-          <DropdownItem>
+          {/* <DropdownItem>
             <Link href={`/profiles/${ user.username }/edit`} className="p-2 block w-full">
               {'프로필 편집'}
             </Link>
-          </DropdownItem>
+          </DropdownItem> */}
 
           <DropdownItem onClick={handleLogout}>
             <span className="p-2 block w-full text-level-5">{'로그아웃'}</span>
