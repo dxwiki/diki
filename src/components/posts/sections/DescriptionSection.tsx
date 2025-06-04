@@ -1,5 +1,4 @@
 import MarkdownContent from '../MarkdownContent';
-import { MathJaxProvider } from '../MathJaxProvider';
 
 interface DescriptionSectionProps {
   description: string;
@@ -13,9 +12,7 @@ const DescriptionSection = ({ description }: DescriptionSectionProps) => {
         {'개념'}
       </h2>
       {description ? (
-        <MathJaxProvider>
-          <MarkdownContent content={description} />
-        </MathJaxProvider>
+        <MarkdownContent content={description} />
       ) : (
         <p className="text-sub">{'본문을 작성하세요.'}</p>
       )}
