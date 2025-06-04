@@ -9,7 +9,8 @@ export async function getServerTermsData(): Promise<TermData[]> {
     const termsPath = path.join(process.cwd(), 'src', 'data', 'terms.json');
     if (fs.existsSync(termsPath)) {
       const content = fs.readFileSync(termsPath, 'utf8');
-      return JSON.parse(content);
+      const terms = JSON.parse(content);
+      return terms.filter((term: TermData) => term.publish !== false);
     }
     return [];
   } catch (error) {

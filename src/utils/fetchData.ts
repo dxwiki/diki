@@ -16,8 +16,10 @@ const fetchTermsData = async (): Promise<TermData[]> => {
 
     if (fileExists) {
       const fileContent = fs.readFileSync(filePath, 'utf8');
-      terms = JSON.parse(fileContent);
-      // if(!terms.length) console.log('데이터가 존재하지 않음');
+      const parsedTerms = JSON.parse(fileContent);
+
+      terms = parsedTerms.filter((term: TermData) => term.publish !== false);
+
       store.dispatch(setTerms(terms));
       store.dispatch(setTermsLoading(false));
 

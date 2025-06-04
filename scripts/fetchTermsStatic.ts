@@ -26,7 +26,8 @@ async function fetchAndSaveTerms() {
         references: data.references,
         description: data.description,
       } as TermData;
-    });
+    })
+      .filter((term) => term.publish !== false);
 
     // 데이터 디렉토리가 없으면 생성
     const dataDir = path.join(process.cwd(), 'src', 'data');
