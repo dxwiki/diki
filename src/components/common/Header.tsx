@@ -17,7 +17,6 @@ import AuthStatus from '@/components/auth/AuthStatus';
 const Header = () => {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
-  const isContactPage = pathname === '/contact';
   const dispatch = useDispatch();
   const { theme, resolvedTheme } = useTheme();
   const [isThemeChanging, setIsThemeChanging] = useState(false);
