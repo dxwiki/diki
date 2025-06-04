@@ -33,6 +33,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // description.full의 줄바꿈 문자를 <br> 태그로 변환
+    if (data.description?.full) {
+      data.description.full = data.description.full.replace(/\n/g, '<br>');
+    }
+
     // URL 생성 (영문 제목 기반)
     if (data.title.en) {
       const urlSlug = data.title.en
@@ -101,6 +106,9 @@ export async function POST(request: NextRequest) {
 
 // 이슈 본문 마크다운 포맷팅 함수
 function formatIssueBody(data: TermData, userInfo: UserInfo | null): string {
+  // description.full의 줄바꿈 문자를 <br> 태그로 변환
+  const formattedDescription = data.description?.full || '';
+
   return `
 # 새 포스트 추가 요청
 
@@ -115,7 +123,7 @@ function formatIssueBody(data: TermData, userInfo: UserInfo | null): string {
 ${ data.description?.short || '' }
 
 ### 개념(전체 설명)
-${ data.description?.full || '' }
+${ formattedDescription }
 
 ## 난이도
 - 레벨: ${ data.difficulty?.level || '' }
