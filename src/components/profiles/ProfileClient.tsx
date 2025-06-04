@@ -1,33 +1,31 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import ProfilePostCard from '@/components/profiles/ProfilePostCard';
 import { TermData, Profile } from '@/types';
-import Link from 'next/link';
 import ContactButtonWrapper from './ContactButtonWrapper';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-
 interface ProfileClientProps {
-  initialTerms: TermData[];
   username: string;
-  activeTab: 'all' | 'posts' | 'contributes';
-  postsCount?: number;
-  contributeCount?: number;
   profile: Profile;
   isOwnProfile?: boolean;
+  postsData: TermData[];
+  contributesData: TermData[];
+  allTermsData: TermData[];
 }
 
 const ProfileClient = ({
-  initialTerms,
   username,
-  activeTab,
-  postsCount = 0,
-  contributeCount = 0,
   profile,
   isOwnProfile = false,
+  postsData,
+  contributesData,
+  allTermsData,
 }: ProfileClientProps) => {
-  const [terms] = useState(initialTerms);
+  const [activeTab, setActiveTab] = useState<'all' | 'posts' | 'contributes'>('all');
+  const [terms, setTerms] = useState<TermData[]>(allTermsData);
   const [visibleTerms, setVisibleTerms] = useState<TermData[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -41,6 +39,7 @@ const ProfileClient = ({
     // 초기 로딩 시 첫 페이지 표시
     setVisibleTerms(terms.slice(0, termsPerPage));
     setHasMore(terms.length > termsPerPage);
+    setPage(1);
   }, [terms]);
 
   // 현재 로그인한 사용자와 프로필 소유자가 같은지 확인
@@ -95,16 +94,28 @@ const ProfileClient = ({
     }
   };
 
+  const handleTabChange = (tab: 'all' | 'posts' | 'contributes') => {
+    setActiveTab(tab);
+
+    if (tab === 'all') {
+      setTerms(allTermsData);
+    } else if (tab === 'posts') {
+      setTerms(postsData);
+    } else {
+      setTerms(contributesData);
+    }
+  };
+
+  const postsCount = postsData.length;
+  const contributeCount = contributesData.length;
+
   // 전체 글 수 계산 (중복 제거된 숫자)
-  const allCount = postsCount + contributeCount
-    // 중복 카운트 처리 - 실제 전체 숫자가 있을 때만 사용
-    - (activeTab === 'all' ? (initialTerms.length < postsCount + contributeCount
-      ? postsCount + contributeCount - initialTerms.length : 0) : 0);
+  const allCount = allTermsData.length;
 
   return (
     <>
       <div className='flex flex-col gap-2'>
-        <div className='flex gap-4 items-center justify-between'>
+        <div className='flex gap-4 my-2 items-center justify-between'>
           <h1 className="text-xl sm:text-2xl font-bold">
             {profile.name}
             <span className='text-sub text-base sm:text-xl'>
@@ -129,27 +140,33 @@ const ProfileClient = ({
         </div>
 
         <div className="flex space-x-2">
-          <Link
-            href={`/profiles/${ username }`}
-            className={`text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'all' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
+          <button
+            onClick={() => handleTabChange('all')}
+            className={`text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${
+              activeTab === 'all' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub'
+            }`}
           >
             {'All'}
             {` (${ allCount })`}
-          </Link>
-          <Link
-            href={`/profiles/${ username }/posts`}
-            className={`text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'posts' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
+          </button>
+          <button
+            onClick={() => handleTabChange('posts')}
+            className={`text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${
+              activeTab === 'posts' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub'
+            }`}
           >
             {'Posts'}
             {` (${ postsCount })`}
-          </Link>
-          <Link
-            href={`/profiles/${ username }/contributes`}
-            className={`text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${ activeTab === 'contributes' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub' }`}
+          </button>
+          <button
+            onClick={() => handleTabChange('contributes')}
+            className={`text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium ${
+              activeTab === 'contributes' ? 'bg-accent dark:bg-secondary text-white' : 'text-gray1 hover:bg-gray4 hover:text-sub'
+            }`}
           >
             {'Contributes'}
             {` (${ contributeCount })`}
-          </Link>
+          </button>
         </div>
       </div>
 

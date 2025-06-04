@@ -102,13 +102,12 @@ export default async function ProfilePage({ params }: { params: { slug: string }
     <>
       <div className="flex flex-col gap-5">
         <ProfileClient
-          initialTerms={allTerms}
           username={params.slug}
-          activeTab="all"
-          postsCount={posts.length}
-          contributeCount={contributions.length}
           profile={profile}
           isOwnProfile={isOwnProfile}
+          postsData={posts}
+          contributesData={contributions}
+          allTermsData={allTerms}
         />
       </div>
       <div className='block sm:hidden'>
