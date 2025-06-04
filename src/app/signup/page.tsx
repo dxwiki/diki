@@ -56,9 +56,9 @@ function SignupContent() {
         <div className="space-y-5">
           <div className="bg-gray5 p-4 rounded-lg">
             <h2 className="text-lg font-medium text-main mb-2">{'Diki 서비스 이용 안내'}</h2>
-            <p className="text-sm text-sub mb-1">{'- GitHub 계정으로 간편하게 가입하실 수 있습니다.'}</p>
-            <p className="text-sm text-sub mb-1">{'- 가입 후 글을 작성하고 기여할 수 있습니다.'}</p>
-            <p className="text-sm text-sub">{'- 개인정보 처리방침에 동의하셔야 이용이 가능합니다.'}</p>
+            <p className="text-sm text-sub mb-1">{'- GitHub 계정으로 간편하게 가입하실 수 있습니다'}</p>
+            <p className="text-sm text-sub mb-1">{'- 가입 후 글 작성 및 기여 활동이 가능합니다.'}</p>
+            <p className="text-sm text-sub">{'- 서비스 이용을 위해 개인정보 처리방침에 대한 동의가 필요합니다.'}</p>
           </div>
 
           <div className="relative">

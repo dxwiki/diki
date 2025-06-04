@@ -162,7 +162,7 @@ export default function PrivacyPolicy({ onCheckChange, isChecked }: PrivacyPolic
             </div>
 
             <h3 className="text-base font-semibold mt-4 mb-2">{'2. 개인정보의 수집 및 이용 목적'}</h3>
-            <p className="pl-3">{'수집한 개인정보는 다음 목적에 한하여 사용됩니다.'}</p>
+            <p className="pl-3 mb-2">{'수집한 개인정보는 다음 목적에 한하여 사용됩니다.'}</p>
             <ul className="list-disc pl-6 md:pl-8">
               <li className="mb-1">{'사용자 식별 및 서비스 이용을 위한 로그인 인증'}</li>
               <li className="mb-1">{'사용자 게시글 작성 기능 제공'}</li>
