@@ -83,17 +83,18 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
             </div>
 
             <div className="bg-background flex items-center text-sub h-full px-2">
-              <MarkdownContent content="\$인라인 수식\$" />
+              <span>{'$인라인 수식$'}</span>
             </div>
             <div className="flex items-center gap-2 bg-background py-1 px-2">
-              <MarkdownContent content="달러 기호(\$)를 사용하여 $E=mc^2$ 와 같이 인라인 수식을 만들 수 있습니다." />
+              <MarkdownContent content="$E=mc^2$ 와 같이 달러 기호($)를 사용해 인라인 수식을 만들 수 있습니다." />
             </div>
 
             <div className="bg-background flex items-center text-sub h-full px-2">
-              <MarkdownContent content="\$\$블록 수식\$\$" />
+              <span>{'$$블록 수식$$'}</span>
             </div>
-            <div className="flex items-center gap-2 bg-background py-1 px-2">
-              <MarkdownContent content="$$Z=10$$ 달러 기호 2개(\$\$)는 한 줄을 차지하는 수식이 됩니다." />
+            <div className="flex flex-col justify-center gap-2 bg-background py-1 px-2">
+              <MarkdownContent content="$$Z=10$$" />
+              <span>{'와 같이 달러 기호 2개(\$\$)를 사용해 한 줄을 차지하는 블록 수식을 만들 수 있습니다.'}</span>
             </div>
 
             <div className="bg-background flex items-center text-sub h-full px-2">{'[링크 텍스트](URL)'}</div>
