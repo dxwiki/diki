@@ -354,7 +354,7 @@ const PostPreview = ({
     return (
       <div
         ref={(el) => { sectionRefs.current[section] = el; }}
-        className={`m-1 p-1 mt-2 animate-slideDown ${ section === 'koTitle' || section === 'enTitle' || section === 'etcTitle' ? '' : 'border-t border-primary border-dashed' } ${ section === 'tags' ? 'border-t border-primary border-dashed sm:border-t-0' : '' }`}
+        className={`m-1 p-1 mt-2 animate-slideDown ${ section === 'koTitle' || section === 'enTitle' || section === 'etcTitle' ? '' : 'border-t border-primary border-dashed' } ${ section === 'tags' ? 'border-t border-primary border-dashed md:border-t-0' : '' }`}
       >
         {renderContent()}
         {renderSectionErrors(section)}
@@ -365,26 +365,25 @@ const PostPreview = ({
 
   return (
     <div className="prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg p-2 sm:p-4 border border-gray4" ref={postPreviewRef}>
-      <div className="relative">
-        <TableOfContents
-          title={term.title?.ko === '' ? '한글 제목' : term.title?.ko ?? ''}
-          term={term}
-          slug=""
-          onTagSectionClick={(e) => handleSectionClick('tags', e)}
-          tagsClassName={getSectionClassName('tags', 'rounded-lg')}
-          isEditMode={true}
-          isPreview={isPreview}
-        />
+      <TableOfContents
+        title={term.title?.ko === '' ? '한글 제목' : term.title?.ko ?? ''}
+        term={term}
+        slug=""
+        onTagSectionClick={(e) => handleSectionClick('tags', e)}
+        tagsClassName={getSectionClassName('tags', 'rounded-lg')}
+        isEditMode={true}
+        isPreview={isPreview}
+      />
 
-        {/* 데스크톱 태그 편집 (사이드바) */}
-        {editingSections?.tags && (
-          <div className="hidden md:block absolute top-[336px] left-[196px] w-[54vw] z-20">
-            <div className="max-w-[720px] outline outline-2 outline-primary rounded-lg bg-background p-2">
-              {renderInlineEditForm('tags')}
-            </div>
+      {/* 데스크톱 태그 편집 (사이드바) */}
+      {editingSections?.tags && (
+        <div className="hidden md:block absolute top-[353px] left-[206px] w-[50vw] max-w-[720px] z-20">
+          <div className="outline outline-2 outline-primary rounded-lg bg-background p-2">
+            {renderInlineEditForm('tags')}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
       <div className='text-justify relative' ref={contentRef}>
         <div className='sm:ml-5'>
           {/* 한글/영문 제목 섹션 */}

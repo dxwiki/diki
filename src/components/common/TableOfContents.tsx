@@ -111,7 +111,7 @@ const TableOfContents = ({ title, term, onTagSectionClick, tagsClassName, isEdit
   }, []);
 
   return (
-    <div className='animate-introSecond flex flex-col'>
+    <div className={`flex flex-col ${ isEditMode ? '' : 'animate-introSecond' }`}>
       <div className='h-[131px] hidden md:block' />
       <div className='sticky top-[132px] hidden md:block'>
         <nav className="space-y-2 text-sm min-w-32">
