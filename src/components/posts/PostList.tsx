@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { TermData } from '@/types';
 import PostCard from '@/components/posts/PostCard';
@@ -25,6 +25,25 @@ const PostList = ({ itemsPerPage }: PaginationProps) => {
   const [isClient, setIsClient] = useState(false);
   const [localLoading, setLocalLoading] = useState(true);
   const searchParams = useSearchParams();
+  const prevSearchParamsRef = useRef<string>('');
+  const isFirstRenderRef = useRef(true);
+
+  const getSearchParamsString = (params: URLSearchParams) => {
+    const searchRelatedParams = {
+      q: params.get('q') || '',
+      f: params.get('f') || '',
+      p: params.get('p') || '',
+      m: params.get('m') || '',
+    };
+    return JSON.stringify(searchRelatedParams);
+  };
+
+  useEffect(() => {
+    if (isFirstRenderRef.current) {
+      prevSearchParamsRef.current = getSearchParamsString(searchParams);
+      isFirstRenderRef.current = false;
+    }
+  }, []);
 
   useEffect(() => {
     setIsClient(true);
@@ -33,8 +52,18 @@ const PostList = ({ itemsPerPage }: PaginationProps) => {
     }
   }, [terms.length]);
 
+  // 검색 파라미터 변경 감지
   useEffect(() => {
-    dispatch(setCurrentPage(1));
+    if (isFirstRenderRef.current) {
+      return;
+    }
+    
+    const currentSearchParams = getSearchParamsString(searchParams);
+    
+    if (currentSearchParams !== prevSearchParamsRef.current) {
+      dispatch(setCurrentPage(1));
+      prevSearchParamsRef.current = currentSearchParams;
+    }
   }, [searchParams, dispatch]);
 
   useEffect(() => {
