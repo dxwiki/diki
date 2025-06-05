@@ -200,6 +200,7 @@ const ReferencesGrid = ({ references, colorConfig = defaultColorConfig }: Refere
                 <div
                   className={`animate-slideDown absolute w-[calc(100%+2px)] -left-px border ${ colors.border }
                   bg-gray5 text-main p-2 shadow-md z-50`}
+                  onMouseEnter={() => setActiveTooltip(null)}
                 >
                   <div className="flex flex-col">
                     <span className={`text-sm font-medium ${ colors.text }`}>{item.type}</span>
