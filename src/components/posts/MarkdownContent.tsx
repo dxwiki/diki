@@ -56,6 +56,24 @@ function parseMarkdownSegment(segment: string) {
   // 모든 br에 대해 br-gap 추가
   html = html.replace(/<br\s*\/?>/gi, '<div class="br-gap"></div>');
 
+  // 이미지 처리
+  // 이미지 처리
+  html = html.replace(/!\[(.*?)\]\((.*?)\)/g, `
+  <div class="flex flex-col items-center my-1.5">
+    <img 
+      src="$2" 
+      alt="$1" 
+      loading="lazy"
+      width="800"
+      height="450"
+      style="aspect-ratio: 16 / 9;" 
+      class="w-full rounded-lg m-0" 
+      onerror="this.onerror=null;this.src='/image-not-found.png';"
+    />
+    <p class="text-gray1 text-center text-sm mt-1">$1</p>
+  </div>
+`);
+
   // Bold / Italic / Inline code / 링크
   html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');

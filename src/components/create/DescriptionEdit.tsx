@@ -99,7 +99,16 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
 
             <div className="bg-background flex items-center text-sub h-full px-2">{'[링크 텍스트](URL)'}</div>
             <div className="flex items-center gap-2 bg-background py-1 px-2">
-              <MarkdownContent content="[diki.kr](https://diki.kr)와 같이 대괄호에 링크 텍스트를, 소괄호에 URL을 넣어 링크를 만듭니다." />
+              <MarkdownContent content="[diki.kr](https://www.diki.kr)와 같이 대괄호에 링크 텍스트를, 소괄호에 URL을 넣어 링크를 만듭니다." />
+            </div>
+            <div className="bg-background flex items-center text-sub h-full px-2">{'![이미지 캡션](URL)'}</div>
+            <div className="w-full gap-2 bg-background ">
+              <div className="w-1/2 mx-auto">
+                <MarkdownContent content="![디키 웹사이트](https://www.diki.kr/thumbnail.png)" />
+              </div>
+              <div className="px-2">
+                <MarkdownContent content="- 위와 같이 대괄호에 이미지 캡션을, 소괄호에 URL을 넣어 이미지를 만듭니다.<br>- 이미지의 폭은 전체 너비입니다.<br>- 이미지가 없는 경우, 기본 이미지와 캡션만 표출됩니다." />
+              </div>
             </div>
 
             <div className="bg-background flex items-center text-sub h-full px-2">{'> 인용구'}</div>
@@ -116,7 +125,6 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
               <MarkdownContent content="|  제목1  |  제목2  |<br>| ---- | ---- |<br>|  내용1  |  내용2  |<br><br>Markdown 형식으로 표를 만들 수 있습니다. 첫 번째 열은 자동으로 중앙 정렬됩니다." />
             </div>
           </div>
-          <p className="text-gray3 text-end text-sm my-1">{'이미지 첨부 등의 기능은 추후 추가될 예정입니다.'}</p>
         </div>
       </div>
     );
