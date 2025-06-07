@@ -15,7 +15,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 
 interface EditingSectionState {
-  basicInfo: boolean;
+  koTitle: boolean;
+  enTitle: boolean;
+  shortDesc: boolean;
+  etcTitle: boolean;
   difficulty: boolean;
   description: boolean;
   tags: boolean;
@@ -23,14 +26,13 @@ interface EditingSectionState {
   relevance: boolean;
   usecase: boolean;
   references: boolean;
-  koTitle: boolean;
-  enTitle: boolean;
-  shortDesc: boolean;
-  etcTitle: boolean;
 }
 
 interface FormComponents {
-  basicInfo: ReactElement;
+  koTitle: ReactElement;
+  enTitle: ReactElement;
+  shortDesc: ReactElement;
+  etcTitle: ReactElement;
   difficulty: ReactElement;
   description: ReactElement;
   tags: ReactElement;
@@ -45,10 +47,6 @@ interface PostPreviewProps {
   onSectionClick?: (section: string)=> void;
   editingSections?: EditingSectionState;
   formComponents?: FormComponents;
-  renderKoreanTitleForm?: ()=> React.ReactNode;
-  renderEnglishTitleForm?: ()=> React.ReactNode;
-  renderShortDescriptionForm?: ()=> React.ReactNode;
-  renderEtcTitleForm?: ()=> React.ReactNode;
   isPreview?: boolean;
 }
 
@@ -57,10 +55,6 @@ const PostPreview = ({
   onSectionClick,
   editingSections,
   formComponents,
-  renderKoreanTitleForm,
-  renderEnglishTitleForm,
-  renderShortDescriptionForm,
-  renderEtcTitleForm,
   isPreview = false,
 }: PostPreviewProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -242,7 +236,7 @@ const PostPreview = ({
   }, [editingSections, isPreview, term]);
 
   // 섹션 내부에 편집 폼 렌더링
-  const renderInlineEditForm = useCallback((section: keyof EditingSectionState) => {
+  const renderInlineEditForm = useCallback((section: keyof EditingSectionState & keyof FormComponents) => {
     if (!editingSections || !formComponents) return null;
     if (!editingSections[section]) return null;
 
@@ -259,36 +253,17 @@ const PostPreview = ({
       </div>
     );
 
-    // 특정 섹션에 대한 컨텐츠 렌더링
-    const renderContent = () => {
-      switch (section) {
-        case 'koTitle':
-          return renderKoreanTitleForm ? renderKoreanTitleForm()
-            : (formComponents.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }));
-        case 'enTitle':
-          return renderEnglishTitleForm ? renderEnglishTitleForm()
-            : (formComponents.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }));
-        case 'etcTitle':
-          return renderEtcTitleForm ? renderEtcTitleForm()
-            : (formComponents.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }));
-        case 'shortDesc':
-          return renderShortDescriptionForm ? renderShortDescriptionForm()
-            : (formComponents.basicInfo && React.cloneElement(formComponents.basicInfo as React.ReactElement, { isModal: true }));
-        default:
-          return formComponents[section as keyof FormComponents];
-      }
-    };
-
+    // 각 섹션에 맞는 컴포넌트 반환
     return (
       <div
         ref={(el) => { sectionRefs.current[section] = el; }}
         className={`m-1 p-1 mt-2 animate-slideDown ${ section === 'koTitle' || section === 'enTitle' || section === 'etcTitle' ? '' : 'border-t border-primary border-dashed' } ${ section === 'tags' ? 'border-t border-primary border-dashed md:border-t-0' : '' }`}
       >
-        {renderContent()}
+        {formComponents[section]}
         {closeButton}
       </div>
     );
-  }, [editingSections, formComponents, handleCloseSection, renderKoreanTitleForm, renderEnglishTitleForm, renderEtcTitleForm, renderShortDescriptionForm]);
+  }, [editingSections, formComponents, handleCloseSection]);
 
   return (
     <div className="prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg p-2 sm:p-4 border border-gray4" ref={postPreviewRef}>

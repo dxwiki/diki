@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { TermData } from '@/types/database';
-import BasicInfoEdit from '@/components/create/BasicInfoEdit';
 import DescriptionEdit from '@/components/create/DescriptionEdit';
 import TagsEdit from '@/components/create/TagsEdit';
 import TermsEdit from '@/components/create/TermsEdit';
@@ -11,14 +10,21 @@ import DifficultyEdit from '@/components/create/DifficultyEdit';
 import RelevanceEdit from '@/components/create/RelevanceEdit';
 import UsecaseEdit from '@/components/create/UsecaseEdit';
 import ReferencesEdit from '@/components/create/ReferencesEdit';
+import KoreanTitleEdit from '@/components/create/KoreanTitleEdit';
+import EnglishTitleEdit from '@/components/create/EnglishTitleEdit';
+import ShortDescriptionEdit from '@/components/create/ShortDescriptionEdit';
+import EtcTitleEdit from '@/components/create/EtcTitleEdit';
 import EditPreview from '@/components/create/EditPreview';
 import { ConfirmModal } from '@/components/ui/Modal';
 import Footer from '@/components/common/Footer';
 import { useToast } from '@/layouts/ToastProvider';
-import { X, Save, Upload } from 'lucide-react';
+import { Save, Upload } from 'lucide-react';
 
 interface EditingSectionState {
-  basicInfo: boolean;
+  koTitle: boolean;
+  enTitle: boolean;
+  shortDesc: boolean;
+  etcTitle: boolean;
   difficulty: boolean;
   description: boolean;
   tags: boolean;
@@ -26,10 +32,6 @@ interface EditingSectionState {
   relevance: boolean;
   usecase: boolean;
   references: boolean;
-  koTitle: boolean;
-  enTitle: boolean;
-  shortDesc: boolean;
-  etcTitle: boolean;
 }
 
 export default function CreatePage() {
@@ -43,11 +45,13 @@ export default function CreatePage() {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
-  const [newEtcKeyword, setNewEtcKeyword] = useState('');
 
   // 각 섹션의 편집 상태를 관리하는 상태
   const [editingSections, setEditingSections] = useState<EditingSectionState>({
-    basicInfo: false,
+    koTitle: false,
+    enTitle: false,
+    shortDesc: false,
+    etcTitle: false,
     difficulty: false,
     description: false,
     tags: false,
@@ -55,10 +59,6 @@ export default function CreatePage() {
     relevance: false,
     usecase: false,
     references: false,
-    koTitle: false,
-    enTitle: false,
-    shortDesc: false,
-    etcTitle: false,
   });
 
   const [formData, setFormData] = useState<TermData>({
@@ -335,163 +335,6 @@ export default function CreatePage() {
     return null; // useEffect에서 리다이렉트 처리
   }
 
-  // 모달용 컴포넌트 생성
-  const renderKoreanTitleForm = () => (
-    <div className="p-2">
-      <label className="block text-sm font-medium mb-1 text-gray0">{'한글 제목'}</label>
-      <input
-        type="text"
-        name="title.ko"
-        value={formData.title?.ko || ''}
-        onChange={handleChange}
-        onKeyDown={(e) => {
-          if (e.nativeEvent.isComposing) return;
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            toggleSection('enTitle');
-          }
-        }}
-        className="w-full p-2 border border-gray4 text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
-        placeholder="포스트 한글 제목 (ex. 인공지능)"
-      />
-    </div>
-  );
-
-  const renderEnglishTitleForm = () => (
-    <div className="p-2">
-      <label className="block text-sm font-medium mb-1 text-gray0">{'영문 제목'}</label>
-      <input
-        type="text"
-        name="title.en"
-        value={formData.title?.en || ''}
-        onChange={handleChange}
-        onKeyDown={(e) => {
-          if (e.nativeEvent.isComposing) return;
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            toggleSection('shortDesc');
-          }
-        }}
-        className="w-full p-2 border border-gray4 text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
-        placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
-      />
-    </div>
-  );
-
-  const renderShortDescriptionForm = () => (
-    <div className="p-2">
-      <label className="block text-sm font-medium mb-1 text-gray0">{'짧은 설명'}</label>
-      <div className="relative">
-        <textarea
-          name="description.short"
-          value={formData.description?.short || ''}
-          onChange={(e) => {
-            handleChange(e);
-            // 높이 자동 조절
-            e.target.style.height = 'auto';
-            e.target.style.height = e.target.scrollHeight + 'px';
-          }}
-          onKeyDown={(e) => {
-            if (e.nativeEvent.isComposing) return;
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              toggleSection('difficulty');
-            }
-          }}
-          className="w-full p-2 border border-gray4 text-main rounded-md resize-none overflow-hidden focus:border-primary focus:ring-1 focus:ring-primary"
-          placeholder="포스트에 대한 간단한 설명을 작성하세요."
-          maxLength={100}
-          rows={2}
-          style={{ minHeight: '60px' }}
-        />
-        <div className="absolute right-2 bottom-2 text-xs text-gray2">
-          {`${ formData.description?.short?.length || 0 }/100`}
-        </div>
-      </div>
-    </div>
-  );
-
-  // ETC 제목 폼 렌더링
-  const renderEtcTitleForm = () => {
-    const currentEtcArray = Array.isArray(formData.title?.etc) ? formData.title.etc : [];
-
-    const handleAddKeyword = () => {
-      if (newEtcKeyword.trim()) {
-        setFormData((prev) => ({
-          ...prev,
-          title: {
-            ...prev.title,
-            etc: [...(prev.title?.etc || []), newEtcKeyword.trim()],
-          },
-        }));
-        setNewEtcKeyword('');
-      }
-    };
-
-    const handleRemoveKeyword = (index: number) => {
-      setFormData((prev) => ({
-        ...prev,
-        title: {
-          ...prev.title,
-          etc: (prev.title?.etc || []).filter((_, i) => i !== index),
-        },
-      }));
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.nativeEvent.isComposing) return;
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        handleAddKeyword();
-      }
-    };
-
-    return (
-      <div className="p-2">
-        <label className="block text-sm font-medium mb-1 text-gray0">
-          {'검색 키워드'}
-        </label>
-        <div className="flex items-end space-x-2 mb-2">
-          <div className="flex-1">
-            <input
-              type="text"
-              value={newEtcKeyword}
-              onChange={(e) => setNewEtcKeyword(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="w-full p-2 border border-gray4 rounded-md text-main"
-              placeholder="검색 결과의 정확도를 높이기 위해 주제를 잘 나타내는 키워드를 작성하세요."
-            />
-          </div>
-          <button
-            type="button"
-            onClick={handleAddKeyword}
-            className="px-4 py-2 text-main border border-gray4 bg-gray4 hover:text-white hover:bg-gray3 rounded-md"
-          >
-            {'추가'}
-          </button>
-        </div>
-        <p className="text-sm text-gray2 mb-2">
-          {'Enter 키 또는 [추가] 버튼을 눌러 키워드를 추가할 수 있습니다. 이 키워드들은 포스트에 표시되지 않지만 검색에 사용됩니다.'}
-        </p>
-
-        <div className="flex flex-wrap gap-2 mt-4">
-          {currentEtcArray.map((keyword, index) => (
-            <div key={index} className="bg-gray5 border border-gray4 rounded-lg px-3 py-1 flex items-center text-main">
-              <span>{keyword}</span>
-              <button
-                type="button"
-                onClick={() => handleRemoveKeyword(index)}
-                className="ml-2 text-level-5"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="container mx-auto">
       <div className="w-full flex justify-between items-center mb-4">
@@ -520,13 +363,15 @@ export default function CreatePage() {
 
       <form id="createForm" onSubmit={handleSubmit} noValidate>
         <div className="relative">
-          {/* EditPreview 컴포넌트가 섹션 클릭 이벤트를 받을 수 있도록 toggleSection 함수 전달 */}
           <EditPreview
             term={formData}
             onSectionClick={isPreview ? undefined : toggleSection}
             editingSections={editingSections}
             formComponents={{
-              basicInfo: <BasicInfoEdit formData={formData} handleChange={handleChange} />,
+              koTitle: <KoreanTitleEdit formData={formData} handleChange={handleChange} onEnterPress={() => toggleSection('enTitle')} />,
+              enTitle: <EnglishTitleEdit formData={formData} handleChange={handleChange} onEnterPress={() => toggleSection('shortDesc')} />,
+              shortDesc: <ShortDescriptionEdit formData={formData} handleChange={handleChange} onEnterPress={() => toggleSection('difficulty')} />,
+              etcTitle: <EtcTitleEdit formData={formData} handleChange={handleChange} />,
               difficulty: <DifficultyEdit formData={formData} handleChange={handleChange} />,
               description: <DescriptionEdit formData={formData} handleChange={handleChange} />,
               terms: <TermsEdit formData={formData} setFormData={setFormData} />,
@@ -535,10 +380,6 @@ export default function CreatePage() {
               usecase: <UsecaseEdit formData={formData} setFormData={setFormData} handleChange={handleChange} />,
               references: <ReferencesEdit formData={formData} setFormData={setFormData} />,
             }}
-            renderKoreanTitleForm={renderKoreanTitleForm}
-            renderEnglishTitleForm={renderEnglishTitleForm}
-            renderShortDescriptionForm={renderShortDescriptionForm}
-            renderEtcTitleForm={renderEtcTitleForm}
             isPreview={isPreview}
           />
         </div>
