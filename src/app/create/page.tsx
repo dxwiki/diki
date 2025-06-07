@@ -40,11 +40,11 @@ export default function CreatePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
+  const [invalidSections, setInvalidSections] = useState<string[]>([]);
 
   // 각 섹션의 편집 상태를 관리하는 상태
   const [editingSections, setEditingSections] = useState<EditingSectionState>({
@@ -286,18 +286,57 @@ export default function CreatePage() {
         });
         return newState;
       });
+
+      // 미리보기 모드 진입 시 무효 섹션 표시 초기화
+      if (invalidSections.length > 0) {
+        setInvalidSections([]);
+      }
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 모달 열기
+
+    // 폼 유효성 검사
+    const newInvalidSections: string[] = [];
+
+    if (!formData.title?.ko || formData.title.ko.trim() === '') newInvalidSections.push('koTitle');
+    if (!formData.title?.en || formData.title.en.trim() === '') newInvalidSections.push('enTitle');
+    if (!formData.description?.short || formData.description.short.trim() === '') newInvalidSections.push('shortDesc');
+    if (!formData.difficulty?.description || formData.difficulty.description.trim() === '') newInvalidSections.push('difficulty');
+    if (!formData.description?.full || formData.description.full.trim() === '') newInvalidSections.push('description');
+    if (!Array.isArray(formData.terms) || formData.terms.length === 0) newInvalidSections.push('terms');
+    if (!Array.isArray(formData.tags) || formData.tags.length === 0) newInvalidSections.push('tags');
+    if (!formData.relevance?.analyst?.description
+        || !formData.relevance.scientist?.description
+        || !formData.relevance.engineer?.description) {
+      newInvalidSections.push('relevance');
+    }
+    if (!formData.usecase?.description || !formData.usecase?.example) {
+      newInvalidSections.push('usecase');
+    }
+    const hasReferences
+      = (Array.isArray(formData.references?.tutorials) && formData.references.tutorials.length > 0)
+      || (Array.isArray(formData.references?.books) && formData.references.books.length > 0)
+      || (Array.isArray(formData.references?.academic) && formData.references.academic.length > 0)
+      || (Array.isArray(formData.references?.opensource) && formData.references.opensource.length > 0);
+    if (!hasReferences) newInvalidSections.push('references');
+    if (newInvalidSections.length > 0) {
+      const errorMessage = `필수 항목을 모두 입력해주세요: ${ newInvalidSections.length }개 항목이 누락되었습니다.`;
+      showToast(errorMessage, 'error', 10000); // 10초 동안 표시
+      setInvalidSections(newInvalidSections);
+      return;
+    }
+
+    // 모든 유효성 검사를 통과한 경우
+    setInvalidSections([]);
+
+    // 등록하기 모달 열기
     setIsConfirmModalOpen(true);
   };
 
   const submitToGithub = async () => {
     setSubmitting(true);
-    setError(null);
 
     try {
       // GitHub 이슈 생성 API 호출
@@ -315,13 +354,13 @@ export default function CreatePage() {
       }
 
       const result = await response.json();
-      alert('문서가 성공적으로 GitHub 이슈로 등록되었습니다!');
+      showToast('문서가 성공적으로 GitHub 이슈로 등록되었습니다!', 'success');
 
       // 제출 성공 시 로컬 스토리지에서 데이터 삭제
       localStorage.removeItem('diki-create-form-data');
       router.push(`/thank-you?issue=${ result.issue_number }`);
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : '문서 제출 중 오류가 발생했습니다.');
+      showToast(error instanceof Error ? error.message : '문서 제출 중 오류가 발생했습니다.', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -381,14 +420,9 @@ export default function CreatePage() {
               references: <ReferencesEdit formData={formData} setFormData={setFormData} />,
             }}
             isPreview={isPreview}
+            invalidSections={invalidSections}
           />
         </div>
-
-        {error && (
-          <div className="text-end text-level-5 rounded-lg">
-            {error}
-          </div>
-        )}
       </form>
 
       <div className="flex justify-between items-center space-x-2 sm:space-x-4 space-y-2 sm:space-y-4">

@@ -48,6 +48,7 @@ interface PostPreviewProps {
   editingSections?: EditingSectionState;
   formComponents?: FormComponents;
   isPreview?: boolean;
+  invalidSections?: string[];
 }
 
 const PostPreview = ({
@@ -56,6 +57,7 @@ const PostPreview = ({
   editingSections,
   formComponents,
   isPreview = false,
+  invalidSections = [],
 }: PostPreviewProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const postPreviewRef = useRef<HTMLDivElement>(null);
@@ -181,6 +183,7 @@ const PostPreview = ({
   // 섹션 hover 스타일 클래스 생성
   const getSectionClassName = useCallback((section: string, baseClass: string = '') => {
     const isEditing = editingSections && editingSections[section as keyof EditingSectionState];
+    const isInvalid = invalidSections.includes(section);
 
     // 미리보기 모드이면 모든 스타일 적용 안함
     if (isPreview) {
@@ -230,6 +233,14 @@ const PostPreview = ({
       return `${ baseClass } outline outline-2 outline-primary`;
     }
 
+    // 유효성 검사 실패 섹션인 경우
+    if (isInvalid) {
+      if (status === 'filled') {
+        return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
+      }
+      return `${ baseClass } outline outline-2 outline-dashed outline-level-5 bg-gray5`;
+    }
+
     // 상태에 따른 스타일 적용
     switch (status) {
       case 'empty':
@@ -237,7 +248,7 @@ const PostPreview = ({
       case 'filled':
         return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
     }
-  }, [editingSections, isPreview, term]);
+  }, [editingSections, isPreview, invalidSections, term]);
 
   // 섹션 내부에 편집 폼 렌더링
   const renderInlineEditForm = useCallback((section: keyof EditingSectionState & keyof FormComponents) => {
