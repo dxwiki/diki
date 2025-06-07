@@ -232,21 +232,14 @@ const PostPreview = ({
     if (isEditing) {
       return `${ baseClass } outline outline-2 outline-primary`;
     }
-
-    // 유효성 검사 실패 섹션인 경우
     if (isInvalid) {
-      if (status === 'filled') {
-        return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
-      }
-      return `${ baseClass } outline outline-2 outline-dashed outline-level-5 bg-gray5`;
+      return `${ baseClass } outline outline-2 outline-dashed outline-level-5 bg-gray5 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
     }
-
-    // 상태에 따른 스타일 적용
-    switch (status) {
-      case 'empty':
-        return `${ baseClass } outline outline-1 outline-dashed outline-gray3 bg-gray5 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
-      case 'filled':
-        return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
+    if (status === 'empty') {
+      return `${ baseClass } outline outline-1 outline-dashed outline-gray3 bg-gray5 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
+    }
+    if (status === 'filled') {
+      return `${ baseClass } outline outline-1 outline-dashed outline-gray3 hover:outline-primary hover:outline-2 hover:bg-background-secondary`;
     }
   }, [editingSections, isPreview, invalidSections, term]);
 
@@ -307,7 +300,7 @@ const PostPreview = ({
           <div
             className="flex group cursor-pointer"
           >
-            <span className={`flex flex-wrap items-center text-3xl font-bold mb-0 transition-colors ${ isPreview ? '' : ' gap-2' }`}>
+            <span className={`flex flex-wrap items-center text-3xl font-bold mb-0 ${ isPreview ? '' : ' gap-2' }`}>
               <span
                 id="koTitle-section"
                 onClick={(e: React.MouseEvent) => handleSectionClick('koTitle', e)}
@@ -326,7 +319,7 @@ const PostPreview = ({
               </span>
               {!isPreview && (
                 <button
-                  className={`${ getSectionClassName('etcTitle', 'inline-flex items-center px-2 py-1 text-xs rounded-lg transition-colors') } border-t-0`}
+                  className={`${ getSectionClassName('etcTitle', 'inline-flex items-center px-2 py-1 text-xs rounded-lg') } border-t-0`}
                   onClick={(e: React.MouseEvent) => {
                     e.stopPropagation();
                     handleSectionClick('etcTitle', e);
