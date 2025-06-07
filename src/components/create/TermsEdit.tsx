@@ -3,7 +3,6 @@ import React, { useState, KeyboardEvent, useRef } from 'react';
 import { TermData } from '@/types/database';
 import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
-import { useFormValidation, IsolatedGuidanceMessage } from './ValidatedInput';
 
 interface TermsSectionProps {
   formData: TermData;
@@ -12,7 +11,6 @@ interface TermsSectionProps {
 
 const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   const [newTerm, setNewTerm] = useState({ term: '', description: '', internal_link: undefined as string | undefined, link_title: '' });
-  const { showValidation, setShowValidation } = useFormValidation();
 
   const termInputRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -27,7 +25,6 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   };
 
   const handleAddTerm = () => {
-    setShowValidation(true);
     if (newTerm.term.trim() && newTerm.description.trim()) {
       setFormData((prev) => ({
         ...prev,
@@ -35,7 +32,6 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
       }));
       setNewTerm({ term: '', description: '', internal_link: undefined, link_title: '' });
       termInputRef.current?.focus();
-      setShowValidation(false);
     }
   };
 
@@ -89,11 +85,6 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             placeholder="각주 또는 포스트와 관련된 용어를 작성하세요."
             readOnly={!!newTerm.internal_link}
           />
-          <IsolatedGuidanceMessage
-            value={newTerm.term}
-            guidanceMessage="용어는 필숫값입니다."
-            showValidation={showValidation}
-          />
         </div>
         <div className="w-full">
           <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
@@ -108,11 +99,6 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             onKeyDown={(e) => handleInputKeyDown(e, linkSearchRef)}
             className="w-full p-2 border border-gray4 text-main rounded-md h-20"
             placeholder="용어에 대한 설명을 작성하세요."
-          />
-          <IsolatedGuidanceMessage
-            value={newTerm.description}
-            guidanceMessage="설명은 필숫값입니다."
-            showValidation={showValidation}
           />
         </div>
         <div className="w-full">

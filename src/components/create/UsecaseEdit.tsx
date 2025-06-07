@@ -1,23 +1,15 @@
 import { TermData } from '@/types/database';
 import React, { useState, KeyboardEvent } from 'react';
 import { X } from 'lucide-react';
-import { useFormValidation, InputFeedback } from './ValidatedInput';
 
 interface UsecaseSectionProps {
   formData: TermData;
   setFormData: React.Dispatch<React.SetStateAction<TermData>>;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
-  validationErrors?: string[];
 }
 
-const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors = [] }: UsecaseSectionProps) => {
+const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionProps) => {
   const [newIndustry, setNewIndustry] = useState('');
-  const { getInputClassName, showValidation } = useFormValidation();
-
-  // 특정 필드에 대한 유효성 검사 오류 찾기
-  const getFieldError = (fieldName: string) => {
-    return validationErrors.find((err) => err.includes(fieldName));
-  };
 
   const handleAddIndustry = () => {
     if (newIndustry.trim()) {
@@ -62,14 +54,8 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
             e.target.style.height = 'auto';
             e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
           }}
-          className={getInputClassName(formData.usecase?.description)}
+          className="w-full p-2 border border-gray4 text-main rounded-md"
           placeholder="포스트 내용의 사용 사례에 대한 개요를 작성하세요."
-          required
-        />
-        <InputFeedback
-          value={formData.usecase?.description}
-          errorMessage={getFieldError('사용 사례 개요') || '사용 사례 개요'}
-          showValidation={showValidation}
         />
       </div>
 
@@ -83,14 +69,8 @@ const UsecaseSection = ({ formData, setFormData, handleChange, validationErrors 
             e.target.style.height = 'auto';
             e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
           }}
-          className={getInputClassName(formData.usecase?.example)}
+          className="w-full p-2 border border-gray4 text-main rounded-md"
           placeholder="구체적인 사용 사례를 작성하세요."
-          required
-        />
-        <InputFeedback
-          value={formData.usecase?.example}
-          errorMessage={getFieldError('구체적인 사용 사례') || '구체적인 사용 사례를 입력하세요.'}
-          showValidation={showValidation}
         />
       </div>
 

@@ -1,23 +1,15 @@
 import { TermData } from '@/types/database';
 import React, { useState, useEffect } from 'react';
 import CreateSlider from '@/components/ui/CreateSlider';
-import { useFormValidation, InputFeedback } from './ValidatedInput';
 
 interface RelevanceSectionProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
   handleCustomChange?: (name: string, value: number)=> void;
-  validationErrors?: string[];
 }
 
-const RelevanceSection = ({ formData, handleChange, handleCustomChange, validationErrors = [] }: RelevanceSectionProps) => {
+const RelevanceSection = ({ formData, handleChange, handleCustomChange }: RelevanceSectionProps) => {
   const relevanceLevels = ['희박', '낮음', '보통', '높음', '밀접'];
-  const { getInputClassName, showValidation } = useFormValidation();
-
-  // 특정 필드에 대한 유효성 검사 오류 찾기
-  const getFieldError = (fieldName: string) => {
-    return validationErrors.find((err) => err.includes(fieldName));
-  };
 
   // 각 직무별 슬라이더 값 상태 관리 (1~5 범위 사용)
   const [analystScore, setAnalystScore] = useState<number>(formData.relevance?.analyst?.score || 1);
@@ -108,14 +100,8 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange, validati
                 e.target.style.height = 'auto';
                 e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
               }}
-              className={getInputClassName(formData.relevance?.analyst?.description, 'w-full min-h-[120px] p-2 border rounded-md text-main')}
+              className="w-full min-h-[120px] p-2 border border-gray4 text-main rounded-md"
               placeholder="데이터 분석가의 연관성에 대해 작성하세요."
-              required
-            />
-            <InputFeedback
-              value={formData.relevance?.analyst?.description}
-              errorMessage={getFieldError('데이터 분석가') || '데이터 분석가 직무 연관성 설명'}
-              showValidation={showValidation}
             />
           </div>
         </div>
@@ -142,14 +128,8 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange, validati
                 e.target.style.height = 'auto';
                 e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
               }}
-              className={getInputClassName(formData.relevance?.scientist?.description, 'w-full min-h-[120px] p-2 border rounded-md text-main')}
+              className="w-full min-h-[120px] p-2 border border-gray4 text-main rounded-md"
               placeholder="데이터 과학자의 연관성에 대해 작성하세요."
-              required
-            />
-            <InputFeedback
-              value={formData.relevance?.scientist?.description}
-              errorMessage={getFieldError('데이터 과학자') || '데이터 과학자 직무 연관성 설명'}
-              showValidation={showValidation}
             />
           </div>
         </div>
@@ -176,14 +156,8 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange, validati
                 e.target.style.height = 'auto';
                 e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
               }}
-              className={getInputClassName(formData.relevance?.engineer?.description, 'w-full min-h-[120px] p-2 border rounded-md text-main')}
+              className="w-full min-h-[120px] p-2 border border-gray4 text-main rounded-md"
               placeholder="데이터 엔지니어의 연관성에 대해 작성하세요."
-              required
-            />
-            <InputFeedback
-              value={formData.relevance?.engineer?.description}
-              errorMessage={getFieldError('데이터 엔지니어') || '데이터 엔지니어 직무 연관성 설명'}
-              showValidation={showValidation}
             />
           </div>
         </div>

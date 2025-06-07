@@ -1,6 +1,5 @@
 import { TermData } from '@/types/database';
 import React, { useState, useRef, useEffect } from 'react';
-import { useFormValidation, InputFeedback } from './ValidatedInput';
 import MarkdownContent from '../posts/MarkdownContent';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -10,7 +9,6 @@ interface DescriptionSectionProps {
 }
 
 const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps) => {
-  const { getInputClassName, showValidation } = useFormValidation();
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const guideContentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number | null>(null);
@@ -136,15 +134,9 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
         name="description.full"
         value={formData.description?.full || ''}
         onChange={handleDescriptionChange}
-        className={getInputClassName(formData.description?.full)}
+        className="w-full p-2 border border-gray4 text-main rounded-md"
         placeholder="마크다운 형식으로 작성하세요."
-        required
         rows={6}
-      />
-      <InputFeedback
-        value={formData.description?.full}
-        errorMessage="본문을 입력하세요."
-        showValidation={showValidation}
       />
       {tips()}
     </div>

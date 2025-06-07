@@ -42,8 +42,6 @@ export default function CreatePage() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [formSubmitted, setFormSubmitted] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
   const [newEtcKeyword, setNewEtcKeyword] = useState('');
 
@@ -126,7 +124,7 @@ export default function CreatePage() {
   // 자동 저장 기능 구현
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
-      if (isLoggedIn && !formSubmitted) {
+      if (isLoggedIn) {
         try {
           localStorage.setItem('diki-create-form-data', JSON.stringify(formData));
           showToast('작성 중인 내용이 자동으로 브라우저에 저장되었습니다.', 'info');
@@ -138,7 +136,7 @@ export default function CreatePage() {
     }, 180000); // 3분마다 자동 저장
 
     return () => clearInterval(autoSaveInterval);
-  }, [formData, isLoggedIn, formSubmitted, showToast]);
+  }, [formData, isLoggedIn, showToast]);
 
   // 로그인 확인 로직
   useEffect(() => {
@@ -291,105 +289,8 @@ export default function CreatePage() {
     }
   };
 
-  // 폼 필드 유효성 검사 조건을 하나의 객체로 정의
-  const validationRules = {
-    koTitle: (data: TermData) => !data.title?.ko || data.title.ko.trim() === '',
-    enTitle: (data: TermData) => !data.title?.en || data.title.en.trim() === '',
-    shortDesc: (data: TermData) => !data.description?.short || data.description.short.trim() === '',
-    difficulty: (data: TermData) => !data.difficulty?.description || data.difficulty.description.trim() === '',
-    description: (data: TermData) => !data.description?.full || data.description.full.trim() === '',
-    relevance: (data: TermData) => (
-      !data.relevance?.analyst?.description
-      || !data.relevance?.scientist?.description
-      || !data.relevance?.engineer?.description
-    ),
-    usecase: (data: TermData) => !data.usecase?.description || !data.usecase?.example,
-    tags: (data: TermData) => !Array.isArray(data.tags) || data.tags.length === 0,
-    terms: (data: TermData) => !Array.isArray(data.terms) || data.terms.length === 0,
-    references: (data: TermData) => {
-      const hasTutorials = Array.isArray(data.references?.tutorials) && data.references.tutorials.length > 0;
-      const hasBooks = Array.isArray(data.references?.books) && data.references.books.length > 0;
-      const hasAcademic = Array.isArray(data.references?.academic) && data.references.academic.length > 0;
-      const hasOpensource = Array.isArray(data.references?.opensource) && data.references.opensource.length > 0;
-      return !(hasTutorials || hasBooks || hasAcademic || hasOpensource);
-    },
-  };
-
-  // 에러 메시지 맵
-  const errorMessages = {
-    koTitle: '한글 제목을 입력하세요.',
-    enTitle: '영문 제목을 입력하세요.',
-    shortDesc: '짧은 설명을 입력하세요.',
-    difficulty: '난이도에 대한 설명을 입력하세요.',
-    description: '전체 설명을 입력하세요.',
-    relevance: [
-      '데이터 분석가 직무 연관성 설명을 입력하세요.',
-      '데이터 과학자 직무 연관성 설명을 입력하세요.',
-      '데이터 엔지니어 직무 연관성 설명을 입력하세요.',
-    ],
-    usecase: [
-      '사용 사례 개요를 입력하세요.',
-      '구체적인 사용 사례를 입력하세요.',
-    ],
-    tags: '관련 포스트를 하나 이상 추가하세요.',
-    terms: '관련 용어를 하나 이상 추가하세요.',
-    references: '참고 자료를 하나 이상 추가하세요.',
-  };
-
-  // 섹션 유효성 검사 함수
-  const validateSection = (section: string): boolean => {
-    const errors = getSectionValidationErrors(section);
-    setValidationErrors(errors);
-    return errors.length === 0;
-  };
-
-  // 섹션별 유효성 검사 에러 가져오기
-  const getSectionValidationErrors = (section: string): string[] => {
-    const errors: string[] = [];
-
-    // 유효성 검사 규칙이 있고 해당 섹션이 유효하지 않은 경우
-    if (section in validationRules && validationRules[section as keyof typeof validationRules](formData)) {
-      const errorMessage = errorMessages[section as keyof typeof errorMessages];
-
-      // 에러 메시지가 배열인 경우 (relevance, usecase)
-      if (Array.isArray(errorMessage)) {
-        errors.push(...errorMessage);
-      } else if (errorMessage) {
-        errors.push(errorMessage);
-      }
-    }
-
-    return errors;
-  };
-
-  // 폼 유효성 검사
-  const validateForm = (): boolean => {
-    const errors: string[] = [];
-
-    // 모든 필수 섹션에 대해 유효성 검사 수행
-    Object.keys(validationRules).forEach((section) => {
-      const sectionErrors = getSectionValidationErrors(section);
-      if (sectionErrors.length > 0) {
-        errors.push(...sectionErrors);
-      }
-    });
-
-    setValidationErrors(errors);
-    return errors.length === 0;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // 폼 제출 상태 설정
-    setFormSubmitted(true);
-
-    if (!validateForm()) {
-      setError('붉은 점선으로 된 항목을 모두 채워주세요.');
-      showToast('붉은 점선으로 된 항목을 모두 채워주세요.', 'error');
-      return;
-    }
-
     // 모달 열기
     setIsConfirmModalOpen(true);
   };
@@ -452,11 +353,7 @@ export default function CreatePage() {
         }}
         className="w-full p-2 border border-gray4 text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
         placeholder="포스트 한글 제목 (ex. 인공지능)"
-        required
       />
-      {validationErrors.find((err) => err.includes('한글 제목')) && (
-        <p className="text-level-5 text-sm mt-1">{'한글 제목을 입력하세요.'}</p>
-      )}
     </div>
   );
 
@@ -477,11 +374,7 @@ export default function CreatePage() {
         }}
         className="w-full p-2 border border-gray4 text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
         placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
-        required
       />
-      {validationErrors.find((err) => err.includes('영문 제목')) && (
-        <p className="text-level-5 text-sm mt-1">{'영문 제목을 입력하세요.'}</p>
-      )}
     </div>
   );
 
@@ -506,7 +399,6 @@ export default function CreatePage() {
             }
           }}
           className="w-full p-2 border border-gray4 text-main rounded-md resize-none overflow-hidden focus:border-primary focus:ring-1 focus:ring-primary"
-          required
           placeholder="포스트에 대한 간단한 설명을 작성하세요."
           maxLength={100}
           rows={2}
@@ -516,9 +408,6 @@ export default function CreatePage() {
           {`${ formData.description?.short?.length || 0 }/100`}
         </div>
       </div>
-      {validationErrors.find((err) => err.includes('짧은 설명')) && (
-        <p className="text-level-5 text-sm mt-1">{'짧은 설명을 입력하세요.'}</p>
-      )}
     </div>
   );
 
@@ -637,26 +526,24 @@ export default function CreatePage() {
             onSectionClick={isPreview ? undefined : toggleSection}
             editingSections={editingSections}
             formComponents={{
-              basicInfo: <BasicInfoEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-              difficulty: <DifficultyEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
+              basicInfo: <BasicInfoEdit formData={formData} handleChange={handleChange} />,
+              difficulty: <DifficultyEdit formData={formData} handleChange={handleChange} />,
               description: <DescriptionEdit formData={formData} handleChange={handleChange} />,
               terms: <TermsEdit formData={formData} setFormData={setFormData} />,
               tags: <TagsEdit formData={formData} setFormData={setFormData} />,
-              relevance: <RelevanceEdit formData={formData} handleChange={handleChange} validationErrors={validationErrors} />,
-              usecase: <UsecaseEdit formData={formData} setFormData={setFormData} handleChange={handleChange} validationErrors={validationErrors} />,
+              relevance: <RelevanceEdit formData={formData} handleChange={handleChange} />,
+              usecase: <UsecaseEdit formData={formData} setFormData={setFormData} handleChange={handleChange} />,
               references: <ReferencesEdit formData={formData} setFormData={setFormData} />,
             }}
             renderKoreanTitleForm={renderKoreanTitleForm}
             renderEnglishTitleForm={renderEnglishTitleForm}
             renderShortDescriptionForm={renderShortDescriptionForm}
             renderEtcTitleForm={renderEtcTitleForm}
-            validateSection={validateSection}
-            formSubmitted={formSubmitted}
             isPreview={isPreview}
           />
         </div>
 
-        {error && validationErrors.length === 0 && (
+        {error && (
           <div className="text-end text-level-5 rounded-lg">
             {error}
           </div>

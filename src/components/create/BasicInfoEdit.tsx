@@ -1,12 +1,10 @@
 import { TermData } from '@/types/database';
 import React, { useState, KeyboardEvent, useRef } from 'react';
 import { X } from 'lucide-react';
-import { useFormValidation, InputFeedback } from './ValidatedInput';
 
 interface BasicInfoSectionProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
-  validationErrors?: string[];
   isModal?: boolean;
 }
 
@@ -14,7 +12,6 @@ interface BasicInfoSectionProps {
 interface InputComponentProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
-  validationErrors: string[];
   handleInputKeyDown: (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, nextRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement>)=> void;
 }
 
@@ -27,17 +24,11 @@ interface KoreanTitleProps extends InputComponentProps {
 const KoreanTitleInput = ({
   formData,
   handleChange,
-  validationErrors,
   koTitleRef,
   enTitleRef,
   handleInputKeyDown,
 }: KoreanTitleProps) => {
-  const { getInputClassName, showValidation } = useFormValidation();
   const [koTitleGuidance, setKoTitleGuidance] = useState<string | null>(null);
-
-  const getFieldError = (fieldName: string) => {
-    return validationErrors.find((err) => err.includes(fieldName));
-  };
 
   const handleKoreanTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -70,16 +61,12 @@ const KoreanTitleInput = ({
         value={formData.title?.ko || ''}
         onChange={handleKoreanTitleChange}
         onKeyDown={(e) => handleInputKeyDown(e, enTitleRef)}
-        className={getInputClassName(formData.title?.ko)}
+        className="w-full p-2 border border-gray4 text-main rounded-md"
         placeholder="포스트 한글 제목 (ex. 인공지능)"
-        required
       />
-      <InputFeedback
-        value={formData.title?.ko}
-        errorMessage={getFieldError('한글 제목') || '한글 제목을 입력하세요.'}
-        guidanceMessage={koTitleGuidance || undefined}
-        showValidation={showValidation}
-      />
+      {koTitleGuidance && (
+        <p className="text-sm text-primary ml-1">{koTitleGuidance}</p>
+      )}
     </div>
   );
 };
@@ -93,17 +80,11 @@ interface EnglishTitleProps extends InputComponentProps {
 const EnglishTitleInput = ({
   formData,
   handleChange,
-  validationErrors,
   enTitleRef,
   shortDescRef,
   handleInputKeyDown,
 }: EnglishTitleProps) => {
-  const { getInputClassName, showValidation } = useFormValidation();
   const [enTitleGuidance, setEnTitleGuidance] = useState<string | null>(null);
-
-  const getFieldError = (fieldName: string) => {
-    return validationErrors.find((err) => err.includes(fieldName));
-  };
 
   const handleEnglishTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -135,16 +116,12 @@ const EnglishTitleInput = ({
         value={formData.title?.en || ''}
         onChange={handleEnglishTitleChange}
         onKeyDown={(e) => handleInputKeyDown(e, shortDescRef)}
-        className={getInputClassName(formData.title?.en)}
+        className="w-full p-2 border border-gray4 text-main rounded-md"
         placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
-        required
       />
-      <InputFeedback
-        value={formData.title?.en}
-        errorMessage={getFieldError('영문 제목') || '영문 제목을 입력하세요.'}
-        guidanceMessage={enTitleGuidance || undefined}
-        showValidation={showValidation}
-      />
+      {enTitleGuidance && (
+        <p className="text-sm text-primary ml-1">{enTitleGuidance}</p>
+      )}
     </div>
   );
 };
@@ -158,17 +135,10 @@ interface ShortDescriptionProps extends InputComponentProps {
 const ShortDescriptionInput = ({
   formData,
   handleChange,
-  validationErrors,
   shortDescRef,
   etcTitleRef,
   handleInputKeyDown,
 }: ShortDescriptionProps) => {
-  const { getInputClassName, showValidation } = useFormValidation();
-
-  const getFieldError = (fieldName: string) => {
-    return validationErrors.find((err) => err.includes(fieldName));
-  };
-
   return (
     <div className='md:col-span-2'>
       <label className="block text-sm font-medium mb-1 text-gray0">{'짧은 설명'}</label>
@@ -184,8 +154,7 @@ const ShortDescriptionInput = ({
             e.target.style.height = e.target.scrollHeight + 'px';
           }}
           onKeyDown={(e) => handleInputKeyDown(e, etcTitleRef)}
-          className={getInputClassName(formData.description?.short) + ' resize-none overflow-hidden'}
-          required
+          className="w-full p-2 border border-gray4 text-main rounded-md resize-none overflow-hidden"
           placeholder="포스트에 대한 1~2줄 짧은 설명 (100자 이내)"
           maxLength={100}
           rows={1}
@@ -195,11 +164,6 @@ const ShortDescriptionInput = ({
           {`${ formData.description?.short?.length || 0 }/100`}
         </div>
       </div>
-      <InputFeedback
-        value={formData.description?.short}
-        errorMessage={getFieldError('짧은 설명') || '짧은 설명을 입력하세요.'}
-        showValidation={showValidation}
-      />
     </div>
   );
 };
@@ -306,7 +270,7 @@ const AdditionalTitleInput = ({
   );
 };
 
-const BasicInfoSection = ({ formData, handleChange, validationErrors = [], isModal = false }: BasicInfoSectionProps) => {
+const BasicInfoSection = ({ formData, handleChange, isModal = false }: BasicInfoSectionProps) => {
   // 각 입력 필드에 대한 ref 생성
   const koTitleRef = useRef<HTMLInputElement>(null);
   const enTitleRef = useRef<HTMLInputElement>(null);
@@ -332,7 +296,6 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [], isMod
         <KoreanTitleInput
           formData={formData}
           handleChange={handleChange}
-          validationErrors={validationErrors}
           koTitleRef={koTitleRef}
           enTitleRef={enTitleRef}
           handleInputKeyDown={handleInputKeyDown}
@@ -341,7 +304,6 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [], isMod
         <EnglishTitleInput
           formData={formData}
           handleChange={handleChange}
-          validationErrors={validationErrors}
           enTitleRef={enTitleRef}
           shortDescRef={shortDescRef}
           handleInputKeyDown={handleInputKeyDown}
@@ -350,7 +312,6 @@ const BasicInfoSection = ({ formData, handleChange, validationErrors = [], isMod
         <ShortDescriptionInput
           formData={formData}
           handleChange={handleChange}
-          validationErrors={validationErrors}
           shortDescRef={shortDescRef}
           etcTitleRef={etcTitleRef}
           handleInputKeyDown={handleInputKeyDown}
