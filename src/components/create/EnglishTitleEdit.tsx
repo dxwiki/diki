@@ -1,5 +1,5 @@
 import { TermData } from '@/types/database';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface EnglishTitleEditProps {
   formData: TermData;
@@ -9,15 +9,30 @@ interface EnglishTitleEditProps {
 
 const EnglishTitleEdit = ({ formData, handleChange, onEnterPress }: EnglishTitleEditProps) => {
   const [enTitleGuidance, setEnTitleGuidance] = useState<string | null>(null);
+  const [showDefaultGuidance, setShowDefaultGuidance] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (formData.title?.en && formData.title.en.trim() !== '') {
+      setShowDefaultGuidance(false);
+    } else {
+      setShowDefaultGuidance(true);
+    }
+  }, [formData.title?.en]);
 
   const handleEnglishTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
 
-    // 영어만 허용
-    const englishOnly = value.replace(/[^a-zA-Z\s]/g, '');
+    if (value.trim() !== '') {
+      setShowDefaultGuidance(false);
+    } else {
+      setShowDefaultGuidance(true);
+    }
 
-    if (value !== englishOnly) {
-      setEnTitleGuidance('영어 외의 문자는 사용할 수 없습니다');
+    // 영어, 별(*), 하이픈(-) 문자만 허용
+    const allowedCharsOnly = value.replace(/[^a-zA-Z\s\*\-]/g, '');
+
+    if (value !== allowedCharsOnly) {
+      setEnTitleGuidance('영어, 별(*), 하이픈(-) 외의 문자는 사용할 수 없습니다.');
     } else {
       setEnTitleGuidance(null);
     }
@@ -25,7 +40,7 @@ const EnglishTitleEdit = ({ formData, handleChange, onEnterPress }: EnglishTitle
     const filteredEvent = {
       target: {
         name: e.target.name,
-        value: englishOnly,
+        value: allowedCharsOnly,
       },
     } as React.ChangeEvent<HTMLInputElement>;
 
@@ -52,9 +67,11 @@ const EnglishTitleEdit = ({ formData, handleChange, onEnterPress }: EnglishTitle
         className="w-full p-2 border border-gray4 text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
         placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
       />
-      {enTitleGuidance && (
+      {enTitleGuidance ? (
         <p className="text-sm text-primary ml-1">{enTitleGuidance}</p>
-      )}
+      ) : showDefaultGuidance ? (
+        <p className="text-sm text-level-5 ml-1 mt-1">{'영문 제목을 작성해주세요.'}</p>
+      ) : null}
     </div>
   );
 };

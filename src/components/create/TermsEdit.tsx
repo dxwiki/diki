@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { useState, KeyboardEvent, useRef } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import { TermData } from '@/types/database';
 import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
@@ -11,10 +11,23 @@ interface TermsSectionProps {
 
 const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   const [newTerm, setNewTerm] = useState({ term: '', description: '', internal_link: undefined as string | undefined, link_title: '' });
+  const [showGuidance, setShowGuidance] = useState(true);
+  const [termError, setTermError] = useState<string | null>(null);
+  const [descriptionError, setDescriptionError] = useState<string | null>(null);
+  const [enterKeyError, setEnterKeyError] = useState<boolean>(false);
 
   const termInputRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const linkSearchRef = useRef<HTMLDivElement>(null);
+
+  // 관련 용어 추가 여부에 따라 안내 메시지 표시 상태 업데이트
+  useEffect(() => {
+    if (formData.terms && formData.terms.length > 0) {
+      setShowGuidance(false);
+    } else {
+      setShowGuidance(true);
+    }
+  }, [formData.terms]);
 
   const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, nextRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLDivElement>) => {
     if (e.nativeEvent.isComposing) return;
@@ -24,19 +37,92 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
     }
   };
 
-  const handleAddTerm = () => {
-    if (newTerm.term.trim() && newTerm.description.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        terms: [...(prev.terms || []), { ...newTerm }],
-      }));
-      setNewTerm({ term: '', description: '', internal_link: undefined, link_title: '' });
-      termInputRef.current?.focus();
+  // 설명 입력란에서 Enter 키 입력 방지
+  const handleDescriptionKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.nativeEvent.isComposing) return;
+
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      setEnterKeyError(true);
     }
+  };
+
+  const validateInputs = (): boolean => {
+    let isValid = true;
+
+    // 용어 입력 검증
+    if (!newTerm.term.trim()) {
+      setTermError('관련 용어를 추가하려면 용어 제목을 작성해야 합니다.');
+      isValid = false;
+      termInputRef.current?.focus();
+    } else {
+      setTermError(null);
+    }
+
+    // 설명 입력 검증
+    if (!newTerm.description.trim()) {
+      setDescriptionError('관련 용어를 추가하려면 용어 설명을 작성해야 합니다.');
+      isValid = false;
+      if (newTerm.term.trim()) {
+        descriptionRef.current?.focus();
+      }
+    } else {
+      setDescriptionError(null);
+    }
+
+    return isValid;
+  };
+
+  const handleAddTerm = () => {
+    // 입력 검증
+    if (!validateInputs()) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      terms: [...(prev.terms || []), { ...newTerm }],
+    }));
+
+    // 입력 필드 초기화
+    setNewTerm({ term: '', description: '', internal_link: undefined, link_title: '' });
+    setTermError(null);
+    setDescriptionError(null);
+    termInputRef.current?.focus();
+  };
+
+  const handleTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!newTerm.internal_link) {
+      setNewTerm({ ...newTerm, term: e.target.value });
+    }
+
+    // 입력 시 에러 메시지 제거
+    if (e.target.value.trim()) {
+      setTermError(null);
+    }
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewTerm({ ...newTerm, description: e.target.value });
+
+    // 입력 시 에러 메시지 제거
+    if (e.target.value.trim()) {
+      setDescriptionError(null);
+    }
+
+    // Enter 키 에러 메시지 초기화
+    setEnterKeyError(false);
+
+    e.target.style.height = 'auto';
+    e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
   };
 
   const handleLinkSelect = (url: string, title: string) => {
     setNewTerm((prev) => ({ ...prev, internal_link: url, link_title: title, term: title }));
+    setTermError(null); // 링크 선택 시 용어 에러 초기화
+  };
+
+  // 버튼 활성화 여부 확인
+  const isButtonActive = (): boolean => {
+    return !!(newTerm.term.trim() && newTerm.description.trim());
   };
 
   return (
@@ -79,27 +165,30 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             ref={termInputRef}
             type="text"
             value={newTerm.term}
-            onChange={(e) => !newTerm.internal_link && setNewTerm({ ...newTerm, term: e.target.value })}
+            onChange={handleTermChange}
             onKeyDown={(e) => handleInputKeyDown(e, descriptionRef)}
-            className={`w-full p-2 border border-gray4 text-main rounded-md ${ newTerm.internal_link ? 'bg-gray5 cursor-not-allowed' : '' }`}
+            className={`w-full p-2 border ${ termError ? 'border-primary' : 'border-gray4' } text-main rounded-md ${ newTerm.internal_link ? 'bg-gray5 cursor-not-allowed' : '' }`}
             placeholder="각주 또는 포스트와 관련된 용어를 작성하세요."
             readOnly={!!newTerm.internal_link}
           />
+          {termError && <p className="text-sm text-primary mt-1">{termError}</p>}
         </div>
         <div className="w-full">
           <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
           <textarea
             ref={descriptionRef}
             value={newTerm.description}
-            onChange={(e) => {
-              setNewTerm({ ...newTerm, description: e.target.value });
-              e.target.style.height = 'auto';
-              e.target.style.height = `calc(${ e.target.scrollHeight }px + 1rem)`;
-            }}
-            onKeyDown={(e) => handleInputKeyDown(e, linkSearchRef)}
-            className="w-full p-2 border border-gray4 text-main rounded-md h-20"
+            onChange={handleDescriptionChange}
+            onKeyDown={handleDescriptionKeyDown}
+            className={`w-full p-2 border ${ descriptionError ? 'border-primary' : 'border-gray4' } text-main rounded-md h-[88px]`}
             placeholder="용어에 대한 설명을 작성하세요."
           />
+          {enterKeyError && (
+            <p className="text-sm text-primary mt-1">{'관련 용어 설명에 줄바꿈을 추가할 수 없습니다.'}</p>
+          )}
+          {descriptionError && !enterKeyError && (
+            <p className="text-sm text-primary mt-1">{descriptionError}</p>
+          )}
         </div>
         <div className="w-full">
           <label className="block text-sm font-medium mb-1 text-gray0">{'내부 링크 (선택)'}</label>
@@ -126,12 +215,13 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             </div>
           )}
         </div>
-        <div className="w-full flex justify-end">
+        <div className="w-full flex justify-between items-center">
+          <p className={`text-sm text-level-5 ${ showGuidance ? 'opacity-100' : 'opacity-0' }`}>{'관련 용어를 1개 이상 작성해주세요.'}</p>
           <button
             type="button"
             onClick={handleAddTerm}
             className={`px-4 py-2 rounded-md ${
-              newTerm.term.trim() && newTerm.description.trim()
+              isButtonActive()
                 ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'
                 : 'text-main bg-gray4 hover:text-white hover:bg-gray3'
             }`}

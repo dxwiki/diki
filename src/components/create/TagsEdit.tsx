@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TermData } from '@/types/database';
 import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
@@ -11,6 +11,7 @@ interface TagsSectionProps {
 
 const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [showValidationMessage, setShowValidationMessage] = useState<boolean>(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -21,6 +22,15 @@ const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // 포스트 개수에 따라 validation 메시지 표시 여부 결정
+  useEffect(() => {
+    if (formData.tags && formData.tags.length > 0) {
+      setShowValidationMessage(false);
+    } else {
+      setShowValidationMessage(true);
+    }
+  }, [formData.tags]);
 
   const handleLinkSelect = (url: string, title: string) => {
     const tagToAdd = {
@@ -67,6 +77,9 @@ const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
         <div className="relative">
           <InternalLinkSearch onSelect={handleLinkSelect} refocus inputRef={searchInputRef} />
         </div>
+        {showValidationMessage && (
+          <p className="text-sm text-level-5 mt-1">{'관련 포스트를 1개 이상 선택해주세요.'}</p>
+        )}
       </div>
       <p className="text-sm text-gray2 mt-1">{'Diki 내 포스트를 검색하여 선택하면, 관련 포스트가 자동으로 추가됩니다.\n 추가된 포스트의 링크를 눌러 확인할 수 있습니다.'}</p>
     </div>

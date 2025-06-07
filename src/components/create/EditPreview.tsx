@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useEffect, useRef, ReactElement, useState, useCallback } from 'react';
 import { TermData } from '@/types/database';
 import DescriptionSection from '../posts/sections/DescriptionSection';
 import RelevanceSection from '../posts/sections/RelevanceSection';
@@ -9,7 +10,6 @@ import ReferencesSection from '../posts/sections/ReferencesSection';
 import { X } from 'lucide-react';
 import Level from '@/components/ui/Level';
 import { formatDate } from '@/utils/filters';
-import React, { useEffect, useRef, ReactElement, useState, useCallback } from 'react';
 import TableOfContents from '@/components/common/TableOfContents';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -95,6 +95,10 @@ const PostPreview = ({
       || (Array.isArray(term.references?.academic) && term.references.academic.length > 0)
       || (Array.isArray(term.references?.opensource) && term.references.opensource.length > 0),
   };
+
+  useEffect(() => {
+    console.log(term);
+  }, [term]);
 
   useEffect(() => {
     if (profiles.length > 0 && term.metadata?.authors) {
@@ -419,7 +423,7 @@ const PostPreview = ({
               {/* 관련 용어 섹션 */}
               <div id="terms-section" className="relative">
                 <div
-                  className={getSectionClassName('terms', 'flex flex-col p-1 my-3 prose-section rounded')}
+                  className={getSectionClassName('terms', 'flex flex-col p-1 my-3 prose-section rounded gap-2')}
                 >
                   <div className="cursor-pointer" onClick={(e: React.MouseEvent) => handleSectionClick('terms', e)}>
                     <RelatedTermsSection
@@ -469,7 +473,7 @@ const PostPreview = ({
               {/* 직무 연관도 섹션 */}
               <div id="relevance-section" className="relative">
                 <div
-                  className={getSectionClassName('relevance', 'flex flex-col p-1 my-3 bg-cover bg-center prose-section rounded')}
+                  className={getSectionClassName('relevance', 'flex flex-col p-1 my-3 bg-cover bg-center prose-section rounded gap-2')}
                 >
                   <div className="cursor-pointer" onClick={(e: React.MouseEvent) => handleSectionClick('relevance', e)}>
                     <RelevanceSection
@@ -494,7 +498,7 @@ const PostPreview = ({
               {/* 사용 사례 섹션 */}
               <div id="usecase-section" className="relative">
                 <div
-                  className={getSectionClassName('usecase', 'flex flex-col p-1 my-3 prose-section rounded')}
+                  className={getSectionClassName('usecase', 'flex flex-col p-1 my-3 prose-section rounded gap-2')}
                 >
                   <div className="cursor-pointer" onClick={(e: React.MouseEvent) => handleSectionClick('usecase', e)}>
                     <UsecaseSection
@@ -512,7 +516,7 @@ const PostPreview = ({
               {/* 참고자료 섹션 */}
               <div id="references-section" className="relative mb-16">
                 <div
-                  className={getSectionClassName('references', 'flex flex-col p-1 my-3 prose-section rounded')}
+                  className={getSectionClassName('references', 'flex flex-col p-1 my-3 prose-section rounded gap-2')}
                 >
                   <div className="cursor-pointer" onClick={(e: React.MouseEvent) => handleSectionClick('references', e)}>
                     {!hasData.references && (
