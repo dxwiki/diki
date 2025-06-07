@@ -12,8 +12,6 @@ import { dikiMetadata } from '../src/constants';
                  + 'Disallow: /signup/\n'
                  + 'Disallow: /good-bye/\n'
                  + 'Disallow: /thank-you/\n'
-                 + 'Disallow: /profiles/*/posts/\n'
-                 + 'Disallow: /profiles/*/contributes/\n'
                  + 'Disallow: /profiles/\n'
                  + 'Disallow: /api/*\n'
                  + `Sitemap: ${ siteUrl }/sitemap.xml\n`;
