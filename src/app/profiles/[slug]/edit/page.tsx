@@ -46,6 +46,7 @@ function getClientProfileFromCookie(username: string) {
       role: 'contributor',
       social: social,
       updatedAt: new Date().toISOString(),
+      intro: userInfo.intro || '',
     };
 
     return { cookieProfile, isOwnProfile, userInfo };
@@ -66,6 +67,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
     username: '',
     email: '',
     thumbnail: '',
+    intro: '',
     social: {
       github: '',
       linkedin: '',
@@ -104,6 +106,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
             username: profileData.username,
             email: profileData.email,
             thumbnail: profileData.thumbnail,
+            intro: profileData.intro || '',
             social: {
               github: profileData.social.github || '',
               linkedin: profileData.social.linkedin || '',
@@ -118,6 +121,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
               username: cookieProfile.username,
               email: cookieProfile.email,
               thumbnail: cookieProfile.thumbnail,
+              intro: cookieProfile.intro || '',
               social: {
                 github: cookieProfile.social.github || '',
                 linkedin: cookieProfile.social.linkedin || '',
@@ -195,6 +199,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
         name: formData.name,
         email: profile.email, // 이메일은 원래 값 사용
         username: profile.username, // 사용자명은 원래 값 사용
+        intro: formData.intro,
         social: formData.social,
       };
 
@@ -305,6 +310,22 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                 {nameError ? '이름은 필수 입력값입니다.' : '포스트에 표시되는 이름입니다.'}
               </p>
             </div>
+
+            <div>
+              <label className="block text-primary font-medium mb-2">
+                {'소개글'}
+              </label>
+              <input
+                name="intro"
+                value={formData.intro}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200"
+                placeholder="간단한 소개글을 입력해주세요."
+                maxLength={50}
+              />
+              <p className="text-gray2 text-sm p-1">{'프로필에 표시될 소개글입니다.(최대 50자)'}</p>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-main font-medium mb-2">
@@ -314,7 +335,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                   type="text"
                   name="username"
                   value={formData.username}
-                  className="w-full px-4 py-3 border border-gray4 rounded-lg !bg-gray4 text-gray2 cursor-not-allowed"
+                  className="w-full px-4 py-3 border border-gray4 rounded-lg !bg-gray4 text-gray0 cursor-not-allowed"
                   disabled
                 />
                 <p className="text-gray2 text-sm p-1">{'Github 닉네임으로 설정되므로 수정할 수 없습니다.'}</p>
@@ -328,7 +349,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                   type="email"
                   name="email"
                   value={formData.email}
-                  className="w-full px-4 py-3 border border-gray4 rounded-lg !bg-gray4 text-gray2 cursor-not-allowed"
+                  className="w-full px-4 py-3 border border-gray4 rounded-lg !bg-gray4 text-gray0 cursor-not-allowed"
                   disabled
                 />
                 <p className="text-gray2 text-sm p-1">{'Github 이메일로 설정되므로 수정할 수 없습니다.'}</p>
