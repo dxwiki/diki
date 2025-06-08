@@ -123,6 +123,7 @@ export async function GET(request: NextRequest) {
           linkedin: username,
         },
         rank: existingProfile?.rank || (userDoc ? userDoc.data().rank : { current: 0, postsCount: 0, remainingForNextRank: 1 }),
+        intro: existingProfile?.intro || (userDoc ? userDoc.data().intro : ''),
       };
     } else if (isSignupFlow) {
       // 회원가입 플로우에서만 신규 사용자 정보 생성
@@ -152,6 +153,7 @@ export async function GET(request: NextRequest) {
         thumbnail: userData.avatar_url,
         updatedAt: new Date().toISOString(),
         rank: { current: 0, postsCount: 0, remainingForNextRank: 1 },
+        intro: '',
       };
 
       cookieUserInfo = {
@@ -165,6 +167,7 @@ export async function GET(request: NextRequest) {
           linkedin: username,
         },
         rank: { current: 0, postsCount: 0, remainingForNextRank: 1 },
+        intro: '',
       };
     } else {
       // 로그인 플로우인데 여기까지 왔다면 오류 (이미 위에서 처리했지만 안전장치)

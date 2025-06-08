@@ -115,6 +115,7 @@ async function fetchAndSaveProfiles(): Promise<void> {
         username: data.username,
         role: data.role,
         thumbnail: data.thumbnail,
+        intro: data.intro || '',
         social: {
           github: data.social?.github,
           linkedin: data.social?.linkedin,

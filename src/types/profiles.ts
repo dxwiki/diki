@@ -19,4 +19,5 @@ export interface Profile {
   thumbnail: string;
   updatedAt?: string;
   rank?: RankInfo;
+  intro?: string;
 }
