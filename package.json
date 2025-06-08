@@ -16,7 +16,10 @@
     "lint:fix": "eslint --fix ./src",
     "format": "prettier --check --ignore-path .gitignore .",
     "format:fix": "prettier --write --ignore-path .gitignore .",
-    "fetch-static-data": "ts-node --project tsconfig.node.json ./scripts/fetchTermsStatic.ts && ts-node --project tsconfig.node.json ./scripts/fetchProfilesStatic.ts",
+    "fetch-terms": "ts-node --project tsconfig.node.json ./scripts/fetchTermsStatic.ts",
+    "calculate-levels": "ts-node --project tsconfig.node.json ./scripts/calculateLevels.ts",
+    "fetch-profiles": "ts-node --project tsconfig.node.json ./scripts/fetchProfilesStatic.ts",
+    "fetch-static-data": "npm run fetch-terms && npm run calculate-levels && npm run fetch-profiles",
     "static": "ts-node --project tsconfig.node.json ./scripts/generateFeed.ts && ts-node --project tsconfig.node.json ./scripts/generateSitemap.ts && ts-node --project tsconfig.node.json ./scripts/generateRobots.ts"
   },
   "dependencies": {
