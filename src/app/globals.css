@@ -37,11 +37,14 @@ body {
   --border: #cccccc; /* 밝은 테마의 기본 테두리 색상 */
   --extreme-light: #efefef;
 
+  --level-0: #909090;
   --level-1: #1a75db;
   --level-2: #00ab52;
   --level-3: #e6ac00;
-  --level-4: #e66000;
+  --level-4: #e66600;
   --level-5: #e60000;
+  --level-6: #a300e6;
+  --level-7: #3a0071;
 }
 
 .dark {
@@ -67,11 +70,14 @@ body {
   --border: #666666; /* 다크 테마의 기본 테두리 색상 */
   --extreme-light: #1f1f1f;
 
+  --level-0: #666666;
   --level-1: #3b82f6;
   --level-2: #4ade80;
   --level-3: #facc15;
   --level-4: #fb923c;
   --level-5: #f87171;
+  --level-6: #c084fc;
+  --level-7: #8b5cf6;
 }
 
 @layer base {
