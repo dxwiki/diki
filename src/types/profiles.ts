@@ -12,4 +12,6 @@ export interface Profile {
   social: SocialType;
   thumbnail: string;
   updatedAt?: string;
+  level?: number;
+  authorCount?: number;
 }

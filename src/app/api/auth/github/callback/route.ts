@@ -122,6 +122,8 @@ export async function GET(request: NextRequest) {
           github: username,
           linkedin: username,
         },
+        level: existingProfile?.level || (userDoc ? userDoc.data().level : 0),
+        authorCount: existingProfile?.authorCount || (userDoc ? userDoc.data().authorCount : 0),
       };
     } else if (isSignupFlow) {
       // 회원가입 플로우에서만 신규 사용자 정보 생성
@@ -150,6 +152,8 @@ export async function GET(request: NextRequest) {
         },
         thumbnail: userData.avatar_url,
         updatedAt: new Date().toISOString(),
+        level: 0,
+        authorCount: 0,
       };
 
       cookieUserInfo = {
@@ -162,6 +166,8 @@ export async function GET(request: NextRequest) {
           github: username,
           linkedin: username,
         },
+        level: 0,
+        authorCount: 0,
       };
     } else {
       // 로그인 플로우인데 여기까지 왔다면 오류 (이미 위에서 처리했지만 안전장치)
