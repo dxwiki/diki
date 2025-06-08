@@ -3,6 +3,12 @@ export interface SocialType {
   linkedin?: string;
 }
 
+export interface RankInfo {
+  current: number;
+  postsCount: number;
+  remainingForNextRank: number;
+}
+
 export interface Profile {
   id: number;
   email: string;
@@ -12,6 +18,5 @@ export interface Profile {
   social: SocialType;
   thumbnail: string;
   updatedAt?: string;
-  level?: number;
-  authorCount?: number;
+  rank?: RankInfo;
 }
