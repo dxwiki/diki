@@ -129,13 +129,35 @@ const ProfileClient = ({
   return (
     <>
       <div className='flex flex-col gap-2'>
-        <div className='flex gap-4 my-2 items-center justify-between'>
-          <h1 className="text-xl sm:text-2xl font-bold">
-            {profile.name}
-            <span className='text-sub text-base sm:text-xl'>
-              {'('}{profile.username}{') 님'}
-            </span>
-          </h1>
+        <div className='flex my-2 items-center justify-between'>
+          <div className='flex items-center gap-2'>
+            <div
+              className="size-14 rounded-full"
+              style={{ backgroundImage: `url(${ profile.thumbnail })`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            />
+            <div className='flex items-center gap-2'>
+              <h1 className="flex items-center text-xl sm:text-2xl font-bold">
+                {profile.name}
+                <span className='text-sub text-base sm:text-xl'>
+                  {'('}{profile.username}{') 님'}
+                </span>
+              </h1>
+              {profile.rank !== undefined && (
+                <div className="flex flex-col">
+                  <span className={`px-2 py-0.5 text-sm rounded-full text-white bg-level-${ profile.rank.current }`}>
+                    {'Lv.'}{profile.rank.current}
+                  </span>
+                </div>
+              )}
+              {
+                profile.role === 'owner' && (
+                  <span className='px-2 py-0.5 text-sm rounded-full text-white bg-primary dark:bg-secondary'>
+                    {'Owner'}
+                  </span>
+                )
+              }
+            </div>
+          </div>
           <div className='flex flex-col sm:flex-row items-center gap-3'>
             {isCurrentUser && (
               <Link
