@@ -1,5 +1,5 @@
 import TooltipButton from '@/components/ui/TooltipButton';
-import { Check, Copy, Mail } from 'lucide-react';
+import { Check, Mail } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useRef, useEffect, useCallback } from 'react';
 

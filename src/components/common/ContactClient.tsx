@@ -1,15 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Profile } from '@/types';
-import { Mail } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { getAuthorSlug } from '@/utils/filters';
 import TooltipButton from '@/components/ui/TooltipButton';
 import { useEffect, useState, useMemo } from 'react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ContactButtonWrapper from '@/components/profiles/ContactButtonWrapper';
 
 const ContactClient = () => {
   const profiles = useSelector((state: RootState) => state.profiles.profiles);
@@ -69,49 +68,11 @@ const ContactClient = () => {
             {profile.role}
           </div>
           <div className="flex items-center justify-center gap-4 mt-2">
-            <TooltipButton
-              isLink={true}
-              tooltip="메일 보내기"
-              href={`mailto:${ profile.email }`}
-              className="p-2 border border-light rounded-md shrink-0"
-            >
-              <Mail className='size-6 md:size-5' />
-            </TooltipButton>
-            <TooltipButton
-              isLink={true}
-              tooltip="깃허브"
-              href={`https://github.com/${ profile.social.github }`}
-              className="p-2 border border-light rounded-md shrink-0"
-            >
-              <Image
-                src="/images/github-mark.png"
-                alt="github"
-                className="block dark:hidden size-6 md:size-5"
-                width={24}
-                height={24}
-              />
-              <Image
-                src="/images/github-mark-white.png"
-                alt="github"
-                className="hidden dark:block size-6 md:size-5"
-                width={24}
-                height={24}
-              />
-            </TooltipButton>
-            <TooltipButton
-              isLink={true}
-              tooltip="링크드인"
-              href={`https://linkedin.com/in/${ profile.social.linkedin }`}
-              className="p-2 border border-light rounded-md shrink-0"
-            >
-              <Image
-                src="/images/linkedin.jpeg"
-                alt="linkedin"
-                className="rounded-sm size-6 md:size-5"
-                width={24}
-                height={24}
-              />
-            </TooltipButton>
+            <ContactButtonWrapper
+              email={profile.email}
+              github={profile.social.github}
+              linkedin={profile.social.linkedin}
+            />
           </div>
         </div>
       </div>
