@@ -11,7 +11,6 @@ import GoogleAdSense from '@/components/meta/GoogleAdSense';
 import GoogleAnalytics from '@/components/meta/GoogleAnalytics';
 import KakaoSDK from '@/components/meta/KakaoSDK';
 import AmpAdScript from '@/components/meta/AmpAdScript';
-import JsonLdScripts from '@/components/meta/JsonLdScripts';
 import MicrosoftClarity from '@/components/meta/MicrosoftClarity';
 import ReduxProvider from '@/components/redux/ReduxProvider';
 import DataInitializer from '@/components/redux/DataInitializer';
@@ -65,7 +64,6 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
         <GoogleAnalytics />
         <KakaoSDK />
         <AmpAdScript />
-        <JsonLdScripts />
         <MicrosoftClarity />
       </head>
       <body
