@@ -54,23 +54,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${ term.title?.ko }${ term.title?.en ? ` (${ term.title.en })` : '' }`;
   const description = term.description?.short;
 
-  // undefined 값을 필터링하여 문자열 배열로 변환
-  const keywords: string[] = [
-    term.title?.ko,
-    term.title?.en,
-    '디키',
-    'Diki',
-    '데이터용어',
-    '데이터사전',
-  ].filter((keyword): keyword is string => keyword !== undefined);
-
   return {
     title: title,
     description: description,
     alternates: {
       canonical: `${ dikiMetadata.url }/posts/${ params.slug }`,
     },
-    keywords: keywords,
     openGraph: {
       title: title,
       description: description ?? '',
