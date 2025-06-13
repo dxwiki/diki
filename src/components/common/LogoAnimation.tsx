@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface LogoAnimationProps {
   fontSize?: string;
+  delayAnimation?: boolean;
 }
 
 interface LogoText {
@@ -11,13 +12,28 @@ interface LogoText {
   key: number;
 }
 
-const LogoAnimation = ({ fontSize = '4rem' }: LogoAnimationProps) => {
+const LogoAnimation = ({ fontSize = '4rem', delayAnimation = true }: LogoAnimationProps) => {
   const [currentLogo, setCurrentLogo] = useState<LogoText>({ prefix: 'DataW', key: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
-  const [nextLogo, setNextLogo] = useState<LogoText>({ prefix: 'DxW', key: 1 });
+  const [nextLogo, setNextLogo] = useState<LogoText>({ prefix: 'D', key: 1 });
+  const [animationEnabled, setAnimationEnabled] = useState(!delayAnimation);
   const responsiveFontSize = `clamp(4rem, ${ fontSize }, 10rem)`;
+  const animationStarted = useRef(false);
 
   useEffect(() => {
+    if (delayAnimation && !animationStarted.current) {
+      const timer = setTimeout(() => {
+        setAnimationEnabled(true);
+        animationStarted.current = true;
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [delayAnimation]);
+
+  useEffect(() => {
+    if (!animationEnabled) return;
+
     const logos: LogoText[] = [
       { prefix: 'DataW', key: 0 },
       { prefix: 'D', key: 1 },
@@ -37,7 +53,7 @@ const LogoAnimation = ({ fontSize = '4rem' }: LogoAnimationProps) => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [currentLogo]);
+  }, [currentLogo, animationEnabled]);
 
   return (
     <div className="relative">
@@ -48,13 +64,13 @@ const LogoAnimation = ({ fontSize = '4rem' }: LogoAnimationProps) => {
           {/* 현재 텍스트 */}
           <span
             className={`absolute flex justify-end top-0 right-0 w-full text-primary ${
-              isAnimating ? 'animate-slideDownOut' : ''
+              isAnimating && animationEnabled ? 'animate-slideDownOut' : ''
             }`}
           >
             {currentLogo.prefix}
           </span>
           {/* 다음 텍스트 */}
-          {isAnimating && (
+          {isAnimating && animationEnabled && (
             <span
               className="absolute flex justify-end top-0 right-0 w-full text-primary animate-slideDownIn"
             >
