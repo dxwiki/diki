@@ -5,6 +5,7 @@ import Footer from '@/components/common/Footer';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { dikiMetadata } from '@/constants';
 import { Metadata } from 'next';
+import JsonLdSchema, { generateCollectionPageSchema } from '@/components/meta/JsonLdSchema';
 
 export function generateMetadata(): Metadata {
   return {
@@ -46,6 +47,14 @@ export function generateStaticParams() {
 export default async function PostsPage() {
   return (
     <div className="relative">
+      <JsonLdSchema
+        id="collection-page-schema"
+        schema={generateCollectionPageSchema(
+          '포스트 목록',
+          '모든 용어와 포스트를 확인할 수 있는 페이지입니다.',
+          `${ dikiMetadata.url }/posts`
+        )}
+      />
       <Suspense fallback={<LoadingSpinner />}>
         <div className='animate-intro relative z-20'>
           <SearchDetailInput />

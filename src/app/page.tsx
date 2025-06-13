@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import { dikiMetadata } from '@/constants';
+import JsonLdSchema, { generateWebSiteSchema, generateOrganizationSchema } from '@/components/meta/JsonLdSchema';
 // import AdContainer from '@/components/common/AdContainer';
 
 export function generateMetadata(): Metadata {
@@ -43,6 +44,14 @@ export function generateMetadata(): Metadata {
 export default async function Home() {
   return (
     <>
+      <JsonLdSchema
+        id="website-schema"
+        schema={generateWebSiteSchema()}
+      />
+      <JsonLdSchema
+        id="organization-schema"
+        schema={generateOrganizationSchema()}
+      />
       <div className="relative min-h-[calc(100vh_-600px)] flex flex-col justify-end items-end sm:mx-10 md:mx-40 overflow-hidden">
         <LogoAnimation fontSize='10vw' />
         <div className='flex gap-1.5'>

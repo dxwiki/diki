@@ -4,6 +4,7 @@ import { Metadata } from 'next';
 import ProfileClient from '@/components/profiles/ProfileClient';
 import Footer from '@/components/common/Footer';
 import { getUserProfileFromCookie } from '@/utils/profileUtils';
+import JsonLdSchema, { generatePersonSchema } from '@/components/meta/JsonLdSchema';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const profiles = await fetchProfilesData();
@@ -100,6 +101,15 @@ export default async function ProfilePage({ params }: { params: { slug: string }
 
   return (
     <>
+      <JsonLdSchema
+        id="person-schema"
+        schema={generatePersonSchema(
+          profile.name,
+          `${ profile.name }님의 프로필 페이지입니다.`,
+          `${ dikiMetadata.url }/profiles/${ params.slug }`,
+          profile.thumbnail
+        )}
+      />
       <div className="flex flex-col gap-5">
         <ProfileClient
           username={params.slug}

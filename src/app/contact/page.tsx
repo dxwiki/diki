@@ -2,6 +2,7 @@ import ContactClient from '@/components/common/ContactClient';
 import Footer from '@/components/common/Footer';
 import { dikiMetadata } from '@/constants';
 import { Metadata } from 'next';
+import JsonLdSchema, { generateContactPageSchema } from '@/components/meta/JsonLdSchema';
 
 export function generateMetadata(): Metadata {
   return {
@@ -39,6 +40,14 @@ export function generateStaticParams() {
 const ContactPage = async () => {
   return (
     <>
+      <JsonLdSchema
+        id="contact-page-schema"
+        schema={generateContactPageSchema(
+          '문의하기',
+          '문의사항이나 피드백을 보내실 수 있는 페이지입니다.',
+          `${ dikiMetadata.url }/contact`
+        )}
+      />
       <ContactClient />
       <div className='block sm:hidden'>
         <Footer />

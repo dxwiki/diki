@@ -7,6 +7,8 @@ import fs from 'fs';
 import path from 'path';
 import { TermData } from '@/types';
 import { transformToSlug } from '@/utils/filters';
+import JsonLdSchema, { generateArticleSchema } from '@/components/meta/JsonLdSchema';
+import { fetchProfilesData } from '@/utils/fetchData';
 
 interface Props {
   params: { slug: string };
@@ -94,7 +96,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function PostPage({ params }: Props) {
+export default async function PostPage({ params }: Props) {
   const term = findTermBySlug(params.slug);
   const termsData = readTermsData();
   const lastTermId = termsData.length > 0 ? termsData[termsData.length - 1].id ?? 1 : 1;
@@ -103,37 +105,30 @@ export default function PostPage({ params }: Props) {
     notFound();
   }
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    'headline': `${ term.title?.ko }${ term.title?.en ? ` (${ term.title.en })` : '' }`,
-    'description': term.description?.short || '',
-    'author': term.metadata?.authors?.map((author) => ({
-      '@type': 'Person',
-      'name': author,
-    })) || [],
-    'publisher': {
-      '@type': 'Organization',
-      'name': '디키 (Diki)',
-      'logo': {
-        '@type': 'ImageObject',
-        'url': `${ dikiMetadata.url }/logo.png`,
-      },
-    },
-    'datePublished': term.metadata?.created_at || '',
-    'dateModified': term.metadata?.updated_at || term.metadata?.created_at || '',
-    'url': `${ dikiMetadata.url }/posts/${ params.slug }`,
-    'mainEntityOfPage': {
-      '@type': 'WebPage',
-      '@id': `${ dikiMetadata.url }/posts/${ params.slug }`,
-    },
-  };
+  // 프로필 데이터 가져오기
+  const profiles = await fetchProfilesData();
+
+  const title = `${ term.title?.ko }${ term.title?.en ? ` (${ term.title.en })` : '' }`;
+  const description = term.description?.short || '';
+  const url = `${ dikiMetadata.url }/posts/${ params.slug }`;
+
+  const author = profiles.find((p) => p.username === term.metadata?.authors?.[0])?.name;
+
+  const datePublished = term.metadata?.created_at || '';
+  const dateModified = term.metadata?.updated_at || term.metadata?.created_at || '';
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <JsonLdSchema
+        id="article-schema"
+        schema={generateArticleSchema(
+          title,
+          description,
+          url,
+          author,
+          datePublished,
+          dateModified
+        )}
       />
       <PostDetail term={term} slug={params.slug} lastTermId={lastTermId} />
     </>
