@@ -7,6 +7,8 @@ import { Profile, SocialType } from '@/types';
 import { ConfirmModal } from '@/components/ui/Modal';
 import Footer from '@/components/common/Footer';
 import { useToast } from '@/layouts/ToastProvider';
+import { Switch } from '@mui/material';
+import styles from '@/app/style/switch.module.css';
 
 // 클라이언트 컴포넌트용 쿠키에서 프로필 정보 가져오는 함수
 function getClientProfileFromCookie(username: string) {
@@ -37,6 +39,12 @@ function getClientProfileFromCookie(username: string) {
       social.linkedin = userInfo.social.linkedin;
     }
 
+    const showLinks = userInfo.showLinks || {
+      email: true,
+      github: true,
+      linkedin: true,
+    };
+
     const cookieProfile: Profile = {
       id: userInfo.id,
       username: userInfo.username,
@@ -47,6 +55,7 @@ function getClientProfileFromCookie(username: string) {
       social: social,
       updatedAt: new Date().toISOString(),
       intro: userInfo.intro || '',
+      showLinks: showLinks,
     };
 
     return { cookieProfile, isOwnProfile, userInfo };
@@ -71,6 +80,11 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
     social: {
       github: '',
       linkedin: '',
+    },
+    showLinks: {
+      email: true,
+      github: true,
+      linkedin: true,
     },
   });
 
@@ -111,6 +125,11 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
               github: profileData.social.github || '',
               linkedin: profileData.social.linkedin || '',
             },
+            showLinks: profileData.showLinks || {
+              email: true,
+              github: true,
+              linkedin: true,
+            },
           });
         } else {
           // API 데이터가 없고, 본인 프로필이며 쿠키에 정보가 있는 경우
@@ -125,6 +144,11 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
               social: {
                 github: cookieProfile.social.github || '',
                 linkedin: cookieProfile.social.linkedin || '',
+              },
+              showLinks: cookieProfile.showLinks || {
+                email: true,
+                github: true,
+                linkedin: true,
               },
             });
           } else {
@@ -174,6 +198,18 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
     }
   };
 
+  // 토글 버튼 상태 변경 처리
+  const handleToggleChange = (field: string) => {
+    const [parent, child] = field.split('.');
+    setFormData((prev) => ({
+      ...prev,
+      [parent]: {
+        ...(prev[parent as keyof typeof prev] as Record<string, boolean>),
+        [child]: !(prev[parent as keyof typeof prev] as Record<string, boolean>)[child],
+      },
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -201,6 +237,7 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
         username: profile.username, // 사용자명은 원래 값 사용
         intro: formData.intro,
         social: formData.social,
+        showLinks: formData.showLinks,
       };
 
       // Firebase 프로필 업데이트 API 호출
@@ -329,12 +366,18 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-main font-medium mb-2">
-                  {'닉네임'}
+                <label className="flex text-main font-medium justify-between items-center" htmlFor="username">
+                  <span>{'닉네임'}</span>
+                  <div className="flex items-center invisible">
+                    <Switch
+                      disabled={true}
+                    />
+                  </div>
                 </label>
                 <input
                   type="text"
                   name="username"
+                  id="username"
                   value={formData.username}
                   className="w-full px-4 py-3 border border-gray4 rounded-lg !bg-gray4 text-gray0 cursor-not-allowed"
                   disabled
@@ -343,15 +386,26 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
               </div>
 
               <div>
-                <label className="block text-main font-medium mb-2">
-                  {'이메일'}
+                <label className="flex text-main font-medium justify-between items-center" htmlFor="email">
+                  <span>{'이메일'}</span>
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray1">{'프로필에 표시'}</span>
+                    <Switch
+                      checked={formData.showLinks.email}
+                      onChange={() => handleToggleChange('showLinks.email')}
+                      inputProps={{ 'aria-label': '이메일 표시 여부' }}
+                      className={styles.customSwitch}
+                    />
+                  </div>
                 </label>
                 <input
                   type="email"
                   name="email"
+                  id="email"
                   value={formData.email}
                   className="w-full px-4 py-3 border border-gray4 rounded-lg !bg-gray4 text-gray0 cursor-not-allowed"
                   disabled
+                  autoComplete="email"
                 />
                 <p className="text-gray2 text-sm p-1">{'Github 이메일로 설정되므로 수정할 수 없습니다.'}</p>
               </div>
@@ -360,8 +414,17 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
             <div className="col-span-1 md:col-span-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-primary font-medium mb-2">
-                    {'GitHub'}
+                  <label className="flex text-primary font-medium justify-between items-center" htmlFor="github">
+                    <span>{'GitHub'}</span>
+                    <div className="flex items-center">
+                      <span className="text-sm text-gray1">{'프로필에 표시'}</span>
+                      <Switch
+                        checked={formData.showLinks.github}
+                        onChange={() => handleToggleChange('showLinks.github')}
+                        inputProps={{ 'aria-label': 'GitHub 표시 여부' }}
+                        className={styles.customSwitch}
+                      />
+                    </div>
                   </label>
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray3">
@@ -370,18 +433,29 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                     <input
                       type="text"
                       name="social.github"
+                      id="github"
                       value={formData.social.github}
                       onChange={handleChange}
                       className="w-full pl-[100px] pr-4 py-3 border border-gray3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200 placeholder:text-gray2"
                       placeholder="username"
+                      autoComplete="username"
                     />
                   </div>
                   <p className="text-gray2 text-sm p-1">{'Github 닉네임으로 기본값이 설정됩니다.'}</p>
                 </div>
 
                 <div>
-                  <label className="block text-primary font-medium mb-2">
-                    {'LinkedIn'}
+                  <label className="flex text-primary font-medium justify-between items-center" htmlFor="linkedin">
+                    <span>{'LinkedIn'}</span>
+                    <div className="flex items-center">
+                      <span className="text-sm text-gray1">{'프로필에 표시'}</span>
+                      <Switch
+                        checked={formData.showLinks.linkedin}
+                        onChange={() => handleToggleChange('showLinks.linkedin')}
+                        inputProps={{ 'aria-label': 'LinkedIn 표시 여부' }}
+                        className={styles.customSwitch}
+                      />
+                    </div>
                   </label>
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray3">
@@ -390,10 +464,12 @@ export default function ProfileEditPage({ params }: { params: { slug: string } }
                     <input
                       type="text"
                       name="social.linkedin"
+                      id="linkedin"
                       value={formData.social.linkedin}
                       onChange={handleChange}
                       className="w-full pl-[125px] pr-4 py-3 border border-gray3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background transition-all duration-200 placeholder:text-gray2"
                       placeholder="username"
+                      autoComplete="url"
                     />
                   </div>
                   <p className="text-gray2 text-sm p-1">{'Github 닉네임으로 기본값이 설정됩니다.'}</p>
