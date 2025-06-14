@@ -4,9 +4,14 @@ import Image from 'next/image';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface ContactButtonWrapperProps {
-  email: string | undefined;
-  github: string | undefined;
-  linkedin: string | undefined;
+  email?: string;
+  github?: string;
+  linkedin?: string;
+  showLinks?: {
+    email: boolean;
+    github: boolean;
+    linkedin: boolean;
+  };
 }
 
 // 이메일 팝오버 컴포넌트
@@ -104,12 +109,12 @@ const EmailPopover = ({ email }: { email: string }) => {
   );
 };
 
-const ContactButtonWrapper = ({ email, github, linkedin }: ContactButtonWrapperProps) => {
+const ContactButtonWrapper = ({ email, github, linkedin, showLinks = { email: true, github: true, linkedin: true } }: ContactButtonWrapperProps) => {
   return (
     <div className="flex shrink-0 items-center justify-center gap-2">
-      {email && <EmailPopover email={email} />}
+      {email && showLinks.email && <EmailPopover email={email} />}
 
-      {github && (
+      {github && showLinks.github && (
         <TooltipButton
           isLink={true}
           tooltip="깃허브"
@@ -135,7 +140,7 @@ const ContactButtonWrapper = ({ email, github, linkedin }: ContactButtonWrapperP
         </TooltipButton>
       )}
 
-      {linkedin && (
+      {linkedin && showLinks.linkedin && (
         <TooltipButton
           isLink={true}
           tooltip="링크드인"

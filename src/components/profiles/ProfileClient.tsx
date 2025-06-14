@@ -215,6 +215,7 @@ const ProfileClient = ({
         email={profile.email}
         github={profile.social.github}
         linkedin={profile.social.linkedin}
+        showLinks={profile.showLinks}
       />
     </div>
   );
