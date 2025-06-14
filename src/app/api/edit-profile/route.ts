@@ -41,6 +41,11 @@ export async function POST(request: NextRequest) {
       username: profileDoc.data()?.username,
       updatedAt: new Date().toISOString(),
       intro: data.profile_data.intro,
+      showLinks: data.profile_data.showLinks || {
+        email: true,
+        github: true,
+        linkedin: true,
+      },
     };
 
     // Firestore 업데이트
@@ -83,6 +88,7 @@ export async function POST(request: NextRequest) {
           username: updateData.username,
           intro: updateData.intro,
           social: updateData.social,
+          showLinks: updateData.showLinks,
         };
 
         // 쿠키 업데이트
