@@ -22,6 +22,12 @@ export function getUserProfileFromCookie(username: string) {
       linkedin: userInfo.username || '',
     };
 
+    const showLinks = userInfo.showLinks || {
+      email: true,
+      github: true,
+      linkedin: true,
+    };
+
     cookieProfile = {
       id: userInfo.id,
       username: userInfo.username,
@@ -31,6 +37,7 @@ export function getUserProfileFromCookie(username: string) {
       role: 'contributor', // 기본 역할
       social: social,
       updatedAt: new Date().toISOString(), // 현재 시간으로 설정
+      showLinks: showLinks,
     };
   }
 
