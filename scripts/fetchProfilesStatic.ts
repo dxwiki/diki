@@ -121,6 +121,11 @@ async function fetchAndSaveProfiles(): Promise<void> {
           linkedin: data.social?.linkedin,
         },
         rank: data.rank || { current: 0, postsCount: 0, remainingForNextRank: 1 },
+        showLinks: data.showLinks || {
+          email: true,
+          github: true,
+          linkedin: true,
+        },
       } as Profile;
     });
 
