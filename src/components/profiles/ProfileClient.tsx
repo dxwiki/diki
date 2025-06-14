@@ -128,76 +128,125 @@ const ProfileClient = ({
   // 전체 글 수 계산 (중복 제거된 숫자)
   const allCount = allTermsData.length;
 
+  // 프로필 아바타 컴포넌트
+  const ProfileAvatar = ({ className = '' }: { className?: string }) => (
+    <div
+      className={`size-20 rounded-md ${ className }`}
+      style={{
+        backgroundImage: `url(${ profile.thumbnail })`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    />
+  );
+
+  // 프로필 이름 및 유저명 컴포넌트
+  const ProfileName = () => (
+    <h1 className="flex items-center text-xl sm:text-2xl font-bold">
+      {profile.name}
+      <span className='text-sub text-base sm:text-xl'>
+        {'('}{profile.username}{') 님'}
+      </span>
+    </h1>
+  );
+
+  // 프로필 뱃지 컴포넌트 (rank, role)
+  const ProfileBadges = () => (
+    <div className='flex items-center gap-2'>
+      {profile.rank !== undefined ? (
+        <div className="flex flex-col">
+          <TooltipButton
+            tooltip={`포스트 ${ profile.rank.remainingForNextRank }개를 더 작성하면 Lv.${ profile.rank.current + 1 }로 승급합니다.`}
+            className={`px-2 py-0.5 text-sm rounded-full text-white bg-level-${ profile.rank.current }`}
+          >
+            {'Lv.'}{profile.rank.current}
+          </TooltipButton>
+        </div>
+      ) : (
+        <div className="flex flex-col">
+          <TooltipButton
+            tooltip="포스트 1개를 작성하면 Lv.1로 승급합니다."
+            className="px-2 py-0.5 text-sm rounded-full text-white bg-level-0"
+          >
+            {'Lv.0'}
+          </TooltipButton>
+        </div>
+      )}
+      {
+        profile.role === 'owner' ? (
+          <span className='px-2 py-0.5 text-sm rounded-full text-white bg-primary dark:bg-secondary'>
+            {'Owner'}
+          </span>
+        ) : (
+          <span className='px-2 py-0.5 text-sm rounded-full text-white bg-gray2'>
+            {'Contributor'}
+          </span>
+        )
+      }
+    </div>
+  );
+
+  // 프로필 소개글 컴포넌트
+  const ProfileIntro = () => (
+    profile.intro && (
+      <div className='text-gray0'>
+        {profile.intro}
+      </div>
+    )
+  );
+
+  // 프로필 편집 버튼 컴포넌트
+  const ProfileEditButton = () => (
+    isCurrentUser && (
+      <Link
+        href={`/profiles/${ username }/edit`}
+        className="text-sm w-[120px] text-center sm:w-auto px-3 py-1.5 rounded-md bg-primary dark:bg-secondary text-white hover:bg-accent dark:hover:bg-background-secondary"
+      >
+        {'프로필 편집'}
+      </Link>
+    )
+  );
+
+  // 프로필 액션 버튼 영역 (편집 + 연락처)
+  const ProfileActions = () => (
+    <div className='h-full shrink-0 sm:ml-3 flex justify-end items-start gap-3'>
+      <ProfileEditButton />
+      <ContactButtonWrapper
+        email={profile.email}
+        github={profile.social.github}
+        linkedin={profile.social.linkedin}
+      />
+    </div>
+  );
+
   return (
     <>
       <div className='flex flex-col gap-2'>
-        <div className='flex flex-col sm:flex-row my-2 items-center justify-between'>
-          <div className='flex items-center gap-2'>
-            <div
-              className="shrink-0 size-14 rounded-md"
-              style={{ backgroundImage: `url(${ profile.thumbnail })`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-            />
-            <div className='flex flex-col gap-1'>
-              <div className='flex items-center gap-2'>
-                <h1 className="flex items-center text-xl sm:text-2xl font-bold">
-                  {profile.name}
-                  <span className='text-sub text-base sm:text-xl'>
-                    {'('}{profile.username}{') 님'}
-                  </span>
-                </h1>
-                {profile.rank !== undefined ? (
-                  <div className="flex flex-col">
-                    <TooltipButton
-                      tooltip={`다음 레벨(Lv.${ profile.rank.current + 1 })까지 포스트 ${ profile.rank.remainingForNextRank }개 남았습니다.`}
-                      className={`px-2 py-0.5 text-sm rounded-full text-white bg-level-${ profile.rank.current }`}
-                    >
-                      {'Lv.'}{profile.rank.current}
-                    </TooltipButton>
-                  </div>
-                ) : (
-                  <div className="flex flex-col">
-                    <TooltipButton
-                      tooltip="다음 레벨(Lv.1)까지 포스트 1개 남았습니다."
-                      className="px-2 py-0.5 text-sm rounded-full text-white bg-level-0"
-                    >
-                      {'Lv.0'}
-                    </TooltipButton>
-                  </div>
-                )}
-                {
-                  profile.role === 'owner' ? (
-                    <span className='px-2 py-0.5 text-sm rounded-full text-white bg-primary dark:bg-secondary'>
-                      {'Owner'}
-                    </span>
-                  ) : (
-                    <span className='px-2 py-0.5 text-sm rounded-full text-white bg-gray2'>
-                      {'Contributor'}
-                    </span>
-                  )
-                }
-              </div>
-              {profile.intro && (
-                <div className='text-gray0 max-w-[calc(100vw-100px)] sm:max-w-full'>
-                  {profile.intro}
-                </div>
-              )}
+        <div className='flex flex-col sm:flex-row my-2 items-center justify-between gap-3 sm:gap-0 border-b border-gray4 pb-3'>
+          <div className='flex flex-col sm:hidden items-center gap-1.5'>
+            <ProfileAvatar />
+            <ProfileName />
+            <ProfileIntro />
+            <div className={`flex items-center gap-1.5 ${ isCurrentUser ? 'flex-col gap-2' : 'justify-between' }`}>
+              <ProfileBadges />
+              <ProfileActions />
             </div>
           </div>
-          <div className='flex items-center gap-3 mt-3 sm:mt-0'>
-            {isCurrentUser && (
-              <Link
-                href={`/profiles/${ username }/edit`}
-                className="text-sm w-[120px] text-center sm:w-auto px-3 py-1.5 rounded-md bg-primary dark:bg-secondary text-white hover:bg-accent dark:hover:bg-background-secondary"
-              >
-                {'프로필 편집'}
-              </Link>
-            )}
-            <ContactButtonWrapper
-              email={profile.email}
-              github={profile.social.github}
-              linkedin={profile.social.linkedin}
-            />
+
+          <div className='hidden sm:flex items-center gap-2 justify-between w-full'>
+            <div className='flex items-center gap-2'>
+              <ProfileAvatar className="shrink-0" />
+              <div className='flex flex-col gap-1'>
+                <div className='flex flex-col sm:flex-row items-center gap-2'>
+                  <ProfileName />
+                  <ProfileBadges />
+                </div>
+                <ProfileIntro />
+              </div>
+            </div>
+            <ProfileActions />
           </div>
+
         </div>
 
         <div className="flex space-x-2">
