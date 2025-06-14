@@ -20,4 +20,9 @@ export interface Profile {
   updatedAt?: string;
   rank?: RankInfo;
   intro?: string;
+  showLinks?: {
+    email: boolean;
+    github: boolean;
+    linkedin: boolean;
+  };
 }
