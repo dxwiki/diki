@@ -48,7 +48,8 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
   const tips = () => {
     return (
       <div className="flex flex-col gap-2 bg-background">
-        <div
+        <button
+          type="button"
           className="flex justify-center items-center text-main bg-gray4 hover:bg-secondary py-2 text-sm font-medium rounded-lg cursor-pointer"
           onClick={toggleGuide}
         >
@@ -58,7 +59,7 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
           ) : (
             <ChevronDown className="size-5 mr-2" />
           )}
-        </div>
+        </button>
         <div
           ref={guideContentRef}
           className="overflow-hidden transition-all duration-300 ease-in-out"
