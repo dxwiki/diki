@@ -46,33 +46,39 @@ export interface Usecase {
   description?: string;
   industries?: string[];
 }
+
+export interface Tutorial {
+  external_link?: string;
+  platform?: string;
+  title?: string;
+}
+export interface Book {
+  external_link?: string;
+  isbn?: string;
+  authors?: string[];
+  publisher?: string;
+  year?: string;
+  title?: string;
+}
+export interface Academic {
+  external_link?: string;
+  authors?: string[];
+  year?: string;
+  title?: string;
+  doi?: string;
+}
+export interface Opensource {
+  external_link?: string;
+  name?: string;
+  license?: string;
+  description?: string;
+}
+
 export interface References {
-  tutorials: Array<{
-    external_link?: string;
-    platform?: string;
-    title?: string;
-  }> | undefined;
-  books: Array<{
-    external_link?: string;
-    isbn?: string;
-    authors?: string[];
-    publisher?: string;
-    year?: string;
-    title?: string;
-  }> | undefined;
-  academic: Array<{
-    external_link?: string;
-    authors?: string[];
-    year?: string;
-    title?: string;
-    doi?: string;
-  }> | undefined;
-  opensource: Array<{
-    external_link?: string;
-    name?: string;
-    license?: string;
-    description?: string;
-  }> | undefined;
+  tutorials: Array<Tutorial> | undefined;
+  books: Array<Book> | undefined;
+  academic: Array<Academic> | undefined;
+  opensource: Array<Opensource> | undefined;
 }
 
 export interface FetchTermData {
