@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
-import { TermData } from '@/types/database';
+import { Terms, TermData } from '@/types/database';
 import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
 
@@ -10,7 +10,7 @@ interface TermsSectionProps {
 }
 
 const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
-  const [newTerm, setNewTerm] = useState({ term: '', description: '', internal_link: undefined as string | undefined, link_title: '' });
+  const [newTerm, setNewTerm] = useState<Terms>({});
   const [showGuidance, setShowGuidance] = useState(true);
   const [termError, setTermError] = useState<string | null>(null);
   const [descriptionError, setDescriptionError] = useState<string | null>(null);
@@ -51,7 +51,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
     let isValid = true;
 
     // 용어 입력 검증
-    if (!newTerm.term.trim()) {
+    if (!newTerm.term) {
       setTermError('관련 용어를 추가하려면 용어 제목을 작성해야 합니다.');
       isValid = false;
       termInputRef.current?.focus();
@@ -60,10 +60,10 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
     }
 
     // 설명 입력 검증
-    if (!newTerm.description.trim()) {
+    if (!newTerm.description) {
       setDescriptionError('관련 용어를 추가하려면 용어 설명을 작성해야 합니다.');
       isValid = false;
-      if (newTerm.term.trim()) {
+      if (newTerm.term) {
         descriptionRef.current?.focus();
       }
     } else {
@@ -83,7 +83,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
     }));
 
     // 입력 필드 초기화
-    setNewTerm({ term: '', description: '', internal_link: undefined, link_title: '' });
+    setNewTerm({ term: '', description: '', internal_link: undefined });
     setTermError(null);
     setDescriptionError(null);
     termInputRef.current?.focus();
@@ -116,13 +116,13 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   };
 
   const handleLinkSelect = (url: string, title: string) => {
-    setNewTerm((prev) => ({ ...prev, internal_link: url, link_title: title, term: title }));
+    setNewTerm((prev) => ({ ...prev, internal_link: url, term: title }));
     setTermError(null); // 링크 선택 시 용어 에러 초기화
   };
 
   // 버튼 활성화 여부 확인
   const isButtonActive = (): boolean => {
-    return !!(newTerm.term.trim() && newTerm.description.trim());
+    return !!(newTerm.term && newTerm.description);
   };
 
   return (
@@ -199,11 +199,11 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             <div className="flex items-center gap-1 mt-2 text-sm text-primary">
               {'선택된 Diki 내부 링크:'}
               <Link href={newTerm.internal_link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate">
-                {newTerm.link_title}
+                {newTerm.internal_link}
               </Link>
               <button
                 type="button"
-                onClick={() => setNewTerm((prev) => ({ ...prev, internal_link: undefined, link_title: '' }))}
+                onClick={() => setNewTerm((prev) => ({ ...prev, internal_link: undefined }))}
                 className="ml-1 text-level-5 hover:opacity-80"
               >
                 <X className="size-4" />
