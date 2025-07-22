@@ -38,16 +38,6 @@ export async function POST(request: NextRequest) {
       data.description.full = data.description.full.replace(/\n/g, '<br>');
     }
 
-    // URL 생성 (영문 제목 기반)
-    if (data.title.en) {
-      const urlSlug = data.title.en
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
-
-      data.url = `/posts/${ urlSlug }`;
-    }
-
     // 작성자 정보 추가
     if (userInfo?.username && data.metadata?.authors) {
       if (!data.metadata.authors.includes(userInfo.username)) {
@@ -109,6 +99,64 @@ function formatIssueBody(data: TermData, userInfo: UserInfo | null): string {
   // description.full의 줄바꿈 문자를 <br> 태그로 변환
   const formattedDescription = data.description?.full || '';
 
+  // references 객체를 마크다운 형식으로 포맷팅
+  let referencesMarkdown = '';
+
+  if (data.references) {
+    // 튜토리얼 목록
+    if (data.references.tutorials && data.references.tutorials.length > 0) {
+      referencesMarkdown += '\n### 튜토리얼\n';
+      data.references.tutorials.forEach((tutorial, index) => {
+        referencesMarkdown += `${ index + 1 }. **${ tutorial.title || '제목 없음' }**\n`;
+        if (tutorial.platform) referencesMarkdown += `   - 플랫폼: ${ tutorial.platform }\n`;
+        if (tutorial.external_link) referencesMarkdown += `   - 링크: ${ tutorial.external_link }\n`;
+      });
+    }
+
+    // 참고서적 목록
+    if (data.references.books && data.references.books.length > 0) {
+      referencesMarkdown += '\n### 참고서적\n';
+      data.references.books.forEach((book, index) => {
+        referencesMarkdown += `${ index + 1 }. **${ book.title || '제목 없음' }**\n`;
+        if (book.authors && book.authors.length > 0) referencesMarkdown += `   - 저자: ${ book.authors.join(', ') }\n`;
+        if (book.publisher) referencesMarkdown += `   - 출판사: ${ book.publisher }\n`;
+        if (book.year) referencesMarkdown += `   - 출판년도: ${ book.year }\n`;
+        if (book.isbn) referencesMarkdown += `   - ISBN: ${ book.isbn }\n`;
+        if (book.external_link) referencesMarkdown += `   - 링크: ${ book.external_link }\n`;
+      });
+    }
+
+    // 연구논문 목록
+    if (data.references.academic && data.references.academic.length > 0) {
+      referencesMarkdown += '\n### 연구논문\n';
+      data.references.academic.forEach((paper, index) => {
+        referencesMarkdown += `${ index + 1 }. **${ paper.title || '제목 없음' }**\n`;
+        if (paper.authors && paper.authors.length > 0) referencesMarkdown += `   - 저자: ${ paper.authors.join(', ') }\n`;
+        if (paper.year) referencesMarkdown += `   - 출판년도: ${ paper.year }\n`;
+        if (paper.doi) referencesMarkdown += `   - DOI: ${ paper.doi }\n`;
+        if (paper.external_link) referencesMarkdown += `   - 링크: ${ paper.external_link }\n`;
+      });
+    }
+
+    // 오픈소스 목록
+    if (data.references.opensource && data.references.opensource.length > 0) {
+      referencesMarkdown += '\n### 오픈소스\n';
+      data.references.opensource.forEach((os, index) => {
+        referencesMarkdown += `${ index + 1 }. **${ os.name || '이름 없음' }**\n`;
+        if (os.license) referencesMarkdown += `   - 라이선스: ${ os.license }\n`;
+        if (os.description) referencesMarkdown += `   - 설명: ${ os.description }\n`;
+        if (os.external_link) referencesMarkdown += `   - 링크: ${ os.external_link }\n`;
+      });
+    }
+
+    // 참고 자료가 없는 경우
+    if (referencesMarkdown === '') {
+      referencesMarkdown = '참고 자료 없음';
+    }
+  } else {
+    referencesMarkdown = '참고 자료 없음';
+  }
+
   return `
 # 새 포스트 추가 요청
 
@@ -152,7 +200,7 @@ ${ data.terms?.length === 0 ? '관련 용어 없음' : '' }
 - 산업 분야: ${ (data.usecase?.industries || []).join(', ') }
 
 ## 참고 자료
-- 참고 자료: ${ data.references || '' }
+${ referencesMarkdown }
 
 ## 태그(관련 포스트)
 ${ (data.tags || []).map((tag) => `- ${ tag.name || '' }`).join('\n') }
