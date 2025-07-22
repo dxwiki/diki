@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React, { useState, useRef, KeyboardEvent, useEffect } from 'react';
-import { TermData, References } from '@/types/database';
+import { TermData, References, Tutorial, Book, Academic, Opensource } from '@/types/database';
 import { X } from 'lucide-react';
 
 interface ReferencesSectionProps {
@@ -28,37 +28,14 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
   // 탭 변경 시 첫 렌더링 여부를 추적하기 위한 ref
   const isFirstRender = useRef(true);
 
-  const [tutorial, setTutorial] = useState<{
-    title?: string;
-    platform?: string;
-    external_link?: string;
-  }>({});
-
-  const [book, setBook] = useState<{
-    title?: string;
-    authors?: string[];
-    publisher?: string;
-    year?: string;
-    isbn?: string;
-    external_link?: string;
-    authorsText?: string;
-  }>({});
-
-  const [academic, setAcademic] = useState<{
-    title?: string;
-    authors?: string[];
-    year?: string;
-    doi?: string;
-    external_link?: string;
-    authorsText?: string;
-  }>({});
-
-  const [opensource, setOpensource] = useState<{
-    name?: string;
-    license?: string;
-    description?: string;
-    external_link?: string;
-  }>({});
+  const [tutorial, setTutorial] = useState<Tutorial>({});
+  const [book, setBook] = useState<Book & { authorsText: string }>({
+    authorsText: '',
+  });
+  const [academic, setAcademic] = useState<Academic & { authorsText: string }>({
+    authorsText: '',
+  });
+  const [opensource, setOpensource] = useState<Opensource>({});
 
   // CSS의 transitions와 animations이 탭 변경 시 스크롤 위치에 영향을 미치는 것을 방지
   useEffect(() => {
@@ -245,7 +222,15 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
       return;
     }
 
-    const newBook = { ...book };
+    // authorsText 필드를 제외한 새 객체 생성
+    const newBook = {
+      title: book.title,
+      authors: book.authors,
+      publisher: book.publisher,
+      year: book.year,
+      isbn: book.isbn,
+      external_link: book.external_link,
+    };
     bookCallbackRef.current = false;
 
     setFormData((prev) => {
@@ -291,7 +276,14 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
       return;
     }
 
-    const newAcademic = { ...academic };
+    // authorsText 필드를 제외한 새 객체 생성
+    const newAcademic = {
+      title: academic.title,
+      authors: academic.authors,
+      year: academic.year,
+      doi: academic.doi,
+      external_link: academic.external_link,
+    };
     academicCallbackRef.current = false;
 
     setFormData((prev) => {
@@ -1090,7 +1082,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                       <X className="size-5" />
                     </button>
                   </div>
-                  {item.license && <span className="text-sm">{`라이센스: ${ item.license }`}</span>}
+                  {item.license && <span className="text-sm">{`라이선스: ${ item.license }`}</span>}
                   {item.description && <span className="text-sm">{`설명: ${ item.description }`}</span>}
                   {item.external_link && (
                     <Link href={item.external_link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline truncate">
@@ -1119,11 +1111,11 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'라이센스'}</label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'라이선스'}</label>
                     <input
                       ref={opensourceLicenseRef}
                       type="text"
-                      placeholder="라이센스 (ex. MIT, GPL)"
+                      placeholder="라이선스 (ex. MIT, GPL)"
                       className="w-full p-2 border border-gray4 rounded-md text-main"
                       value={opensource.license || ''}
                       onChange={(e) => setOpensource({ ...opensource, license: e.target.value })}
