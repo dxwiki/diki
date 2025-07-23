@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     // 날짜 형식 확인
     const currentDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     if (data.metadata) {
-      data.metadata.created_at = data.metadata.created_at || currentDate;
+      data.metadata.created_at = currentDate;
       data.metadata.updated_at = currentDate;
     }
 
