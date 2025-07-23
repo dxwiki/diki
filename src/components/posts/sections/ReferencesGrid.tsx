@@ -188,7 +188,7 @@ const ReferencesGrid = ({ references, colorConfig = defaultColorConfig }: Refere
               >
                 <span
                   className={`
-                    text-sm font-medium break-words ${ colors.text } 
+                    text-sm font-medium break-words line-clamp-1 ${ colors.text } 
                     group-hover:underline group-hover:underline-offset-4 ${ colors.decoration }
                   `}
                 >
