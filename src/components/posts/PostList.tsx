@@ -15,9 +15,10 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface PaginationProps {
   itemsPerPage: number;
+  isModifyMode?: boolean;
 }
 
-const PostList = ({ itemsPerPage }: PaginationProps) => {
+const PostList = ({ itemsPerPage, isModifyMode = false }: PaginationProps) => {
   const { terms } = useSelector((state: RootState) => state.terms);
   const { sortType, sortDirection, currentPage } = useSelector((state: RootState) => state.page);
   const dispatch = useDispatch();
@@ -226,7 +227,7 @@ const PostList = ({ itemsPerPage }: PaginationProps) => {
                 key={term.id}
                 className="transition-transform duration-300 hover:-translate-y-2 sm:min-h-[186px]"
               >
-                <PostCard sortType={sortType} term={term} />
+                <PostCard sortType={sortType} term={term} isModifyMode={isModifyMode} />
               </li>
             ))}
           </ul>

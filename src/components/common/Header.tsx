@@ -13,6 +13,7 @@ import TooltipButton from '../ui/TooltipButton';
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import AuthStatus from '@/components/auth/AuthStatus';
+import { Dropdown, DropdownTrigger, DropdownList, DropdownItem } from '@/components/ui/Dropdown';
 
 const Header = () => {
   const pathname = usePathname();
@@ -65,13 +66,35 @@ const Header = () => {
                 </div>
               </div>
             ) : (
-              <Link
-                href={isLoggedIn ? '/create' : '/login'}
-                className='rounded-full px-3 py-1 border border-gray3 sm:border-none text-main hover:text-primary hover:bg-gray4 transition-all duration-300'
-                aria-label={isLoggedIn ? '기여하기(새 포스트 작성)' : '로그인'}
-              >
-                {isLoggedIn ? '기여하기' : '로그인'}
-              </Link>
+              isLoggedIn ? (
+                <Dropdown>
+                  <DropdownTrigger>
+                    <div className='rounded-full px-3 py-1 border border-gray3 sm:border-none text-main hover:text-primary hover:bg-gray4 transition-all duration-300 cursor-pointer'>
+                      {'기여하기\r'}
+                    </div>
+                  </DropdownTrigger>
+                  <DropdownList>
+                    <DropdownItem>
+                      <Link href='/create' className='w-full p-3 block'>
+                        {'새 포스트 작성\r'}
+                      </Link>
+                    </DropdownItem>
+                    <DropdownItem>
+                      <Link href='/posts/modify' className='w-full p-3 block'>
+                        {'포스트 수정\r'}
+                      </Link>
+                    </DropdownItem>
+                  </DropdownList>
+                </Dropdown>
+              ) : (
+                <Link
+                  href='/login'
+                  className='rounded-full px-3 py-1 border border-gray3 sm:border-none text-main hover:text-primary hover:bg-gray4 transition-all duration-300'
+                  aria-label='로그인'
+                >
+                  {'로그인\r'}
+                </Link>
+              )
             )}
           </div>
 

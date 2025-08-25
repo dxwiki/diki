@@ -12,10 +12,11 @@ interface PostCardProps {
   term: TermData;
   size?: 'flex' | 'sm';
   sortType?: SortType;
+  isModifyMode?: boolean;
 }
 const levels = ['기초', '초급', '중급', '고급', '전문'];
 
-const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
+const PostCard = ({ term, size = 'flex', sortType, isModifyMode = false }: PostCardProps) => {
   const sortTagStyle = 'flex gap-1 items-center text-gray1 text-[13px] ml-2 sm:ml-0';
   const getSortData = (type: SortType) => {
     switch (type) {
@@ -59,14 +60,18 @@ const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
   if (size === 'sm') {
     return (
       <Link
-        href={term.url ?? ''}
+        href={isModifyMode ? `${ term.url }/modify` : term.url ?? ''}
         className="group h-full flex flex-col gap-0 justify-between p-2.5 border border-light hover:border-primary rounded-lg
         hover:bg-gray5 hover:no-underline duration-300 shadow-sm hover:shadow-xl"
       >
         <div className="flex flex-col">
           <div className='flex justify-between items-center'>
             <span className="text-lg text-primary font-semibold">{term.title?.ko}</span>
-            <ChevronRight className="size-5 text-light group-hover:text-sub" />
+            {isModifyMode ? (
+              <span className="text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">{'수정하기'}</span>
+            ) : (
+              <ChevronRight className="size-5 text-light group-hover:text-sub" />
+            )}
           </div>
           <span className="text-sub text-sm line-clamp-1 mt-1 font-normal break-all">{term.description?.short}</span>
         </div>
@@ -75,7 +80,7 @@ const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
   }
   return (
     <Link
-      href={term.url ?? 'not-found'}
+      href={isModifyMode ? `${ term.url }/modify` : term.url ?? 'not-found'}
       className="group h-full flex flex-col gap-0 sm:gap-2.5 justify-between p-2.5 sm:p-4 border border-light hover:border-primary rounded-lg
       hover:bg-gray5 hover:no-underline duration-300 shadow-sm hover:shadow-xl"
     >
@@ -97,13 +102,21 @@ const PostCard = ({ term, size = 'flex', sortType }: PostCardProps) => {
       <div className="hidden sm:flex justify-end sm:justify-between items-center">
         {sortType ? getSortData(sortType) : <span className={sortTagStyle}>{formatDate(term.metadata?.created_at || '')}</span>}
         <div className="flex gap-0 md:gap-1 items-center">
-          <span
-            className="flex items-center gap-1 text-sub text-sm sm:opacity-0 -translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0"
-          >
-            <Clock className="size-4" />
-            {getReadingTime(term)}
-          </span>
-          <ChevronRight className="size-5 text-light group-hover:text-sub" />
+          {isModifyMode ? (
+            <span className="text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+              {'수정하기'}
+            </span>
+          ) : (
+            <>
+              <span
+                className="flex items-center gap-1 text-sub text-sm sm:opacity-0 -translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0"
+              >
+                <Clock className="size-4" />
+                {getReadingTime(term)}
+              </span>
+              <ChevronRight className="size-5 text-light group-hover:text-sub" />
+            </>
+          )}
         </div>
       </div>
     </Link>
