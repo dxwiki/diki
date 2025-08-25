@@ -18,7 +18,6 @@ import EditPreview from '@/components/edit/EditPreview';
 import { ConfirmModal } from '@/components/ui/Modal';
 import Footer from '@/components/common/Footer';
 import { useToast } from '@/layouts/ToastProvider';
-import { Save, Upload } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface EditingSectionState {
@@ -142,15 +141,15 @@ export default function ModifyClient({ slug, initialData }: ModifyClientProps) {
   }, [loading, isLoggedIn, router]);
 
   // 로컬 스토리지에 폼 데이터 저장
-  const saveFormData = () => {
-    try {
-      localStorage.setItem(`diki-modify-form-data-${ slug }`, JSON.stringify(formData));
-      showToast('작성 중인 내용이 브라우저에 저장되었습니다.', 'info');
-    } catch (error) {
-      console.error('로컬 스토리지 저장 오류:', error);
-      showToast('저장 중 오류가 발생했습니다.');
-    }
-  };
+  // const saveFormData = () => {
+  //   try {
+  //     localStorage.setItem(`diki-modify-form-data-${ slug }`, JSON.stringify(formData));
+  //     showToast('작성 중인 내용이 브라우저에 저장되었습니다.', 'info');
+  //   } catch (error) {
+  //     console.error('로컬 스토리지 저장 오류:', error);
+  //     showToast('저장 중 오류가 발생했습니다.');
+  //   }
+  // };
 
   // 로컬 스토리지에서 폼 데이터 불러오기
   const loadFormData = () => {
@@ -416,26 +415,6 @@ export default function ModifyClient({ slug, initialData }: ModifyClientProps) {
     <div className="container mx-auto">
       <div className="w-full flex justify-between items-center mb-4">
         <div className="flex items-center text-lg md:text-xl lg:text-2xl font-bold">{'포스트 수정하기'}</div>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={saveFormData}
-            className="flex items-center px-3 py-1.5 rounded-md hover:bg-gray4 text-sm text-gray0"
-            title="현재 작성 중인 내용을 브라우저에 임시저장합니다"
-          >
-            <Save size={16} className="mr-1" />
-            {'임시저장'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsLoadModalOpen(true)}
-            className="flex items-center px-3 py-1.5 rounded-md bg-gray3 hover:bg-gray2 text-sm text-white"
-            title="브라우저에 마지막으로 임시저장한 내용을 불러옵니다"
-          >
-            <Upload size={16} className="mr-1" />
-            {'불러오기'}
-          </button>
-        </div>
       </div>
 
       <form id="modifyForm" onSubmit={handleSubmit} noValidate>
