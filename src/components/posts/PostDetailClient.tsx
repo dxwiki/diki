@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import TableOfContents from '@/components/common/TableOfContents';
 import ShareModal from '@/components/common/ShareModal';
-// import AdContainer from '@/components/common/AdContainer';
+import AdContainer from '@/components/common/AdContainer';
 import PostHeader from './sections/PostHeader';
 import { TermData } from '@/types';
 
@@ -14,46 +14,46 @@ interface Props {
   slug: string;
 }
 
-// const adConfig = {
-//   slots: ['4398375581', '3085293912', '4461288480', '3148206813'],
-//   heightThresholds: {
-//     fourAds: 2800,
-//     threeAds: 2300,
-//     twoAds: 1300,
-//   },
-//   initialMeasurementDelay: 500,
-// } as const;
+const adConfig = {
+  slots: ['4398375581', '3085293912', '4461288480', '3148206813'],
+  heightThresholds: {
+    fourAds: 2800,
+    threeAds: 2300,
+    twoAds: 1300,
+  },
+  initialMeasurementDelay: 500,
+} as const;
 
 const PostDetailClient = ({ title, children, term, slug }: Props) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  // const [visibleAdCount, setVisibleAdCount] = useState(1);
+  const [visibleAdCount, setVisibleAdCount] = useState(1);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // const determineAdCount = useCallback((height: number) => {
-  //   const { heightThresholds } = adConfig;
+  const determineAdCount = useCallback((height: number) => {
+    const { heightThresholds } = adConfig;
 
-  //   if (height > heightThresholds.fourAds) return 4;
-  //   if (height > heightThresholds.threeAds) return 3;
-  //   if (height > heightThresholds.twoAds) return 2;
-  //   return 1;
-  // }, []);
+    if (height > heightThresholds.fourAds) return 4;
+    if (height > heightThresholds.threeAds) return 3;
+    if (height > heightThresholds.twoAds) return 2;
+    return 1;
+  }, []);
 
-  // useEffect(() => {
-  //   if (!contentRef.current) return;
+  useEffect(() => {
+    if (!contentRef.current) return;
 
-  //   const updateAdCount = () => {
-  //     if (!contentRef.current) return;
-  //     const contentHeight = contentRef.current.offsetHeight;
-  //     setVisibleAdCount(determineAdCount(contentHeight));
-  //   };
+    const updateAdCount = () => {
+      if (!contentRef.current) return;
+      const contentHeight = contentRef.current.offsetHeight;
+      setVisibleAdCount(determineAdCount(contentHeight));
+    };
 
-  //   const resizeObserver = new ResizeObserver(updateAdCount);
-  //   resizeObserver.observe(contentRef.current);
+    const resizeObserver = new ResizeObserver(updateAdCount);
+    resizeObserver.observe(contentRef.current);
 
-  //   setTimeout(updateAdCount, adConfig.initialMeasurementDelay);
+    setTimeout(updateAdCount, adConfig.initialMeasurementDelay);
 
-  //   return () => resizeObserver.disconnect();
-  // }, [determineAdCount]);
+    return () => resizeObserver.disconnect();
+  }, [determineAdCount]);
 
   const handleShare = useCallback(() => {
     setIsShareModalOpen(true);
@@ -75,7 +75,7 @@ const PostDetailClient = ({ title, children, term, slug }: Props) => {
         </div>
         <div className='hidden lg:flex flex-col ml-4'>
           <div className='w-full h-[128px]' />
-          {/* <div className='flex flex-col justify-between' style={{ height: `calc(${ contentRef.current?.offsetHeight }px - 352px)` }}>
+          <div className='flex flex-col justify-between' style={{ height: `calc(${ contentRef.current?.offsetHeight }px - 352px)` }}>
             {adConfig.slots.slice(0, visibleAdCount).map((slot) => (
               <AdContainer
                 key={slot}
@@ -85,7 +85,7 @@ const PostDetailClient = ({ title, children, term, slug }: Props) => {
                 className="w-[122px] min-h-[600px]"
               />
             ))}
-          </div> */}
+          </div>
         </div>
       </div>
 
