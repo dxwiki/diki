@@ -4,7 +4,7 @@ interface LoadingSpinnerProps {
   text?: string;
 }
 
-const LoadingSpinner = ({ size = 8, fixed = true, text = 'Diki 검색중...' }: LoadingSpinnerProps) => {
+const LoadingSpinner = ({ size = 32, fixed = true, text }: LoadingSpinnerProps) => {
   const containerClass = fixed
     ? 'fixed inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50'
     : 'flex items-center justify-center';
