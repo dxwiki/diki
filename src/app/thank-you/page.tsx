@@ -52,7 +52,7 @@ export default function ThankYouPage() {
           </Link>
 
           <Link
-            href="/create"
+            href="/posts/create"
             className="px-4 py-2 text-white bg-primary dark:bg-secondary hover:bg-accent dark:hover:bg-background-secondary rounded-md border-gray4"
           >
             {'다른 포스트 작성하기'}

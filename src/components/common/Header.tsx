@@ -75,7 +75,7 @@ const Header = () => {
                   </DropdownTrigger>
                   <DropdownList>
                     <DropdownItem>
-                      <Link href='/create' className='w-full p-3 block'>
+                      <Link href='/posts/create' className='w-full p-3 block'>
                         {'새 포스트 작성\r'}
                       </Link>
                     </DropdownItem>

@@ -7,7 +7,7 @@ import { dikiMetadata } from '../src/constants';
 
     const text = 'User-agent: *\n'
                  + 'Allow: /\n'
-                 + 'Disallow: /create/\n'
+                 + 'Disallow: /posts/create/\n'
                  + 'Disallow: /login/\n'
                  + 'Disallow: /signup/\n'
                  + 'Disallow: /good-bye/\n'

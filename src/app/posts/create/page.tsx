@@ -377,7 +377,7 @@ export default function CreatePage() {
   return (
     <div className="container mx-auto">
       <div className="w-full flex justify-between items-center mb-4">
-        <div className="flex items-center text-lg md:text-xl lg:text-2xl font-bold">{'새 포스트 작성'}</div>
+        <h1 className="flex items-center text-lg md:text-xl lg:text-2xl font-bold">{'새 포스트 작성'}</h1>
         <div className="flex gap-2">
           <button
             type="button"
