@@ -1,0 +1,219 @@
+'use client';
+
+import { useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
+import { TermData } from '@/types/database';
+import KoreanTitleEdit from '@/components/edit/KoreanTitleEdit';
+import EnglishTitleEdit from '@/components/edit/EnglishTitleEdit';
+import EtcTitleEdit from '@/components/edit/EtcTitleEdit';
+import ShortDescriptionEdit from '@/components/edit/ShortDescriptionEdit';
+import DifficultyEdit from '@/components/edit/DifficultyEdit';
+import TermsEdit from '@/components/edit/TermsEdit';
+import TagsEdit from '@/components/edit/TagsEdit';
+import RelevanceEdit from '@/components/edit/RelevanceEdit';
+import UsecaseEdit from '@/components/edit/UsecaseEdit';
+import ReferencesEdit from '@/components/edit/ReferencesEdit';
+import { ChevronDown } from 'lucide-react';
+
+// DescriptionEdit는 MathJax를 사용하므로 동적 로드
+const DescriptionEdit = dynamic(() => import('@/components/edit/DescriptionEdit'), {
+  ssr: false,
+});
+
+interface DesktopEditFormProps {
+  formData: TermData;
+  setFormData: React.Dispatch<React.SetStateAction<TermData>>;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>)=> void;
+}
+
+type SectionKey = 'title' | 'summary' | 'difficulty' | 'description' | 'terms' | 'tags' | 'relevance' | 'usecase' | 'references';
+
+interface Section {
+  key: SectionKey;
+  label: string;
+  component: React.ReactNode;
+}
+
+export default function DesktopEditForm({ formData, setFormData, handleChange }: DesktopEditFormProps) {
+  const [activeSection, setActiveSection] = useState<SectionKey>('title');
+
+  // 섹션 완료 여부 체크
+  const isSectionComplete = useCallback((key: SectionKey): boolean => {
+    switch (key) {
+      case 'title':
+        return !!(formData.title?.ko?.trim() && formData.title?.en?.trim());
+      case 'summary':
+        return !!(formData.description?.short?.trim());
+      case 'difficulty':
+        return !!(formData.difficulty?.level && formData.difficulty?.description?.trim());
+      case 'description':
+        return !!(formData.description?.full?.trim());
+      case 'terms':
+        return Array.isArray(formData.terms) && formData.terms.length > 0;
+      case 'tags':
+        return Array.isArray(formData.tags) && formData.tags.length > 0;
+      case 'relevance':
+        return !!(
+          formData.relevance?.analyst?.description?.trim()
+          && formData.relevance?.engineer?.description?.trim()
+          && formData.relevance?.scientist?.description?.trim()
+        );
+      case 'usecase':
+        return !!(formData.usecase?.description?.trim() && formData.usecase?.example?.trim());
+      case 'references':
+        return (
+          (Array.isArray(formData.references?.tutorials) && formData.references.tutorials.length > 0)
+          || (Array.isArray(formData.references?.books) && formData.references.books.length > 0)
+          || (Array.isArray(formData.references?.academic) && formData.references.academic.length > 0)
+          || (Array.isArray(formData.references?.opensource) && formData.references.opensource.length > 0)
+        );
+      default:
+        return false;
+    }
+  }, [formData]);
+
+  const sections: Section[] = [
+    {
+      key: 'title',
+      label: '제목',
+      component: (
+        <div className="space-y-4">
+          <KoreanTitleEdit formData={formData} handleChange={handleChange} />
+          <EnglishTitleEdit formData={formData} handleChange={handleChange} />
+          <EtcTitleEdit formData={formData} handleChange={handleChange} />
+        </div>
+      ),
+    },
+    {
+      key: 'summary',
+      label: '요약',
+      component: <ShortDescriptionEdit formData={formData} handleChange={handleChange} />,
+    },
+    {
+      key: 'difficulty',
+      label: '난이도',
+      component: <DifficultyEdit formData={formData} handleChange={handleChange} />,
+    },
+    {
+      key: 'description',
+      label: '개념',
+      component: <DescriptionEdit formData={formData} handleChange={handleChange} />,
+    },
+    {
+      key: 'terms',
+      label: '관련 용어',
+      component: <TermsEdit formData={formData} setFormData={setFormData} />,
+    },
+    {
+      key: 'tags',
+      label: '관련 포스트',
+      component: <TagsEdit formData={formData} setFormData={setFormData} />,
+    },
+    {
+      key: 'relevance',
+      label: '직무 연관도',
+      component: <RelevanceEdit formData={formData} handleChange={handleChange} />,
+    },
+    {
+      key: 'usecase',
+      label: '사용 사례',
+      component: <UsecaseEdit formData={formData} setFormData={setFormData} handleChange={handleChange} />,
+    },
+    {
+      key: 'references',
+      label: '참고 자료',
+      component: <ReferencesEdit formData={formData} setFormData={setFormData} />,
+    },
+  ];
+
+  const handleSectionClick = (key: SectionKey) => {
+    // 같은 섹션을 클릭하면 접기 (null로 설정)
+    // 다른 섹션을 클릭하면 해당 섹션 펼치기
+    setActiveSection(activeSection === key ? null as unknown as SectionKey : key);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* 상단 진행도 표시 */}
+      <div className="flex gap-2 flex-wrap sticky top-[76px] bg-background pb-8 z-20">
+        {sections.map((section, index) => {
+          const isComplete = isSectionComplete(section.key);
+          const isActive = activeSection === section.key;
+
+          return (
+            <button
+              key={section.key}
+              type="button"
+              onClick={() => handleSectionClick(section.key)}
+              className={`
+                size-10 rounded-lg font-semibold transition-all duration-200
+                ${ isComplete
+              ? 'bg-primary text-white'
+              : 'bg-gray4 text-gray1 hover:bg-gray3'
+            }
+                ${ isActive ? 'ring ring-primary text-main' : '' }
+              `}
+              title={section.label}
+            >
+              {index + 1}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 아코디언 섹션 */}
+      <div className="space-y-3">
+        {sections.map((section, index) => {
+          const isComplete = isSectionComplete(section.key);
+          const isActive = activeSection === section.key;
+
+          return (
+            <div
+              key={section.key}
+              className={`
+                rounded-lg border transition-all duration-200
+                ${ isComplete ? 'border-primary' : 'border-gray4' }
+                ${ isActive ? 'border-secondary' : '' }
+              `}
+            >
+              {/* 아코디언 헤더 */}
+              <button
+                type="button"
+                onClick={() => handleSectionClick(section.key)}
+                className={`
+                  w-full px-6 py-4 flex items-center justify-between rounded-lg
+                  hover:bg-gray5 transition-colors duration-200
+                  ${ isActive ? 'bg-gray5 rounded-b-none' : '' }
+                `}
+              >
+                <div className="flex items-center gap-4">
+                  <span
+                    className={`
+                      flex items-center justify-center size-8 rounded-full font-semibold text-sm transition-all duration-200
+                      ${ isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1' }
+                    `}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="font-semibold text-lg text-main transition-all duration-200">{section.label}</span>
+                </div>
+                <ChevronDown
+                  className={`size-5 text-gray1 transition-all duration-200 ${
+                    isActive ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {/* 아코디언 내용 */}
+              {isActive && (
+                <div className="px-6 py-4 border-t border-gray4 bg-background rounded-b-lg animate-slideDown">
+                  {section.component}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

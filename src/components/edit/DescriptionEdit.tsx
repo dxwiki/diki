@@ -150,9 +150,9 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
         name="description.full"
         value={formData.description?.full || ''}
         onChange={handleDescriptionChange}
-        className="w-full p-2 border border-gray4 text-main rounded-md"
+        className="w-full p-2 border border-gray4 text-main rounded-md min-h-[646px]"
         placeholder="포스트에 대한 개념을 마크다운 형식으로 작성하세요."
-        rows={6}
+        rows={27}
       />
       {showDescGuidance && (
         <p className="text-sm text-level-5 ml-1 mb-2">{'본문을 작성해주세요.'}</p>
