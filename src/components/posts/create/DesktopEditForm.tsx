@@ -135,28 +135,34 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
   return (
     <div className="space-y-6">
       {/* 상단 진행도 표시 */}
-      <div className="flex gap-2 flex-wrap sticky top-[76px] bg-background pb-8 z-20">
+      <div className="flex gap-2 flex-wrap sticky top-[76px] bg-background pt-4 pb-8 z-20">
         {sections.map((section, index) => {
           const isComplete = isSectionComplete(section.key);
           const isActive = activeSection === section.key;
 
           return (
-            <button
-              key={section.key}
-              type="button"
-              onClick={() => handleSectionClick(section.key)}
-              className={`
-                size-10 rounded-lg font-semibold transition-all duration-200
-                ${ isComplete
+            <div key={section.key} className="relative flex items-start gap-2">
+              <button
+                type="button"
+                onClick={() => handleSectionClick(section.key)}
+                className={`
+                  size-9 rounded-lg font-semibold transition-all duration-200
+                  ${ isComplete
               ? 'bg-primary text-white'
               : 'bg-gray4 text-gray1 hover:bg-gray3'
             }
-                ${ isActive ? 'ring ring-primary text-main' : '' }
-              `}
-              title={section.label}
-            >
-              {index + 1}
-            </button>
+                  ${ isActive ? 'ring ring-primary text-primary' : '' }
+                `}
+                title={section.label}
+              >
+                {index + 1}
+              </button>
+              {/* {isActive && (
+                <span className="w-20 absolute top-[-24px] left-14 text-primary animate-fadeIn">
+                  {section.label}
+                </span>
+              )} */}
+            </div>
           );
         })}
       </div>
@@ -189,7 +195,7 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                 <div className="flex items-center gap-4">
                   <span
                     className={`
-                      flex items-center justify-center size-8 rounded-full font-semibold text-sm transition-all duration-200
+                      flex items-center justify-center size-8 rounded-lg font-semibold text-sm transition-all duration-200
                       ${ isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1' }
                     `}
                   >
@@ -197,11 +203,16 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                   </span>
                   <span className="font-semibold text-lg text-main transition-all duration-200">{section.label}</span>
                 </div>
-                <ChevronDown
-                  className={`size-5 text-gray1 transition-all duration-200 ${
-                    isActive ? 'rotate-180' : ''
-                  }`}
-                />
+                <div className="flex gap-2 items-center">
+                  <span className={`${ isComplete ? 'text-primary' : 'text-gray3' }`}>
+                    {isComplete ? '작성 완료' : '작성중'}
+                  </span>
+                  <ChevronDown
+                    className={`size-5 text-gray1 transition-all duration-200 ${
+                      isActive ? 'rotate-180' : ''
+                    }`}
+                  />
+                </div>
               </button>
 
               {/* 아코디언 내용 */}
