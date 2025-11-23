@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { TermData } from '@/types/database';
 import KoreanTitleEdit from '@/components/edit/KoreanTitleEdit';
@@ -14,10 +14,12 @@ import RelevanceEdit from '@/components/edit/RelevanceEdit';
 import UsecaseEdit from '@/components/edit/UsecaseEdit';
 import ReferencesEdit from '@/components/edit/ReferencesEdit';
 import { ChevronDown } from 'lucide-react';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 // DescriptionEdit는 MathJax를 사용하므로 동적 로드
 const DescriptionEdit = dynamic(() => import('@/components/edit/DescriptionEdit'), {
   ssr: false,
+  loading: () => <LoadingSpinner />,
 });
 
 interface DesktopEditFormProps {
@@ -72,7 +74,7 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
     }
   }, [formData]);
 
-  const sections: Section[] = [
+  const sections: Section[] = useMemo(() => [
     {
       key: 'title',
       label: '제목',
@@ -124,18 +126,32 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
       label: '참고 자료',
       component: <ReferencesEdit formData={formData} setFormData={setFormData} />,
     },
-  ];
+  ], [formData, handleChange, setFormData]);
 
   const handleSectionClick = (key: SectionKey) => {
-    // 같은 섹션을 클릭하면 접기 (null로 설정)
-    // 다른 섹션을 클릭하면 해당 섹션 펼치기
     setActiveSection(activeSection === key ? null as unknown as SectionKey : key);
   };
+
+  // 활성 섹션에 따라 섹션 순서 재정렬
+  const reorderedSections = useCallback(() => {
+    if (!activeSection) return sections;
+
+    const activeIndex = sections.findIndex((s) => s.key === activeSection);
+    if (activeIndex === -1) return sections;
+
+    // 활성 섹션부터 순환하여 배열 생성
+    return [
+      ...sections.slice(activeIndex),
+      ...sections.slice(0, activeIndex),
+    ];
+  }, [activeSection, sections]);
+
+  const orderedSections = reorderedSections();
 
   return (
     <div className="space-y-6">
       {/* 상단 진행도 표시 */}
-      <div className="flex gap-2 flex-wrap sticky top-[76px] bg-background pt-4 pb-8 z-20">
+      <div className="flex gap-2 flex-wrap sticky top-[80px] bg-background pb-[22px] border-b border-gray5 z-20">
         {sections.map((section, index) => {
           const isComplete = isSectionComplete(section.key);
           const isActive = activeSection === section.key;
@@ -168,18 +184,19 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
       </div>
 
       {/* 아코디언 섹션 */}
-      <div className="space-y-3">
-        {sections.map((section, index) => {
+      <div className="space-y-2 mx-1">
+        {orderedSections.map((section) => {
           const isComplete = isSectionComplete(section.key);
           const isActive = activeSection === section.key;
+          const originalIndex = sections.findIndex((s) => s.key === section.key);
 
           return (
             <div
               key={section.key}
               className={`
-                rounded-lg border transition-all duration-200
+                rounded-lg border
                 ${ isComplete ? 'border-primary' : 'border-gray4' }
-                ${ isActive ? 'border-secondary' : '' }
+                ${ isActive ? 'border-secondary outline outline-2 outline-primary' : '' }
               `}
             >
               {/* 아코디언 헤더 */}
@@ -199,25 +216,25 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                       ${ isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1' }
                     `}
                   >
-                    {index + 1}
+                    {originalIndex + 1}
                   </span>
                   <span className="font-semibold text-lg text-main transition-all duration-200">{section.label}</span>
                 </div>
-                <div className="flex gap-2 items-center">
+                {/* <div className="flex gap-2 items-center">
                   <span className={`${ isComplete ? 'text-primary' : 'text-gray3' }`}>
                     {isComplete ? '작성 완료' : '작성중'}
                   </span>
-                  <ChevronDown
-                    className={`size-5 text-gray1 transition-all duration-200 ${
-                      isActive ? 'rotate-180' : ''
-                    }`}
-                  />
-                </div>
+                  </div> */}
+                <ChevronDown
+                  className={`size-5 text-gray1 transition-all duration-200 ${
+                    isActive ? 'rotate-180' : ''
+                  }`}
+                />
               </button>
 
               {/* 아코디언 내용 */}
               {isActive && (
-                <div className="px-6 py-4 border-t border-gray4 bg-background rounded-b-lg animate-slideDown">
+                <div className="px-6 py-4 border-t border-gray4 bg-background rounded-b-lg">
                   {section.component}
                 </div>
               )}

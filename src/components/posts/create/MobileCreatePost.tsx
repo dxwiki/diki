@@ -402,7 +402,7 @@ export default function MobileCreatePost() {
       </div>
 
       <form id="createForm" onSubmit={handleSubmit} noValidate>
-        <div className="relative">
+        <div className="relative border border-gray4 rounded-lg p-2">
           <EditPreview
             term={formData}
             onSectionClick={isPreview ? undefined : toggleSection}

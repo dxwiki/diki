@@ -123,7 +123,7 @@ const Toast = ({
 
   return (
     <div
-      className={`fixed w-full max-w-[90vw] md:max-w-[40vw] xl:max-w-[25vw] h-12
+      className={`fixed w-full max-w-[90vw] md:max-w-[40vw] h-12
         flex justify-between items-center p-3 rounded-lg shadow-lg z-50 hover:opacity-80
         ${ positionClasses[position] } ${ animationClass } ${ bgColors[type] }`}
       role="alert"

@@ -270,7 +270,7 @@ const PostPreview = ({
   }, [editingSections, formComponents, handleCloseSection]);
 
   return (
-    <div className="prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background rounded-lg p-2 sm:p-4 border border-gray4" ref={postPreviewRef}>
+    <div className="prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background" ref={postPreviewRef}>
       <TableOfContents
         title={term.title?.ko === '' ? '한글 제목' : term.title?.ko ?? ''}
         term={term}
