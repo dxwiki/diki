@@ -13,6 +13,7 @@ import {
 
 interface ReferencesSectionProps {
   references: References;
+  isMobilePreview?: boolean;
 }
 
 // 색상 설정 정의
@@ -65,7 +66,7 @@ const useAccordionState = () => {
   return { expandedItems, toggleExpand };
 };
 
-const ReferencesSection = ({ references }: ReferencesSectionProps) => {
+const ReferencesSection = ({ references, isMobilePreview = false }: ReferencesSectionProps) => {
   const { expandedItems, toggleExpand } = useAccordionState();
   const [isSmallScreen, setIsSmallScreen] = React.useState(false);
 
@@ -188,11 +189,11 @@ const ReferencesSection = ({ references }: ReferencesSectionProps) => {
   return (
     <section className="group-section break-all">
       <h2>
-        <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-section-title transition-opacity">{'#'}</span>
+        <span className={`text-primary mr-2.5 transition-opacity ${ isMobilePreview ? '' : 'sm:ml-[-20px] sm:opacity-0 group-section-title' }`}>{'#'}</span>
         {'참고 자료'}
       </h2>
 
-      {isSmallScreen ? (
+      {(isSmallScreen || isMobilePreview) ? (
         <div className='flex flex-col gap-4 sm:mt-[-4px]'>
           <ReferenceList
             title="튜토리얼"

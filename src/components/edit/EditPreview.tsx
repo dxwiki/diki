@@ -49,6 +49,7 @@ interface PostPreviewProps {
   formComponents?: FormComponents;
   isPreview?: boolean;
   invalidSections?: string[];
+  isMobilePreview?: boolean;
 }
 
 const PostPreview = ({
@@ -58,6 +59,7 @@ const PostPreview = ({
   formComponents,
   isPreview = false,
   invalidSections = [],
+  isMobilePreview = false,
 }: PostPreviewProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const postPreviewRef = useRef<HTMLDivElement>(null);
@@ -270,16 +272,18 @@ const PostPreview = ({
   }, [editingSections, formComponents, handleCloseSection]);
 
   return (
-    <div className="prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden block md:grid md:grid-cols-[minmax(0,176px)_5fr] bg-background" ref={postPreviewRef}>
-      <TableOfContents
-        title={term.title?.ko === '' ? '한글 제목' : term.title?.ko ?? ''}
-        term={term}
-        slug=""
-        onTagSectionClick={(e) => handleSectionClick('tags', e)}
-        tagsClassName={getSectionClassName('tags', 'rounded-lg')}
-        isEditMode={true}
-        isPreview={isPreview}
-      />
+    <div className={`prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto m-2 ${ isMobilePreview ? 'block p-4 rounded-3xl' : 'block md:grid md:grid-cols-[minmax(0,176px)_5fr] px-2' } bg-background`} ref={postPreviewRef}>
+      {!isMobilePreview && (
+        <TableOfContents
+          title={term.title?.ko === '' ? '한글 제목' : term.title?.ko ?? ''}
+          term={term}
+          slug=""
+          onTagSectionClick={(e) => handleSectionClick('tags', e)}
+          tagsClassName={getSectionClassName('tags', 'rounded-lg')}
+          isEditMode={true}
+          isPreview={isPreview}
+        />
+      )}
 
       {/* 데스크톱 태그 편집 (사이드바) */}
       {editingSections?.tags && (
@@ -291,12 +295,12 @@ const PostPreview = ({
       )}
 
       <div className='text-justify relative' ref={contentRef}>
-        <div className='sm:ml-5'>
+        <div className={isMobilePreview ? '' : 'sm:ml-5'}>
           {/* 한글/영문 제목 섹션 */}
           <div
             className="flex group cursor-pointer"
           >
-            <span className={`flex flex-wrap items-center text-3xl font-bold mb-0 ${ isPreview ? '' : ' gap-2' }`}>
+            <span className={`flex flex-wrap items-center ${ isMobilePreview ? 'text-2xl' : 'text-3xl' } font-bold mb-0 ${ isPreview ? '' : ' gap-2' }`}>
               <span
                 id="koTitle-section"
                 onClick={(e: React.MouseEvent) => handleSectionClick('koTitle', e)}
@@ -414,6 +418,7 @@ const PostPreview = ({
                   <div className="cursor-pointer" onClick={(e: React.MouseEvent) => handleSectionClick('description', e)}>
                     <DescriptionSection
                       description={term.description?.full || ''}
+                      isMobilePreview={isMobilePreview}
                     />
                   </div>
                   {editingSections?.description && renderInlineEditForm('description')}
@@ -428,6 +433,7 @@ const PostPreview = ({
                   <div className="cursor-pointer" onClick={(e: React.MouseEvent) => handleSectionClick('terms', e)}>
                     <RelatedTermsSection
                       terms={term.terms?.length === 0 ? [{ term: '용어없음', description: '포스트와 관련된 용어를 작성하세요.', internal_link: '' }] : term.terms || []}
+                      isMobilePreview={isMobilePreview}
                     />
                   </div>
                   {editingSections?.terms && renderInlineEditForm('terms')}
@@ -435,7 +441,7 @@ const PostPreview = ({
               </div>
 
               {/* 태그 섹션 (모바일) */}
-              <div id="tags-section" className="relative md:hidden">
+              <div id="tags-section" className={`relative ${ isMobilePreview ? 'block' : 'md:hidden' }`}>
                 <div
                   className={getSectionClassName('tags', 'flex flex-col p-1 my-3 prose-section rounded')}
                 >
@@ -489,6 +495,7 @@ const PostPreview = ({
                         score: term.relevance?.scientist?.score ?? 1,
                         description: term.relevance?.scientist?.description || '데이터 과학자와 관련된 내용을 작성하세요.',
                       }}
+                      isMobilePreview={isMobilePreview}
                     />
                   </div>
                   {editingSections?.relevance && renderInlineEditForm('relevance')}
@@ -507,6 +514,7 @@ const PostPreview = ({
                         example: term.usecase?.example || '구체적인 사용 사례를 작성하세요.',
                         description: term.usecase?.description || '사용 사례에 대한 개요를 작성하세요.',
                       }}
+                      isMobilePreview={isMobilePreview}
                     />
                   </div>
                   {editingSections?.usecase && renderInlineEditForm('usecase')}
@@ -530,6 +538,7 @@ const PostPreview = ({
                     {hasData.references ? (
                       <ReferencesSection
                         references={term.references || { tutorials: [], books: [], academic: [], opensource: [] }}
+                        isMobilePreview={isMobilePreview}
                       />
                     ) : (
                       <div className="relative group/references inline-block">

@@ -3,13 +3,14 @@ import { Usecase } from '@/types';
 
 interface UsecaseSectionProps {
   usecase: Usecase;
+  isMobilePreview?: boolean;
 }
 
-const UsecaseSection = ({ usecase }: UsecaseSectionProps) => {
+const UsecaseSection = ({ usecase, isMobilePreview = false }: UsecaseSectionProps) => {
   return (
     <section className="group-section">
       <h2>
-        <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-section-title transition-opacity">{'#'}</span>
+        <span className={`text-primary mr-2.5 transition-opacity ${ isMobilePreview ? '' : 'sm:ml-[-20px] sm:opacity-0 group-section-title' }`}>{'#'}</span>
         {'사용 사례'}
       </h2>
       <div className="flex flex-wrap gap-1 mb-3">

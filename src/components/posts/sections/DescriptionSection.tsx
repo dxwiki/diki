@@ -2,13 +2,14 @@ import MarkdownContent from '../MarkdownContent';
 
 interface DescriptionSectionProps {
   description: string;
+  isMobilePreview?: boolean;
 }
 
-const DescriptionSection = ({ description }: DescriptionSectionProps) => {
+const DescriptionSection = ({ description, isMobilePreview = false }: DescriptionSectionProps) => {
   return (
     <section className='group'>
       <h2 className='flex items-center'>
-        <span className="text-primary sm:ml-[-20px] mr-2.5 sm:opacity-0 group-hover:opacity-100 transition-opacity">{'#'}</span>
+        <span className={`text-primary mr-2.5 transition-opacity ${ isMobilePreview ? '' : 'sm:ml-[-20px] sm:opacity-0 group-hover:opacity-100' }`}>{'#'}</span>
         {'개념'}
       </h2>
       {description ? (

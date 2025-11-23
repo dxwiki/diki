@@ -274,7 +274,7 @@ export default function DesktopCreatePost() {
 
             {/* 오른쪽: 실시간 미리보기 영역 */}
             <div className="sticky top-[80px] h-fit flex flex-col gap-2">
-              <div className="flex flex-col gap-2 border border-gray4 rounded-lg">
+              <div className="flex flex-col border border-gray4 rounded-lg">
                 <div className="flex justify-between items-center border-b border-gray4 py-2.5 px-4">
                   <span className="text-sm text-gray2">{'미리보기'}</span>
                   <div className="flex items-center gap-2">
@@ -298,11 +298,14 @@ export default function DesktopCreatePost() {
                     </span>
                   </div>
                 </div>
-                <div className="p-4">
-                  <EditPreview
-                    term={formData}
-                    isPreview={true}
-                  />
+                <div className={`flex justify-center ${ isMobilePreview ? 'bg-gray4 rounded-b-lg' : '' }`}>
+                  <div className={isMobilePreview ? 'w-full max-w-[375px]' : 'w-full'}>
+                    <EditPreview
+                      term={formData}
+                      isPreview={true}
+                      isMobilePreview={isMobilePreview}
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex justify-between items-center gap-2">

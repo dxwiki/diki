@@ -149,7 +149,7 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
   const orderedSections = reorderedSections();
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-1 pb-6">
       {/* 상단 진행도 표시 */}
       <div className="flex gap-2 flex-wrap sticky top-[80px] bg-background pb-[22px] border-b border-gray5 z-20">
         {sections.map((section, index) => {
@@ -184,7 +184,7 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
       </div>
 
       {/* 아코디언 섹션 */}
-      <div className="space-y-2 mx-1">
+      <div className="flex flex-col gap-2 mx-1">
         {orderedSections.map((section) => {
           const isComplete = isSectionComplete(section.key);
           const isActive = activeSection === section.key;
