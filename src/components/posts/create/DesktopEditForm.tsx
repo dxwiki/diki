@@ -200,14 +200,8 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
               `}
             >
               {/* 아코디언 헤더 */}
-              <button
-                type="button"
-                onClick={() => handleSectionClick(section.key)}
-                className={`
-                  w-full px-6 py-4 flex items-center justify-between rounded-lg
-                  hover:bg-gray5 transition-colors duration-200
-                  ${ isActive ? 'bg-gray5 rounded-b-none' : '' }
-                `}
+              <div
+                className="w-full px-6 py-4 flex items-center justify-between rounded-lg transition-colors duration-200"
               >
                 <div className="flex items-center gap-4">
                   <span
@@ -220,21 +214,11 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                   </span>
                   <span className="font-semibold text-lg text-main transition-all duration-200">{section.label}</span>
                 </div>
-                {/* <div className="flex gap-2 items-center">
-                  <span className={`${ isComplete ? 'text-primary' : 'text-gray3' }`}>
-                    {isComplete ? '작성 완료' : '작성중'}
-                  </span>
-                  </div> */}
-                <ChevronDown
-                  className={`size-5 text-gray1 transition-all duration-200 ${
-                    isActive ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
+              </div>
 
               {/* 아코디언 내용 */}
               {isActive && (
-                <div className="px-6 py-4 border-t border-gray4 bg-background rounded-b-lg">
+                <div className="px-6 py-4 bg-background rounded-b-lg">
                   {section.component}
                 </div>
               )}
