@@ -13,7 +13,6 @@ import TagsEdit from '@/components/edit/TagsEdit';
 import RelevanceEdit from '@/components/edit/RelevanceEdit';
 import UsecaseEdit from '@/components/edit/UsecaseEdit';
 import ReferencesEdit from '@/components/edit/ReferencesEdit';
-import { ChevronDown } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 // DescriptionEdit는 MathJax를 사용하므로 동적 로드
@@ -163,11 +162,8 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                 onClick={() => handleSectionClick(section.key)}
                 className={`
                   size-9 rounded-lg font-semibold transition-all duration-200
-                  ${ isComplete
-              ? 'bg-primary text-white'
-              : 'bg-gray4 text-gray1 hover:bg-gray3'
-            }
                   ${ isActive ? 'ring ring-primary text-primary' : '' }
+                  ${ isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1 hover:bg-gray3' }
                 `}
                 title={section.label}
               >
@@ -207,6 +203,7 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                   <span
                     className={`
                       flex items-center justify-center size-8 rounded-lg font-semibold text-sm transition-all duration-200
+                      ${ isActive ? 'ring ring-primary text-primary' : '' }
                       ${ isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1' }
                     `}
                   >
@@ -214,6 +211,9 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                   </span>
                   <span className="font-semibold text-lg text-main transition-all duration-200">{section.label}</span>
                 </div>
+                <span className={`text-sm text-gray2 transition-all duration-200 ${ isComplete ? 'text-primary' : '' }`}>
+                  {isComplete ? '작성 완료' : isActive ? '작성중' : ''}
+                </span>
               </div>
 
               {/* 아코디언 내용 */}
