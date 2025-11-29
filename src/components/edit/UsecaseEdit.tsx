@@ -3,7 +3,7 @@ import React, { useState, KeyboardEvent, useCallback, useRef, useEffect, forward
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
-import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
+import { isFieldEmpty, getFieldGuidance, getRequiredFieldError } from '@/utils/formValidation';
 import { X } from 'lucide-react';
 
 export interface UsecaseEditHandle {
@@ -157,7 +157,7 @@ const UsecaseSection = forwardRef<UsecaseEditHandle, UsecaseSectionProps>(({ for
   return (
     <div className="p-2">
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1 text-gray0">{'개요'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+        <label className="block text-sm font-medium mb-1 text-gray0">{'개요'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
         <textarea
           ref={descriptionTextareaRef}
           name="usecase.description"
@@ -173,14 +173,14 @@ const UsecaseSection = forwardRef<UsecaseEditHandle, UsecaseSectionProps>(({ for
         {descEnterError ? (
           <p className="text-sm text-level-5">{'사용 사례 개요에 줄바꿈을 추가할 수 없습니다.'}</p>
         ) : descriptionTouched && !descriptionValid ? (
-          <p className="text-sm text-level-5">{descriptionGuidance}</p>
+          <p className="text-sm text-level-5">{getRequiredFieldError('usecase.description')}</p>
         ) : showDescGuidance ? (
           <p className="text-sm text-sub">{descriptionGuidance}</p>
         ) : null}
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1 text-gray0">{'사례'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+        <label className="block text-sm font-medium mb-1 text-gray0">{'사례'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
         <textarea
           ref={exampleTextareaRef}
           name="usecase.example"
@@ -196,7 +196,7 @@ const UsecaseSection = forwardRef<UsecaseEditHandle, UsecaseSectionProps>(({ for
         {exampleEnterError ? (
           <p className="text-sm text-level-5">{'사용 사례에 줄바꿈을 추가할 수 없습니다.'}</p>
         ) : exampleTouched && !exampleValid ? (
-          <p className="text-sm text-level-5">{exampleGuidance}</p>
+          <p className="text-sm text-level-5">{getRequiredFieldError('usecase.example')}</p>
         ) : showExampleGuidance ? (
           <p className="text-sm text-sub">{exampleGuidance}</p>
         ) : null}

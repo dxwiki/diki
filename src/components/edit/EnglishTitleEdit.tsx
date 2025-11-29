@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, forwardRef, useImperativeHandle 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldError, setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
-import { validateField, isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
+import { validateField, isFieldEmpty, getFieldGuidance, getRequiredFieldError } from '@/utils/formValidation';
 
 export interface EnglishTitleEditHandle {
   focus: ()=> void;
@@ -122,7 +122,7 @@ const EnglishTitleEdit = forwardRef<EnglishTitleEditHandle, EnglishTitleEditProp
 
   return (
     <div className="p-2">
-      <label className="block text-sm font-medium mb-1 text-gray0">{'영문 제목'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+      <label className="block text-sm font-medium mb-1 text-gray0">{'영문 제목'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
       <input
         ref={inputRef}
         type="text"
@@ -136,6 +136,8 @@ const EnglishTitleEdit = forwardRef<EnglishTitleEditHandle, EnglishTitleEditProp
       />
       {showError ? (
         <p className="text-sm text-level-5 ml-1 mt-1">{fieldError}</p>
+      ) : touched && !fieldValid ? (
+        <p className="text-sm text-level-5 ml-1 mt-1">{getRequiredFieldError('title.en')}</p>
       ) : showGuidance ? (
         <p className="text-sm text-primary ml-1 mt-1">{guidance}</p>
       ) : null}

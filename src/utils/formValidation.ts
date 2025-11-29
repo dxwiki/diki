@@ -246,3 +246,24 @@ export function getFieldGuidance(field: FieldName): string | null {
   return guidances[field] ?? null;
 }
 
+// 필수 필드 에러 메시지 반환
+export function getRequiredFieldError(field: FieldName): string | null {
+  const errorMessages: Partial<Record<FieldName, string>> = {
+    'title.ko': '한글 제목은 반드시 입력해야 합니다.',
+    'title.en': '영문 제목은 반드시 입력해야 합니다.',
+    'description.short': '짧은 설명은 반드시 입력해야 합니다.',
+    'difficulty.description': '난이도 설명은 반드시 입력해야 합니다.',
+    'description.full': '개념은 반드시 입력해야 합니다.',
+    'terms': '관련 용어는 1개 이상 추가해야 합니다.',
+    'tags': '관련 포스트는 1개 이상 선택해야 합니다.',
+    'relevance.analyst.description': '데이터 분석가 연관도 설명은 반드시 입력해야 합니다.',
+    'relevance.engineer.description': '데이터 엔지니어 연관도 설명은 반드시 입력해야 합니다.',
+    'relevance.scientist.description': '데이터 과학자 연관도 설명은 반드시 입력해야 합니다.',
+    'usecase.description': '사용 사례 개요는 반드시 입력해야 합니다.',
+    'usecase.example': '사용 사례는 반드시 입력해야 합니다.',
+    'references': '참고 자료는 1개 이상 추가해야 합니다.',
+  };
+
+  return errorMessages[field] ?? null;
+}
+

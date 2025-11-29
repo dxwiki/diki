@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef, forwardRef, useImperat
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
-import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
+import { isFieldEmpty, getFieldGuidance, getRequiredFieldError } from '@/utils/formValidation';
 import CreateSlider from '@/components/ui/CreateSlider';
 
 export interface DifficultyEditHandle {
@@ -126,7 +126,7 @@ const DifficultySection = forwardRef<DifficultyEditHandle, DifficultySectionProp
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray0">{'난이도 설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+          <label className="block text-sm font-medium mb-1 text-gray0">{'난이도 설명'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
           <textarea
             ref={textareaRef}
             name="difficulty.description"
@@ -145,6 +145,8 @@ const DifficultySection = forwardRef<DifficultyEditHandle, DifficultySectionProp
         </p>
         {enterKeyError ? (
           <p className="text-sm text-level-5 ml-1">{'난이도 설명에 줄바꿈을 추가할 수 없습니다.'}</p>
+        ) : touched && !fieldValid ? (
+          <p className="text-sm text-level-5 ml-1">{getRequiredFieldError('difficulty.description')}</p>
         ) : showGuidance ? (
           <p className="text-sm text-primary ml-1">{guidance}</p>
         ) : null}

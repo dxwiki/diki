@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperat
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
-import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
+import { isFieldEmpty, getFieldGuidance, getRequiredFieldError } from '@/utils/formValidation';
 import MarkdownContent from '../posts/MarkdownContent';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -201,9 +201,11 @@ const DescriptionSection = forwardRef<DescriptionEditHandle, DescriptionSectionP
         placeholder="포스트에 대한 개념을 마크다운 형식으로 작성하세요."
         rows={27}
       />
-      {showGuidance && (
+      {touched && !fieldValid ? (
+        <p className="text-sm text-level-5 ml-1 mb-2">{getRequiredFieldError('description.full')}</p>
+      ) : showGuidance ? (
         <p className="text-sm text-primary ml-1 mb-2">{guidance}</p>
-      )}
+      ) : null}
       {tips()}
     </div>
   );

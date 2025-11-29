@@ -3,7 +3,7 @@ import React, { useState, useRef, KeyboardEvent, useEffect, forwardRef, useImper
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
-import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
+import { isFieldEmpty, getFieldGuidance, getRequiredFieldError } from '@/utils/formValidation';
 import { TermData, References, Tutorial, Book, Academic, Opensource } from '@/types/database';
 import { X } from 'lucide-react';
 
@@ -754,7 +754,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
               <div className="border border-gray4 p-3 rounded-md">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={tutorialTitleRef}
                       type="text"
@@ -781,7 +781,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={tutorialLinkRef}
                       type="url"
@@ -852,7 +852,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
               <div className="border border-gray4 p-3 rounded-md">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={bookTitleRef}
                       type="text"
@@ -921,7 +921,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={bookLinkRef}
                       type="url"
@@ -991,7 +991,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
               <div className="border border-gray4 p-3 rounded-md">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={academicTitleRef}
                       type="text"
@@ -1048,7 +1048,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
                     </p>
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={academicLinkRef}
                       type="url"
@@ -1117,7 +1117,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
               <div className="border border-gray4 p-3 rounded-md">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'이름'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'이름'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={opensourceNameRef}
                       type="text"
@@ -1155,7 +1155,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={opensourceLinkRef}
                       type="url"
@@ -1196,7 +1196,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
       </div>
       {/* 안내 메시지 추가 */}
       {touched && !fieldValid ? (
-        <p className="text-sm text-level-5">{guidance}</p>
+        <p className="text-sm text-level-5">{getRequiredFieldError('references')}</p>
       ) : isEmpty ? (
         <p className="text-sm text-primary">{guidance}</p>
       ) : null}

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
-import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
+import { isFieldEmpty, getFieldGuidance, getRequiredFieldError } from '@/utils/formValidation';
 import { TermData } from '@/types/database';
 import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
@@ -97,12 +97,12 @@ const TagsSection = forwardRef<TagsEditHandle, TagsSectionProps>(({ formData, se
         ))}
       </div>
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1 text-gray0">{'관련 포스트 검색'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+        <label className="block text-sm font-medium mb-1 text-gray0">{'관련 포스트 검색'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
         <div className="relative">
           <InternalLinkSearch onSelect={handleLinkSelect} refocus inputRef={searchInputRef} onTabToNext={onTabToNext} />
         </div>
         {touched && !fieldValid ? (
-          <p className="text-sm text-level-5 mt-1">{guidance}</p>
+          <p className="text-sm text-level-5 mt-1">{getRequiredFieldError('tags')}</p>
         ) : showGuidance ? (
           <p className="text-sm text-primary mt-1">{guidance}</p>
         ) : null}

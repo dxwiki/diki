@@ -3,7 +3,7 @@ import React, { useState, useCallback, useRef, useEffect, forwardRef, useImperat
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldError, setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
-import { validateField, isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
+import { validateField, isFieldEmpty, getFieldGuidance, getRequiredFieldError } from '@/utils/formValidation';
 
 export interface ShortDescriptionEditHandle {
   focus: () => void;
@@ -116,7 +116,7 @@ const ShortDescriptionEdit = forwardRef<ShortDescriptionEditHandle, ShortDescrip
 
   return (
     <div className="p-2">
-      <label className="block text-sm font-medium mb-1 text-gray0">{'짧은 설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+      <label className="block text-sm font-medium mb-1 text-gray0">{'짧은 설명'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
       <div className="relative">
         <textarea
           ref={textareaRef}
@@ -139,6 +139,8 @@ const ShortDescriptionEdit = forwardRef<ShortDescriptionEditHandle, ShortDescrip
         <p className="text-sm text-level-5 ml-1">{fieldError}</p>
       ) : enterKeyError ? (
         <p className="text-sm text-level-5 ml-1">{'짧은 설명에 줄바꿈을 추가할 수 없습니다.'}</p>
+      ) : touched && !fieldValid ? (
+        <p className="text-sm text-level-5 ml-1">{getRequiredFieldError('description.short')}</p>
       ) : showGuidance ? (
         <p className="text-sm text-primary ml-1">{guidance}</p>
       ) : null}

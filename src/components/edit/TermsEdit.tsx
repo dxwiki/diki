@@ -3,7 +3,7 @@ import React, { useState, KeyboardEvent, useRef, useEffect, useCallback, forward
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
-import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
+import { isFieldEmpty, getFieldGuidance, getRequiredFieldError } from '@/utils/formValidation';
 import { Terms, TermData } from '@/types/database';
 import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
@@ -191,7 +191,7 @@ const TermsSection = forwardRef<TermsEditHandle, TermsSectionProps>(({ formData,
       )}
       <div className="w-full flex flex-col items-end space-y-4 mb-4">
         <div className="w-full">
-          <label className="block text-sm font-medium mb-1 text-gray0">{'용어'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+          <label className="block text-sm font-medium mb-1 text-gray0">{'용어'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
           <input
             ref={termInputRef}
             type="text"
@@ -205,7 +205,7 @@ const TermsSection = forwardRef<TermsEditHandle, TermsSectionProps>(({ formData,
           {termError && <p className="text-sm text-level-5 mt-1">{termError}</p>}
         </div>
         <div className="w-full">
-          <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+          <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
           <textarea
             ref={descriptionRef}
             value={newTerm.description}
@@ -248,7 +248,7 @@ const TermsSection = forwardRef<TermsEditHandle, TermsSectionProps>(({ formData,
         </div>
         <div className="w-full flex justify-between items-center">
           {touched && !fieldValid ? (
-            <p className="text-sm text-level-5">{guidance}</p>
+            <p className="text-sm text-level-5">{getRequiredFieldError('terms')}</p>
           ) : showGuidance ? (
             <p className="text-sm text-primary">{guidance}</p>
           ) : (

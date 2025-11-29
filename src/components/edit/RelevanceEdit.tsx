@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef, forwardRef, useImperat
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
-import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
+import { isFieldEmpty, getFieldGuidance, getRequiredFieldError } from '@/utils/formValidation';
 import CreateSlider from '@/components/ui/CreateSlider';
 
 export interface RelevanceEditHandle {
@@ -249,7 +249,7 @@ const RelevanceSection = forwardRef<RelevanceEditHandle, RelevanceSectionProps>(
             </div>
           </div>
           <div className="grow">
-            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
             <textarea
               ref={analystTextareaRef}
               name="relevance.analyst.description"
@@ -265,7 +265,7 @@ const RelevanceSection = forwardRef<RelevanceEditHandle, RelevanceSectionProps>(
             {analystEnterError ? (
               <p className="text-sm text-level-5 mt-1">{'줄바꿈을 추가할 수 없습니다.'}</p>
             ) : analystTouched && !analystValid ? (
-              <p className="text-sm text-level-5 mt-1">{guidance}</p>
+              <p className="text-sm text-level-5 mt-1">{getRequiredFieldError('relevance.analyst.description')}</p>
             ) : showAnalystGuidance ? (
               <p className="text-sm text-primary mt-1">{guidance}</p>
             ) : null}
@@ -288,7 +288,7 @@ const RelevanceSection = forwardRef<RelevanceEditHandle, RelevanceSectionProps>(
             </div>
           </div>
           <div className="grow">
-            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
             <textarea
               ref={scientistTextareaRef}
               name="relevance.scientist.description"
@@ -304,7 +304,7 @@ const RelevanceSection = forwardRef<RelevanceEditHandle, RelevanceSectionProps>(
             {scientistEnterError ? (
               <p className="text-sm text-level-5 mt-1">{'줄바꿈을 추가할 수 없습니다.'}</p>
             ) : scientistTouched && !scientistValid ? (
-              <p className="text-sm text-level-5 mt-1">{guidance}</p>
+              <p className="text-sm text-level-5 mt-1">{getRequiredFieldError('relevance.scientist.description')}</p>
             ) : showScientistGuidance ? (
               <p className="text-sm text-primary mt-1">{guidance}</p>
             ) : null}
@@ -327,7 +327,7 @@ const RelevanceSection = forwardRef<RelevanceEditHandle, RelevanceSectionProps>(
             </div>
           </div>
           <div className="grow">
-            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
+            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-level-5 text-xs ml-0.5">{'*'}</span></label>
             <textarea
               ref={engineerTextareaRef}
               name="relevance.engineer.description"
@@ -343,7 +343,7 @@ const RelevanceSection = forwardRef<RelevanceEditHandle, RelevanceSectionProps>(
             {engineerEnterError ? (
               <p className="text-sm text-level-5 mt-1">{'줄바꿈을 추가할 수 없습니다.'}</p>
             ) : engineerTouched && !engineerValid ? (
-              <p className="text-sm text-level-5 mt-1">{guidance}</p>
+              <p className="text-sm text-level-5 mt-1">{getRequiredFieldError('relevance.engineer.description')}</p>
             ) : showEngineerGuidance ? (
               <p className="text-sm text-primary mt-1">{guidance}</p>
             ) : null}
