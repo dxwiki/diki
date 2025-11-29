@@ -2,7 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
 import { TermData } from '@/types/database';
+import { AppDispatch } from '@/store';
+import {
+  setFieldErrors,
+  setFieldValids,
+  setSectionErrors,
+  setAllTouched,
+  resetValidation,
+} from '@/store/formValidationSlice';
+import { validateAllSections } from '@/utils/formValidation';
 import { useToast } from '@/layouts/ToastProvider';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import DesktopEditForm from './DesktopEditForm';
@@ -12,6 +22,7 @@ import { Save, Upload } from 'lucide-react';
 
 export default function DesktopCreatePost() {
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const { showToast } = useToast();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -70,6 +81,7 @@ export default function DesktopCreatePost() {
       if (savedData) {
         const parsedData = JSON.parse(savedData) as TermData;
         setFormData(parsedData);
+        dispatch(resetValidation()); // validation 상태 초기화
         setIsLoadModalOpen(false);
         showToast('마지막으로 작성한 내용을 불러왔습니다.', 'success');
       } else {
@@ -79,7 +91,7 @@ export default function DesktopCreatePost() {
       console.error('로컬 스토리지 불러오기 오류:', error);
       showToast('불러오기 중 오류가 발생했습니다.');
     }
-  }, [showToast]);
+  }, [showToast, dispatch]);
 
   // 자동 저장 기능 구현
   useEffect(() => {
@@ -135,30 +147,16 @@ export default function DesktopCreatePost() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 폼 유효성 검사
-    const invalidSections: string[] = [];
+    // 전체 validation 수행
+    const { sectionErrors, fieldErrors, fieldValids, invalidSections } = validateAllSections(formData);
 
-    if (!formData.title?.ko || formData.title.ko.trim() === '') invalidSections.push('제목 (한글)');
-    if (!formData.title?.en || formData.title.en.trim() === '') invalidSections.push('제목 (영문)');
-    if (!formData.description?.short || formData.description.short.trim() === '') invalidSections.push('요약');
-    if (!formData.difficulty?.description || formData.difficulty.description.trim() === '') invalidSections.push('난이도');
-    if (!formData.description?.full || formData.description.full.trim() === '') invalidSections.push('개념');
-    if (!Array.isArray(formData.terms) || formData.terms.length === 0) invalidSections.push('관련 용어');
-    if (!Array.isArray(formData.tags) || formData.tags.length === 0) invalidSections.push('관련 포스트');
-    if (!formData.relevance?.analyst?.description
-        || !formData.relevance.scientist?.description
-        || !formData.relevance.engineer?.description) {
-      invalidSections.push('직무 연관도');
-    }
-    if (!formData.usecase?.description || !formData.usecase?.example) {
-      invalidSections.push('사용 사례');
-    }
-    const hasReferences
-      = (Array.isArray(formData.references?.tutorials) && formData.references.tutorials.length > 0)
-      || (Array.isArray(formData.references?.books) && formData.references.books.length > 0)
-      || (Array.isArray(formData.references?.academic) && formData.references.academic.length > 0)
-      || (Array.isArray(formData.references?.opensource) && formData.references.opensource.length > 0);
-    if (!hasReferences) invalidSections.push('참고 자료');
+    // 모든 필드를 touched로 설정
+    dispatch(setAllTouched());
+
+    // Redux 상태 업데이트
+    dispatch(setFieldErrors(fieldErrors));
+    dispatch(setFieldValids(fieldValids));
+    dispatch(setSectionErrors(sectionErrors));
 
     if (invalidSections.length > 0) {
       const errorMessage = `필수 항목을 모두 입력해주세요: ${ invalidSections.join(', ') }`;
@@ -359,6 +357,7 @@ export default function DesktopCreatePost() {
         onClose={() => setIsCancelModalOpen(false)}
         onConfirm={() => {
           localStorage.removeItem('diki-create-form-data');
+          dispatch(resetValidation());
           router.push('/');
         }}
         title="작성 취소"

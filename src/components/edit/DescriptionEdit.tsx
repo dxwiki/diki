@@ -1,5 +1,9 @@
 import { TermData } from '@/types/database';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/store';
+import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
+import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import MarkdownContent from '../posts/MarkdownContent';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -9,24 +13,22 @@ interface DescriptionSectionProps {
 }
 
 const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['description.full']);
+  const touched = useSelector((state: RootState) => state.formValidation.touched['description.full']);
+
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const guideContentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number | null>(null);
-  const [showDescGuidance, setShowDescGuidance] = useState<boolean>(true);
+
+  const isEmpty = isFieldEmpty(formData, 'description.full');
+  const guidance = getFieldGuidance('description.full');
 
   useEffect(() => {
     if (guideContentRef.current) {
       setContentHeight(guideContentRef.current.scrollHeight);
     }
   }, [isGuideOpen]);
-
-  useEffect(() => {
-    if (formData.description?.full && formData.description.full.trim() !== '') {
-      setShowDescGuidance(false);
-    } else {
-      setShowDescGuidance(true);
-    }
-  }, [formData.description?.full]);
 
   const toggleGuide = () => {
     setIsGuideOpen(!isGuideOpen);
@@ -35,14 +37,31 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleChange(e);
 
-    if (e.target.value.trim() !== '') {
-      setShowDescGuidance(false);
-    } else {
-      setShowDescGuidance(true);
+    // 실시간 유효성 체크 (touched가 true인 경우에만)
+    if (touched) {
+      const isValid = e.target.value.trim() !== '';
+      dispatch(setFieldValid({ field: 'description.full', valid: isValid }));
     }
 
     e.target.style.height = 'auto';
     e.target.style.height = `calc(${ e.target.scrollHeight }px)`;
+  };
+
+  const handleBlur = useCallback(() => {
+    dispatch(setFieldTouched({ field: 'description.full', touched: true }));
+
+    // 유효성 체크
+    const isValid = !isEmpty;
+    dispatch(setFieldValid({ field: 'description.full', valid: isValid }));
+  }, [dispatch, isEmpty]);
+
+  // guidance 표시 조건
+  const showGuidance = isEmpty;
+
+  // border 클래스 결정
+  const getBorderClass = () => {
+    if (fieldValid) return 'border-primary';
+    return 'border-gray4';
   };
 
   const tips = () => {
@@ -150,12 +169,13 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
         name="description.full"
         value={formData.description?.full || ''}
         onChange={handleDescriptionChange}
-        className="w-full p-2 border border-gray4 text-main rounded-md min-h-[646px]"
+        onBlur={handleBlur}
+        className={`w-full p-2 border ${ getBorderClass() } text-main rounded-md min-h-[646px] transition-colors duration-200`}
         placeholder="포스트에 대한 개념을 마크다운 형식으로 작성하세요."
         rows={27}
       />
-      {showDescGuidance && (
-        <p className="text-sm text-level-5 ml-1 mb-2">{'본문을 작성해주세요.'}</p>
+      {showGuidance && (
+        <p className="text-sm text-level-5 ml-1 mb-2">{guidance}</p>
       )}
       {tips()}
     </div>

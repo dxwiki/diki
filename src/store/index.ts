@@ -4,6 +4,7 @@ import searchReducer from './searchSlice';
 import pageReducer from './pageSlice';
 import profilesReducer from './profilesSlice';
 import authReducer from './authSlice';
+import formValidationReducer from './formValidationSlice';
 import { authMiddleware } from './authMiddleware';
 
 // 루트 리듀서 정의
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   page: pageReducer,
   profiles: profilesReducer,
   auth: authReducer,
+  formValidation: formValidationReducer,
 });
 
 // 초기 상태 없이 스토어 생성

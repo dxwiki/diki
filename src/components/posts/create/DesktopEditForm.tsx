@@ -1,8 +1,18 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { TermData } from '@/types/database';
+import { RootState, AppDispatch } from '@/store';
+import {
+  SectionKey,
+  setFieldErrors,
+  setFieldValids,
+  setSectionError,
+  setSectionTouched,
+} from '@/store/formValidationSlice';
+import { validateSection } from '@/utils/formValidation';
 import KoreanTitleEdit from '@/components/edit/KoreanTitleEdit';
 import EnglishTitleEdit from '@/components/edit/EnglishTitleEdit';
 import EtcTitleEdit from '@/components/edit/EtcTitleEdit';
@@ -27,8 +37,6 @@ interface DesktopEditFormProps {
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>)=> void;
 }
 
-type SectionKey = 'title' | 'summary' | 'difficulty' | 'description' | 'terms' | 'tags' | 'relevance' | 'usecase' | 'references';
-
 interface Section {
   key: SectionKey;
   label: string;
@@ -36,6 +44,9 @@ interface Section {
 }
 
 export default function DesktopEditForm({ formData, setFormData, handleChange }: DesktopEditFormProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  const sectionErrors = useSelector((state: RootState) => state.formValidation.sectionErrors);
+
   const [activeSection, setActiveSection] = useState<SectionKey>('title');
 
   // 섹션 완료 여부 체크
@@ -128,6 +139,23 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
   ], [formData, handleChange, setFormData]);
 
   const handleSectionClick = (key: SectionKey) => {
+    // 현재 섹션이 있고, 다른 섹션으로 이동하는 경우 validation 수행
+    if (activeSection && activeSection !== key) {
+      const result = validateSection(formData, activeSection);
+
+      // 현재 섹션의 모든 필드를 touched로 설정
+      dispatch(setSectionTouched({ section: activeSection, touched: true }));
+
+      // 필드 에러 설정
+      dispatch(setFieldErrors(result.errors));
+
+      // 필드 유효성 설정
+      dispatch(setFieldValids(result.fieldValids));
+
+      // 섹션 에러 설정
+      dispatch(setSectionError({ section: activeSection, hasError: result.hasError }));
+    }
+
     setActiveSection(activeSection === key ? null as unknown as SectionKey : key);
   };
 
@@ -154,6 +182,7 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
         {sections.map((section, index) => {
           const isComplete = isSectionComplete(section.key);
           const isActive = activeSection === section.key;
+          const hasError = sectionErrors[section.key];
 
           return (
             <div key={section.key} className="relative flex items-start gap-2">
@@ -163,17 +192,12 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                 className={`
                   size-9 rounded-lg font-semibold transition-all duration-200
                   ${ isActive ? 'ring ring-primary text-primary' : '' }
-                  ${ isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1 hover:bg-gray3' }
+                  ${ hasError ? 'bg-level-5 text-white' : isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1 hover:bg-gray3' }
                 `}
                 title={section.label}
               >
                 {index + 1}
               </button>
-              {/* {isActive && (
-                <span className="w-20 absolute top-[-24px] left-14 text-primary animate-fadeIn">
-                  {section.label}
-                </span>
-              )} */}
             </div>
           );
         })}
@@ -184,15 +208,16 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
         {orderedSections.map((section) => {
           const isComplete = isSectionComplete(section.key);
           const isActive = activeSection === section.key;
+          const hasError = sectionErrors[section.key];
           const originalIndex = sections.findIndex((s) => s.key === section.key);
 
           return (
             <div
               key={section.key}
               className={`
-                rounded-lg border
-                ${ isComplete ? 'border-primary' : 'border-gray4' }
-                ${ isActive ? 'border-secondary outline outline-2 outline-primary' : '' }
+                rounded-lg border transition-all duration-200
+                ${ hasError ? 'border-level-5' : isComplete ? 'border-primary' : 'border-gray4' }
+                ${ isActive ? 'outline outline-2 outline-primary' : '' }
               `}
             >
               {/* 아코디언 헤더 */}
@@ -204,15 +229,15 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                     className={`
                       flex items-center justify-center size-8 rounded-lg font-semibold text-sm transition-all duration-200
                       ${ isActive ? 'ring ring-primary text-primary' : '' }
-                      ${ isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1' }
+                      ${ hasError ? 'bg-level-5 text-white' : isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1' }
                     `}
                   >
                     {originalIndex + 1}
                   </span>
                   <span className="font-semibold text-lg text-main transition-all duration-200">{section.label}</span>
                 </div>
-                <span className={`text-sm text-gray2 transition-all duration-200 ${ isComplete ? 'text-primary' : '' }`}>
-                  {isComplete ? '작성 완료' : isActive ? '작성중' : ''}
+                <span className={`text-sm transition-all duration-200 ${ hasError ? 'text-level-5' : isComplete ? 'text-primary' : 'text-gray2' }`}>
+                  {hasError ? '입력 필요' : isComplete ? '작성 완료' : isActive ? '작성중' : ''}
                 </span>
               </div>
 

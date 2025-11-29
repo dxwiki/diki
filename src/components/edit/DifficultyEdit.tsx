@@ -1,5 +1,9 @@
 import { TermData } from '@/types/database';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/store';
+import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
+import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import CreateSlider from '@/components/ui/CreateSlider';
 
 interface DifficultySectionProps {
@@ -10,22 +14,28 @@ interface DifficultySectionProps {
 }
 
 const DifficultySection = ({ formData, handleChange, handleCustomChange, isModal = false }: DifficultySectionProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['difficulty.description']);
+  const touched = useSelector((state: RootState) => state.formValidation.touched['difficulty.description']);
+
   const levels = ['기초', '초급', '중급', '고급', '전문'];
 
   // 슬라이더 상태는 1~5 범위 사용
   const [levelValue, setLevelValue] = useState<number>(formData.difficulty?.level || 1);
   const [userChangedLevel, setUserChangedLevel] = useState<boolean>(false);
-  const [showDescGuidance, setShowDescGuidance] = useState<boolean>(true);
+
+  // enterKeyError는 컴포넌트 내부에서 관리
   const [enterKeyError, setEnterKeyError] = useState<boolean>(false);
+
+  const isEmpty = isFieldEmpty(formData, 'difficulty.description');
+  const guidance = getFieldGuidance('difficulty.description');
 
   const handleLevelChange = (newValue: number) => {
     setUserChangedLevel(true);
 
     if (handleCustomChange) {
-      // 커스텀 핸들러가 있는 경우 이를 사용
       handleCustomChange('difficulty.level', newValue);
     } else {
-      // 기존 방식으로 이벤트 시뮬레이션
       const event = {
         target: {
           name: 'difficulty.level',
@@ -43,25 +53,24 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, isModal
     setLevelValue(formData.difficulty?.level || 1);
   }, [formData.difficulty?.level]);
 
-  useEffect(() => {
-    if (formData.difficulty?.description && formData.difficulty.description.trim() !== '') {
-      setShowDescGuidance(false);
-    } else {
-      setShowDescGuidance(true);
-    }
-  }, [formData.difficulty?.description]);
-
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleChange(e);
-
-    if (e.target.value.trim() !== '') {
-      setShowDescGuidance(false);
-    } else {
-      setShowDescGuidance(true);
-    }
-
     setEnterKeyError(false);
+
+    // 실시간 유효성 체크 (touched가 true인 경우에만)
+    if (touched) {
+      const isValid = e.target.value.trim() !== '';
+      dispatch(setFieldValid({ field: 'difficulty.description', valid: isValid }));
+    }
   };
+
+  const handleBlur = useCallback(() => {
+    dispatch(setFieldTouched({ field: 'difficulty.description', touched: true }));
+
+    // 유효성 체크
+    const isValid = !isEmpty;
+    dispatch(setFieldValid({ field: 'difficulty.description', valid: isValid }));
+  }, [dispatch, isEmpty]);
 
   // Enter 키 입력 방지
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -71,9 +80,16 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, isModal
     }
   };
 
-  const containerClasses = isModal
-    ? 'p-2'
-    : 'p-2';
+  // guidance 표시 조건
+  const showGuidance = isEmpty && !enterKeyError;
+
+  // border 클래스 결정
+  const getBorderClass = () => {
+    if (fieldValid) return 'border-primary';
+    return 'border-gray4';
+  };
+
+  const containerClasses = isModal ? 'p-2' : 'p-2';
 
   return (
     <div className={containerClasses}>
@@ -93,19 +109,22 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, isModal
           <textarea
             name="difficulty.description"
             value={formData.difficulty?.description || ''}
-            className="w-full p-2 border border-gray4 text-main rounded-md"
+            className={`w-full p-2 border ${ getBorderClass() } text-main rounded-md transition-colors duration-200`}
             placeholder="난이도에 대한 설명을 작성하세요."
             onChange={handleDescriptionChange}
+            onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             rows={4}
             style={{ resize: 'none', height: '80px', minHeight: '80px', maxHeight: '80px', overflowY: 'auto' }}
           />
         </div>
-        <p className={`text-sm text-level-5 !m-0 ${ !userChangedLevel ? 'opacity-100' : 'opacity-0' }`}>{'난이도를 선택해주세요.(기본값: 기초)'}</p>
+        <p className={`text-sm text-level-5 !m-0 ${ !userChangedLevel ? 'opacity-100' : 'opacity-0' }`}>
+          {'난이도를 선택해주세요.(기본값: 기초)'}
+        </p>
         {enterKeyError ? (
-          <p className="text-sm text-primary ml-1">{'난이도 설명에 줄바꿈을 추가할 수 없습니다.'}</p>
-        ) : showDescGuidance ? (
-          <p className="text-sm text-level-5 ml-1">{'난이도 설명을 작성해주세요.'}</p>
+          <p className="text-sm text-level-5 ml-1">{'난이도 설명에 줄바꿈을 추가할 수 없습니다.'}</p>
+        ) : showGuidance ? (
+          <p className="text-sm text-level-5 ml-1">{guidance}</p>
         ) : null}
       </div>
     </div>

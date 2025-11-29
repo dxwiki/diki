@@ -1,5 +1,9 @@
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/store';
+import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
+import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import { TermData } from '@/types/database';
 import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
@@ -10,8 +14,13 @@ interface TagsSectionProps {
 }
 
 const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['tags']);
+
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [showValidationMessage, setShowValidationMessage] = useState<boolean>(false);
+
+  const isEmpty = isFieldEmpty(formData, 'tags');
+  const guidance = getFieldGuidance('tags');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -23,14 +32,15 @@ const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // 포스트 개수에 따라 validation 메시지 표시 여부 결정
+  // tags가 변경될 때마다 유효성 체크
   useEffect(() => {
-    if (formData.tags && formData.tags.length > 0) {
-      setShowValidationMessage(false);
-    } else {
-      setShowValidationMessage(true);
+    const hasTags = Array.isArray(formData.tags) && formData.tags.length > 0;
+    dispatch(setFieldValid({ field: 'tags', valid: hasTags }));
+
+    if (hasTags) {
+      dispatch(setFieldTouched({ field: 'tags', touched: true }));
     }
-  }, [formData.tags]);
+  }, [formData.tags, dispatch]);
 
   const handleLinkSelect = (url: string, title: string) => {
     // URL에서 /posts/ 접두사 제거
@@ -47,11 +57,14 @@ const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
     }));
   };
 
+  // guidance 표시 조건
+  const showGuidance = isEmpty;
+
   return (
     <div className="p-2">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {formData.tags?.map((tag, index) => (
-          <div key={index} className="bg-gray5 border border-gray4 rounded-lg px-3 py-1 flex flex-col items-center mb-2">
+          <div key={index} className={`bg-gray5 border ${ fieldValid ? 'border-primary' : 'border-gray4' } rounded-lg px-3 py-1 flex flex-col items-center mb-2 transition-colors duration-200`}>
             <div className="w-full flex justify-between items-start">
               <span className="font-medium truncate">{tag.name}</span>
               <button
@@ -80,8 +93,8 @@ const TagsSection = ({ formData, setFormData }: TagsSectionProps) => {
         <div className="relative">
           <InternalLinkSearch onSelect={handleLinkSelect} refocus inputRef={searchInputRef} />
         </div>
-        {showValidationMessage && (
-          <p className="text-sm text-level-5 mt-1">{'관련 포스트를 1개 이상 선택해주세요.'}</p>
+        {showGuidance && (
+          <p className="text-sm text-level-5 mt-1">{guidance}</p>
         )}
       </div>
       <p className="text-sm text-gray2 mt-1">{'Diki 내 포스트를 검색하여 선택하면, 관련 포스트가 자동으로 추가됩니다.\n 추가된 포스트의 링크를 눌러 확인할 수 있습니다.'}</p>

@@ -1,5 +1,9 @@
 import { TermData } from '@/types/database';
-import React, { useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/store';
+import { setFieldError, setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
+import { validateField, isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 
 interface EnglishTitleEditProps {
   formData: TermData;
@@ -8,33 +12,28 @@ interface EnglishTitleEditProps {
 }
 
 const EnglishTitleEdit = ({ formData, handleChange, onEnterPress }: EnglishTitleEditProps) => {
-  const [enTitleGuidance, setEnTitleGuidance] = useState<string | null>(null);
-  const [showDefaultGuidance, setShowDefaultGuidance] = useState<boolean>(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const fieldError = useSelector((state: RootState) => state.formValidation.fieldErrors['title.en']);
+  const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['title.en']);
+  const touched = useSelector((state: RootState) => state.formValidation.touched['title.en']);
 
-  useEffect(() => {
-    if (formData.title?.en && formData.title.en.trim() !== '') {
-      setShowDefaultGuidance(false);
-    } else {
-      setShowDefaultGuidance(true);
-    }
-  }, [formData.title?.en]);
+  const isEmpty = isFieldEmpty(formData, 'title.en');
+  const guidance = getFieldGuidance('title.en');
 
   const handleEnglishTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
 
-    if (value.trim() !== '') {
-      setShowDefaultGuidance(false);
-    } else {
-      setShowDefaultGuidance(true);
-    }
-
     // 영어, 별(*), 하이픈(-) 문자만 허용
-    const allowedCharsOnly = value.replace(/[^a-zA-Z\s\*\-]/g, '');
+    const allowedCharsOnly = value.replace(/[^a-zA-Z\s*-]/g, '');
 
-    if (value !== allowedCharsOnly) {
-      setEnTitleGuidance('영어, 별(*), 하이픈(-) 외의 문자는 사용할 수 없습니다.');
-    } else {
-      setEnTitleGuidance(null);
+    // 실시간 validation (입력 중에는 에러만 체크, touched가 true인 경우에만)
+    if (touched) {
+      const error = validateField(formData, 'title.en', allowedCharsOnly);
+      dispatch(setFieldError({ field: 'title.en', error }));
+
+      // 유효성 체크 (border-primary용)
+      const isValid = allowedCharsOnly.trim() !== '' && !error;
+      dispatch(setFieldValid({ field: 'title.en', valid: isValid }));
     }
 
     const filteredEvent = {
@@ -47,12 +46,42 @@ const EnglishTitleEdit = ({ formData, handleChange, onEnterPress }: EnglishTitle
     handleChange(filteredEvent);
   };
 
+  const handleBlur = useCallback(() => {
+    dispatch(setFieldTouched({ field: 'title.en', touched: true }));
+
+    // 빈 값이면 에러 없음 (guidance만 표시)
+    if (isEmpty) {
+      dispatch(setFieldError({ field: 'title.en', error: null }));
+      dispatch(setFieldValid({ field: 'title.en', valid: false }));
+      return;
+    }
+
+    // validation 수행
+    const error = validateField(formData, 'title.en');
+    dispatch(setFieldError({ field: 'title.en', error }));
+
+    // 유효성 체크
+    const isValid = !isEmpty && !error;
+    dispatch(setFieldValid({ field: 'title.en', valid: isValid }));
+  }, [dispatch, formData, isEmpty]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
     if (e.key === 'Enter' && onEnterPress) {
       e.preventDefault();
       onEnterPress();
     }
+  };
+
+  // 에러가 있으면 에러 표시, 없으면 빈 값일 때만 guidance 표시
+  const showError = touched && fieldError;
+  const showGuidance = isEmpty && !showError;
+
+  // border 클래스 결정
+  const getBorderClass = () => {
+    if (showError) return 'border-level-5';
+    if (fieldValid) return 'border-primary';
+    return 'border-gray4';
   };
 
   return (
@@ -63,14 +92,15 @@ const EnglishTitleEdit = ({ formData, handleChange, onEnterPress }: EnglishTitle
         name="title.en"
         value={formData.title?.en || ''}
         onChange={handleEnglishTitleChange}
+        onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className="w-full p-2 border border-gray4 text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
+        className={`w-full p-2 border ${ getBorderClass() } text-main rounded-md focus:border-primary focus:ring-1 focus:ring-primary transition-colors duration-200`}
         placeholder="포스트 영문 제목 (ex. Artificial Intelligence)"
       />
-      {enTitleGuidance ? (
-        <p className="text-sm text-primary ml-1">{enTitleGuidance}</p>
-      ) : showDefaultGuidance ? (
-        <p className="text-sm text-level-5 ml-1 mt-1">{'영문 제목을 작성해주세요.'}</p>
+      {showError ? (
+        <p className="text-sm text-level-5 ml-1 mt-1">{fieldError}</p>
+      ) : showGuidance ? (
+        <p className="text-sm text-level-5 ml-1 mt-1">{guidance}</p>
       ) : null}
     </div>
   );

@@ -1,5 +1,9 @@
 import Link from 'next/link';
-import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/store';
+import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
+import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import { Terms, TermData } from '@/types/database';
 import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
@@ -10,8 +14,10 @@ interface TermsSectionProps {
 }
 
 const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['terms']);
+
   const [newTerm, setNewTerm] = useState<Terms>({});
-  const [showGuidance, setShowGuidance] = useState(true);
   const [termError, setTermError] = useState<string | null>(null);
   const [descriptionError, setDescriptionError] = useState<string | null>(null);
   const [enterKeyError, setEnterKeyError] = useState<boolean>(false);
@@ -20,14 +26,18 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const linkSearchRef = useRef<HTMLDivElement>(null);
 
-  // 관련 용어 추가 여부에 따라 안내 메시지 표시 상태 업데이트
+  const isEmpty = isFieldEmpty(formData, 'terms');
+  const guidance = getFieldGuidance('terms');
+
+  // terms가 변경될 때마다 유효성 체크
   useEffect(() => {
-    if (formData.terms && formData.terms.length > 0) {
-      setShowGuidance(false);
-    } else {
-      setShowGuidance(true);
+    const hasTerms = Array.isArray(formData.terms) && formData.terms.length > 0;
+    dispatch(setFieldValid({ field: 'terms', valid: hasTerms }));
+
+    if (hasTerms) {
+      dispatch(setFieldTouched({ field: 'terms', touched: true }));
     }
-  }, [formData.terms]);
+  }, [formData.terms, dispatch]);
 
   const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, nextRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLDivElement>) => {
     if (e.nativeEvent.isComposing) return;
@@ -50,7 +60,6 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   const validateInputs = (): boolean => {
     let isValid = true;
 
-    // 용어 입력 검증
     if (!newTerm.term) {
       setTermError('관련 용어를 추가하려면 용어 제목을 작성해야 합니다.');
       isValid = false;
@@ -59,7 +68,6 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
       setTermError(null);
     }
 
-    // 설명 입력 검증
     if (!newTerm.description) {
       setDescriptionError('관련 용어를 추가하려면 용어 설명을 작성해야 합니다.');
       isValid = false;
@@ -73,8 +81,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
     return isValid;
   };
 
-  const handleAddTerm = () => {
-    // 입력 검증
+  const handleAddTerm = useCallback(() => {
     if (!validateInputs()) return;
 
     setFormData((prev) => ({
@@ -82,19 +89,17 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
       terms: [...(prev.terms || []), { ...newTerm }],
     }));
 
-    // 입력 필드 초기화
     setNewTerm({ term: '', description: '', internal_link: undefined });
     setTermError(null);
     setDescriptionError(null);
     termInputRef.current?.focus();
-  };
+  }, [newTerm, setFormData]);
 
   const handleTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!newTerm.internal_link) {
       setNewTerm({ ...newTerm, term: e.target.value });
     }
 
-    // 입력 시 에러 메시지 제거
     if (e.target.value.trim()) {
       setTermError(null);
     }
@@ -103,12 +108,10 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewTerm({ ...newTerm, description: e.target.value });
 
-    // 입력 시 에러 메시지 제거
     if (e.target.value.trim()) {
       setDescriptionError(null);
     }
 
-    // Enter 키 에러 메시지 초기화
     setEnterKeyError(false);
 
     e.target.style.height = 'auto';
@@ -117,13 +120,15 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
 
   const handleLinkSelect = (url: string, title: string) => {
     setNewTerm((prev) => ({ ...prev, internal_link: url, term: title }));
-    setTermError(null); // 링크 선택 시 용어 에러 초기화
+    setTermError(null);
   };
 
-  // 버튼 활성화 여부 확인
   const isButtonActive = (): boolean => {
     return !!(newTerm.term && newTerm.description);
   };
+
+  // guidance 표시 조건
+  const showGuidance = isEmpty;
 
   return (
     <div className="p-2">
@@ -131,7 +136,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
         <div className="my-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {formData.terms.map((term, index) => (
-              <div key={index} className="bg-gray5 border border-gray4 rounded-lg p-3 flex flex-col">
+              <div key={index} className={`bg-gray5 border ${ fieldValid ? 'border-primary' : 'border-gray4' } rounded-lg p-3 flex flex-col transition-colors duration-200`}>
                 <div className="flex justify-between items-start">
                   <span className="font-medium truncate">{term.term}</span>
                   <button
@@ -167,11 +172,11 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             value={newTerm.term}
             onChange={handleTermChange}
             onKeyDown={(e) => handleInputKeyDown(e, descriptionRef)}
-            className={`w-full p-2 border ${ termError ? 'border-primary' : 'border-gray4' } text-main rounded-md ${ newTerm.internal_link ? 'bg-gray5 cursor-not-allowed' : '' }`}
+            className={`w-full p-2 border ${ termError ? 'border-level-5' : 'border-gray4' } text-main rounded-md ${ newTerm.internal_link ? 'bg-gray5 cursor-not-allowed' : '' }`}
             placeholder="각주 또는 포스트와 관련된 용어를 작성하세요."
             readOnly={!!newTerm.internal_link}
           />
-          {termError && <p className="text-sm text-primary mt-1">{termError}</p>}
+          {termError && <p className="text-sm text-level-5 mt-1">{termError}</p>}
         </div>
         <div className="w-full">
           <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
@@ -180,14 +185,14 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
             value={newTerm.description}
             onChange={handleDescriptionChange}
             onKeyDown={handleDescriptionKeyDown}
-            className={`w-full p-2 border ${ descriptionError ? 'border-primary' : 'border-gray4' } text-main rounded-md h-[88px]`}
+            className={`w-full p-2 border ${ descriptionError ? 'border-level-5' : 'border-gray4' } text-main rounded-md h-[88px]`}
             placeholder="용어에 대한 설명을 작성하세요."
           />
           {enterKeyError && (
-            <p className="text-sm text-primary mt-1">{'관련 용어 설명에 줄바꿈을 추가할 수 없습니다.'}</p>
+            <p className="text-sm text-level-5 mt-1">{'관련 용어 설명에 줄바꿈을 추가할 수 없습니다.'}</p>
           )}
           {descriptionError && !enterKeyError && (
-            <p className="text-sm text-primary mt-1">{descriptionError}</p>
+            <p className="text-sm text-level-5 mt-1">{descriptionError}</p>
           )}
         </div>
         <div className="w-full">
@@ -216,7 +221,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
           )}
         </div>
         <div className="w-full flex justify-between items-center">
-          <p className={`text-sm text-level-5 ${ showGuidance ? 'opacity-100' : 'opacity-0' }`}>{'관련 용어를 1개 이상 작성해주세요.'}</p>
+          <p className={`text-sm text-level-5 ${ showGuidance ? 'opacity-100' : 'opacity-0' }`}>{guidance}</p>
           <button
             type="button"
             onClick={handleAddTerm}
@@ -230,7 +235,6 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
           </button>
         </div>
       </div>
-
     </div>
   );
 };

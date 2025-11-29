@@ -1,5 +1,9 @@
 import Link from 'next/link';
 import React, { useState, useRef, KeyboardEvent, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/store';
+import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
+import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import { TermData, References, Tutorial, Book, Academic, Opensource } from '@/types/database';
 import { X } from 'lucide-react';
 
@@ -11,14 +15,19 @@ interface ReferencesSectionProps {
 type ReferenceTab = 'tutorial' | 'book' | 'academic' | 'opensource';
 
 const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['references']);
+
   const [activeTab, setActiveTab] = useState<ReferenceTab>('tutorial');
   const containerRef = useRef<HTMLDivElement>(null);
-  const [showGuidance, setShowGuidance] = useState<boolean>(true);
   const [linkError, setLinkError] = useState<string | null>(null);
   const [yearError, setYearError] = useState<string | null>(null);
   const [isbnError, setIsbnError] = useState<string | null>(null);
   const [doiError, setDoiError] = useState<string | null>(null);
   const [titleError, setTitleError] = useState<{ [key in ReferenceTab]?: string | null }>({});
+
+  const isEmpty = isFieldEmpty(formData as TermData, 'references');
+  const guidance = getFieldGuidance('references');
 
   const tutorialCallbackRef = useRef(false);
   const bookCallbackRef = useRef(false);
@@ -56,7 +65,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
     };
   }, [activeTab]);
 
-  // 참고 자료 추가 여부에 따라 안내 메시지 표시 여부 결정
+  // 참고 자료 추가 여부에 따라 유효성 상태 업데이트
   useEffect(() => {
     // 모든 참고 자료 타입에 대해 하나라도 추가되었는지 확인
     const hasTutorials = !!(formData?.references?.tutorials && formData.references.tutorials.length > 0);
@@ -64,11 +73,13 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
     const hasAcademic = !!(formData?.references?.academic && formData.references.academic.length > 0);
     const hasOpensource = !!(formData?.references?.opensource && formData.references.opensource.length > 0);
 
-    // 하나라도 있으면 안내 메시지 숨김
-    if (hasTutorials || hasBooks || hasAcademic || hasOpensource) {
-      setShowGuidance(false);
-    } else {
-      setShowGuidance(true);
+    const hasAny = hasTutorials || hasBooks || hasAcademic || hasOpensource;
+
+    // Redux 상태 업데이트
+    dispatch(setFieldValid({ field: 'references', valid: hasAny }));
+
+    if (hasAny) {
+      dispatch(setFieldTouched({ field: 'references', touched: true }));
     }
   }, [
     formData,
@@ -77,6 +88,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
     formData?.references?.books,
     formData?.references?.academic,
     formData?.references?.opensource,
+    dispatch,
   ]);
 
   // 빈 References 객체 생성 함수 - 타입을 사용하여 참조 에러 해결
@@ -1174,8 +1186,8 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
         )}
       </div>
       {/* 안내 메시지 추가 */}
-      {showGuidance && (
-        <p className="text-sm text-level-5">{'참고 자료를 1개 이상 작성해주세요.'}</p>
+      {isEmpty && (
+        <p className="text-sm text-level-5">{guidance}</p>
       )}
     </div>
   );

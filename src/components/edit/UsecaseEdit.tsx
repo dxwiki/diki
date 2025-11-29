@@ -1,5 +1,9 @@
 import { TermData } from '@/types/database';
-import React, { useState, KeyboardEvent, useEffect } from 'react';
+import React, { useState, KeyboardEvent, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/store';
+import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
+import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import { X } from 'lucide-react';
 
 interface UsecaseSectionProps {
@@ -9,26 +13,20 @@ interface UsecaseSectionProps {
 }
 
 const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const descriptionValid = useSelector((state: RootState) => state.formValidation.fieldValid['usecase.description']);
+  const exampleValid = useSelector((state: RootState) => state.formValidation.fieldValid['usecase.example']);
+  const descriptionTouched = useSelector((state: RootState) => state.formValidation.touched['usecase.description']);
+  const exampleTouched = useSelector((state: RootState) => state.formValidation.touched['usecase.example']);
+
   const [newIndustry, setNewIndustry] = useState('');
-  const [showDescriptionGuidance, setShowDescriptionGuidance] = useState<boolean>(true);
-  const [showExampleGuidance, setShowExampleGuidance] = useState<boolean>(true);
   const [descEnterError, setDescEnterError] = useState<boolean>(false);
   const [exampleEnterError, setExampleEnterError] = useState<boolean>(false);
 
-  // 설명 입력 여부에 따라 안내 메시지 표시 여부 결정
-  useEffect(() => {
-    if (formData.usecase?.description && formData.usecase.description.trim() !== '') {
-      setShowDescriptionGuidance(false);
-    } else {
-      setShowDescriptionGuidance(true);
-    }
-
-    if (formData.usecase?.example && formData.usecase.example.trim() !== '') {
-      setShowExampleGuidance(false);
-    } else {
-      setShowExampleGuidance(true);
-    }
-  }, [formData.usecase?.description, formData.usecase?.example]);
+  const descriptionEmpty = isFieldEmpty(formData, 'usecase.description');
+  const exampleEmpty = isFieldEmpty(formData, 'usecase.example');
+  const descriptionGuidance = getFieldGuidance('usecase.description');
+  const exampleGuidance = getFieldGuidance('usecase.example');
 
   const handleAddIndustry = () => {
     if (newIndustry.trim()) {
@@ -63,27 +61,34 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleChange(e);
-
-    if (e.target.value.trim() !== '') {
-      setShowDescriptionGuidance(false);
-    } else {
-      setShowDescriptionGuidance(true);
-    }
-
     setDescEnterError(false);
+
+    if (descriptionTouched) {
+      const isValid = e.target.value.trim() !== '';
+      dispatch(setFieldValid({ field: 'usecase.description', valid: isValid }));
+    }
   };
 
   const handleExampleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleChange(e);
-
-    if (e.target.value.trim() !== '') {
-      setShowExampleGuidance(false);
-    } else {
-      setShowExampleGuidance(true);
-    }
-
     setExampleEnterError(false);
+
+    if (exampleTouched) {
+      const isValid = e.target.value.trim() !== '';
+      dispatch(setFieldValid({ field: 'usecase.example', valid: isValid }));
+    }
   };
+
+  // blur 핸들러
+  const handleDescriptionBlur = useCallback(() => {
+    dispatch(setFieldTouched({ field: 'usecase.description', touched: true }));
+    dispatch(setFieldValid({ field: 'usecase.description', valid: !descriptionEmpty }));
+  }, [dispatch, descriptionEmpty]);
+
+  const handleExampleBlur = useCallback(() => {
+    dispatch(setFieldTouched({ field: 'usecase.example', touched: true }));
+    dispatch(setFieldValid({ field: 'usecase.example', valid: !exampleEmpty }));
+  }, [dispatch, exampleEmpty]);
 
   // Enter 키 입력 방지 핸들러
   const handleDescKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -100,6 +105,17 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
     }
   };
 
+  // border 클래스 결정
+  const getDescriptionBorderClass = () => {
+    if (descriptionValid) return 'border-primary';
+    return 'border-gray4';
+  };
+
+  const getExampleBorderClass = () => {
+    if (exampleValid) return 'border-primary';
+    return 'border-gray4';
+  };
+
   return (
     <div className="p-2">
       <div className="mb-4">
@@ -108,16 +124,17 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
           name="usecase.description"
           value={formData.usecase?.description || ''}
           onChange={handleDescriptionChange}
+          onBlur={handleDescriptionBlur}
           onKeyDown={handleDescKeyDown}
-          className="w-full p-2 border border-gray4 text-main rounded-md"
+          className={`w-full p-2 border ${ getDescriptionBorderClass() } text-main rounded-md transition-colors duration-200`}
           placeholder="포스트 내용의 사용 사례에 대한 개요를 작성하세요."
           rows={4}
           style={{ resize: 'none', height: '80px', minHeight: '80px', maxHeight: '80px', overflowY: 'auto' }}
         />
         {descEnterError ? (
-          <p className="text-sm text-primary">{'사용 사례 개요에 줄바꿈을 추가할 수 없습니다.'}</p>
-        ) : showDescriptionGuidance ? (
-          <p className="text-sm text-level-5">{'사용 사례 개요를 작성해주세요.'}</p>
+          <p className="text-sm text-level-5">{'사용 사례 개요에 줄바꿈을 추가할 수 없습니다.'}</p>
+        ) : descriptionEmpty ? (
+          <p className="text-sm text-level-5">{descriptionGuidance}</p>
         ) : null}
       </div>
 
@@ -127,16 +144,17 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
           name="usecase.example"
           value={formData.usecase?.example || ''}
           onChange={handleExampleChange}
+          onBlur={handleExampleBlur}
           onKeyDown={handleExampleKeyDown}
-          className="w-full p-2 border border-gray4 text-main rounded-md"
+          className={`w-full p-2 border ${ getExampleBorderClass() } text-main rounded-md transition-colors duration-200`}
           placeholder="구체적인 사용 사례를 작성하세요."
           rows={4}
           style={{ resize: 'none', height: '80px', minHeight: '80px', maxHeight: '80px', overflowY: 'auto' }}
         />
         {exampleEnterError ? (
-          <p className="text-sm text-primary">{'사용 사례에 줄바꿈을 추가할 수 없습니다.'}</p>
-        ) : showExampleGuidance ? (
-          <p className="text-sm text-level-5">{'사용 사례를 작성해주세요.'}</p>
+          <p className="text-sm text-level-5">{'사용 사례에 줄바꿈을 추가할 수 없습니다.'}</p>
+        ) : exampleEmpty ? (
+          <p className="text-sm text-level-5">{exampleGuidance}</p>
         ) : null}
       </div>
 
