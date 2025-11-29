@@ -15,11 +15,12 @@ interface ReferencesSectionProps {
   formData?: TermData;
   setFormData: React.Dispatch<React.SetStateAction<TermData>>;
   autoFocus?: boolean;
+  onTabToNext?: () => void;
 }
 
 type ReferenceTab = 'tutorial' | 'book' | 'academic' | 'opensource';
 
-const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProps>(({ formData, setFormData, autoFocus }, ref) => {
+const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProps>(({ formData, setFormData, autoFocus, onTabToNext }, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['references']);
   const touched = useSelector((state: RootState) => state.formValidation.touched['references']);
@@ -805,6 +806,12 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
                     <button
                       type="button"
                       onClick={handleAddTutorial}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+                          e.preventDefault();
+                          onTabToNext();
+                        }
+                      }}
                       className={`px-4 py-2 rounded-md ${
                         tutorial.title?.trim() && tutorial.external_link?.trim()
                           ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'
@@ -945,6 +952,12 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
                     <button
                       type="button"
                       onClick={handleAddBook}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+                          e.preventDefault();
+                          onTabToNext();
+                        }
+                      }}
                       className={`px-4 py-2 rounded-md ${
                         book.title?.trim() && book.external_link?.trim()
                           ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'
@@ -1072,6 +1085,12 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
                     <button
                       type="button"
                       onClick={handleAddAcademic}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+                          e.preventDefault();
+                          onTabToNext();
+                        }
+                      }}
                       className={`px-4 py-2 rounded-md ${
                         academic.title?.trim() && academic.external_link?.trim()
                           ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'
@@ -1179,6 +1198,12 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
                     <button
                       type="button"
                       onClick={handleAddOpensource}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+                          e.preventDefault();
+                          onTabToNext();
+                        }
+                      }}
                       className={`px-4 py-2 rounded-md ${
                         opensource.name?.trim() && opensource.external_link?.trim()
                           ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'

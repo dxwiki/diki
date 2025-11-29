@@ -81,19 +81,20 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
   // 다음 섹션으로 이동하는 함수
   const goToNextSection = useCallback((currentSection: SectionKey) => {
     const currentIndex = sectionList.indexOf(currentSection);
-    if (currentIndex < sectionList.length - 1) {
-      const nextSection = sectionList[currentIndex + 1];
+    // 마지막 섹션이면 첫 번째 섹션으로, 아니면 다음 섹션으로
+    const nextSection = currentIndex < sectionList.length - 1
+      ? sectionList[currentIndex + 1]
+      : sectionList[0];
 
-      // 현재 섹션 validation
-      const result = validateSection(formData, currentSection);
-      dispatch(setSectionTouched({ section: currentSection, touched: true }));
-      dispatch(setFieldErrors(result.errors));
-      dispatch(setFieldValids(result.fieldValids));
-      dispatch(setSectionError({ section: currentSection, hasError: result.hasError }));
+    // 현재 섹션 validation
+    const result = validateSection(formData, currentSection);
+    dispatch(setSectionTouched({ section: currentSection, touched: true }));
+    dispatch(setFieldErrors(result.errors));
+    dispatch(setFieldValids(result.fieldValids));
+    dispatch(setSectionError({ section: currentSection, hasError: result.hasError }));
 
-      // 다음 섹션 활성화
-      setActiveSection(nextSection);
-    }
+    // 다음 섹션 활성화
+    setActiveSection(nextSection);
   }, [formData, dispatch]);
 
   // 섹션이 활성화될 때 첫 입력 요소에 focus
@@ -296,6 +297,7 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
           ref={referencesRef}
           formData={formData}
           setFormData={setFormData}
+          onTabToNext={() => goToNextSection('references')}
         />
       ),
     },
