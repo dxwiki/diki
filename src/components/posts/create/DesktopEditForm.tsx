@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { TermData } from '@/types/database';
@@ -12,17 +12,17 @@ import {
   setSectionError,
   setSectionTouched,
 } from '@/store/formValidationSlice';
-import { validateSection } from '@/utils/formValidation';
-import KoreanTitleEdit from '@/components/edit/KoreanTitleEdit';
-import EnglishTitleEdit from '@/components/edit/EnglishTitleEdit';
-import EtcTitleEdit from '@/components/edit/EtcTitleEdit';
-import ShortDescriptionEdit from '@/components/edit/ShortDescriptionEdit';
-import DifficultyEdit from '@/components/edit/DifficultyEdit';
-import TermsEdit from '@/components/edit/TermsEdit';
-import TagsEdit from '@/components/edit/TagsEdit';
-import RelevanceEdit from '@/components/edit/RelevanceEdit';
-import UsecaseEdit from '@/components/edit/UsecaseEdit';
-import ReferencesEdit from '@/components/edit/ReferencesEdit';
+import { validateSection, validateAllSections } from '@/utils/formValidation';
+import KoreanTitleEdit, { KoreanTitleEditHandle } from '@/components/edit/KoreanTitleEdit';
+import EnglishTitleEdit, { EnglishTitleEditHandle } from '@/components/edit/EnglishTitleEdit';
+import EtcTitleEdit, { EtcTitleEditHandle } from '@/components/edit/EtcTitleEdit';
+import ShortDescriptionEdit, { ShortDescriptionEditHandle } from '@/components/edit/ShortDescriptionEdit';
+import DifficultyEdit, { DifficultyEditHandle } from '@/components/edit/DifficultyEdit';
+import TermsEdit, { TermsEditHandle } from '@/components/edit/TermsEdit';
+import TagsEdit, { TagsEditHandle } from '@/components/edit/TagsEdit';
+import RelevanceEdit, { RelevanceEditHandle } from '@/components/edit/RelevanceEdit';
+import UsecaseEdit, { UsecaseEditHandle } from '@/components/edit/UsecaseEdit';
+import ReferencesEdit, { ReferencesEditHandle } from '@/components/edit/ReferencesEdit';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 // DescriptionEdit는 MathJax를 사용하므로 동적 로드
@@ -30,6 +30,9 @@ const DescriptionEdit = dynamic(() => import('@/components/edit/DescriptionEdit'
   ssr: false,
   loading: () => <LoadingSpinner />,
 });
+
+// 섹션 순서 배열
+const sectionList: SectionKey[] = ['title', 'summary', 'difficulty', 'description', 'terms', 'tags', 'relevance', 'usecase', 'references'];
 
 interface DesktopEditFormProps {
   formData: TermData;
@@ -49,29 +52,118 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
 
   const [activeSection, setActiveSection] = useState<SectionKey>('title');
 
+  // 각 컴포넌트 refs
+  const koreanTitleRef = useRef<KoreanTitleEditHandle>(null);
+  const englishTitleRef = useRef<EnglishTitleEditHandle>(null);
+  const etcTitleRef = useRef<EtcTitleEditHandle>(null);
+  const shortDescriptionRef = useRef<ShortDescriptionEditHandle>(null);
+  const difficultyRef = useRef<DifficultyEditHandle>(null);
+  const termsRef = useRef<TermsEditHandle>(null);
+  const tagsRef = useRef<TagsEditHandle>(null);
+  const relevanceRef = useRef<RelevanceEditHandle>(null);
+  const usecaseRef = useRef<UsecaseEditHandle>(null);
+  const referencesRef = useRef<ReferencesEditHandle>(null);
+
+  // 컴포넌트 마운트 시 및 formData 변경 시 초기 유효성 체크
+  useEffect(() => {
+    const { fieldValids, sectionErrors: validatedSectionErrors } = validateAllSections(formData);
+    dispatch(setFieldValids(fieldValids));
+
+    // 에러로 표시된 섹션이 이제 유효하면 에러 상태 해제
+    sectionList.forEach((section) => {
+      // 현재 섹션이 에러 상태이고, validation 결과 에러가 없으면 에러 해제
+      if (sectionErrors[section] && !validatedSectionErrors[section]) {
+        dispatch(setSectionError({ section, hasError: false }));
+      }
+    });
+  }, [formData, dispatch, sectionErrors]);
+
+  // 다음 섹션으로 이동하는 함수
+  const goToNextSection = useCallback((currentSection: SectionKey) => {
+    const currentIndex = sectionList.indexOf(currentSection);
+    if (currentIndex < sectionList.length - 1) {
+      const nextSection = sectionList[currentIndex + 1];
+
+      // 현재 섹션 validation
+      const result = validateSection(formData, currentSection);
+      dispatch(setSectionTouched({ section: currentSection, touched: true }));
+      dispatch(setFieldErrors(result.errors));
+      dispatch(setFieldValids(result.fieldValids));
+      dispatch(setSectionError({ section: currentSection, hasError: result.hasError }));
+
+      // 다음 섹션 활성화
+      setActiveSection(nextSection);
+    }
+  }, [formData, dispatch]);
+
+  // 섹션이 활성화될 때 첫 입력 요소에 focus
+  useEffect(() => {
+    if (!activeSection) return;
+
+    const timer = setTimeout(() => {
+      switch (activeSection) {
+        case 'title':
+          koreanTitleRef.current?.focus();
+          break;
+        case 'summary':
+          shortDescriptionRef.current?.focus();
+          break;
+        case 'difficulty':
+          difficultyRef.current?.focus();
+          break;
+        case 'description':
+          // DescriptionEdit는 dynamic import라 autoFocus prop 사용
+          break;
+        case 'terms':
+          termsRef.current?.focus();
+          break;
+        case 'tags':
+          tagsRef.current?.focus();
+          break;
+        case 'relevance':
+          relevanceRef.current?.focus();
+          break;
+        case 'usecase':
+          usecaseRef.current?.focus();
+          break;
+        case 'references':
+          referencesRef.current?.focus();
+          break;
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [activeSection]);
+
+  // 안전한 문자열 trim 헬퍼
+  const safeTrim = (value: unknown): string => {
+    if (typeof value === 'string') return value.trim();
+    return '';
+  };
+
   // 섹션 완료 여부 체크
   const isSectionComplete = useCallback((key: SectionKey): boolean => {
     switch (key) {
       case 'title':
-        return !!(formData.title?.ko?.trim() && formData.title?.en?.trim());
+        return !!(safeTrim(formData.title?.ko) && safeTrim(formData.title?.en));
       case 'summary':
-        return !!(formData.description?.short?.trim());
+        return !!safeTrim(formData.description?.short);
       case 'difficulty':
-        return !!(formData.difficulty?.level && formData.difficulty?.description?.trim());
+        return !!(formData.difficulty?.level && safeTrim(formData.difficulty?.description));
       case 'description':
-        return !!(formData.description?.full?.trim());
+        return !!safeTrim(formData.description?.full);
       case 'terms':
         return Array.isArray(formData.terms) && formData.terms.length > 0;
       case 'tags':
         return Array.isArray(formData.tags) && formData.tags.length > 0;
       case 'relevance':
         return !!(
-          formData.relevance?.analyst?.description?.trim()
-          && formData.relevance?.engineer?.description?.trim()
-          && formData.relevance?.scientist?.description?.trim()
+          safeTrim(formData.relevance?.analyst?.description)
+          && safeTrim(formData.relevance?.engineer?.description)
+          && safeTrim(formData.relevance?.scientist?.description)
         );
       case 'usecase':
-        return !!(formData.usecase?.description?.trim() && formData.usecase?.example?.trim());
+        return !!(safeTrim(formData.usecase?.description) && safeTrim(formData.usecase?.example));
       case 'references':
         return (
           (Array.isArray(formData.references?.tutorials) && formData.references.tutorials.length > 0)
@@ -90,53 +182,124 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
       label: '제목',
       component: (
         <div className="space-y-4">
-          <KoreanTitleEdit formData={formData} handleChange={handleChange} />
-          <EnglishTitleEdit formData={formData} handleChange={handleChange} />
-          <EtcTitleEdit formData={formData} handleChange={handleChange} />
+          <KoreanTitleEdit
+            ref={koreanTitleRef}
+            formData={formData}
+            handleChange={handleChange}
+            onTabToNext={() => englishTitleRef.current?.focus()}
+          />
+          <EnglishTitleEdit
+            ref={englishTitleRef}
+            formData={formData}
+            handleChange={handleChange}
+            onTabToNext={() => etcTitleRef.current?.focus()}
+          />
+          <EtcTitleEdit
+            ref={etcTitleRef}
+            formData={formData}
+            handleChange={handleChange}
+            onTabToNext={() => goToNextSection('title')}
+          />
         </div>
       ),
     },
     {
       key: 'summary',
       label: '요약',
-      component: <ShortDescriptionEdit formData={formData} handleChange={handleChange} />,
+      component: (
+        <ShortDescriptionEdit
+          ref={shortDescriptionRef}
+          formData={formData}
+          handleChange={handleChange}
+          onTabToNext={() => goToNextSection('summary')}
+        />
+      ),
     },
     {
       key: 'difficulty',
       label: '난이도',
-      component: <DifficultyEdit formData={formData} handleChange={handleChange} />,
+      component: (
+        <DifficultyEdit
+          ref={difficultyRef}
+          formData={formData}
+          handleChange={handleChange}
+          onTabToNext={() => goToNextSection('difficulty')}
+        />
+      ),
     },
     {
       key: 'description',
       label: '개념',
-      component: <DescriptionEdit formData={formData} handleChange={handleChange} />,
+      component: (
+        <DescriptionEdit
+          formData={formData}
+          handleChange={handleChange}
+          autoFocus={activeSection === 'description'}
+          onTabToNext={() => goToNextSection('description')}
+        />
+      ),
     },
     {
       key: 'terms',
       label: '관련 용어',
-      component: <TermsEdit formData={formData} setFormData={setFormData} />,
+      component: (
+        <TermsEdit
+          ref={termsRef}
+          formData={formData}
+          setFormData={setFormData}
+          onTabToNext={() => goToNextSection('terms')}
+        />
+      ),
     },
     {
       key: 'tags',
       label: '관련 포스트',
-      component: <TagsEdit formData={formData} setFormData={setFormData} />,
+      component: (
+        <TagsEdit
+          ref={tagsRef}
+          formData={formData}
+          setFormData={setFormData}
+          onTabToNext={() => goToNextSection('tags')}
+        />
+      ),
     },
     {
       key: 'relevance',
       label: '직무 연관도',
-      component: <RelevanceEdit formData={formData} handleChange={handleChange} />,
+      component: (
+        <RelevanceEdit
+          ref={relevanceRef}
+          formData={formData}
+          handleChange={handleChange}
+          onTabToNext={() => goToNextSection('relevance')}
+        />
+      ),
     },
     {
       key: 'usecase',
       label: '사용 사례',
-      component: <UsecaseEdit formData={formData} setFormData={setFormData} handleChange={handleChange} />,
+      component: (
+        <UsecaseEdit
+          ref={usecaseRef}
+          formData={formData}
+          setFormData={setFormData}
+          handleChange={handleChange}
+          onTabToNext={() => goToNextSection('usecase')}
+        />
+      ),
     },
     {
       key: 'references',
       label: '참고 자료',
-      component: <ReferencesEdit formData={formData} setFormData={setFormData} />,
+      component: (
+        <ReferencesEdit
+          ref={referencesRef}
+          formData={formData}
+          setFormData={setFormData}
+        />
+      ),
     },
-  ], [formData, handleChange, setFormData]);
+  ], [formData, handleChange, setFormData, activeSection, goToNextSection]);
 
   const handleSectionClick = (key: SectionKey) => {
     // 현재 섹션이 있고, 다른 섹션으로 이동하는 경우 validation 수행
@@ -221,7 +384,9 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
               `}
             >
               {/* 아코디언 헤더 */}
-              <div
+              <button
+                type="button"
+                onClick={() => handleSectionClick(section.key)}
                 className="w-full px-6 py-4 flex items-center justify-between rounded-lg transition-colors duration-200"
               >
                 <div className="flex items-center gap-4">
@@ -239,7 +404,7 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                 <span className={`text-sm transition-all duration-200 ${ hasError ? 'text-level-5' : isComplete ? 'text-primary' : 'text-gray2' }`}>
                   {hasError ? '입력 필요' : isComplete ? '작성 완료' : isActive ? '작성중' : ''}
                 </span>
-              </div>
+              </button>
 
               {/* 아코디언 내용 */}
               {isActive && (

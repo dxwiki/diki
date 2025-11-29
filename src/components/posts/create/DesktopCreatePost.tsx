@@ -144,6 +144,15 @@ export default function DesktopCreatePost() {
     }
   };
 
+  // form 내에서 Enter 키로 인한 submit 방지
+  const handleFormKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    const target = e.target as HTMLElement;
+    // textarea나 button이 아닌 곳에서 Enter를 누르면 submit 방지
+    if (e.key === 'Enter' && target.tagName !== 'BUTTON' && target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -261,7 +270,7 @@ export default function DesktopCreatePost() {
           </button>
         </div>
 
-        <form id="createForm" onSubmit={handleSubmit} noValidate>
+        <form id="createForm" onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} noValidate>
           <div className="grid grid-cols-2 gap-8 px-8 py-0">
             {/* 왼쪽: 편집 영역 */}
             <DesktopEditForm

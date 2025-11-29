@@ -1,14 +1,32 @@
 import { TermData } from '@/types/database';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { X } from 'lucide-react';
+
+export interface EtcTitleEditHandle {
+  focus: () => void;
+}
 
 interface EtcTitleEditProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
+  onTabToNext?: () => void;
+  autoFocus?: boolean;
 }
 
-const EtcTitleEdit = ({ formData, handleChange }: EtcTitleEditProps) => {
+const EtcTitleEdit = forwardRef<EtcTitleEditHandle, EtcTitleEditProps>(({ formData, handleChange, onTabToNext, autoFocus }, ref) => {
   const [newKeyword, setNewKeyword] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current?.focus(),
+  }));
+
+  useEffect(() => {
+    if (autoFocus) {
+      const timer = setTimeout(() => inputRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
 
   const handleAddKeyword = () => {
     if (newKeyword.trim()) {
@@ -47,6 +65,10 @@ const EtcTitleEdit = ({ formData, handleChange }: EtcTitleEditProps) => {
       e.preventDefault();
       handleAddKeyword();
     }
+    if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+      e.preventDefault();
+      onTabToNext();
+    }
   };
 
   const currentEtcArray = Array.isArray(formData.title?.etc) ? formData.title.etc : [];
@@ -59,6 +81,7 @@ const EtcTitleEdit = ({ formData, handleChange }: EtcTitleEditProps) => {
       <div className="flex items-end space-x-2 mb-2">
         <div className="flex-1">
           <input
+            ref={inputRef}
             type="text"
             value={newKeyword}
             onChange={(e) => setNewKeyword(e.target.value)}
@@ -95,6 +118,8 @@ const EtcTitleEdit = ({ formData, handleChange }: EtcTitleEditProps) => {
       </div>
     </div>
   );
-};
+});
+
+EtcTitleEdit.displayName = 'EtcTitleEdit';
 
 export default EtcTitleEdit;

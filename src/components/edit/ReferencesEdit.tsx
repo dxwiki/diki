@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { useState, useRef, KeyboardEvent, useEffect } from 'react';
+import React, { useState, useRef, KeyboardEvent, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
@@ -7,16 +7,22 @@ import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import { TermData, References, Tutorial, Book, Academic, Opensource } from '@/types/database';
 import { X } from 'lucide-react';
 
+export interface ReferencesEditHandle {
+  focus: () => void;
+}
+
 interface ReferencesSectionProps {
   formData?: TermData;
   setFormData: React.Dispatch<React.SetStateAction<TermData>>;
+  autoFocus?: boolean;
 }
 
 type ReferenceTab = 'tutorial' | 'book' | 'academic' | 'opensource';
 
-const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) => {
+const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProps>(({ formData, setFormData, autoFocus }, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['references']);
+  const touched = useSelector((state: RootState) => state.formValidation.touched['references']);
 
   const [activeTab, setActiveTab] = useState<ReferenceTab>('tutorial');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -414,13 +420,16 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
     setTitleError({});
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      tutorialTitleRef.current?.focus();
-    }, 50);
+  useImperativeHandle(ref, () => ({
+    focus: () => tutorialTitleRef.current?.focus(),
+  }));
 
-    return () => clearTimeout(timer);
-  }, []);
+  useEffect(() => {
+    if (autoFocus) {
+      const timer = setTimeout(() => tutorialTitleRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -745,7 +754,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
               <div className="border border-gray4 p-3 rounded-md">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}</label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={tutorialTitleRef}
                       type="text"
@@ -772,7 +781,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}</label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={tutorialLinkRef}
                       type="url"
@@ -843,7 +852,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
               <div className="border border-gray4 p-3 rounded-md">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}</label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={bookTitleRef}
                       type="text"
@@ -912,7 +921,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}</label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={bookLinkRef}
                       type="url"
@@ -982,7 +991,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
               <div className="border border-gray4 p-3 rounded-md">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}</label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'제목'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={academicTitleRef}
                       type="text"
@@ -1039,7 +1048,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                     </p>
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}</label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={academicLinkRef}
                       type="url"
@@ -1108,7 +1117,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
               <div className="border border-gray4 p-3 rounded-md">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'이름'}</label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'이름'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={opensourceNameRef}
                       type="text"
@@ -1146,7 +1155,7 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}</label>
+                    <label className="block text-sm font-medium mb-1 text-gray0">{'링크'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
                     <input
                       ref={opensourceLinkRef}
                       type="url"
@@ -1186,11 +1195,15 @@ const ReferencesSection = ({ formData, setFormData }: ReferencesSectionProps) =>
         )}
       </div>
       {/* 안내 메시지 추가 */}
-      {isEmpty && (
+      {touched && !fieldValid ? (
         <p className="text-sm text-level-5">{guidance}</p>
-      )}
+      ) : isEmpty ? (
+        <p className="text-sm text-primary">{guidance}</p>
+      ) : null}
     </div>
   );
-};
+});
+
+ReferencesSection.displayName = 'ReferencesSection';
 
 export default ReferencesSection;

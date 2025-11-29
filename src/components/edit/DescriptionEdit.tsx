@@ -1,5 +1,5 @@
 import { TermData } from '@/types/database';
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
@@ -7,19 +7,37 @@ import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import MarkdownContent from '../posts/MarkdownContent';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+export interface DescriptionEditHandle {
+  focus: ()=> void;
+}
+
 interface DescriptionSectionProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
+  onTabToNext?: ()=> void;
+  autoFocus?: boolean;
 }
 
-const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps) => {
+const DescriptionSection = forwardRef<DescriptionEditHandle, DescriptionSectionProps>(({ formData, handleChange, onTabToNext, autoFocus }, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['description.full']);
   const touched = useSelector((state: RootState) => state.formValidation.touched['description.full']);
 
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const guideContentRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [contentHeight, setContentHeight] = useState<number | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => textareaRef.current?.focus(),
+  }));
+
+  useEffect(() => {
+    if (autoFocus) {
+      const timer = setTimeout(() => textareaRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
 
   const isEmpty = isFieldEmpty(formData, 'description.full');
   const guidance = getFieldGuidance('description.full');
@@ -37,11 +55,9 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleChange(e);
 
-    // 실시간 유효성 체크 (touched가 true인 경우에만)
-    if (touched) {
-      const isValid = e.target.value.trim() !== '';
-      dispatch(setFieldValid({ field: 'description.full', valid: isValid }));
-    }
+    // 실시간 유효성 체크 (touched와 무관하게)
+    const isValid = e.target.value.trim() !== '';
+    dispatch(setFieldValid({ field: 'description.full', valid: isValid }));
 
     e.target.style.height = 'auto';
     e.target.style.height = `calc(${ e.target.scrollHeight }px)`;
@@ -55,11 +71,20 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
     dispatch(setFieldValid({ field: 'description.full', valid: isValid }));
   }, [dispatch, isEmpty]);
 
-  // guidance 표시 조건
-  const showGuidance = isEmpty;
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Tab 키만 처리 (Enter는 줄바꿈으로 사용)
+    if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+      e.preventDefault();
+      onTabToNext();
+    }
+  };
+
+  // 빈 값이면 무조건 guidance만 표시
+  const showGuidance = isEmpty && guidance;
 
   // border 클래스 결정
   const getBorderClass = () => {
+    if (touched && !fieldValid) return 'border-level-5';
     if (fieldValid) return 'border-primary';
     return 'border-gray4';
   };
@@ -166,20 +191,24 @@ const DescriptionSection = ({ formData, handleChange }: DescriptionSectionProps)
   return (
     <div className="p-2">
       <textarea
+        ref={textareaRef}
         name="description.full"
         value={formData.description?.full || ''}
         onChange={handleDescriptionChange}
         onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         className={`w-full p-2 border ${ getBorderClass() } text-main rounded-md min-h-[646px] transition-colors duration-200`}
         placeholder="포스트에 대한 개념을 마크다운 형식으로 작성하세요."
         rows={27}
       />
       {showGuidance && (
-        <p className="text-sm text-level-5 ml-1 mb-2">{guidance}</p>
+        <p className="text-sm text-primary ml-1 mb-2">{guidance}</p>
       )}
       {tips()}
     </div>
   );
-};
+});
+
+DescriptionSection.displayName = 'DescriptionSection';
 
 export default DescriptionSection;

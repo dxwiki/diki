@@ -272,7 +272,7 @@ const PostPreview = ({
   }, [editingSections, formComponents, handleCloseSection]);
 
   return (
-    <div className={`prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto m-2 ${ isMobilePreview ? 'block p-4 rounded-3xl' : 'block md:grid md:grid-cols-[minmax(0,176px)_5fr] px-2' } bg-background`} ref={postPreviewRef}>
+    <div className={`prose h-[68vh] sm:h-[calc(100vh-280px)] overflow-y-auto m-2 ${ isMobilePreview ? 'block p-4 rounded-3xl' : 'block md:grid md:grid-cols-[minmax(0,176px)_5fr] p-2' } bg-background`} ref={postPreviewRef}>
       {!isMobilePreview && (
         <TableOfContents
           title={term.title?.ko === '' ? '한글 제목' : term.title?.ko ?? ''}

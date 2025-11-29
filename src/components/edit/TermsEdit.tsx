@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { useState, KeyboardEvent, useRef, useEffect, useCallback } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
@@ -8,14 +8,21 @@ import { Terms, TermData } from '@/types/database';
 import { X } from 'lucide-react';
 import InternalLinkSearch from './InternalLinkSearch';
 
+export interface TermsEditHandle {
+  focus: () => void;
+}
+
 interface TermsSectionProps {
   formData: TermData;
   setFormData: React.Dispatch<React.SetStateAction<TermData>>;
+  onTabToNext?: () => void;
+  autoFocus?: boolean;
 }
 
-const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
+const TermsSection = forwardRef<TermsEditHandle, TermsSectionProps>(({ formData, setFormData, onTabToNext, autoFocus }, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['terms']);
+  const touched = useSelector((state: RootState) => state.formValidation.touched['terms']);
 
   const [newTerm, setNewTerm] = useState<Terms>({});
   const [termError, setTermError] = useState<string | null>(null);
@@ -25,11 +32,23 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
   const termInputRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const linkSearchRef = useRef<HTMLDivElement>(null);
+  const addButtonRef = useRef<HTMLButtonElement>(null);
 
   const isEmpty = isFieldEmpty(formData, 'terms');
   const guidance = getFieldGuidance('terms');
 
-  // terms가 변경될 때마다 유효성 체크
+  useImperativeHandle(ref, () => ({
+    focus: () => termInputRef.current?.focus(),
+  }));
+
+  useEffect(() => {
+    if (autoFocus) {
+      const timer = setTimeout(() => termInputRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
+
+  // terms가 변경될 때마다 유효성 체크 (실시간)
   useEffect(() => {
     const hasTerms = Array.isArray(formData.terms) && formData.terms.length > 0;
     dispatch(setFieldValid({ field: 'terms', valid: hasTerms }));
@@ -127,8 +146,15 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
     return !!(newTerm.term && newTerm.description);
   };
 
-  // guidance 표시 조건
-  const showGuidance = isEmpty;
+  const handleButtonKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+      e.preventDefault();
+      onTabToNext();
+    }
+  };
+
+  // 빈 값이면 무조건 guidance만 표시
+  const showGuidance = isEmpty && guidance;
 
   return (
     <div className="p-2">
@@ -136,7 +162,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
         <div className="my-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {formData.terms.map((term, index) => (
-              <div key={index} className={`bg-gray5 border ${ fieldValid ? 'border-primary' : 'border-gray4' } rounded-lg p-3 flex flex-col transition-colors duration-200`}>
+              <div key={index} className={`bg-gray5 border ${ touched && !fieldValid ? 'border-level-5' : fieldValid ? 'border-primary' : 'border-gray4' } rounded-lg p-3 flex flex-col transition-colors duration-200`}>
                 <div className="flex justify-between items-start">
                   <span className="font-medium truncate">{term.term}</span>
                   <button
@@ -165,7 +191,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
       )}
       <div className="w-full flex flex-col items-end space-y-4 mb-4">
         <div className="w-full">
-          <label className="block text-sm font-medium mb-1 text-gray0">{'용어'}</label>
+          <label className="block text-sm font-medium mb-1 text-gray0">{'용어'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
           <input
             ref={termInputRef}
             type="text"
@@ -179,7 +205,7 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
           {termError && <p className="text-sm text-level-5 mt-1">{termError}</p>}
         </div>
         <div className="w-full">
-          <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
+          <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
           <textarea
             ref={descriptionRef}
             value={newTerm.description}
@@ -221,10 +247,18 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
           )}
         </div>
         <div className="w-full flex justify-between items-center">
-          <p className={`text-sm text-level-5 ${ showGuidance ? 'opacity-100' : 'opacity-0' }`}>{guidance}</p>
+          {touched && !fieldValid ? (
+            <p className="text-sm text-level-5">{guidance}</p>
+          ) : showGuidance ? (
+            <p className="text-sm text-primary">{guidance}</p>
+          ) : (
+            <div />
+          )}
           <button
+            ref={addButtonRef}
             type="button"
             onClick={handleAddTerm}
+            onKeyDown={handleButtonKeyDown}
             className={`px-4 py-2 rounded-md ${
               isButtonActive()
                 ? 'bg-primary dark:bg-secondary text-white hover:opacity-90'
@@ -237,6 +271,8 @@ const TermsSection = ({ formData, setFormData }: TermsSectionProps) => {
       </div>
     </div>
   );
-};
+});
+
+TermsSection.displayName = 'TermsSection';
 
 export default TermsSection;

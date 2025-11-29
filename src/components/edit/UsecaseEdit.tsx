@@ -1,18 +1,24 @@
 import { TermData } from '@/types/database';
-import React, { useState, KeyboardEvent, useCallback } from 'react';
+import React, { useState, KeyboardEvent, useCallback, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
 import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import { X } from 'lucide-react';
 
+export interface UsecaseEditHandle {
+  focus: () => void;
+}
+
 interface UsecaseSectionProps {
   formData: TermData;
   setFormData: React.Dispatch<React.SetStateAction<TermData>>;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
+  onTabToNext?: () => void;
+  autoFocus?: boolean;
 }
 
-const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionProps) => {
+const UsecaseSection = forwardRef<UsecaseEditHandle, UsecaseSectionProps>(({ formData, setFormData, handleChange, onTabToNext, autoFocus }, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const descriptionValid = useSelector((state: RootState) => state.formValidation.fieldValid['usecase.description']);
   const exampleValid = useSelector((state: RootState) => state.formValidation.fieldValid['usecase.example']);
@@ -22,6 +28,21 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
   const [newIndustry, setNewIndustry] = useState('');
   const [descEnterError, setDescEnterError] = useState<boolean>(false);
   const [exampleEnterError, setExampleEnterError] = useState<boolean>(false);
+
+  const descriptionTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const exampleTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const industryInputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => descriptionTextareaRef.current?.focus(),
+  }));
+
+  useEffect(() => {
+    if (autoFocus) {
+      const timer = setTimeout(() => descriptionTextareaRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
 
   const descriptionEmpty = isFieldEmpty(formData, 'usecase.description');
   const exampleEmpty = isFieldEmpty(formData, 'usecase.example');
@@ -41,13 +62,6 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.nativeEvent.isComposing) return;
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleAddIndustry();
-    }
-  };
 
   const handleRemoveIndustry = (index: number) => {
     setFormData((prev) => ({
@@ -63,20 +77,18 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
     handleChange(e);
     setDescEnterError(false);
 
-    if (descriptionTouched) {
-      const isValid = e.target.value.trim() !== '';
-      dispatch(setFieldValid({ field: 'usecase.description', valid: isValid }));
-    }
+    // 실시간 유효성 체크 (touched와 무관하게)
+    const isValid = e.target.value.trim() !== '';
+    dispatch(setFieldValid({ field: 'usecase.description', valid: isValid }));
   };
 
   const handleExampleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleChange(e);
     setExampleEnterError(false);
 
-    if (exampleTouched) {
-      const isValid = e.target.value.trim() !== '';
-      dispatch(setFieldValid({ field: 'usecase.example', valid: isValid }));
-    }
+    // 실시간 유효성 체크 (touched와 무관하게)
+    const isValid = e.target.value.trim() !== '';
+    dispatch(setFieldValid({ field: 'usecase.example', valid: isValid }));
   };
 
   // blur 핸들러
@@ -96,6 +108,10 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
       e.preventDefault();
       setDescEnterError(true);
     }
+    if (e.key === 'Tab' && !e.shiftKey) {
+      e.preventDefault();
+      exampleTextareaRef.current?.focus();
+    }
   };
 
   const handleExampleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -103,24 +119,47 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
       e.preventDefault();
       setExampleEnterError(true);
     }
+    if (e.key === 'Tab' && !e.shiftKey) {
+      e.preventDefault();
+      industryInputRef.current?.focus();
+    }
+  };
+
+  const handleIndustryKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing) return;
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddIndustry();
+    }
+    if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+      e.preventDefault();
+      onTabToNext();
+    }
   };
 
   // border 클래스 결정
   const getDescriptionBorderClass = () => {
+    if (descriptionTouched && !descriptionValid) return 'border-level-5';
     if (descriptionValid) return 'border-primary';
     return 'border-gray4';
   };
 
   const getExampleBorderClass = () => {
+    if (exampleTouched && !exampleValid) return 'border-level-5';
     if (exampleValid) return 'border-primary';
     return 'border-gray4';
   };
 
+  // 빈 값이면 무조건 guidance만 표시
+  const showDescGuidance = descriptionEmpty && descriptionGuidance && !descEnterError;
+  const showExampleGuidance = exampleEmpty && exampleGuidance && !exampleEnterError;
+
   return (
     <div className="p-2">
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1 text-gray0">{'개요'}</label>
+        <label className="block text-sm font-medium mb-1 text-gray0">{'개요'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
         <textarea
+          ref={descriptionTextareaRef}
           name="usecase.description"
           value={formData.usecase?.description || ''}
           onChange={handleDescriptionChange}
@@ -133,14 +172,17 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
         />
         {descEnterError ? (
           <p className="text-sm text-level-5">{'사용 사례 개요에 줄바꿈을 추가할 수 없습니다.'}</p>
-        ) : descriptionEmpty ? (
+        ) : descriptionTouched && !descriptionValid ? (
           <p className="text-sm text-level-5">{descriptionGuidance}</p>
+        ) : showDescGuidance ? (
+          <p className="text-sm text-sub">{descriptionGuidance}</p>
         ) : null}
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1 text-gray0">{'사례'}</label>
+        <label className="block text-sm font-medium mb-1 text-gray0">{'사례'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
         <textarea
+          ref={exampleTextareaRef}
           name="usecase.example"
           value={formData.usecase?.example || ''}
           onChange={handleExampleChange}
@@ -153,8 +195,10 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
         />
         {exampleEnterError ? (
           <p className="text-sm text-level-5">{'사용 사례에 줄바꿈을 추가할 수 없습니다.'}</p>
-        ) : exampleEmpty ? (
+        ) : exampleTouched && !exampleValid ? (
           <p className="text-sm text-level-5">{exampleGuidance}</p>
+        ) : showExampleGuidance ? (
+          <p className="text-sm text-sub">{exampleGuidance}</p>
         ) : null}
       </div>
 
@@ -163,10 +207,11 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
         <div className="flex items-end space-x-2 mb-2">
           <div className="flex-1">
             <input
+              ref={industryInputRef}
               type="text"
               value={newIndustry}
               onChange={(e) => setNewIndustry(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleIndustryKeyDown}
               className="w-full p-2 border border-gray4 rounded-md text-main truncate"
               placeholder="산업 분야 (ex. 모든 산업 분야, 의료, 금융, 제조, 교통, 교육, 보안, 리테일, 에너지, 농업 등)"
             />
@@ -200,6 +245,8 @@ const UsecaseSection = ({ formData, setFormData, handleChange }: UsecaseSectionP
       </div>
     </div>
   );
-};
+});
+
+UsecaseSection.displayName = 'UsecaseSection';
 
 export default UsecaseSection;

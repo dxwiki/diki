@@ -1,17 +1,35 @@
 import { TermData } from '@/types/database';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldError, setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
 import { validateField, isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 
+export interface ShortDescriptionEditHandle {
+  focus: () => void;
+}
+
 interface ShortDescriptionEditProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
   onEnterPress?: ()=> void;
+  onTabToNext?: () => void;
+  autoFocus?: boolean;
 }
 
-const ShortDescriptionEdit = ({ formData, handleChange, onEnterPress }: ShortDescriptionEditProps) => {
+const ShortDescriptionEdit = forwardRef<ShortDescriptionEditHandle, ShortDescriptionEditProps>(({ formData, handleChange, onEnterPress, onTabToNext, autoFocus }, ref) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => textareaRef.current?.focus(),
+  }));
+
+  useEffect(() => {
+    if (autoFocus) {
+      const timer = setTimeout(() => textareaRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
   const dispatch = useDispatch<AppDispatch>();
   const fieldError = useSelector((state: RootState) => state.formValidation.fieldErrors['description.short']);
   const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['description.short']);
@@ -28,15 +46,19 @@ const ShortDescriptionEdit = ({ formData, handleChange, onEnterPress }: ShortDes
 
     setEnterKeyError(false);
 
-    // 실시간 validation (touched가 true인 경우에만)
-    if (touched) {
-      const error = validateField(formData, 'description.short', value);
-      dispatch(setFieldError({ field: 'description.short', error }));
+    // 실시간 validation
+    const error = validateField(formData, 'description.short', value);
 
-      // 유효성 체크 (border-primary용)
-      const isValid = value.trim() !== '' && !error;
-      dispatch(setFieldValid({ field: 'description.short', valid: isValid }));
+    // 빈 값이 아닐 때만 에러 설정
+    if (value.trim() !== '') {
+      dispatch(setFieldError({ field: 'description.short', error }));
+    } else {
+      dispatch(setFieldError({ field: 'description.short', error: null }));
     }
+
+    // 실시간 유효성 체크 (touched와 무관하게)
+    const isValid = value.trim() !== '' && !error;
+    dispatch(setFieldValid({ field: 'description.short', valid: isValid }));
 
     handleChange(e);
   };
@@ -74,24 +96,30 @@ const ShortDescriptionEdit = ({ formData, handleChange, onEnterPress }: ShortDes
         setEnterKeyError(true);
       }
     }
+    if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+      e.preventDefault();
+      onTabToNext();
+    }
   };
 
-  // 에러가 있으면 에러 표시, 없으면 빈 값일 때만 guidance 표시
-  const showError = touched && fieldError;
-  const showGuidance = isEmpty && !showError && !enterKeyError;
+  // 빈 값이면 무조건 guidance만 표시, 아니면 에러가 있을 때만 에러 표시
+  const showError = !isEmpty && touched && fieldError;
+  const showGuidance = isEmpty && guidance && !enterKeyError;
 
   // border 클래스 결정
   const getBorderClass = () => {
     if (showError) return 'border-level-5';
+    if (touched && !fieldValid) return 'border-level-5';
     if (fieldValid) return 'border-primary';
     return 'border-gray4';
   };
 
   return (
     <div className="p-2">
-      <label className="block text-sm font-medium mb-1 text-gray0">{'짧은 설명'}</label>
+      <label className="block text-sm font-medium mb-1 text-gray0">{'짧은 설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
       <div className="relative">
         <textarea
+          ref={textareaRef}
           name="description.short"
           value={formData.description?.short || ''}
           onChange={handleTextareaChange}
@@ -112,10 +140,12 @@ const ShortDescriptionEdit = ({ formData, handleChange, onEnterPress }: ShortDes
       ) : enterKeyError ? (
         <p className="text-sm text-level-5 ml-1">{'짧은 설명에 줄바꿈을 추가할 수 없습니다.'}</p>
       ) : showGuidance ? (
-        <p className="text-sm text-level-5 ml-1">{guidance}</p>
+        <p className="text-sm text-primary ml-1">{guidance}</p>
       ) : null}
     </div>
   );
-};
+});
+
+ShortDescriptionEdit.displayName = 'ShortDescriptionEdit';
 
 export default ShortDescriptionEdit;

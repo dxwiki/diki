@@ -11,9 +11,10 @@ interface InternalLinkSearchProps {
   onSelect: (url: string, title: string)=> void;
   refocus?: boolean;
   inputRef?: RefObject<HTMLInputElement>;
+  onTabToNext?: () => void;
 }
 
-const InternalLinkSearch = ({ onSelect, refocus = false, inputRef }: InternalLinkSearchProps) => {
+const InternalLinkSearch = ({ onSelect, refocus = false, inputRef, onTabToNext }: InternalLinkSearchProps) => {
   const { terms } = useSelector((state: RootState) => state.terms);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -111,6 +112,14 @@ const InternalLinkSearch = ({ onSelect, refocus = false, inputRef }: InternalLin
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // Tab 키 처리
+    if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+      e.preventDefault();
+      setIsModalOpen(false);
+      onTabToNext();
+      return;
+    }
+
     if (!searchQuery || recommendedTerms.length === 0) return;
 
     if (e.key === 'ArrowDown') {

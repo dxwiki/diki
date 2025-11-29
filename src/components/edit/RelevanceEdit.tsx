@@ -1,18 +1,24 @@
 import { TermData } from '@/types/database';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
 import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import CreateSlider from '@/components/ui/CreateSlider';
 
+export interface RelevanceEditHandle {
+  focus: () => void;
+}
+
 interface RelevanceSectionProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
   handleCustomChange?: (name: string, value: number)=> void;
+  onTabToNext?: () => void;
+  autoFocus?: boolean;
 }
 
-const RelevanceSection = ({ formData, handleChange, handleCustomChange }: RelevanceSectionProps) => {
+const RelevanceSection = forwardRef<RelevanceEditHandle, RelevanceSectionProps>(({ formData, handleChange, handleCustomChange, onTabToNext, autoFocus }, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const analystValid = useSelector((state: RootState) => state.formValidation.fieldValid['relevance.analyst.description']);
   const engineerValid = useSelector((state: RootState) => state.formValidation.fieldValid['relevance.engineer.description']);
@@ -37,6 +43,22 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
   const [analystEnterError, setAnalystEnterError] = useState<boolean>(false);
   const [engineerEnterError, setEngineerEnterError] = useState<boolean>(false);
   const [scientistEnterError, setScientistEnterError] = useState<boolean>(false);
+
+  // textarea refs
+  const analystTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const scientistTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const engineerTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => analystTextareaRef.current?.focus(),
+  }));
+
+  useEffect(() => {
+    if (autoFocus) {
+      const timer = setTimeout(() => analystTextareaRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
 
   const analystEmpty = isFieldEmpty(formData, 'relevance.analyst.description');
   const engineerEmpty = isFieldEmpty(formData, 'relevance.engineer.description');
@@ -103,30 +125,27 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
     handleChange(e);
     setAnalystEnterError(false);
 
-    if (analystTouched) {
-      const isValid = e.target.value.trim() !== '';
-      dispatch(setFieldValid({ field: 'relevance.analyst.description', valid: isValid }));
-    }
+    // 실시간 유효성 체크 (touched와 무관하게)
+    const isValid = e.target.value.trim() !== '';
+    dispatch(setFieldValid({ field: 'relevance.analyst.description', valid: isValid }));
   };
 
   const handleEngineerDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleChange(e);
     setEngineerEnterError(false);
 
-    if (engineerTouched) {
-      const isValid = e.target.value.trim() !== '';
-      dispatch(setFieldValid({ field: 'relevance.engineer.description', valid: isValid }));
-    }
+    // 실시간 유효성 체크 (touched와 무관하게)
+    const isValid = e.target.value.trim() !== '';
+    dispatch(setFieldValid({ field: 'relevance.engineer.description', valid: isValid }));
   };
 
   const handleScientistDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleChange(e);
     setScientistEnterError(false);
 
-    if (scientistTouched) {
-      const isValid = e.target.value.trim() !== '';
-      dispatch(setFieldValid({ field: 'relevance.scientist.description', valid: isValid }));
-    }
+    // 실시간 유효성 체크 (touched와 무관하게)
+    const isValid = e.target.value.trim() !== '';
+    dispatch(setFieldValid({ field: 'relevance.scientist.description', valid: isValid }));
   };
 
   // blur 핸들러
@@ -151,6 +170,10 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
       e.preventDefault();
       setAnalystEnterError(true);
     }
+    if (e.key === 'Tab' && !e.shiftKey) {
+      e.preventDefault();
+      scientistTextareaRef.current?.focus();
+    }
   };
 
   const handleEngineerKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -158,12 +181,20 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
       e.preventDefault();
       setEngineerEnterError(true);
     }
+    if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+      e.preventDefault();
+      onTabToNext();
+    }
   };
 
   const handleScientistKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       setScientistEnterError(true);
+    }
+    if (e.key === 'Tab' && !e.shiftKey) {
+      e.preventDefault();
+      engineerTextareaRef.current?.focus();
     }
   };
 
@@ -176,19 +207,27 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
 
   // border 클래스 결정
   const getAnalystBorderClass = () => {
+    if (analystTouched && !analystValid) return 'border-level-5';
     if (analystValid) return 'border-primary';
     return 'border-gray4';
   };
 
   const getEngineerBorderClass = () => {
+    if (engineerTouched && !engineerValid) return 'border-level-5';
     if (engineerValid) return 'border-primary';
     return 'border-gray4';
   };
 
   const getScientistBorderClass = () => {
+    if (scientistTouched && !scientistValid) return 'border-level-5';
     if (scientistValid) return 'border-primary';
     return 'border-gray4';
   };
+
+  // 빈 값이면 무조건 guidance만 표시
+  const showAnalystGuidance = analystEmpty && guidance && !analystEnterError;
+  const showEngineerGuidance = engineerEmpty && guidance && !engineerEnterError;
+  const showScientistGuidance = scientistEmpty && guidance && !scientistEnterError;
 
   return (
     <div className="p-2">
@@ -204,14 +243,15 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
                 value={analystScore}
                 onChange={handleAnalystChange}
               />
-              <p className={`text-sm text-level-5 !ml-[-12px] ${ !userChangedAnalyst ? 'opacity-100' : 'opacity-0' }`}>
+              <p className={`text-sm text-primary !ml-[-12px] ${ !userChangedAnalyst ? 'opacity-100' : 'opacity-0' }`}>
                 {'연관도를 선택해주세요.(기본값: 희박)'}
               </p>
             </div>
           </div>
           <div className="grow">
-            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
+            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
             <textarea
+              ref={analystTextareaRef}
               name="relevance.analyst.description"
               value={formData.relevance?.analyst?.description || ''}
               onChange={handleAnalystDescChange}
@@ -224,8 +264,10 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
             />
             {analystEnterError ? (
               <p className="text-sm text-level-5 mt-1">{'줄바꿈을 추가할 수 없습니다.'}</p>
-            ) : analystEmpty ? (
+            ) : analystTouched && !analystValid ? (
               <p className="text-sm text-level-5 mt-1">{guidance}</p>
+            ) : showAnalystGuidance ? (
+              <p className="text-sm text-primary mt-1">{guidance}</p>
             ) : null}
           </div>
         </div>
@@ -240,14 +282,15 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
                 value={scientistScore}
                 onChange={handleScientistChange}
               />
-              <p className={`text-sm text-level-5 !ml-[-12px] ${ !userChangedScientist ? 'opacity-100' : 'opacity-0' }`}>
+              <p className={`text-sm text-primary !ml-[-12px] ${ !userChangedScientist ? 'opacity-100' : 'opacity-0' }`}>
                 {'연관도를 선택해주세요.(기본값: 희박)'}
               </p>
             </div>
           </div>
           <div className="grow">
-            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
+            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
             <textarea
+              ref={scientistTextareaRef}
               name="relevance.scientist.description"
               value={formData.relevance?.scientist?.description || ''}
               onChange={handleScientistDescChange}
@@ -260,8 +303,10 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
             />
             {scientistEnterError ? (
               <p className="text-sm text-level-5 mt-1">{'줄바꿈을 추가할 수 없습니다.'}</p>
-            ) : scientistEmpty ? (
+            ) : scientistTouched && !scientistValid ? (
               <p className="text-sm text-level-5 mt-1">{guidance}</p>
+            ) : showScientistGuidance ? (
+              <p className="text-sm text-primary mt-1">{guidance}</p>
             ) : null}
           </div>
         </div>
@@ -276,14 +321,15 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
                 value={engineerScore}
                 onChange={handleEngineerChange}
               />
-              <p className={`text-sm text-level-5 !ml-[-12px] ${ !userChangedEngineer ? 'opacity-100' : 'opacity-0' }`}>
+              <p className={`text-sm text-primary !ml-[-12px] ${ !userChangedEngineer ? 'opacity-100' : 'opacity-0' }`}>
                 {'연관도를 선택해주세요.(기본값: 희박)'}
               </p>
             </div>
           </div>
           <div className="grow">
-            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}</label>
+            <label className="block text-sm font-medium mb-1 text-gray0">{'설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
             <textarea
+              ref={engineerTextareaRef}
               name="relevance.engineer.description"
               value={formData.relevance?.engineer?.description || ''}
               onChange={handleEngineerDescChange}
@@ -296,14 +342,18 @@ const RelevanceSection = ({ formData, handleChange, handleCustomChange }: Releva
             />
             {engineerEnterError ? (
               <p className="text-sm text-level-5 mt-1">{'줄바꿈을 추가할 수 없습니다.'}</p>
-            ) : engineerEmpty ? (
+            ) : engineerTouched && !engineerValid ? (
               <p className="text-sm text-level-5 mt-1">{guidance}</p>
+            ) : showEngineerGuidance ? (
+              <p className="text-sm text-primary mt-1">{guidance}</p>
             ) : null}
           </div>
         </div>
       </div>
     </div>
   );
-};
+});
+
+RelevanceSection.displayName = 'RelevanceSection';
 
 export default RelevanceSection;

@@ -1,17 +1,35 @@
 import { TermData } from '@/types/database';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldError, setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
 import { validateField, isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 
+export interface KoreanTitleEditHandle {
+  focus: () => void;
+}
+
 interface KoreanTitleEditProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
   onEnterPress?: ()=> void;
+  onTabToNext?: () => void;
+  autoFocus?: boolean;
 }
 
-const KoreanTitleEdit = ({ formData, handleChange, onEnterPress }: KoreanTitleEditProps) => {
+const KoreanTitleEdit = forwardRef<KoreanTitleEditHandle, KoreanTitleEditProps>(({ formData, handleChange, onEnterPress, onTabToNext, autoFocus }, ref) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current?.focus(),
+  }));
+
+  useEffect(() => {
+    if (autoFocus) {
+      const timer = setTimeout(() => inputRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
   const dispatch = useDispatch<AppDispatch>();
   const fieldError = useSelector((state: RootState) => state.formValidation.fieldErrors['title.ko']);
   const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['title.ko']);
@@ -26,15 +44,27 @@ const KoreanTitleEdit = ({ formData, handleChange, onEnterPress }: KoreanTitleEd
     // 한글, 영어, 별(*), 하이픈(-) 문자만 허용
     const allowedCharsOnly = value.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z\s*-]/g, '');
 
-    // 실시간 validation (입력 중에는 에러만 체크, touched가 true인 경우에만)
-    if (touched) {
-      const error = validateField(formData, 'title.ko', allowedCharsOnly);
-      dispatch(setFieldError({ field: 'title.ko', error }));
+    // 허용되지 않는 문자가 있었는지 체크
+    const hasInvalidChars = value !== allowedCharsOnly;
 
-      // 유효성 체크 (border-primary용)
-      const isValid = allowedCharsOnly.trim() !== '' && !error;
-      dispatch(setFieldValid({ field: 'title.ko', valid: isValid }));
+    // 실시간 validation
+    let error = validateField(formData, 'title.ko', allowedCharsOnly);
+
+    // 허용되지 않는 문자가 있으면 에러 메시지 설정
+    if (hasInvalidChars) {
+      error = '한국어, 영어, 별(*), 하이픈(-) 외의 문자는 사용할 수 없습니다.';
     }
+
+    // 에러 설정 (허용되지 않는 문자 에러 또는 validation 에러)
+    if (hasInvalidChars || (allowedCharsOnly.trim() !== '' && error)) {
+      dispatch(setFieldError({ field: 'title.ko', error }));
+    } else {
+      dispatch(setFieldError({ field: 'title.ko', error: null }));
+    }
+
+    // 실시간 유효성 체크 (touched와 무관하게)
+    const isValid = allowedCharsOnly.trim() !== '' && !error;
+    dispatch(setFieldValid({ field: 'title.ko', valid: isValid }));
 
     const filteredEvent = {
       target: {
@@ -71,23 +101,30 @@ const KoreanTitleEdit = ({ formData, handleChange, onEnterPress }: KoreanTitleEd
       e.preventDefault();
       onEnterPress();
     }
+    if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+      e.preventDefault();
+      onTabToNext();
+    }
   };
 
-  // 에러가 있으면 에러 표시, 없으면 빈 값일 때만 guidance 표시
-  const showError = touched && fieldError;
-  const showGuidance = isEmpty && !showError;
+  // 에러가 있으면 에러 표시 (touched 여부와 무관하게 즉시 표시)
+  // 빈 값이고 에러가 없으면 guidance 표시
+  const showError = fieldError;
+  const showGuidance = isEmpty && !fieldError && guidance;
 
   // border 클래스 결정
   const getBorderClass = () => {
     if (showError) return 'border-level-5';
+    if (touched && !fieldValid) return 'border-level-5';
     if (fieldValid) return 'border-primary';
     return 'border-gray4';
   };
 
   return (
     <div className="p-2">
-      <label className="block text-sm font-medium mb-1 text-gray0">{'한글 제목'}</label>
+      <label className="block text-sm font-medium mb-1 text-gray0">{'한글 제목'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
       <input
+        ref={inputRef}
         type="text"
         name="title.ko"
         value={formData.title?.ko || ''}
@@ -100,10 +137,12 @@ const KoreanTitleEdit = ({ formData, handleChange, onEnterPress }: KoreanTitleEd
       {showError ? (
         <p className="text-sm text-level-5 ml-1 mt-1">{fieldError}</p>
       ) : showGuidance ? (
-        <p className="text-sm text-level-5 ml-1 mt-1">{guidance}</p>
+        <p className="text-sm text-primary ml-1 mt-1">{guidance}</p>
       ) : null}
     </div>
   );
-};
+});
+
+KoreanTitleEdit.displayName = 'KoreanTitleEdit';
 
 export default KoreanTitleEdit;

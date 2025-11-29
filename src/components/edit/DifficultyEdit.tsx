@@ -1,19 +1,37 @@
 import { TermData } from '@/types/database';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { setFieldTouched, setFieldValid } from '@/store/formValidationSlice';
 import { isFieldEmpty, getFieldGuidance } from '@/utils/formValidation';
 import CreateSlider from '@/components/ui/CreateSlider';
 
+export interface DifficultyEditHandle {
+  focus: () => void;
+}
+
 interface DifficultySectionProps {
   formData: TermData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> void;
   handleCustomChange?: (name: string, value: number)=> void;
   isModal?: boolean;
+  onTabToNext?: () => void;
+  autoFocus?: boolean;
 }
 
-const DifficultySection = ({ formData, handleChange, handleCustomChange, isModal = false }: DifficultySectionProps) => {
+const DifficultySection = forwardRef<DifficultyEditHandle, DifficultySectionProps>(({ formData, handleChange, handleCustomChange, isModal = false, onTabToNext, autoFocus }, ref) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => textareaRef.current?.focus(),
+  }));
+
+  useEffect(() => {
+    if (autoFocus) {
+      const timer = setTimeout(() => textareaRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
   const dispatch = useDispatch<AppDispatch>();
   const fieldValid = useSelector((state: RootState) => state.formValidation.fieldValid['difficulty.description']);
   const touched = useSelector((state: RootState) => state.formValidation.touched['difficulty.description']);
@@ -57,11 +75,9 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, isModal
     handleChange(e);
     setEnterKeyError(false);
 
-    // 실시간 유효성 체크 (touched가 true인 경우에만)
-    if (touched) {
-      const isValid = e.target.value.trim() !== '';
-      dispatch(setFieldValid({ field: 'difficulty.description', valid: isValid }));
-    }
+    // 실시간 유효성 체크 (touched와 무관하게)
+    const isValid = e.target.value.trim() !== '';
+    dispatch(setFieldValid({ field: 'difficulty.description', valid: isValid }));
   };
 
   const handleBlur = useCallback(() => {
@@ -78,13 +94,18 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, isModal
       e.preventDefault();
       setEnterKeyError(true);
     }
+    if (e.key === 'Tab' && !e.shiftKey && onTabToNext) {
+      e.preventDefault();
+      onTabToNext();
+    }
   };
 
-  // guidance 표시 조건
-  const showGuidance = isEmpty && !enterKeyError;
+  // 빈 값이면 무조건 guidance만 표시
+  const showGuidance = isEmpty && guidance && !enterKeyError;
 
   // border 클래스 결정
   const getBorderClass = () => {
+    if (touched && !fieldValid) return 'border-level-5';
     if (fieldValid) return 'border-primary';
     return 'border-gray4';
   };
@@ -105,8 +126,9 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, isModal
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray0">{'난이도 설명'}</label>
+          <label className="block text-sm font-medium mb-1 text-gray0">{'난이도 설명'}<span className="text-primary text-xs ml-0.5">{'*'}</span></label>
           <textarea
+            ref={textareaRef}
             name="difficulty.description"
             value={formData.difficulty?.description || ''}
             className={`w-full p-2 border ${ getBorderClass() } text-main rounded-md transition-colors duration-200`}
@@ -118,17 +140,19 @@ const DifficultySection = ({ formData, handleChange, handleCustomChange, isModal
             style={{ resize: 'none', height: '80px', minHeight: '80px', maxHeight: '80px', overflowY: 'auto' }}
           />
         </div>
-        <p className={`text-sm text-level-5 !m-0 ${ !userChangedLevel ? 'opacity-100' : 'opacity-0' }`}>
+        <p className={`text-sm text-primary !m-0 ${ !userChangedLevel ? 'opacity-100' : 'opacity-0' }`}>
           {'난이도를 선택해주세요.(기본값: 기초)'}
         </p>
         {enterKeyError ? (
           <p className="text-sm text-level-5 ml-1">{'난이도 설명에 줄바꿈을 추가할 수 없습니다.'}</p>
         ) : showGuidance ? (
-          <p className="text-sm text-level-5 ml-1">{guidance}</p>
+          <p className="text-sm text-primary ml-1">{guidance}</p>
         ) : null}
       </div>
     </div>
   );
-};
+});
+
+DifficultySection.displayName = 'DifficultySection';
 
 export default DifficultySection;
