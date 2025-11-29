@@ -1,3 +1,6 @@
+'use client';
+import styled from '@emotion/styled';
+
 interface CardComponentProps {
   score: number;
   description: string;
@@ -5,6 +8,30 @@ interface CardComponentProps {
   subtitle: string;
   className?: string;
 }
+
+const CardContainer = styled.div`
+  container-type: inline-size;
+`;
+
+const FlexRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @container (max-width: 200px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+`;
+
+const HideOnSmall = styled.span`
+  display: contents;
+
+  @container (max-width: 220px) {
+    display: none;
+  }
+`;
 
 const levelColors = {
   1: 'level-1',
@@ -55,21 +82,29 @@ const RelevanceCard = ({
   }
 
   return (
-    <div className={`group rounded-lg border overflow-hidden flex flex-col relative ${ className }
-      transition-transform duration-300 backdrop-blur-xl bg-white/5
-      border-gray1`}
+    <CardContainer
+      className={`group rounded-lg border overflow-hidden flex flex-col relative ${ className }
+        transition-transform duration-300 backdrop-blur-xl bg-white/5 border-gray1
+      `}
     >
       <div className="p-2.5 lg:p-4 flex flex-col gap-2 opacity-90 flex-1 relative z-10">
-        <div className="flex justify-between items-center">
-          <span className="flex items-center font-semibold">
-            <span className='sm:hidden lg:block mr-1 text-primary'>{tag}{' | '}</span>
+        <FlexRow>
+          <span className="flex items-center font-semibold gap-1">
+            <HideOnSmall>
+              <span className='sm:hidden lg:block text-primary'>{tag}</span>
+              <div className='bg-secondary w-0.5 h-4' />
+            </HideOnSmall>
             <span className='text-primary'>{subtitle}</span>
           </span>
-          <span className={`text-${ levelColors[score as keyof typeof levelColors] } text-xs border border-${ levelColors[score as keyof typeof levelColors] } rounded-full px-1.5 py-0.5`}>{relevance}</span>
-        </div>
+          <span className={`text-${ levelColors[score as keyof typeof levelColors] } text-xs 
+          border border-${ levelColors[score as keyof typeof levelColors] } rounded-full px-1.5 py-0.5`}
+          >
+            {relevance}
+          </span>
+        </FlexRow>
         <div className="card-description text-sub text-sm font-semibold">{description}</div>
       </div>
-    </div>
+    </CardContainer>
   );
 };
 
