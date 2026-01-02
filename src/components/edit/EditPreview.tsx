@@ -383,8 +383,10 @@ const PostPreview = ({
                 className={getSectionClassName('shortDesc', 'flex flex-col gap-2 group p-1 rounded cursor-pointer')}
                 id="shortDesc-section"
               >
-                <div className='flex items-center gap-2' onClick={(e: React.MouseEvent) => handleSectionClick('shortDesc', e)}>
-                  <Level level={0} />
+                <div className='flex items-start gap-2' onClick={(e: React.MouseEvent) => handleSectionClick('shortDesc', e)}>
+                  <div className='inline-block'>
+                    <Level level={0} />
+                  </div>
                   <div className='text-main'>
                     {term.description?.short || '포스트의 요약을 작성하세요.'}
                   </div>
@@ -398,8 +400,10 @@ const PostPreview = ({
               className={getSectionClassName('difficulty', 'flex flex-col gap-2 group p-1 rounded cursor-pointer')}
               id="difficulty-section"
             >
-              <div className='flex items-center gap-2' onClick={(e: React.MouseEvent) => handleSectionClick('difficulty', e)}>
-                <Level level={Number(term.difficulty?.level)} />
+              <div className='flex items-start gap-2' onClick={(e: React.MouseEvent) => handleSectionClick('difficulty', e)}>
+                <div className='inline-block'>
+                  <Level level={Number(term.difficulty?.level)} />
+                </div>
                 <div className='my-0.5 text-main'>
                   {term.difficulty?.description || '난이도에 대한 설명을 작성하세요.'}
                 </div>
