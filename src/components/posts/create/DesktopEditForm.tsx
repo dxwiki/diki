@@ -304,8 +304,11 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
   ], [formData, handleChange, setFormData, activeSection, goToNextSection]);
 
   const handleSectionClick = (key: SectionKey) => {
+    // 이미 활성화된 섹션을 다시 클릭하면 아무 동작도 하지 않음
+    if (activeSection === key) return;
+
     // 현재 섹션이 있고, 다른 섹션으로 이동하는 경우 validation 수행
-    if (activeSection && activeSection !== key) {
+    if (activeSection) {
       const result = validateSection(formData, activeSection);
 
       // 현재 섹션의 모든 필드를 touched로 설정
@@ -321,7 +324,7 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
       dispatch(setSectionError({ section: activeSection, hasError: result.hasError }));
     }
 
-    setActiveSection(activeSection === key ? null as unknown as SectionKey : key);
+    setActiveSection(key);
   };
 
   // 활성 섹션에 따라 섹션 순서 재정렬
