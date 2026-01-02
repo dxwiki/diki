@@ -219,7 +219,7 @@ const config: Config = {
               tableLayout: 'auto',
             },
             '.markdown-table th, .markdown-table td': {
-              border: '1px solid var(--border)',
+              border: '1px solid var(--gray3)',
               padding: '0.5rem',
               textAlign: 'left',
             },

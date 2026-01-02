@@ -122,7 +122,7 @@ const DescriptionSection = forwardRef<DescriptionEditHandle, DescriptionSectionP
           className="overflow-hidden transition-all duration-300 ease-in-out"
           style={{ height: isGuideOpen ? (contentHeight ? `${ contentHeight }px` : 'auto') : '0px' }}
         >
-          <div className={`grid grid-cols-[auto_1fr] items-center gap-px bg-gray4 text-sm ${ isGuideOpen ? 'animate-slideDown' : '' }`}>
+          <div className={`prose grid grid-cols-[auto_1fr] items-center gap-px bg-gray4 text-sm ${ isGuideOpen ? 'animate-slideDown' : '' }`}>
             <div className="bg-background flex justify-center items-center text-sub h-full px-2 border-t border-gray4 font-bold">{'문법'}</div>
             <div className="flex justify-center items-center gap-2 bg-background py-1 px-2 border-t border-gray4 font-bold">
               <MarkdownContent content="설명" />
