@@ -73,7 +73,7 @@ const TagsSection = forwardRef<TagsEditHandle, TagsSectionProps>(({ formData, se
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {formData.tags?.map((tag, index) => (
           <div key={index} className={`bg-gray5 border ${ touched && !fieldValid ? 'border-level-5' : fieldValid ? 'border-primary' : 'border-gray4' } rounded-lg px-3 py-1 flex flex-col items-center mb-2 transition-colors duration-200`}>
-            <div className="w-full flex justify-between items-start">
+            <div className="w-full flex justify-between items-center">
               <span className="font-medium truncate">{tag.name}</span>
               <button
                 type="button"

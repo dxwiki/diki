@@ -163,7 +163,7 @@ const TermsSection = forwardRef<TermsEditHandle, TermsSectionProps>(({ formData,
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {formData.terms.map((term, index) => (
               <div key={index} className={`bg-gray5 border ${ touched && !fieldValid ? 'border-level-5' : fieldValid ? 'border-primary' : 'border-gray4' } rounded-lg p-3 flex flex-col transition-colors duration-200`}>
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-center">
                   <span className="font-medium truncate">{term.term}</span>
                   <button
                     type="button"

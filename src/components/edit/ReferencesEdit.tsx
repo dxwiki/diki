@@ -733,7 +733,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-2 gap-2">
                 {formData.references.tutorials.map((item, index) => (
                   <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
-                    <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-center">
                       <span className="font-medium truncate">{item.title}</span>
                       <button
                         type="button"
@@ -834,7 +834,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-2 gap-2">
                 {formData?.references?.books?.map((item, index) => (
                   <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
-                    <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-center">
                       <span className="font-medium truncate">{item.title}</span>
                       <button
                         type="button"
@@ -982,7 +982,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-2 gap-2">
                 {formData.references.academic.map((item, index) => (
                   <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
-                    <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-center">
                       <span className="font-medium truncate">{item.title}</span>
                       <button
                         type="button"
@@ -1117,7 +1117,7 @@ const ReferencesSection = forwardRef<ReferencesEditHandle, ReferencesSectionProp
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-2 gap-2">
                 {formData.references.opensource.map((item, index) => (
                   <div key={index} className="bg-gray5 rounded-lg p-3 flex flex-col border border-gray4">
-                    <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-center">
                       <span className="font-medium truncate">{item.name}</span>
                       <button
                         type="button"
