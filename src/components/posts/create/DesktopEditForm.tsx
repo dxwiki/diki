@@ -327,22 +327,6 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
     setActiveSection(key);
   };
 
-  // 활성 섹션에 따라 섹션 순서 재정렬
-  const reorderedSections = useCallback(() => {
-    if (!activeSection) return sections;
-
-    const activeIndex = sections.findIndex((s) => s.key === activeSection);
-    if (activeIndex === -1) return sections;
-
-    // 활성 섹션부터 순환하여 배열 생성
-    return [
-      ...sections.slice(activeIndex),
-      ...sections.slice(0, activeIndex),
-    ];
-  }, [activeSection, sections]);
-
-  const orderedSections = reorderedSections();
-
   return (
     <div className="flex flex-col gap-1 pb-6">
       {/* 상단 진행도 표시 */}
@@ -359,8 +343,8 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
                 onClick={() => handleSectionClick(section.key)}
                 className={`
                   size-9 rounded-lg font-semibold transition-all duration-200
-                  ${ isActive ? 'ring ring-primary text-primary' : '' }
-                  ${ hasError ? 'bg-level-5 text-white' : isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1 hover:bg-gray3' }
+                  ${ isActive ? 'ring ring-primary ring-offset-2 ring-offset-background' : '' }
+                  ${ hasError ? 'bg-level-5 text-white' : isComplete ? 'bg-primary text-white' : isActive ? 'bg-gray4 text-primary' : 'bg-gray4 text-gray1 hover:bg-gray3' }
                 `}
                 title={section.label}
               >
@@ -373,47 +357,15 @@ export default function DesktopEditForm({ formData, setFormData, handleChange }:
 
       {/* 아코디언 섹션 */}
       <div className="flex flex-col gap-2 mx-1">
-        {orderedSections.map((section) => {
-          // const isComplete = isSectionComplete(section.key);
+        {sections.map((section, index) => {
           const isActive = activeSection === section.key;
-          // const hasError = sectionErrors[section.key];
-          const originalIndex = sections.findIndex((s) => s.key === section.key);
 
           return (
-            // <div
-            //   key={section.key}
-            //   className={`
-            //     rounded-lg border transition-all duration-200
-            //     ${ hasError ? 'border-level-5' : isComplete ? 'border-primary' : 'border-gray4' }
-            //     ${ isActive ? 'outline outline-2 outline-primary' : '' }
-            //   `}
-            // >
-            //   <button
-            //     type="button"
-            //     onClick={() => handleSectionClick(section.key)}
-            //     className="w-full px-6 py-4 flex items-center justify-between rounded-lg transition-colors duration-200"
-            //   >
-            //     <div className="flex items-center gap-4">
-            //       <span
-            //         className={`
-            //           flex items-center justify-center size-8 rounded-lg font-semibold text-sm transition-all duration-200
-            //           ${ isActive ? 'ring ring-primary text-primary' : '' }
-            //           ${ hasError ? 'bg-level-5 text-white' : isComplete ? 'bg-primary text-white' : 'bg-gray4 text-gray1' }
-            //         `}
-            //       >
-            //         {originalIndex + 1}
-            //       </span>
-            //     </div>
-            //     <span className={`text-sm transition-all duration-200 ${ hasError ? 'text-level-5' : isComplete ? 'text-primary' : 'text-gray2' }`}>
-            //       {hasError ? '입력 필요' : isComplete ? '작성 완료' : isActive ? '작성중' : ''}
-            //     </span>
-            //   </button>
-            // </div>
             <Fragment key={section.key}>
               {isActive && (
                 <div className="flex flex-col gap-3 py-4 bg-background rounded-b-lg">
                   <span className="font-semibold text-lg text-main transition-all duration-200 px-2">
-                    {originalIndex + 1}{'. '}{section.label}
+                    {index + 1}{'. '}{section.label}
                   </span>
                   {section.component}
                 </div>
