@@ -59,8 +59,21 @@ const DescriptionSection = forwardRef<DescriptionEditHandle, DescriptionSectionP
     const isValid = e.target.value.trim() !== '';
     dispatch(setFieldValid({ field: 'description.full', valid: isValid }));
 
-    e.target.style.height = 'auto';
-    e.target.style.height = `calc(${ e.target.scrollHeight }px)`;
+    const textarea = e.target;
+
+    // textarea 및 부모 컨테이너의 스크롤 위치 저장
+    const scrollTop = textarea.scrollTop;
+    const parentScrollable = textarea.closest('.overflow-y-auto') as HTMLElement | null;
+    const parentScrollTop = parentScrollable?.scrollTop ?? 0;
+
+    textarea.style.height = 'auto';
+    textarea.style.height = `calc(${ textarea.scrollHeight }px)`;
+
+    // 스크롤 위치 복원
+    textarea.scrollTop = scrollTop;
+    if (parentScrollable) {
+      parentScrollable.scrollTop = parentScrollTop;
+    }
   };
 
   const handleBlur = useCallback(() => {
