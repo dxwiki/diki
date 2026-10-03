@@ -1,5 +1,6 @@
 import { firestore } from '../src/libs/firebaseAdmin';
 import { Profile, RankInfo } from '../src/types';
+import { resolveRole } from '../src/utils/role';
 import fs from 'fs';
 import path from 'path';
 
@@ -113,7 +114,7 @@ async function fetchAndSaveProfiles(): Promise<void> {
         email: data.email,
         name: data.name,
         username: data.username,
-        role: data.role,
+        role: resolveRole(data.username, data.role),
         thumbnail: data.thumbnail,
         intro: data.intro || '',
         social: {

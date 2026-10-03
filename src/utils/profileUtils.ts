@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { Profile, SocialType } from '@/types';
+import { resolveRole } from '@/utils/role';
 
 /**
  * 쿠키에서 사용자 프로필 정보를 가져오는 함수
@@ -34,7 +35,7 @@ export function getUserProfileFromCookie(username: string) {
       name: userInfo.name,
       thumbnail: userInfo.thumbnail,
       email: userInfo.email || '', // 쿠키에 이메일 정보가 있으면 사용
-      role: userInfo.role || 'contributor',
+      role: resolveRole(userInfo.username, userInfo.role),
       social: social,
       updatedAt: new Date().toISOString(), // 현재 시간으로 설정
       showLinks: showLinks,

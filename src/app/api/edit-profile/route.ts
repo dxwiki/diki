@@ -4,6 +4,7 @@ import { Profile } from '@/types';
 import { firestore } from '@/libs/firebaseAdmin';
 import fs from 'fs';
 import path from 'path';
+import { resolveRole } from '@/utils/role';
 
 interface ProfileEditData {
   profile_data: Profile;
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
     const updateData = {
       ...data.profile_data,
       username: existingData?.username,
-      role: existingData?.role,
+      role: resolveRole(existingData?.username, existingData?.role),
       id: existingData?.id,
       updatedAt: new Date().toISOString(),
       intro: data.profile_data.intro,

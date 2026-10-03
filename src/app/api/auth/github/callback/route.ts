@@ -4,6 +4,7 @@ import { firestore } from '@/libs/firebaseAdmin';
 import path from 'path';
 import fs from 'fs';
 import { Profile } from '@/types';
+import { resolveRole } from '@/utils/role';
 
 interface GitHubEmail {
   email: string;
@@ -107,19 +108,21 @@ export async function GET(request: NextRequest) {
 
     if (existingProfile || userDoc) {
       // 기존 사용자 정보 업데이트
+      const existingData = userDoc ? userDoc.data() : existingProfile;
+      const role = resolveRole(existingData?.username || username, existingData?.role);
       firestoreData = {
-        ...(existingProfile || (userDoc ? userDoc.data() : {})),
+        ...existingData,
+        role,
         updatedAt: new Date().toISOString(),
       };
 
-      const existingData = existingProfile || (userDoc ? userDoc.data() : {});
       cookieUserInfo = {
         id: existingData?.id || newId,
         username: existingData?.username || username,
         name: existingData?.name || userData.name || userData.login,
         thumbnail: existingData?.thumbnail || userData.avatar_url,
         email: existingData?.email || primaryEmail,
-        role: existingData?.role || 'contributor',
+        role,
         social: existingData?.social || {
           github: username,
           linkedin: username,
@@ -197,15 +200,12 @@ export async function GET(request: NextRequest) {
       if (!userDoc) {
         await firestore.collection('profiles').doc(username).set(firestoreData);
       } else {
-        if (existingProfile) {
-          await userDoc.ref.update(firestoreData);
-        } else {
-          const existingData = userDoc.data();
-          await userDoc.ref.update({
-            ...firestoreData,
-            id: existingData.id || newId,
-          });
-        }
+        // 빌드 시점 스냅샷으로 Firestore를 덮어쓰지 않도록 필요한 필드만 갱신한다
+        await userDoc.ref.update({
+          role: firestoreData.role,
+          updatedAt: firestoreData.updatedAt,
+          id: userDoc.data().id || existingProfile?.id || newId,
+        });
       }
     } else if (isSignupFlow) {
       // 회원가입 플로우에서만 새 사용자 추가

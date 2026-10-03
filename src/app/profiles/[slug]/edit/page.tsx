@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Profile, SocialType } from '@/types';
+import { resolveRole } from '@/utils/role';
 import { ConfirmModal } from '@/components/ui/Modal';
 import Footer from '@/components/common/Footer';
 import { useToast } from '@/layouts/ToastProvider';
@@ -51,7 +52,7 @@ function getClientProfileFromCookie(username: string) {
       name: userInfo.name,
       thumbnail: userInfo.thumbnail,
       email: userInfo.email || '',
-      role: userInfo.role || 'contributor',
+      role: resolveRole(userInfo.username, userInfo.role),
       social: social,
       updatedAt: new Date().toISOString(),
       intro: userInfo.intro || '',
