@@ -22,6 +22,7 @@ const generateSitemapXML = (urls: SitemapURL[]): string => {
     </urlset>`;
 };
 
+// 용어 상세 페이지만 생성한다. 일반 페이지는 public/sitemap-pages.xml에서 직접 관리한다
 export const getSitemapURLs = async (): Promise<SitemapURL[]> => {
   const baseUrl = dikiMetadata.url;
   const postLists = await fetchTermsData();
@@ -30,34 +31,19 @@ export const getSitemapURLs = async (): Promise<SitemapURL[]> => {
     return date.toISOString().split('T')[0] + 'T00:00:00+00:00';
   };
 
-  // Create a copy of postLists before sorting
-  const sortedPostLists = [...postLists].sort((a, b) => {
-    const dateA = a.metadata?.updated_at || a.metadata?.created_at || new Date();
-    const dateB = b.metadata?.updated_at || b.metadata?.created_at || new Date();
-    return new Date(dateB).getTime() - new Date(dateA).getTime();
-  });
-
-  const urls: SitemapURL[] = [
-    {
-      loc: baseUrl,
-      lastmod: formatDate(new Date()),
-    },
-    {
-      loc: `${ baseUrl }/posts`,
-      lastmod: formatDate(new Date()),
-    },
-    ...sortedPostLists.map(({ url, metadata }) => {
+  return [...postLists]
+    .map(({ url, metadata }) => {
       const date = metadata?.updated_at || metadata?.created_at;
-      const lastmod = date ? new Date(date) : new Date();
-
-      return {
-        loc: `${ baseUrl }${ url }`,
-        lastmod: formatDate(lastmod),
-      };
-    }),
-  ];
-
-  return urls;
+      return { loc: `${ baseUrl }${ url }`, lastmod: formatDate(date ? new Date(date) : new Date()) };
+    })
+    .sort((a, b) => b.lastmod.localeCompare(a.lastmod));
 };
 
-export { generateSitemapXML };
+const generateSitemapIndexXML = (sitemaps: SitemapURL[]): string => {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${ sitemaps.map(({ loc, lastmod }) => `  <sitemap>\n    <loc>${ loc }</loc>\n    <lastmod>${ lastmod }</lastmod>\n  </sitemap>`).join('\n') }
+</sitemapindex>`;
+};
+
+export { generateSitemapXML, generateSitemapIndexXML };

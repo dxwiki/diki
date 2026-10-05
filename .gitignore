@@ -226,6 +226,7 @@ service-account.json
 /public/feed.xml
 /public/robots.txt
 /public/sitemap.xml
+/public/sitemap-posts.xml
 
 # output
 /src/data

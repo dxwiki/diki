@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 직접 관리하는 일반 페이지 사이트맵: 페이지 내용이 실제로 바뀐 날에만 lastmod를 갱신한다 -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.diki.kr</loc>
+    <lastmod>2026-10-05</lastmod>
+  </url>
+  <url>
+    <loc>https://www.diki.kr/posts</loc>
+    <lastmod>2026-10-05</lastmod>
+  </url>
+  <url>
+    <loc>https://www.diki.kr/contact</loc>
+    <lastmod>2025-06-14</lastmod>
+  </url>
+</urlset>
