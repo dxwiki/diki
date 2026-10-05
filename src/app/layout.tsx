@@ -20,7 +20,11 @@ interface RootLayoutProps {
   readonly children: React.ReactNode;
 }
 
+// 운영 배포가 아니면(프리뷰·로컬) 검색 노출과 분석·광고 수집을 막는다
+const isProduction = process.env.VERCEL_ENV === 'production';
+
 export const metadata: Metadata = {
+  robots: isProduction ? undefined : { index: false, follow: false },
   title: {
     template: `%s | ${ dikiMetadata.title }`,
     default: dikiMetadata.title,
@@ -60,11 +64,15 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
     <html lang='ko' suppressHydrationWarning>
       <head>
         <SiteVerification />
-        <GoogleAdSense />
-        <GoogleAnalytics />
+        {isProduction && (
+          <>
+            <GoogleAdSense />
+            <GoogleAnalytics />
+            <AmpAdScript />
+            <MicrosoftClarity />
+          </>
+        )}
         <KakaoSDK />
-        <AmpAdScript />
-        <MicrosoftClarity />
       </head>
       <body
         className={`${ fontCoding.variable } ${ fontTinos.variable } overflow-x-hidden overflow-y-auto`}
