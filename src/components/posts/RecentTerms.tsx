@@ -15,10 +15,16 @@ const SkeletonItem = () => (
   />
 );
 
-export default function RecentTerms() {
-  const { terms, isLoading } = useSelector((state: RootState) => state.terms);
+interface RecentTermsProps {
+  initialTerms?: TermData[];
+}
+
+export default function RecentTerms({ initialTerms = [] }: RecentTermsProps) {
+  const { terms: storeTerms, isLoading } = useSelector((state: RootState) => state.terms);
+  // 스토어가 채워지기 전에는 서버에서 받은 최신 용어로 링크를 그려 검색엔진도 읽을 수 있게 한다
+  const terms = storeTerms.length > 0 ? storeTerms : initialTerms;
   const containerRef = useRef<HTMLDivElement>(null);
-  const [visibleItems, setVisibleItems] = useState<TermData[]>([]);
+  const [visibleItems, setVisibleItems] = useState<TermData[]>(() => initialTerms.slice(0, skeleton_count));
 
   const recentTerms = [...terms]
     .sort((a, b) => {
@@ -64,7 +70,7 @@ export default function RecentTerms() {
     };
   }, [recentTerms]);
 
-  const isLocalLoading = isLoading || (terms.length === 0);
+  const isLocalLoading = terms.length === 0 || (isLoading && initialTerms.length === 0);
 
   return (
     <div className='w-full space-y-1.5'>

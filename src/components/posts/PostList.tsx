@@ -208,7 +208,7 @@ const PostList = ({ itemsPerPage, isModifyMode = false }: PaginationProps) => {
   return (
     <>
       <div className="w-full flex justify-between items-center mb-5">
-        <h1 className='flex items-center gap-2 text-sub'>
+        <p className='flex items-center gap-2 text-sub'>
           {isClient && (
             <>
               {'검색결과'}
@@ -216,7 +216,7 @@ const PostList = ({ itemsPerPage, isModifyMode = false }: PaginationProps) => {
               {'/ '}{terms.length}{' 개'}
             </>
           )}
-        </h1>
+        </p>
         <SortButtons />
       </div>
       <div className='sm:min-h-[804px] lg:min-h-[598px]'>

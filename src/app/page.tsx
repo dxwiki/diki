@@ -1,6 +1,7 @@
 import LogoAnimation from '@/components/common/LogoAnimation';
 import SearchInput from '@/components/search/SearchInput';
 import RecentTerms from '@/components/posts/RecentTerms';
+import { readPublishedTerms, sortByCreatedDesc } from '@/utils/termsServer';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
@@ -41,6 +42,10 @@ export function generateMetadata(): Metadata {
 }
 
 export default async function Home() {
+  const recentTerms = sortByCreatedDesc(readPublishedTerms())
+    .slice(0, 10)
+    .map(({ id, url, title, metadata }) => ({ id, url, title, metadata }));
+
   return (
     <>
       <JsonLdSchema
@@ -66,7 +71,7 @@ export default async function Home() {
             <SearchInput />
           </div>
           <div className='w-full absolute top-20'>
-            <RecentTerms />
+            <RecentTerms initialTerms={recentTerms} />
           </div>
           <div className='w-full absolute top-48'>
             <AdContainer
