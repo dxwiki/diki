@@ -23,7 +23,8 @@ export function generateWebSiteSchema() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     'name': dikiMetadata.title,
-    'url': dikiMetadata.url,
+    'alternateName': ['Diki', '데이터위키', 'DataWiki'],
+    'url': `${ dikiMetadata.url }/`,
     'description': dikiMetadata.description,
     'potentialAction': {
       '@type': 'SearchAction',
@@ -42,6 +43,7 @@ export function generateOrganizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     'name': dikiMetadata.title,
+    'alternateName': ['Diki', '데이터위키', 'DataWiki'],
     'url': dikiMetadata.url,
     'logo': `${ dikiMetadata.url }/logo.png`,
     'sameAs': [

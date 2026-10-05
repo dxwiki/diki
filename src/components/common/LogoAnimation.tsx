@@ -57,7 +57,7 @@ const LogoAnimation = ({ fontSize = '4rem', delayAnimation = true }: LogoAnimati
 
   return (
     <div className="relative">
-      <h1 className="sr-only">{'Diki, DataWiki, 디키, 데이터위키'}</h1>
+      <h1 className="sr-only">{'디키'}</h1>
 
       <div className="flex font-bold text-main" style={{ fontSize : responsiveFontSize }}>
         <div className="relative flex justify-end overflow-hidden w-[6ch]">
