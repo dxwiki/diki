@@ -233,3 +233,7 @@ service-account.json
 .cursor
 claude.md
 .claude
+
+# 기획 문서 (로컬 전용)
+TODO.md
+docs/
