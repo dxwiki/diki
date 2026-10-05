@@ -5,8 +5,8 @@ import { dikiMetadata } from '../src/constants';
   const createRobotsTxt = () => {
     const siteUrl = dikiMetadata.url;
 
-    // 프리뷰 등 운영이 아닌 배포는 전체 크롤링을 막는다
-    if (process.env.VERCEL_ENV !== 'production') {
+    // Vercel 프리뷰·개발 배포는 전체 크롤링을 막는다(값이 없으면 운영으로 간주)
+    if ((process.env.VERCEL_ENV ?? 'production') !== 'production') {
       return 'User-agent: *\nDisallow: /\n';
     }
 

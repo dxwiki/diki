@@ -17,8 +17,8 @@ interface AdContainerProps {
   containerClassName?: string;
 }
 
-// 운영 배포에서만 광고를 불러오고, 프리뷰·로컬에서는 같은 크기의 빈 영역만 남긴다
-const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+// 프리뷰·로컬 개발에서는 광고 대신 같은 크기의 빈 영역만 남긴다(Vercel 값이 없으면 NODE_ENV로 판단)
+const isProduction = (process.env.NEXT_PUBLIC_VERCEL_ENV ?? (process.env.NODE_ENV === 'production' ? 'production' : 'development')) === 'production';
 
 const AdContainer = ({ slot, format, className, containerClassName }: AdContainerProps) => {
   useEffect(() => {

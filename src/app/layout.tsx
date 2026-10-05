@@ -20,8 +20,8 @@ interface RootLayoutProps {
   readonly children: React.ReactNode;
 }
 
-// 운영 배포가 아니면(프리뷰·로컬) 검색 노출과 분석·광고 수집을 막는다
-const isProduction = process.env.VERCEL_ENV === 'production';
+// Vercel 프리뷰·개발 배포에서만 검색 노출과 분석·광고 수집을 막는다(값이 없으면 운영으로 간주)
+const isProduction = (process.env.VERCEL_ENV ?? 'production') === 'production';
 
 export const metadata: Metadata = {
   robots: isProduction ? undefined : { index: false, follow: false },
