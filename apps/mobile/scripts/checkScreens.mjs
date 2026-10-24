@@ -23,8 +23,8 @@ const TABS = [
 ];
 
 const tabLayout = read('app/(tabs)/_layout.tsx');
-const screens = [...tabLayout.matchAll(/<Tabs\.Screen\s+name=\{?'([^']+)'\}?\s+options=\{\{\s*title:\s*'([^']+)'/g)]
-  .map((m) => ({ name: m[1], title: m[2] }));
+const screens = [...tabLayout.matchAll(/<Tabs\.Screen\s+name=(?:"([^"]+)"|\{'([^']+)'\})\s+options=\{\{\s*title:\s*'([^']+)'/g)]
+  .map((m) => ({ name: m[1] ?? m[2], title: m[3] }));
 const got = screens.map((s) => `${ s.name }:${ s.title }`).join(', ');
 const want = TABS.map((s) => `${ s.name }:${ s.title }`).join(', ');
 if (got !== want) failures.push(`탭 구성·순서 다름 (기대 ${ want } / 실제 ${ got })`);
@@ -35,11 +35,18 @@ const comingSoon = read('components/ui/ComingSoon.tsx');
 if (!comingSoon.includes('준비 중')) failures.push('ComingSoon 에 준비 중 안내가 없다');
 if (!/openWeb\(\s*webPath\s*\)/.test(comingSoon)) failures.push('ComingSoon 버튼이 openWeb 으로 웹을 열지 않는다');
 
-for (const [file, webPath] of [['app/(tabs)/learn.tsx', '/learn'], ['app/(tabs)/interview.tsx', '/interview']]) {
+for (const [file, webPath] of [['app/(tabs)/interview.tsx', '/interview']]) {
   const src = read(file);
   if (!/<ComingSoon\b/.test(src)) failures.push(`${ file } 가 준비 중 화면을 쓰지 않는다`);
-  if (!src.includes(`webPath={'${ webPath }'}`)) failures.push(`${ file } 에 ${ webPath } 링크가 없다`);
+  if (!src.includes(`webPath="${ webPath }"`) && !src.includes(`webPath={'${ webPath }'}`)) failures.push(`${ file } 에 ${ webPath } 링크가 없다`);
 }
+
+const learnTab = read('app/(tabs)/learn.tsx');
+if (/<ComingSoon\b/.test(learnTab)) failures.push('학습 탭이 아직 준비 중 화면이다');
+if (!/useLearnCourse\(\)/.test(learnTab) || !/<PhaseList\b/.test(learnTab)) failures.push('학습 탭이 코스 지도(useLearnCourse·PhaseList)를 그리지 않는다');
+const lessonRoute = read('app/learn/[stage]/[phase]/[step].tsx');
+if (!/buildLesson\(/.test(lessonRoute) || !/<LessonRunner\b/.test(lessonRoute)) failures.push('레슨 화면이 buildLesson·LessonRunner 를 쓰지 않는다');
+if (!read('app/_layout.tsx').includes('<ProgressProvider>')) failures.push('루트 레이아웃에 ProgressProvider 가 없다');
 
 const links = read('lib/links.ts');
 if (!/Linking\.openURL\(/.test(links)) failures.push('lib/links.ts 가 Linking.openURL(시스템 브라우저)을 쓰지 않는다');
@@ -77,7 +84,7 @@ const expectIn = (label, src, checks) => {
 
 const recent = read('lib/recent/RecentTermsProvider.tsx');
 expectIn('lib/recent/RecentTermsProvider.tsx', recent, [
-  ['AsyncStorage 키 diki.recentTerms.v1 이 없다', "'diki.recentTerms.v1'"],
+  ['AsyncStorage 키 diki.recentTerms.v1 이 없다', '\'diki.recentTerms.v1\''],
   ['AsyncStorage 를 쓰지 않는다', /from\s+'@react-native-async-storage\/async-storage'/],
   ['저장값을 parseRecentIds 로 읽지 않는다', /parseRecentIds\(\s*await\s+AsyncStorage\.getItem\(/],
   ['addRecentTermId 로 추가하지 않는다', 'addRecentTermId('],
@@ -115,7 +122,7 @@ expectIn('components/terms/useTermListing.ts', listingHook, [
   ['디바운스 타이머가 없다', /setTimeout\([\s\S]*SEARCH_DEBOUNCE_MS\)/],
   ['콘텐츠가 바뀔 때 인덱스를 만들지 않는다', /buildSearchIndex\(terms\);[\s\S]*\},\s*\[terms\]\)/],
   ['listTerms 를 쓰지 않는다', /listTerms\(terms,\s*options\)/],
-  ['검색어가 생길 때 관련도가 기본값이 되지 않는다', "setSortType('relevance')"],
+  ['검색어가 생길 때 관련도가 기본값이 되지 않는다', 'setSortType(\'relevance\')'],
   ['난이도 범위를 ranges.LEVEL 로 넘기지 않는다', /ranges\s*=\s*\{\s*LEVEL:/],
   ['수정일 기간을 updatedPeriodRange 로 넘기지 않는다', /updated\s*=\s*updatedPeriodRange\(/],
   ['초기화가 DEFAULT_LISTING 으로 돌아가지 않는다', /reset\s*=\s*useCallback\([\s\S]*DEFAULT_LISTING\.sortType[\s\S]*DEFAULT_LISTING\.sortDirection/],
@@ -136,8 +143,8 @@ expectIn('components/terms/FilterSheet.tsx', filterSheet, [
 
 const emptyResult = read('components/terms/EmptyResult.tsx');
 expectIn('components/terms/EmptyResult.tsx', emptyResult, [
-  ['결과 없음 안내가 없다', "'결과 없음'"],
-  ['필터 초기화 버튼이 없다', /label=\{'필터 초기화'\}[\s\S]*onPress=\{onReset\}/],
+  ['결과 없음 안내가 없다', '\'결과 없음\''],
+  ['필터 초기화 버튼이 없다', /label=(?:"필터 초기화"|\{'필터 초기화'\})[\s\S]*onPress=\{onReset\}/],
 ]);
 
 const termPath = read('components/terms/termPath.ts');
@@ -149,16 +156,16 @@ const detailScreen = read('app/posts/[slug].tsx');
 expectIn('상세 화면 app/posts/[slug].tsx', detailScreen, [
   ['findTermBySlug 로 용어를 찾지 않는다', /findTermBySlug\(terms,\s*slugValue\)/],
   ['찾을 수 없음 화면이 없다', /if \(!term\)[\s\S]*<NotFound\b/],
-  ["용어사전으로 돌아가는 router.replace('/(tabs)/terms') 가 없다", "router.replace('/(tabs)/terms')"],
+  ['용어사전으로 돌아가는 router.replace(\'/(tabs)/terms\') 가 없다', 'router.replace(\'/(tabs)/terms\')'],
   ['찾은 용어를 최근 본 용어에 기록하지 않는다', /useRecentTerms\(\)[\s\S]*addRecentTerm\(termId\)/],
   ['TermDetail 로 상세를 그리지 않는다', '<TermDetail'],
 ]);
-expectIn('app/_layout.tsx', rootLayout, [["Stack 에 posts/[slug] 화면이 없다", "name={'posts/[slug]'}"]]);
+expectIn('app/_layout.tsx', rootLayout, [['Stack 에 posts/[slug] 화면이 없다', /name=(?:"posts\/\[slug\]"|\{'posts\/\[slug\]'\})/]]);
 
 const notFound = read('components/detail/NotFound.tsx');
 expectIn('components/detail/NotFound.tsx', notFound, [
-  ['용어를 찾을 수 없음 문구가 없다', "'용어를 찾을 수 없음'"],
-  ['용어사전으로 버튼이 없다', /label=\{'용어사전으로'\}[\s\S]*onPress=\{onBack\}/],
+  ['용어를 찾을 수 없음 문구가 없다', '\'용어를 찾을 수 없음\''],
+  ['용어사전으로 버튼이 없다', /label=(?:"용어사전으로"|\{'용어사전으로'\})[\s\S]*onPress=\{onBack\}/],
 ]);
 
 const termDetail = read('components/detail/TermDetail.tsx');
@@ -242,7 +249,7 @@ for (const rel of colorFiles) {
   if (named.length) failures.push(`${ rel } 에 theme 밖 색 이름이 있다: ${ named.join(', ') }`);
 }
 
-const leftovers =['app/(tabs)/two.tsx', 'app/modal.tsx', 'components/EditScreenInfo.tsx', 'components/Themed.tsx', 'constants/Colors.ts'];
+const leftovers = ['app/(tabs)/two.tsx', 'app/modal.tsx', 'components/EditScreenInfo.tsx', 'components/Themed.tsx', 'constants/Colors.ts'];
 for (const rel of leftovers) {
   if (fs.existsSync(path.join(appRoot, rel))) failures.push(`템플릿 예제 파일이 남아 있다: ${ rel }`);
 }

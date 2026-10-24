@@ -1,6 +1,7 @@
 import { Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ContentProvider } from '@/lib/content';
+import { ProgressProvider } from '@/lib/progress';
 import { RecentTermsProvider } from '@/lib/recent';
 import { getNavigationTheme, useColorSchemeName } from '@/theme';
 
@@ -12,17 +13,23 @@ export default function RootLayout() {
     <ThemeProvider value={getNavigationTheme(scheme)}>
       <ContentProvider>
         <RecentTermsProvider>
-          <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-          <Stack>
-            <Stack.Screen
-              name={'(tabs)'}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name={'posts/[slug]'}
-              options={{ title: '', headerBackTitle: '뒤로' }}
-            />
-          </Stack>
+          <ProgressProvider>
+            <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+            <Stack>
+              <Stack.Screen
+                name="(tabs)"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="posts/[slug]"
+                options={{ title: '', headerBackTitle: '뒤로' }}
+              />
+              <Stack.Screen
+                name="learn/[stage]/[phase]/[step]"
+                options={{ title: '', headerBackTitle: '코스' }}
+              />
+            </Stack>
+          </ProgressProvider>
         </RecentTermsProvider>
       </ContentProvider>
     </ThemeProvider>

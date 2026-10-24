@@ -76,3 +76,4 @@ export {
   contentUrl,
   syncContent,
 } from './content';
+export * from './course';

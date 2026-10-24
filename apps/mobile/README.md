@@ -1,7 +1,7 @@
 # Diki 모바일 앱 (@diki/mobile)
 
 Expo Router 기반 iOS·Android 앱. 저장소 루트의 npm workspaces 로 설치한다.
-이번 범위는 용어사전(목록·검색·정렬·필터·최근 본 용어·상세)이다. 학습·면접·로그인은 준비 중 화면만 있다.
+현재 범위는 용어사전(목록·검색·정렬·필터·최근 본 용어·상세)과 학습(코스 지도·레슨)이다. 면접·로그인은 준비 중 화면만 있다. 학습 진도는 기기에만 저장된다.
 
 ## 설치
 
@@ -54,7 +54,7 @@ npm run check:mathjax            # MathJax 설치본 자산
 npx expo export --platform all --output-dir dist
 ```
 
-공용 로직 테스트는 저장소 루트에서 `npm run --workspace @diki/core test:<parity|content|listing|recent|app-parity|detail|markdown>` 로 실행한다.
+공용 로직 테스트는 저장소 루트에서 `npm run --workspace @diki/core test:<parity|content|listing|recent|app-parity|detail|markdown|course>` 로 실행한다.
 
 ## React 버전
 
