@@ -7,13 +7,13 @@ import SectionBlock from './SectionBlock';
 
 interface RecommendationsSectionProps {
   terms: TermData[];
-  onPressTerm: (term: TermData) => void;
+  onPressTerm: (term: TermData)=> void;
 }
 
 export default function RecommendationsSection({ terms, onPressTerm }: RecommendationsSectionProps) {
   const colors = useThemeColors();
   return (
-    <SectionBlock title={'추천 포스트'}>
+    <SectionBlock title="추천 포스트">
       <View style={[styles.list, { borderColor: colors['extreme-light'] }]}>
         {terms.map((term, index) => (
           <TermListItem

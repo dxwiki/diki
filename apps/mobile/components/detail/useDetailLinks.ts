@@ -7,9 +7,9 @@ import { openExternal } from '@/lib/links';
 export const detailPath = (slug: string): string => `/posts/${ encodeURIComponent(slug) }`;
 
 export interface DetailLinks {
-  openSlug: (slug: string) => void;
-  openTerm: (term: TermData) => void;
-  openHref: (href: string) => void;
+  openSlug: (slug: string)=> void;
+  openTerm: (term: TermData)=> void;
+  openHref: (href: string)=> void;
 }
 
 // 내부 용어는 앱 상세로, 외부 주소는 시스템 브라우저(Linking.openURL)로 연다

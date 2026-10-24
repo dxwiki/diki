@@ -10,7 +10,7 @@ export default function Screen({ children }: ScreenProps) {
   const colors = useThemeColors();
   return (
     <ScrollView
-      contentInsetAdjustmentBehavior={'automatic'}
+      contentInsetAdjustmentBehavior="automatic"
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={styles.content}
     >

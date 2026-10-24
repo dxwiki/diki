@@ -18,7 +18,7 @@ export default function DifficultySection({ level, description }: DifficultySect
         <Text style={[styles.badgeText, { color: levelColor }]}>{difficultyLabel(level) ?? `${ level }`}</Text>
       </View>
       <View style={styles.description}>
-        {description ? <RichText text={description} /> : <Text variant={'caption'}>{'난이도에 대한 설명을 입력하세요.'}</Text>}
+        {description ? <RichText text={description} /> : <Text variant="caption">{'난이도에 대한 설명을 입력하세요.'}</Text>}
       </View>
     </View>
   );

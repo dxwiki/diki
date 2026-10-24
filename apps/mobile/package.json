@@ -8,6 +8,8 @@
     "ios": "expo start --ios",
     "android": "expo start --android",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .js,.mjs,.ts,.tsx",
+    "lint:fix": "eslint --fix . --ext .js,.mjs,.ts,.tsx",
     "check:theme": "node scripts/checkTheme.mjs",
     "check:screens": "node scripts/checkScreens.mjs",
     "check:react": "node scripts/checkReactResolution.mjs",

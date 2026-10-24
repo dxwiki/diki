@@ -20,7 +20,7 @@ interface RelevanceSectionProps {
 export default function RelevanceSection({ items }: RelevanceSectionProps) {
   const colors = useThemeColors();
   return (
-    <SectionBlock title={'직무 연관도'}>
+    <SectionBlock title="직무 연관도">
       {items.map((item) => {
         const label = ROLE_LABELS[item.role];
         const score = Math.min(Math.max(Math.round(item.score), 0), MAX_SCORE);
@@ -32,7 +32,7 @@ export default function RelevanceSection({ items }: RelevanceSectionProps) {
             <View style={styles.head}>
               <View>
                 <Text style={styles.title}>{label.title}</Text>
-                <Text variant={'caption'}>{label.subtitle}</Text>
+                <Text variant="caption">{label.subtitle}</Text>
               </View>
               <View
                 style={styles.score}

@@ -15,7 +15,7 @@ const upstreamResolve = config.resolver.resolveRequest;
 // MathJax 설치본(assets/mathjax/tex-svg-full.txt)을 자산으로 번들한다
 if (!config.resolver.assetExts.includes('txt')) config.resolver.assetExts.push('txt');
 
-config.resolver.extraNodeModules ={ ...config.resolver.extraNodeModules, ...pinnedRoots };
+config.resolver.extraNodeModules = { ...config.resolver.extraNodeModules, ...pinnedRoots };
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   const name = pinned.find((p) => moduleName === p || moduleName.startsWith(`${ p }/`));
   const resolve = upstreamResolve ?? context.resolveRequest;

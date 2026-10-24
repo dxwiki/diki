@@ -6,7 +6,7 @@ import { termKey } from './termPath';
 
 interface RecentTermsProps {
   terms: TermData[];
-  onPress: (term: TermData) => void;
+  onPress: (term: TermData)=> void;
   emptyText?: string;
 }
 
@@ -17,18 +17,18 @@ export default function RecentTerms({ terms, onPress, emptyText }: RecentTermsPr
     <View style={styles.wrap}>
       <Text style={styles.heading}>{'최근 본 용어'}</Text>
       {terms.length === 0 ? (
-        <Text variant={'caption'}>{emptyText}</Text>
+        <Text variant="caption">{emptyText}</Text>
       ) : (
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.row}
-          keyboardShouldPersistTaps={'handled'}
+          keyboardShouldPersistTaps="handled"
         >
           {terms.map((term, index) => (
             <Pressable
               key={termKey(term, index)}
-              accessibilityRole={'button'}
+              accessibilityRole="button"
               onPress={() => onPress(term)}
               style={({ pressed }) => [
                 styles.card,
@@ -44,7 +44,7 @@ export default function RecentTerms({ terms, onPress, emptyText }: RecentTermsPr
               </Text>
               {term.title?.en ? (
                 <Text
-                  variant={'caption'}
+                  variant="caption"
                   numberOfLines={1}
                 >
                   {term.title.en}

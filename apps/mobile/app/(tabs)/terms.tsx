@@ -48,7 +48,7 @@ export default function TermsScreen() {
           onPress={openTerm}
         />
       ) : null}
-      <Text variant={'caption'}>{`${ listing.results.length }개 용어`}</Text>
+      <Text variant="caption">{`${ listing.results.length }개 용어`}</Text>
     </View>
   );
 
@@ -70,7 +70,7 @@ export default function TermsScreen() {
             />
           </View>
           <Pressable
-            accessibilityRole={'button'}
+            accessibilityRole="button"
             accessibilityLabel={listing.filterActive ? '필터 열기, 적용 중' : '필터 열기'}
             onPress={() => setFilterOpen(true)}
             style={({ pressed }) => [
@@ -93,8 +93,8 @@ export default function TermsScreen() {
         renderItem={renderItem}
         ListHeaderComponent={header}
         ListEmptyComponent={<EmptyResult onReset={listing.reset} />}
-        keyboardShouldPersistTaps={'handled'}
-        keyboardDismissMode={'on-drag'}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         initialNumToRender={20}
       />
       <FilterSheet

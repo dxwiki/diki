@@ -39,7 +39,7 @@ const renderSection = (section: DetailSection, links: DetailLinks) => {
       );
     case 'description':
       return (
-        <SectionBlock title={'개념'}>
+        <SectionBlock title="개념">
           <ArticleWebView content={section.content} />
         </SectionBlock>
       );

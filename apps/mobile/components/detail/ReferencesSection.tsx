@@ -65,7 +65,7 @@ const hasLink = (link: string): boolean => link.trim() !== '' && link.trim() !==
 
 interface ReferencesSectionProps {
   references: References;
-  onOpenLink: (href: string) => void;
+  onOpenLink: (href: string)=> void;
 }
 
 export default function ReferencesSection({ references, onOpenLink }: ReferencesSectionProps) {
@@ -73,7 +73,7 @@ export default function ReferencesSection({ references, onOpenLink }: References
   const groups = toGroups(references);
   if (groups.length === 0) return null;
   return (
-    <SectionBlock title={'참고 자료'}>
+    <SectionBlock title="참고 자료">
       {groups.map((group) => (
         <View
           key={group.label}
@@ -93,7 +93,7 @@ export default function ReferencesSection({ references, onOpenLink }: References
               {row.details.map((detail, detailIndex) => (
                 <Text
                   key={detailIndex}
-                  variant={'caption'}
+                  variant="caption"
                 >
                   {detail}
                 </Text>

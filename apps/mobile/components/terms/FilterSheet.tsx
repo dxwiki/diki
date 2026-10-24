@@ -21,8 +21,8 @@ const LEVELS = [1, 2, 3, 4, 5];
 interface FilterSheetProps {
   visible: boolean;
   value: TermListingFilterState;
-  onApply: (next: TermListingFilterState) => void;
-  onClose: () => void;
+  onApply: (next: TermListingFilterState)=> void;
+  onClose: ()=> void;
 }
 
 export default function FilterSheet({ visible, value, onApply, onClose }: FilterSheetProps) {
@@ -40,18 +40,18 @@ export default function FilterSheet({ visible, value, onApply, onClose }: Filter
     <Modal
       visible={visible}
       transparent
-      animationType={'slide'}
+      animationType="slide"
       onRequestClose={onClose}
     >
       <View style={styles.wrap}>
         <Pressable
           style={[styles.backdrop, { backgroundColor: colors['background-opacity'] }]}
-          accessibilityLabel={'필터 닫기'}
+          accessibilityLabel="필터 닫기"
           onPress={onClose}
         />
         <View style={[styles.sheet, { backgroundColor: colors.background, borderColor: colors.border }]}>
           <ScrollView contentContainerStyle={styles.content}>
-            <Text variant={'title'}>{'필터'}</Text>
+            <Text variant="title">{'필터'}</Text>
             <Text>{'난이도 최소'}</Text>
             <View style={styles.row}>
               {LEVELS.map((level) => (
@@ -88,14 +88,14 @@ export default function FilterSheet({ visible, value, onApply, onClose }: Filter
             <View style={styles.actions}>
               <View style={styles.action}>
                 <Button
-                  label={'초기화'}
-                  variant={'outline'}
+                  label="초기화"
+                  variant="outline"
                   onPress={() => setDraft({ level: FULL_LEVEL_RANGE, period: 'all' })}
                 />
               </View>
               <View style={styles.action}>
                 <Button
-                  label={'적용'}
+                  label="적용"
                   onPress={() => onApply(draft)}
                 />
               </View>

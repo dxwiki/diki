@@ -13,7 +13,7 @@ interface UsecaseSectionProps {
 export default function UsecaseSection({ industries, description, example }: UsecaseSectionProps) {
   const colors = useThemeColors();
   return (
-    <SectionBlock title={'사용 사례'}>
+    <SectionBlock title="사용 사례">
       {industries.length > 0 ? (
         <View style={styles.industries}>
           {industries.map((industry, index) => (
@@ -21,7 +21,7 @@ export default function UsecaseSection({ industries, description, example }: Use
               key={`${ industry }-${ index }`}
               style={[styles.industry, { borderColor: colors.border }]}
             >
-              <Text variant={'caption'}>{industry}</Text>
+              <Text variant="caption">{industry}</Text>
             </View>
           ))}
         </View>

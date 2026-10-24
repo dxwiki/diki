@@ -7,13 +7,13 @@ import SectionBlock from './SectionBlock';
 
 interface RelatedTermsSectionProps {
   items: DetailRelatedTerm[];
-  onPressTerm: (slug: string) => void;
+  onPressTerm: (slug: string)=> void;
 }
 
 export default function RelatedTermsSection({ items, onPressTerm }: RelatedTermsSectionProps) {
   const colors = useThemeColors();
   return (
-    <SectionBlock title={'관련 용어'}>
+    <SectionBlock title="관련 용어">
       {items.map((item, index) => (
         <View
           key={`${ item.term }-${ index }`}
@@ -21,7 +21,7 @@ export default function RelatedTermsSection({ items, onPressTerm }: RelatedTerms
         >
           {item.slug ? (
             <Pressable
-              accessibilityRole={'link'}
+              accessibilityRole="link"
               accessibilityLabel={`${ item.term } 상세 보기`}
               onPress={() => {
                 if (item.slug) onPressTerm(item.slug);

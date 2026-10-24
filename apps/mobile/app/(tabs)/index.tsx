@@ -17,13 +17,13 @@ export default function HomeScreen() {
 
   return (
     <Screen>
-      <Text variant={'title'}>{'Diki'}</Text>
+      <Text variant="title">{'Diki'}</Text>
       <Text>{'데이터 분야 용어를 쉽게 찾아보고 익히는 용어사전이에요.'}</Text>
-      <Text variant={'caption'}>{`공개 용어 ${ terms.length }개를 오프라인에서도 볼 수 있어요.`}</Text>
+      <Text variant="caption">{`공개 용어 ${ terms.length }개를 오프라인에서도 볼 수 있어요.`}</Text>
       <Pressable
-        accessibilityRole={'search'}
-        accessibilityLabel={'용어 검색'}
-        accessibilityHint={'용어사전 탭의 검색창으로 이동합니다'}
+        accessibilityRole="search"
+        accessibilityLabel="용어 검색"
+        accessibilityHint="용어사전 탭의 검색창으로 이동합니다"
         onPress={() => router.push({ pathname: '/(tabs)/terms', params: { focus: String(Date.now()) } })}
         style={({ pressed }) => [
           styles.search,
@@ -36,7 +36,7 @@ export default function HomeScreen() {
       <RecentTerms
         terms={recentTerms}
         onPress={openTerm}
-        emptyText={'아직 본 용어가 없어요. 용어사전에서 용어를 열어 보세요.'}
+        emptyText="아직 본 용어가 없어요. 용어사전에서 용어를 열어 보세요."
       />
     </Screen>
   );

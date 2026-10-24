@@ -8,7 +8,7 @@ interface DetailHeaderProps {
   title: Title;
   shortDescription: string;
   tags: DetailTag[];
-  onPressTag: (slug: string) => void;
+  onPressTag: (slug: string)=> void;
 }
 
 export default function DetailHeader({ title, shortDescription, tags, onPressTag }: DetailHeaderProps) {
@@ -19,14 +19,14 @@ export default function DetailHeader({ title, shortDescription, tags, onPressTag
   return (
     <View style={styles.header}>
       <Text
-        variant={'title'}
-        accessibilityRole={'header'}
+        variant="title"
+        accessibilityRole="header"
         style={styles.title}
       >
         {ko || en}
       </Text>
       {en && en !== ko ? <Text style={[styles.en, { color: colors.gray1 }]}>{en}</Text> : null}
-      {etc.length > 0 ? <Text variant={'caption'}>{etc.join(', ')}</Text> : null}
+      {etc.length > 0 ? <Text variant="caption">{etc.join(', ')}</Text> : null}
       {shortDescription ? <Text style={{ color: colors['text-secondary'] }}>{shortDescription}</Text> : null}
       {tags.length > 0 ? (
         <View style={styles.tags}>

@@ -14,7 +14,7 @@ export default function SectionBlock({ title, children }: SectionBlockProps) {
     <View style={styles.section}>
       {title ? (
         <Text
-          accessibilityRole={'header'}
+          accessibilityRole="header"
           style={[styles.title, { color: colors.text }]}
         >
           {title}

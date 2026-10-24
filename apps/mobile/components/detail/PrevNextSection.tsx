@@ -6,14 +6,14 @@ import { useThemeColors } from '@/theme';
 interface PrevNextSectionProps {
   prev: TermData | null;
   next: TermData | null;
-  onPressTerm: (term: TermData) => void;
+  onPressTerm: (term: TermData)=> void;
 }
 
 interface PrevNextCardProps {
   label: string;
   term: TermData;
   align: 'flex-start' | 'flex-end';
-  onPress: (term: TermData) => void;
+  onPress: (term: TermData)=> void;
 }
 
 function PrevNextCard({ label, term, align, onPress }: PrevNextCardProps) {
@@ -21,7 +21,7 @@ function PrevNextCard({ label, term, align, onPress }: PrevNextCardProps) {
   const title = term.title?.ko ?? term.title?.en ?? '';
   return (
     <Pressable
-      accessibilityRole={'link'}
+      accessibilityRole="link"
       accessibilityLabel={`${ label } ${ title }`}
       onPress={() => onPress(term)}
       style={({ pressed }) => [styles.card, { borderColor: colors.border, alignItems: align }, pressed && styles.pressed]}
@@ -35,7 +35,7 @@ function PrevNextCard({ label, term, align, onPress }: PrevNextCardProps) {
       </Text>
       {term.title?.en ? (
         <Text
-          variant={'caption'}
+          variant="caption"
           numberOfLines={1}
         >
           {`(${ term.title.en })`}
@@ -50,17 +50,17 @@ export default function PrevNextSection({ prev, next, onPressTerm }: PrevNextSec
     <View style={styles.row}>
       {prev ? (
         <PrevNextCard
-          label={'이전 포스트'}
+          label="이전 포스트"
           term={prev}
-          align={'flex-start'}
+          align="flex-start"
           onPress={onPressTerm}
         />
       ) : <View style={styles.spacer} />}
       {next ? (
         <PrevNextCard
-          label={'다음 포스트'}
+          label="다음 포스트"
           term={next}
-          align={'flex-end'}
+          align="flex-end"
           onPress={onPressTerm}
         />
       ) : <View style={styles.spacer} />}

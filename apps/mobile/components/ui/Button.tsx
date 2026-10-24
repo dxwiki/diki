@@ -3,7 +3,7 @@ import { useThemeColors } from '@/theme';
 
 interface ButtonProps {
   label: string;
-  onPress: () => void;
+  onPress: ()=> void;
   variant?: 'primary' | 'outline';
   accessibilityHint?: string;
   disabled?: boolean;
@@ -14,7 +14,7 @@ export default function Button({ label, onPress, variant = 'primary', accessibil
   const isPrimary = variant === 'primary';
   return (
     <Pressable
-      accessibilityRole={'button'}
+      accessibilityRole="button"
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled }}
       disabled={disabled}

@@ -20,7 +20,7 @@ interface SortSelectorProps {
   sortType: SortType;
   sortDirection: SortDirection;
   hasQuery: boolean;
-  onChange: (type: SortType, direction: SortDirection) => void;
+  onChange: (type: SortType, direction: SortDirection)=> void;
 }
 
 export default function SortSelector({ sortType, sortDirection, hasQuery, onChange }: SortSelectorProps) {
@@ -31,7 +31,7 @@ export default function SortSelector({ sortType, sortDirection, hasQuery, onChan
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.row}
-      keyboardShouldPersistTaps={'handled'}
+      keyboardShouldPersistTaps="handled"
     >
       {types.map((type) => (
         <Chip

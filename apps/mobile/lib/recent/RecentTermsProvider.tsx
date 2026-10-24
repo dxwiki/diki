@@ -9,7 +9,7 @@ export interface RecentTermsState {
   ids: number[];
   recentTerms: TermData[];
   ready: boolean;
-  addRecentTerm: (id: number) => void;
+  addRecentTerm: (id: number)=> void;
 }
 
 const RecentTermsContext = createContext<RecentTermsState>({

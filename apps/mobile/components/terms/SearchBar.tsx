@@ -4,7 +4,7 @@ import { useThemeColors } from '@/theme';
 
 interface SearchBarProps {
   value: string;
-  onChangeText: (text: string) => void;
+  onChangeText: (text: string)=> void;
   inputRef?: Ref<TextInputInstance>;
 }
 
@@ -16,20 +16,20 @@ export default function SearchBar({ value, onChangeText, inputRef }: SearchBarPr
         ref={inputRef}
         value={value}
         onChangeText={onChangeText}
-        placeholder={'용어 검색 (한글·영문)'}
+        placeholder="용어 검색 (한글·영문)"
         placeholderTextColor={colors.gray2}
         selectionColor={colors.primary}
         style={[styles.input, { color: colors.text }]}
-        returnKeyType={'search'}
-        autoCapitalize={'none'}
+        returnKeyType="search"
+        autoCapitalize="none"
         autoCorrect={false}
-        clearButtonMode={'never'}
-        accessibilityLabel={'용어 검색'}
+        clearButtonMode="never"
+        accessibilityLabel="용어 검색"
       />
       {value.length > 0 ? (
         <Pressable
-          accessibilityRole={'button'}
-          accessibilityLabel={'검색어 지우기'}
+          accessibilityRole="button"
+          accessibilityLabel="검색어 지우기"
           hitSlop={8}
           onPress={() => onChangeText('')}
         >

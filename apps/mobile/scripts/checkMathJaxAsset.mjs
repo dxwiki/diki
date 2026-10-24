@@ -69,7 +69,7 @@ const metro = readApp('metro.config.js');
 if (!/assetExts[\s\S]*'txt'/.test(metro)) failures.push('metro.config.js assetExts 에 txt 가 없다');
 
 const globalTypes = readApp('global.d.ts');
-if (!/declare module '\*\.txt'/.test(globalTypes)) failures.push("global.d.ts 에 '*.txt' 모듈 선언이 없다");
+if (!/declare module '\*\.txt'/.test(globalTypes)) failures.push('global.d.ts 에 \'*.txt\' 모듈 선언이 없다');
 
 const loader = readApp('lib/webview/mathjax.ts');
 if (!/from '@\/assets\/mathjax\/tex-svg-full\.txt'/.test(loader)) failures.push('lib/webview/mathjax.ts 가 설치본 자산을 읽지 않는다');

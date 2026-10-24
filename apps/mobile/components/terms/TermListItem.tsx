@@ -7,7 +7,7 @@ import { difficultyLabel } from './termPath';
 
 interface TermListItemProps {
   term: TermData;
-  onPress: (term: TermData) => void;
+  onPress: (term: TermData)=> void;
 }
 
 function TermListItem({ term, onPress }: TermListItemProps) {
@@ -16,7 +16,7 @@ function TermListItem({ term, onPress }: TermListItemProps) {
   const title = term.title?.ko ?? term.title?.en ?? '';
   return (
     <Pressable
-      accessibilityRole={'button'}
+      accessibilityRole="button"
       accessibilityLabel={title}
       onPress={() => onPress(term)}
       style={({ pressed }) => [styles.item, { borderBottomColor: colors['extreme-light'] }, pressed && styles.pressed]}
@@ -25,10 +25,10 @@ function TermListItem({ term, onPress }: TermListItemProps) {
         <Text style={styles.title}>{title}</Text>
         {level ? <Text style={[styles.level, { color: colors.primary }]}>{level}</Text> : null}
       </View>
-      {term.title?.en && term.title.en !== title ? <Text variant={'caption'}>{term.title.en}</Text> : null}
+      {term.title?.en && term.title.en !== title ? <Text variant="caption">{term.title.en}</Text> : null}
       {term.description?.short ? (
         <Text
-          variant={'caption'}
+          variant="caption"
           numberOfLines={2}
           style={{ color: colors['text-secondary'] }}
         >

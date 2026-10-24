@@ -4,7 +4,7 @@ import { useThemeColors } from '@/theme';
 interface ChipProps {
   label: string;
   selected?: boolean;
-  onPress: () => void;
+  onPress: ()=> void;
   accessibilityLabel?: string;
 }
 
@@ -12,7 +12,7 @@ export default function Chip({ label, selected = false, onPress, accessibilityLa
   const colors = useThemeColors();
   return (
     <Pressable
-      accessibilityRole={'button'}
+      accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}

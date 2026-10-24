@@ -37,23 +37,23 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name={'index'}
+        name="index"
         options={{ title: '홈', tabBarIcon: renderIcon('index') }}
       />
       <Tabs.Screen
-        name={'learn'}
+        name="learn"
         options={{ title: '학습', tabBarIcon: renderIcon('learn') }}
       />
       <Tabs.Screen
-        name={'interview'}
+        name="interview"
         options={{ title: '면접', tabBarIcon: renderIcon('interview') }}
       />
       <Tabs.Screen
-        name={'terms'}
+        name="terms"
         options={{ title: '용어사전', tabBarIcon: renderIcon('terms') }}
       />
       <Tabs.Screen
-        name={'me'}
+        name="me"
         options={{ title: '내 정보', tabBarIcon: renderIcon('me') }}
       />
     </Tabs>
