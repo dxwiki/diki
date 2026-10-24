@@ -24,21 +24,26 @@
     "fetch-profiles": "ts-node --project tsconfig.node.json ./scripts/fetchProfilesStatic.ts",
     "fetch-static-data": "npm run fetch-terms && npm run calculate-levels && npm run fetch-profiles",
     "static": "ts-node --project tsconfig.node.json ./scripts/generateFeed.ts && ts-node --project tsconfig.node.json ./scripts/generateSitemap.ts && ts-node --project tsconfig.node.json ./scripts/generateRobots.ts",
-    "export-public-data": "node scripts/exportPublicData.mjs"
+    "export-public-data": "node scripts/exportPublicData.mjs",
+    "test:ai": "rimraf .ai-test-dist && tsc -p tsconfig.ai-test.json && node --conditions=react-server --require ./scripts/verify/aiTestAliases.cjs --test \".ai-test-dist/src/lib/ai/__tests__/*.test.js\""
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
     "@diki/core": "*",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@google/genai": "^2.31.0",
     "@mui/material": "^7.0.1",
     "@reduxjs/toolkit": "^2.5.0",
     "dayjs": "^1.11.13",
     "lucide-react": "^0.436.0",
     "lunr": "^2.3.9",
     "next": "14.2.13",
+    "openai": "^7.43.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-redux": "^9.2.0"
+    "react-redux": "^9.2.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^2.6.4",

@@ -77,3 +77,30 @@ export {
   syncContent,
 } from './content';
 export * from './course';
+export type {
+  AiProviderId,
+  AiVerdict,
+  AiItemFeedback,
+  AiEvaluation,
+  FollowUpTurn,
+  AiFollowUp,
+  AiPrompt,
+  InterviewPromptInput,
+} from './interview-ai';
+export {
+  AI_PROVIDERS,
+  MAX_ANSWER_CHARS,
+  MIN_ANSWER_CHARS,
+  MAX_FOLLOW_UP_TURNS,
+  isAiProviderId,
+  normalizeAnswer,
+  buildEvaluationPrompt,
+  buildFollowUpPrompt,
+  evaluationSchema,
+  FOLLOW_UP_SCHEMA,
+  parseEvaluation,
+  parseFollowUp,
+  parseFollowUpTurns,
+  extractJson,
+  maskApiKey,
+} from './interview-ai';

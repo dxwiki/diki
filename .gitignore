@@ -233,6 +233,7 @@ service-account.json
 /src/data
 /public/data
 packages/core/.test-dist
+.ai-test-dist
 
 .cursor
 claude.md

@@ -15,6 +15,7 @@
     "test:detail": "npm run build:test && node --test .test-dist/test/detail.test.js",
     "test:markdown": "npm run build:test && node --test .test-dist/test/markdown.test.js",
     "test:course": "npm run build:test && node --test .test-dist/test/course.test.js",
+    "test:interview-ai": "npm run build:test && node --test .test-dist/test/interviewAi.test.js",
     "check:apis": "node scripts/checkForbiddenApis.mjs"
   },
   "dependencies": {
