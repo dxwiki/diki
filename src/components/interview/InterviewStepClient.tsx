@@ -7,6 +7,8 @@ import StepShell from '@/components/course/StepShell';
 import { InterviewContent, RoleSummary, StepLink } from '@/content/types';
 import { computePhaseStates, stepKey } from '@/content/progress';
 import { useCourseProgress } from '@/hooks/useCourseProgress';
+import { AiEntry, AiItemNote, AiSummary, type AiEvaluationResult } from './ai/AiFeedback';
+import { useAiKeys } from './ai/useAiKeys';
 
 interface InterviewStepClientProps {
   role: RoleSummary;
@@ -30,6 +32,9 @@ export default function InterviewStepClient({ role, phaseId, stepId, termTitle, 
   const [revealed, setRevealed] = useState(false);
   const [assessment, setAssessment] = useState<Record<number, Assessment>>({});
   const [finished, setFinished] = useState(false);
+  const [aiResult, setAiResult] = useState<AiEvaluationResult | null>(null);
+  const aiKeys = useAiKeys();
+  const stepRef = { role: role.id, phaseId, stepId };
   const loadedDraft = useRef(false);
 
   useEffect(() => {
@@ -60,10 +65,18 @@ export default function InterviewStepClient({ role, phaseId, stepId, termTitle, 
     recordAttempt('interview', key, { completed: true, review: missingItems.length > 0 });
   };
 
+  // AI 판정을 자가 점검 선택에 미리 채운다. 부분 충족은 보완 필요로 보고, 사용자가 고칠 수 있다
+  const applyAiResult = (result: AiEvaluationResult) => {
+    setAiResult(result);
+    setAssessment(Object.fromEntries(result.evaluation.items.map((item, i) => [i, item.verdict === 'met' ? 'met' : 'missing'])));
+    setRevealed(true);
+  };
+
   const practiceAgain = () => {
     setFinished(false);
     setRevealed(false);
     setAssessment({});
+    setAiResult(null);
   };
 
   return (
@@ -110,12 +123,25 @@ export default function InterviewStepClient({ role, phaseId, stepId, termTitle, 
             <ArrowRight className="size-4" />
           </button>
         )}
+        {!revealed && (
+          <AiEntry
+            keys={aiKeys}
+            step={stepRef}
+            answer={answer}
+            canRequest={canReveal}
+            onResult={applyAiResult}
+          />
+        )}
       </section>
 
       {revealed && (
         <section className="mt-12 animate-slideDown">
           <h2 className="text-lg font-bold text-main">{'평가 기준 확인 · 자기 점검'}</h2>
-          <p className="mt-1 text-xs text-gray2">{'내 답변이 각 항목을 충족했는지 스스로 점검합니다. AI 채점이나 합격 가능성 평가가 아닙니다.'}</p>
+          <p className="mt-1 text-xs text-gray2">
+            {aiResult
+              ? 'AI 판정을 참고해 각 항목을 최종 점검하세요. 판정은 직접 바꿀 수 있습니다.'
+              : '내 답변이 각 항목을 충족했는지 스스로 점검합니다. AI 채점이나 합격 가능성 평가가 아닙니다.'}
+          </p>
 
           <ol className="mt-4 space-y-3">
             {content.items.map((item, i) => (
@@ -126,6 +152,7 @@ export default function InterviewStepClient({ role, phaseId, stepId, termTitle, 
                     <p className="mt-1 text-sm text-gray1">{item.detail}</p>
                   </div>
                 </div>
+                {aiResult?.evaluation.items[i] && <AiItemNote feedback={aiResult.evaluation.items[i]} />}
                 <div className="mt-3 flex gap-2" role="radiogroup" aria-label={`${ item.label } 점검`}>
                   {(['met', 'missing'] as Assessment[]).map((value) => (
                     <button
@@ -146,6 +173,14 @@ export default function InterviewStepClient({ role, phaseId, stepId, termTitle, 
               </li>
             ))}
           </ol>
+
+          {aiResult && (
+            <AiSummary
+              result={aiResult}
+              step={stepRef}
+              answer={answer}
+            />
+          )}
 
           <div className="mt-6 rounded-xl bg-extreme-light p-4">
             {content.sampleAnswer ? (
