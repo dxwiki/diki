@@ -231,6 +231,7 @@ service-account.json
 
 # output
 /src/data
+/public/data
 packages/core/.test-dist
 
 .cursor

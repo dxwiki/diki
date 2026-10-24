@@ -1,0 +1,51 @@
+[
+  {
+    "url": "/posts/b-term",
+    "id": "b-term",
+    "title": { "ko": "비 용어", "en": "B Term", "etc": [] },
+    "description": { "short": "짧은 설명 B", "full": "<p>B</p>" },
+    "difficulty": { "level": 2, "description": "보통" },
+    "relevance": { "analyst": { "score": 3, "description": "" } },
+    "tags": [{ "id": "a-term", "name": "에이", "internal_link": "/posts/a-term" }],
+    "terms": [],
+    "usecase": { "description": "", "example": "", "industries": [] },
+    "references": { "tutorials": [], "books": [], "academic": [], "opensource": [] },
+    "publish": true,
+    "secretNote": "비공개 메모",
+    "metadata": {
+      "created_at": "2025-01-01",
+      "updated_at": "2025-02-01",
+      "authors": ["writer-1"],
+      "contributors": [{ "id": "helper-1", "date": "2025-02-01" }],
+      "internalFlag": true
+    }
+  },
+  {
+    "url": "/posts/hidden-term",
+    "id": "hidden-term",
+    "title": { "ko": "숨김 용어", "en": "Hidden Term" },
+    "description": { "short": "공개 안 됨", "full": "" },
+    "publish": false,
+    "metadata": { "created_at": "2025-01-02", "updated_at": "2025-01-02", "authors": ["writer-2"] }
+  },
+  {
+    "url": "/posts/a-term",
+    "id": "a-term",
+    "title": { "ko": "에이 용어", "en": "A Term", "etc": ["AT"] },
+    "description": { "short": "짧은 설명 A", "full": "<p>A</p>" },
+    "difficulty": { "level": 1, "description": "쉬움" },
+    "relevance": { "engineer": { "score": 5, "description": "" } },
+    "tags": [],
+    "terms": [{ "term": "B", "description": "", "internal_link": "/posts/b-term" }],
+    "usecase": { "description": "", "example": "", "industries": [] },
+    "references": { "tutorials": [], "books": [], "academic": [], "opensource": [] },
+    "publish": true,
+    "metadata": { "created_at": "2024-12-01", "updated_at": "2024-12-02", "authors": ["writer-3"], "contributors": [] }
+  },
+  {
+    "url": "/posts/draft-term",
+    "id": "draft-term",
+    "title": { "ko": "초안 용어", "en": "Draft" },
+    "metadata": { "created_at": "2025-03-01", "updated_at": "2025-03-01" }
+  }
+]

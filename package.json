@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "next dev",
     "devbuild": "next build",
-    "build": "npm run fetch-static-data && next build",
+    "build": "npm run fetch-static-data && npm run export-public-data && next build",
     "preexport": "rimraf out",
     "export": "next export",
     "touch": "touch out/.nojekyll",
@@ -24,7 +24,8 @@
     "calculate-levels": "ts-node --project tsconfig.node.json ./scripts/calculateLevels.ts",
     "fetch-profiles": "ts-node --project tsconfig.node.json ./scripts/fetchProfilesStatic.ts",
     "fetch-static-data": "npm run fetch-terms && npm run calculate-levels && npm run fetch-profiles",
-    "static": "ts-node --project tsconfig.node.json ./scripts/generateFeed.ts && ts-node --project tsconfig.node.json ./scripts/generateSitemap.ts && ts-node --project tsconfig.node.json ./scripts/generateRobots.ts"
+    "static": "ts-node --project tsconfig.node.json ./scripts/generateFeed.ts && ts-node --project tsconfig.node.json ./scripts/generateSitemap.ts && ts-node --project tsconfig.node.json ./scripts/generateRobots.ts",
+    "export-public-data": "node scripts/exportPublicData.mjs"
   },
   "dependencies": {
     "@diki/core": "*",
