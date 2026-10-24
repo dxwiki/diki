@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { ChevronDown, MessageCircleQuestion, Settings, Sparkles } from 'lucide-react';
 import {
   AI_PROVIDERS,
@@ -54,6 +54,18 @@ export function AiEntry({ keys, step, answer, canRequest, onResult }: {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  // 키 등록 페이지에서 돌아오면(?ai=saved) 설정을 열어 결과를 알리고 주소에서 표시를 지운다
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('ai') !== 'saved') return;
+    setNotice('키를 확인하고 안전하게 저장했어요.');
+    setOpen(true);
+    url.searchParams.delete('ai');
+    window.history.replaceState(window.history.state, '', `${ url.pathname }${ url.search }${ url.hash }`);
+  }, []);
+
   if (keys.status === 'unavailable') return null;
   const active = keys.state.providers.find((p) => p.id === keys.state.active);
 
@@ -95,7 +107,12 @@ export function AiEntry({ keys, step, answer, canRequest, onResult }: {
       </div>
       {answer.trim().length > MAX_ANSWER_CHARS && <p className="text-xs text-level-5">{`AI 피드백은 ${ MAX_ANSWER_CHARS }자까지 보낼 수 있어요.`}</p>}
       {error && <p role="alert" className="text-sm text-level-5">{error}</p>}
-      {open && keys.status === 'ready' && <AiSettingsPanel keys={keys} />}
+      {open && keys.status === 'ready' && (
+        <AiSettingsPanel
+          keys={keys}
+          notice={notice}
+        />
+      )}
     </div>
   );
 }

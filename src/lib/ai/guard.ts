@@ -81,6 +81,21 @@ export function assertSameOrigin(request: NextRequest): void {
   if (site && site !== 'same-origin') throw new AiRequestError('forbidden');
 }
 
+// HTML 폼 전송용: 사용자 지정 헤더를 붙일 수 없으므로 Origin 일치를 필수로 본다 (CSRF 토큰은 라우트에서 따로 확인)
+export function assertFormOrigin(request: NextRequest): void {
+  const origin = request.headers.get('origin');
+  if (!origin) throw new AiRequestError('forbidden');
+  let host: string;
+  try {
+    host = new URL(origin).host;
+  } catch {
+    throw new AiRequestError('forbidden');
+  }
+  if (!allowedHosts(request).includes(host)) throw new AiRequestError('forbidden');
+  const site = request.headers.get('sec-fetch-site');
+  if (site && site !== 'same-origin') throw new AiRequestError('forbidden');
+}
+
 export async function readJsonBody(request: NextRequest): Promise<Record<string, unknown>> {
   if (!(request.headers.get('content-type') ?? '').startsWith('application/json')) throw new AiRequestError('bad_request');
   const declared = Number(request.headers.get('content-length') ?? '0');

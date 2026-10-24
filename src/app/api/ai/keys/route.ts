@@ -9,7 +9,7 @@ import {
   jsonResponse,
   readJsonBody,
 } from '@/lib/ai/guard';
-import { normalizeApiKey, toPublicState, type KeyState } from '@/lib/ai/keyStore';
+import { toPublicState, type KeyState } from '@/lib/ai/keyStore';
 import { PROVIDER_ADAPTERS } from '@/lib/ai/providers';
 import { isModelId, selectModels } from '@/lib/ai/providers/catalog';
 import { loadKeyState, requireSecrets, saveKeyState } from '@/lib/ai/session';
@@ -30,29 +30,6 @@ export function GET(request: NextRequest) {
     const secrets = guard(request, 'keys-read', 60);
     const { state, expiresAt } = loadKeyState(request, secrets);
     return jsonResponse(toPublicState(state, expiresAt));
-  });
-}
-
-// 키를 회사 API 로 먼저 확인하고, 통과한 키만 봉인해 쿠키로 내려준다. 응답에는 원문을 담지 않는다
-export function POST(request: NextRequest) {
-  return handleAiRoute(async () => {
-    const secrets = guard(request, 'keys-write', 10);
-    const body = await readJsonBody(request);
-    const provider = body.provider;
-    const apiKey = normalizeApiKey(body.apiKey);
-    if (!isAiProviderId(provider) || !apiKey) throw new AiRequestError('bad_request');
-
-    const models = selectModels(provider, await PROVIDER_ADAPTERS[provider].listModels(apiKey));
-    if (!models.length) throw new AiRequestError('permission');
-
-    const { state } = loadKeyState(request, secrets);
-    const next: KeyState = {
-      keys: { ...state.keys, [provider]: { key: apiKey, model: models[0], addedAt: Date.now() } },
-      active: provider,
-    };
-    const response = jsonResponse({ ...toPublicState(next, null), models });
-    saveKeyState(response, request, next, secrets);
-    return response;
   });
 }
 

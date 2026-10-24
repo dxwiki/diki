@@ -28,12 +28,6 @@ export function useAiKeys() {
     };
   }, []);
 
-  const register = useCallback(async (provider: AiProviderId, apiKey: string) => {
-    const data = await aiFetch<PublicKeyState & { models: string[] }>('/keys', { method: 'POST', body: { provider, apiKey } });
-    setState(data);
-    setModels((prev) => ({ ...prev, [provider]: data.models }));
-  }, []);
-
   const loadModels = useCallback(async (provider: AiProviderId) => {
     const data = await aiFetch<{ models: string[] }>(`/keys/models?provider=${ provider }`);
     setModels((prev) => ({ ...prev, [provider]: data.models }));
@@ -49,5 +43,5 @@ export function useAiKeys() {
     else setModels({});
   }, []);
 
-  return { status, state, models, register, loadModels, update, remove };
+  return { status, state, models, loadModels, update, remove };
 }
