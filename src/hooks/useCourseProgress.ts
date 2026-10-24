@@ -1,31 +1,18 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { CourseMode } from '@/content/types';
+import { applyAttempt, EMPTY_PROGRESS, parseProgress, type CourseMode, type ProgressState } from '@diki/core';
 
-export interface StepRecord {
-  completed: boolean;
-  review: boolean;
-  attempts: number;
-  firstTryCorrect?: boolean;
-  updatedAt: string;
-}
-
-export interface ProgressState {
-  learn: Record<string, StepRecord>;
-  interview: Record<string, StepRecord>;
-  drafts: Record<string, string>;
-}
+export type { StepRecord, ProgressState } from '@diki/core';
 
 // 서버 저장(TODO 4~5단계) 전까지 브라우저에만 임시 보관한다
 const STORAGE_KEY = 'diki-course-progress-v1';
 const EVENT_NAME = 'diki-progress-change';
-const emptyState: ProgressState = { learn: {}, interview: {}, drafts: {} };
+const emptyState: ProgressState = EMPTY_PROGRESS;
 
 function readState(): ProgressState {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? { ...emptyState, ...JSON.parse(raw) } : emptyState;
+    return parseProgress(window.localStorage.getItem(STORAGE_KEY));
   } catch {
     return emptyState;
   }
@@ -57,17 +44,7 @@ export function useCourseProgress() {
   }, []);
 
   const recordAttempt = useCallback((mode: CourseMode, key: string, result: { completed: boolean; review: boolean }) => {
-    const current = readState();
-    const prev = current[mode][key];
-    const attempts = (prev?.attempts ?? 0) + 1;
-    const next: StepRecord = {
-      completed: prev?.completed || result.completed,
-      review: result.review,
-      attempts,
-      firstTryCorrect: prev?.firstTryCorrect ?? (result.completed && !result.review && attempts === 1),
-      updatedAt: new Date().toISOString(),
-    };
-    writeState({ ...current, [mode]: { ...current[mode], [key]: next } });
+    writeState(applyAttempt(readState(), mode, key, result, new Date().toISOString()));
   }, []);
 
   const saveDraft = useCallback((key: string, text: string) => {
