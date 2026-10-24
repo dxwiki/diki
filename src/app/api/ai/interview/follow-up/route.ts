@@ -17,6 +17,7 @@ import {
   readJsonBody,
 } from '@/lib/ai/guard';
 import { activeProvider, loadInterviewStep } from '@/lib/ai/interview';
+import { isMockEnabled, mockFollowUp, MOCK_MODEL, MOCK_USAGE } from '@/lib/ai/mock';
 import { loadKeyState, requireSecrets } from '@/lib/ai/session';
 
 export const runtime = 'nodejs';
@@ -33,10 +34,14 @@ export function POST(request: NextRequest) {
     const answer = normalizeAnswer(body.answer);
     const turns = parseFollowUpTurns(body.turns);
     if (!answer || !turns) throw new AiRequestError('bad_request');
-    const { input } = loadInterviewStep(body);
-    const { adapter, stored, provider } = activeProvider(loadKeyState(request, secrets).state);
-
+    const { input, content } = loadInterviewStep(body);
+    const { state } = loadKeyState(request, secrets);
     const allowNext = turns.length < MAX_FOLLOW_UP_TURNS;
+    if (!state.active && isMockEnabled()) {
+      return jsonResponse({ ...await mockFollowUp(content, turns, allowNext), provider: 'mock', model: MOCK_MODEL, usage: MOCK_USAGE });
+    }
+    const { adapter, stored, provider } = activeProvider(state);
+
     const prompt = buildFollowUpPrompt(input, answer, turns, allowNext);
     const { data, usage } = await adapter.generateJson({
       apiKey: stored.key,

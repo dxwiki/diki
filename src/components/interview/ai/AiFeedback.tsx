@@ -30,12 +30,12 @@ interface Usage {
 
 export interface AiEvaluationResult {
   evaluation: AiEvaluation;
-  provider: AiProviderId;
+  provider: AiProviderId | 'mock';
   model: string;
   usage: Usage;
 }
 
-const providerLabel = (id: AiProviderId) => AI_PROVIDERS.find((p) => p.id === id)?.label ?? id;
+const providerLabel = (id: AiProviderId | 'mock') => (id === 'mock' ? '테스트 모드' : AI_PROVIDERS.find((p) => p.id === id)?.label ?? id);
 const errorText = (error: unknown) => (error instanceof AiClientError ? error.message : '처리하지 못했어요.');
 
 const VERDICT: Record<AiItemFeedback['verdict'], { label: string; tone: string }> = {
@@ -67,7 +67,9 @@ export function AiEntry({ keys, step, answer, canRequest, onResult }: {
   }, []);
 
   if (keys.status === 'unavailable') return null;
-  const active = keys.state.providers.find((p) => p.id === keys.state.active);
+  const stored = keys.state.providers.find((p) => p.id === keys.state.active);
+  // 키가 없고 개발 서버가 테스트 모드면 가짜 응답으로 화면 흐름을 확인할 수 있다
+  const active = stored ?? (keys.state.mock ? { id: 'mock' as const, model: '가짜 응답' } : null);
 
   const request = async () => {
     setBusy(true);

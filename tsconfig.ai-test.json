@@ -27,6 +27,7 @@
     "src/lib/ai/__tests__/keyStore.test.ts",
     "src/lib/ai/__tests__/catalog.test.ts",
     "src/lib/ai/__tests__/guard.test.ts",
-    "src/lib/ai/__tests__/keyEntryPage.test.ts"
+    "src/lib/ai/__tests__/keyEntryPage.test.ts",
+    "src/lib/ai/__tests__/mock.test.ts"
   ]
 }

@@ -10,6 +10,7 @@ import {
   readJsonBody,
 } from '@/lib/ai/guard';
 import { activeProvider, loadInterviewStep } from '@/lib/ai/interview';
+import { isMockEnabled, mockEvaluate, MOCK_MODEL, MOCK_USAGE } from '@/lib/ai/mock';
 import { loadKeyState, requireSecrets } from '@/lib/ai/session';
 
 export const runtime = 'nodejs';
@@ -25,7 +26,11 @@ export function POST(request: NextRequest) {
     const answer = normalizeAnswer(body.answer);
     if (!answer) throw new AiRequestError('bad_request');
     const { input, content } = loadInterviewStep(body);
-    const { adapter, stored, provider } = activeProvider(loadKeyState(request, secrets).state);
+    const { state } = loadKeyState(request, secrets);
+    if (!state.active && isMockEnabled()) {
+      return jsonResponse({ evaluation: await mockEvaluate(content, answer), provider: 'mock', model: MOCK_MODEL, usage: MOCK_USAGE });
+    }
+    const { adapter, stored, provider } = activeProvider(state);
 
     const prompt = buildEvaluationPrompt(input, answer);
     const { data, usage } = await adapter.generateJson({

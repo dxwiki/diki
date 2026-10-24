@@ -12,6 +12,7 @@ import {
 import { toPublicState, type KeyState } from '@/lib/ai/keyStore';
 import { PROVIDER_ADAPTERS } from '@/lib/ai/providers';
 import { isModelId, selectModels } from '@/lib/ai/providers/catalog';
+import { isMockEnabled } from '@/lib/ai/mock';
 import { loadKeyState, requireSecrets, saveKeyState } from '@/lib/ai/session';
 
 export const runtime = 'nodejs';
@@ -29,7 +30,7 @@ export function GET(request: NextRequest) {
   return handleAiRoute(async () => {
     const secrets = guard(request, 'keys-read', 60);
     const { state, expiresAt } = loadKeyState(request, secrets);
-    return jsonResponse(toPublicState(state, expiresAt));
+    return jsonResponse({ ...toPublicState(state, expiresAt), mock: isMockEnabled() });
   });
 }
 

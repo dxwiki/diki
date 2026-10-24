@@ -4,6 +4,7 @@ export interface PublicKeyState {
   providers: { id: AiProviderId; masked: string; model: string; addedAt: number }[];
   active: AiProviderId | null;
   expiresAt: number | null;
+  mock?: boolean;
 }
 
 export const EMPTY_PUBLIC_STATE: PublicKeyState = { providers: [], active: null, expiresAt: null };
