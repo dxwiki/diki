@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "https://www.diki.kr/",
+  "workspaces": [
+    "packages/core",
+    "apps/mobile"
+  ],
   "scripts": {
     "dev": "next dev",
     "devbuild": "next build",
@@ -23,6 +27,7 @@
     "static": "ts-node --project tsconfig.node.json ./scripts/generateFeed.ts && ts-node --project tsconfig.node.json ./scripts/generateSitemap.ts && ts-node --project tsconfig.node.json ./scripts/generateRobots.ts"
   },
   "dependencies": {
+    "@diki/core": "*",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.0.1",

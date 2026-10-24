@@ -1,0 +1,22 @@
+{
+  "name": "@diki/core",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build:test": "node -e \"require('fs').rmSync('.test-dist',{recursive:true,force:true})\" && tsc -p tsconfig.test.json",
+    "test:parity": "npm run build:test && node --test .test-dist/test/parity.test.js",
+    "test:listing": "npm run build:test && node --test .test-dist/test/listing.test.js",
+    "test:app-parity": "npm run build:test && node --test .test-dist/test/appParity.test.js",
+    "test:content": "npm run build:test && node --test .test-dist/test/content.test.js",
+    "test:recent": "npm run build:test && node --test .test-dist/test/recent.test.js",
+    "test:detail": "npm run build:test && node --test .test-dist/test/detail.test.js",
+    "test:markdown": "npm run build:test && node --test .test-dist/test/markdown.test.js",
+    "check:apis": "node scripts/checkForbiddenApis.mjs"
+  },
+  "dependencies": {
+    "lunr": "^2.3.9"
+  }
+}
