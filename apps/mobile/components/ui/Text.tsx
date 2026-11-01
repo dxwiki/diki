@@ -1,5 +1,5 @@
 import { Text as RNText, type TextProps as RNTextProps } from 'react-native';
-import { useThemeColors } from '@/theme';
+import { font, useThemeColors } from '@/theme';
 
 type Variant = 'title' | 'body' | 'caption';
 
@@ -8,9 +8,9 @@ interface TextProps extends RNTextProps {
 }
 
 const variantStyles = {
-  title: { fontSize: 22, fontWeight: '700' as const },
-  body: { fontSize: 16, lineHeight: 24 },
-  caption: { fontSize: 13, lineHeight: 18 },
+  title: { fontSize: font.title2, fontWeight: '700' as const },
+  body: { fontSize: font.callout, lineHeight: 24 },
+  caption: { fontSize: font.footnote, lineHeight: 18 },
 };
 
 export default function Text({ variant = 'body', style, ...rest }: TextProps) {

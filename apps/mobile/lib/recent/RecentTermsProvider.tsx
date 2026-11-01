@@ -10,6 +10,7 @@ export interface RecentTermsState {
   recentTerms: TermData[];
   ready: boolean;
   addRecentTerm: (id: number)=> void;
+  clearRecentTerms: ()=> void;
 }
 
 const RecentTermsContext = createContext<RecentTermsState>({
@@ -17,6 +18,7 @@ const RecentTermsContext = createContext<RecentTermsState>({
   recentTerms: [],
   ready: false,
   addRecentTerm: () => undefined,
+  clearRecentTerms: () => undefined,
 });
 
 const persist = (ids: number[]) => {
@@ -69,9 +71,15 @@ export function RecentTermsProvider({ children }: { children: ReactNode }) {
     if (readyRef.current) persist(next);
   }, [apply]);
 
+  const clearRecentTerms = useCallback(() => {
+    pendingRef.current = [];
+    apply([]);
+    persist([]);
+  }, [apply]);
+
   const recentTerms = useMemo(() => resolveRecentTerms(ids, terms), [ids, terms]);
 
-  const value = useMemo(() => ({ ids, recentTerms, ready, addRecentTerm }), [ids, recentTerms, ready, addRecentTerm]);
+  const value = useMemo(() => ({ ids, recentTerms, ready, addRecentTerm, clearRecentTerms }), [ids, recentTerms, ready, addRecentTerm, clearRecentTerms]);
 
   return <RecentTermsContext.Provider value={value}>{children}</RecentTermsContext.Provider>;
 }

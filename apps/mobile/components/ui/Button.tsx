@@ -1,10 +1,11 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
-import { useThemeColors } from '@/theme';
+import { StyleSheet, Text } from 'react-native';
+import PressableScale from '@/components/ui/PressableScale';
+import { font, radius, spacing, useThemeColors } from '@/theme';
 
 interface ButtonProps {
   label: string;
   onPress: ()=> void;
-  variant?: 'primary' | 'outline';
+  variant?: 'primary' | 'secondary';
   accessibilityHint?: string;
   disabled?: boolean;
 }
@@ -13,44 +14,40 @@ export default function Button({ label, onPress, variant = 'primary', accessibil
   const colors = useThemeColors();
   const isPrimary = variant === 'primary';
   return (
-    <Pressable
+    <PressableScale
       accessibilityRole="button"
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
-      style={({ pressed }) => [
+      style={[
         styles.base,
-        isPrimary
-          ? { backgroundColor: colors.primary, borderColor: colors.primary }
-          : { backgroundColor: 'transparent', borderColor: colors.border },
-        pressed && styles.pressed,
+        { backgroundColor: isPrimary ? colors.primary : colors['extreme-light'] },
         disabled && styles.disabled,
       ]}
     >
       <Text style={[styles.label, { color: isPrimary ? colors.background : colors.text }]}>
         {label}
       </Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    minHeight: 48,
+    borderRadius: radius.md,
+    borderCurve: 'continuous',
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.gutter,
     alignItems: 'center',
-  },
-  pressed: {
-    opacity: 0.7,
+    justifyContent: 'center',
   },
   disabled: {
     opacity: 0.4,
   },
   label: {
-    fontSize: 16,
+    fontSize: font.callout,
     fontWeight: '600',
   },
 });

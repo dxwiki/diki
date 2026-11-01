@@ -23,7 +23,7 @@ export default function TermDetailScreen() {
     return (
       <>
         <Stack.Screen options={{ title: '용어를 찾을 수 없음' }} />
-        <NotFound onBack={() => router.replace('/(tabs)/terms')} />
+        <NotFound onBack={() => router.replace('/terms')} />
       </>
     );
   }

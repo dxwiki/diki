@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { TermData } from '@diki/core';
 import Text from '@/components/ui/Text';
-import { useThemeColors } from '@/theme';
+import { font, hairline, spacing, useThemeColors } from '@/theme';
 
 interface PrevNextSectionProps {
   prev: TermData | null;
@@ -24,7 +24,7 @@ function PrevNextCard({ label, term, align, onPress }: PrevNextCardProps) {
       accessibilityRole="link"
       accessibilityLabel={`${ label } ${ title }`}
       onPress={() => onPress(term)}
-      style={({ pressed }) => [styles.card, { borderColor: colors.border, alignItems: align }, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.card, { alignItems: align }, pressed && styles.pressed]}
     >
       <Text style={[styles.label, { color: colors.primary }]}>{label}</Text>
       <Text
@@ -46,8 +46,9 @@ function PrevNextCard({ label, term, align, onPress }: PrevNextCardProps) {
 }
 
 export default function PrevNextSection({ prev, next, onPressTerm }: PrevNextSectionProps) {
+  const colors = useThemeColors();
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, { borderColor: colors.line }]}>
       {prev ? (
         <PrevNextCard
           label="이전 포스트"
@@ -56,6 +57,7 @@ export default function PrevNextSection({ prev, next, onPressTerm }: PrevNextSec
           onPress={onPressTerm}
         />
       ) : <View style={styles.spacer} />}
+      <View style={[styles.divider, { backgroundColor: colors.line }]} />
       {next ? (
         <PrevNextCard
           label="다음 포스트"
@@ -71,20 +73,23 @@ export default function PrevNextSection({ prev, next, onPressTerm }: PrevNextSec
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    gap: 8,
+    borderTopWidth: hairline,
+    borderBottomWidth: hairline,
   },
   card: {
     flex: 1,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    gap: 2,
+    paddingVertical: spacing.gutter,
+    gap: spacing.xxs,
+  },
+  divider: {
+    width: hairline,
+    marginHorizontal: spacing.md,
   },
   spacer: {
     flex: 1,
   },
   label: {
-    fontSize: 13,
+    fontSize: font.footnote,
   },
   title: {
     fontWeight: '600',

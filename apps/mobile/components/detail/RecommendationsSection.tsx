@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import type { TermData } from '@diki/core';
 import TermListItem from '@/components/terms/TermListItem';
 import { termKey } from '@/components/terms/termPath';
-import { useThemeColors } from '@/theme';
+import { hairline, spacing, useThemeColors } from '@/theme';
 import SectionBlock from './SectionBlock';
 
 interface RecommendationsSectionProps {
@@ -14,7 +14,7 @@ export default function RecommendationsSection({ terms, onPressTerm }: Recommend
   const colors = useThemeColors();
   return (
     <SectionBlock title="추천 포스트">
-      <View style={[styles.list, { borderColor: colors['extreme-light'] }]}>
+      <View style={[styles.list, { borderTopColor: colors.line }]}>
         {terms.map((term, index) => (
           <TermListItem
             key={termKey(term, index)}
@@ -29,7 +29,7 @@ export default function RecommendationsSection({ terms, onPressTerm }: Recommend
 
 const styles = StyleSheet.create({
   list: {
-    borderTopWidth: 1,
-    marginHorizontal: -20,
+    borderTopWidth: hairline,
+    marginHorizontal: -spacing.gutter,
   },
 });

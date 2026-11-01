@@ -69,7 +69,7 @@ export default function LearnStepScreen() {
           <Text>{'코스가 바뀌었거나 주소가 잘못됐어요.'}</Text>
           <Button
             label="코스 지도로"
-            onPress={() => router.replace('/(tabs)/learn')}
+            onPress={() => router.replace('/learn')}
           />
         </Screen>
       </>
@@ -77,7 +77,7 @@ export default function LearnStepScreen() {
   }
 
   const title = term.title?.ko ?? stepId;
-  const toMap = () => (router.canGoBack() ? router.back() : router.replace('/(tabs)/learn'));
+  const toMap = () => (router.canGoBack() ? router.back() : router.replace('/learn'));
 
   if (!ready) {
     return (

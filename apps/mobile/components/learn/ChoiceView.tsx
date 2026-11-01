@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { LessonChoice } from '@diki/core';
 import Text from '@/components/ui/Text';
-import { useThemeColors } from '@/theme';
+import { font, spacing, useThemeColors } from '@/theme';
 import Icon from './Icon';
 import QuestionHeader from './QuestionHeader';
 
@@ -68,28 +68,28 @@ export default function ChoiceView({ question, selected, checked, onSelect }: Ch
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: 16,
+    gap: spacing.gutter,
   },
   context: {
     borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: spacing.gutter,
+    paddingVertical: spacing.md,
   },
   contextText: {
-    fontSize: 15,
+    fontSize: font.body,
     lineHeight: 24,
   },
   options: {
-    gap: 10,
+    gap: spacing.sm,
   },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md,
     borderRadius: 14,
     borderWidth: 2,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
   },
   key: {
     width: 28,
@@ -99,12 +99,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   keyText: {
-    fontSize: 13,
+    fontSize: font.footnote,
     fontWeight: '700',
   },
   optionText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: font.body,
     lineHeight: 22,
   },
   dim: {

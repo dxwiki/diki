@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import Button from '@/components/ui/Button';
 import Screen from '@/components/ui/Screen';
 import Text from '@/components/ui/Text';
+import { spacing } from '@/theme';
 
 interface NotFoundProps {
   onBack: ()=> void;
@@ -29,7 +30,7 @@ export default function NotFound({ onBack }: NotFoundProps) {
 
 const styles = StyleSheet.create({
   body: {
-    gap: 8,
-    paddingTop: 24,
+    gap: spacing.sm,
+    paddingTop: spacing.lg,
   },
 });

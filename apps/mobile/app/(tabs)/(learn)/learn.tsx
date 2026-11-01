@@ -10,7 +10,7 @@ import Screen from '@/components/ui/Screen';
 import Text from '@/components/ui/Text';
 import { learnStepPath, useLearnCourse } from '@/lib/course';
 import { useProgress } from '@/lib/progress';
-import { useThemeColors } from '@/theme';
+import { font, spacing, useThemeColors } from '@/theme';
 
 export default function LearnScreen() {
   const colors = useThemeColors();
@@ -44,47 +44,56 @@ export default function LearnScreen() {
   const open = (phaseId: string, stepId: string) => router.push(learnStepPath(stage.id, phaseId, stepId) as Href);
 
   return (
-    <Screen>
-      <Text variant="caption">{'입문부터 마스터까지, 한 Step에 한 개념씩 쌓아가요.'}</Text>
-      <StageSelector
-        stages={stages}
-        unlocked={unlocked}
-        completed={completed}
-        selectedId={stage.id}
-        onSelect={setChosen}
-      />
+    <Screen
+      bleed
+      divided
+    >
+      <View style={styles.top}>
+        <Text
+          variant="caption"
+          style={styles.gutter}
+        >{'입문부터 마스터까지, 한 Step에 한 개념씩 쌓아가요.'}
+        </Text>
+        <StageSelector
+          stages={stages}
+          unlocked={unlocked}
+          completed={completed}
+          selectedId={stage.id}
+          onSelect={setChosen}
+        />
 
-      <View style={[styles.summary, { backgroundColor: colors['background-secondary'] }]}>
-        <Text style={styles.stageTitle}>{`${ stageIndex + 1 }단계 · ${ stage.label }`}</Text>
-        <Text style={{ color: colors['text-secondary'] }}>{stage.description}</Text>
-        <View style={styles.progressRow}>
-          <View style={styles.progressBar}>
-            <ProgressBar value={steps.length ? doneCount / steps.length : 0} />
+        <View style={styles.summary}>
+          <Text style={styles.stageTitle}>{`${ stageIndex + 1 }단계 · ${ stage.label }`}</Text>
+          <Text style={{ color: colors['text-secondary'] }}>{stage.description}</Text>
+          <View style={styles.progressRow}>
+            <View style={styles.progressBar}>
+              <ProgressBar value={steps.length ? doneCount / steps.length : 0} />
+            </View>
+            <Text variant="caption">{`${ doneCount }/${ steps.length } Step`}</Text>
           </View>
-          <Text variant="caption">{`${ doneCount }/${ steps.length } Step`}</Text>
+          {!unlocked[stageIndex] ? (
+            <Text
+              variant="caption"
+              style={styles.notice}
+            >
+              {`${ stages[stageIndex - 1]?.label } 단계를 모두 완료하면 열려요.`}
+            </Text>
+          ) : next ? (
+            <Button
+              label={doneCount === 0 ? '학습 시작하기' : `이어서 학습 · ${ next.step.title }`}
+              onPress={() => open(next.phaseId, next.step.id)}
+            />
+          ) : (
+            <Text
+              variant="caption"
+              style={styles.notice}
+            >
+              {'이 단계를 모두 완료했어요. 원하는 Step을 다시 풀어볼 수 있어요.'}
+            </Text>
+          )}
         </View>
-        {!unlocked[stageIndex] ? (
-          <Text
-            variant="caption"
-            style={styles.notice}
-          >
-            {`${ stages[stageIndex - 1]?.label } 단계를 모두 완료하면 열려요.`}
-          </Text>
-        ) : next ? (
-          <Button
-            label={doneCount === 0 ? '학습 시작하기' : `이어서 학습 · ${ next.step.title }`}
-            onPress={() => open(next.phaseId, next.step.id)}
-          />
-        ) : (
-          <Text
-            variant="caption"
-            style={styles.notice}
-          >
-            {'이 단계를 모두 완료했어요. 원하는 Step을 다시 풀어볼 수 있어요.'}
-          </Text>
-        )}
-      </View>
 
+      </View>
       <PhaseList
         phases={phases}
         onOpenStep={open}
@@ -94,31 +103,36 @@ export default function LearnScreen() {
 }
 
 const styles = StyleSheet.create({
+  top: {
+    gap: spacing.lg,
+    paddingVertical: spacing.lg,
+  },
   loading: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  gutter: {
+    paddingHorizontal: spacing.gutter,
+  },
   summary: {
-    borderRadius: 16,
-    padding: 18,
-    gap: 10,
-    marginBottom: 8,
+    gap: spacing.md,
+    paddingHorizontal: spacing.gutter,
   },
   stageTitle: {
-    fontSize: 20,
+    fontSize: font.title3,
     fontWeight: '700',
   },
   progressRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginVertical: 2,
+    gap: spacing.sm,
+    marginVertical: spacing.xxs,
   },
   progressBar: {
     flex: 1,
   },
   notice: {
-    marginTop: 2,
+    marginTop: spacing.xxs,
   },
 });

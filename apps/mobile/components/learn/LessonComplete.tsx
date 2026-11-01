@@ -1,8 +1,17 @@
 import { StyleSheet, View } from 'react-native';
+import Animated, { FadeIn, useReducedMotion } from 'react-native-reanimated';
 import Button from '@/components/ui/Button';
 import Text from '@/components/ui/Text';
-import { useThemeColors } from '@/theme';
+import { font, spacing, useThemeColors } from '@/theme';
+import { CSS_EASE_OUT, EASE_OUT } from '@/theme/motion';
 import Icon from './Icon';
+
+// 레슨을 끝낸 순간에만 한 번 체크 배지가 살짝 튀어나온다
+const POP = {
+  '0%': { opacity: 0, transform: [{ scale: 0.9 }] },
+  '60%': { opacity: 1, transform: [{ scale: 1.06 }] },
+  '100%': { opacity: 1, transform: [{ scale: 1 }] },
+};
 
 interface LessonCompleteProps {
   questionCount: number;
@@ -15,13 +24,20 @@ interface LessonCompleteProps {
 
 export default function LessonComplete({ questionCount, firstTryCorrect, next, onMap, onRestart, onOpenTerm }: LessonCompleteProps) {
   const colors = useThemeColors();
+  const reduced = useReducedMotion();
   const perfect = firstTryCorrect === questionCount;
   return (
     <View style={styles.wrap}>
       <View style={styles.hero}>
-        <View style={[styles.badge, { backgroundColor: colors.primary }]}>
+        <Animated.View
+          style={[
+            styles.badge,
+            { backgroundColor: colors.primary },
+            !reduced && { animationName: POP, animationDuration: '420ms', animationTimingFunction: CSS_EASE_OUT },
+          ]}
+        >
           <Icon name="check" color={colors.background} size={28} />
-        </View>
+        </Animated.View>
         <Text style={styles.title}>{'레슨 완료!'}</Text>
         {questionCount > 0 ? (
           <Text style={{ color: colors['text-secondary'] }}>{`문제 ${ questionCount }개 중 ${ firstTryCorrect }개를 한 번에 맞혔어요.`}</Text>
@@ -30,7 +46,10 @@ export default function LessonComplete({ questionCount, firstTryCorrect, next, o
           <Text variant="caption">{'틀린 문제가 있어 코스 지도에 복습 표시를 남겼어요.'}</Text>
         ) : null}
       </View>
-      <View style={styles.actions}>
+      <Animated.View
+        entering={FadeIn.delay(120).duration(240).easing(EASE_OUT)}
+        style={styles.actions}
+      >
         {next ? (
           <Button
             label={`다음 Step · ${ next.title }`}
@@ -39,32 +58,32 @@ export default function LessonComplete({ questionCount, firstTryCorrect, next, o
         ) : null}
         <Button
           label="코스 지도로"
-          variant={next ? 'outline' : 'primary'}
+          variant={next ? 'secondary' : 'primary'}
           onPress={onMap}
         />
         <Button
           label="용어 전체 설명 보기"
-          variant="outline"
+          variant="secondary"
           onPress={onOpenTerm}
         />
         <Button
           label="다시 풀기"
-          variant="outline"
+          variant="secondary"
           onPress={onRestart}
         />
-      </View>
+      </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: 32,
-    paddingTop: 16,
+    gap: spacing.section,
+    paddingTop: spacing.gutter,
   },
   hero: {
     alignItems: 'center',
-    gap: 10,
+    gap: spacing.sm,
   },
   badge: {
     width: 64,
@@ -72,13 +91,13 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 6,
+    marginBottom: spacing.sm,
   },
   title: {
-    fontSize: 26,
+    fontSize: font.title1,
     fontWeight: '700',
   },
   actions: {
-    gap: 10,
+    gap: spacing.sm,
   },
 });

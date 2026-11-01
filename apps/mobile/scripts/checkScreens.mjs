@@ -14,34 +14,39 @@ const read = (rel) => {
   return fs.readFileSync(file, 'utf8');
 };
 
+// 탭마다 그룹 폴더에 스택(_layout)과 화면 파일을 둔다 (네이티브 탭은 헤더를 그리지 않는다)
 const TABS = [
-  { name: 'index', title: '홈' },
-  { name: 'learn', title: '학습' },
-  { name: 'interview', title: '면접' },
-  { name: 'terms', title: '용어사전' },
-  { name: 'me', title: '내 정보' },
+  { group: '(home)', screen: 'index', title: '홈' },
+  { group: '(learn)', screen: 'learn', title: '학습' },
+  { group: '(interview)', screen: 'interview', title: '면접' },
+  { group: '(terms)', screen: 'terms', title: '용어사전' },
+  { group: '(me)', screen: 'me', title: '설정' },
 ];
+const tabFile = (tab) => `app/(tabs)/${ tab.group }/${ tab.screen }.tsx`;
 
 const tabLayout = read('app/(tabs)/_layout.tsx');
-const screens = [...tabLayout.matchAll(/<Tabs\.Screen\s+name=(?:"([^"]+)"|\{'([^']+)'\})\s+options=\{\{\s*title:\s*'([^']+)'/g)]
-  .map((m) => ({ name: m[1] ?? m[2], title: m[3] }));
-const got = screens.map((s) => `${ s.name }:${ s.title }`).join(', ');
-const want = TABS.map((s) => `${ s.name }:${ s.title }`).join(', ');
-if (got !== want) failures.push(`탭 구성·순서 다름 (기대 ${ want } / 실제 ${ got })`);
-
-for (const tab of TABS) read(`app/(tabs)/${ tab.name }.tsx`);
-
-const comingSoon = read('components/ui/ComingSoon.tsx');
-if (!comingSoon.includes('준비 중')) failures.push('ComingSoon 에 준비 중 안내가 없다');
-if (!/openWeb\(\s*webPath\s*\)/.test(comingSoon)) failures.push('ComingSoon 버튼이 openWeb 으로 웹을 열지 않는다');
-
-for (const [file, webPath] of [['app/(tabs)/interview.tsx', '/interview']]) {
-  const src = read(file);
-  if (!/<ComingSoon\b/.test(src)) failures.push(`${ file } 가 준비 중 화면을 쓰지 않는다`);
-  if (!src.includes(`webPath="${ webPath }"`) && !src.includes(`webPath={'${ webPath }'}`)) failures.push(`${ file } 에 ${ webPath } 링크가 없다`);
+if (!tabLayout.includes('from \'expo-router/native-tabs\'')) failures.push('탭 레이아웃이 expo-router/native-tabs 를 쓰지 않는다');
+const screens = [...tabLayout.matchAll(/<NativeTabs\.Trigger name="([^"]+)">[\s\S]*?<NativeTabs\.Trigger\.Label>\{'([^']+)'\}/g)]
+  .map((m) => ({ group: m[1], title: m[2] }));
+const gotTabs = screens.map((s) => `${ s.group }:${ s.title }`).join(', ');
+const want = TABS.map((s) => `${ s.group }:${ s.title }`).join(', ');
+if (gotTabs !== want) failures.push(`탭 구성·순서 다름 (기대 ${ want } / 실제 ${ gotTabs })`);
+if ((tabLayout.match(/sf=\{\{ default: '[^']+', selected: '[^']+' \}\}\s*md="[^"]+"/g) ?? []).length !== TABS.length) failures.push('탭 아이콘마다 SF Symbol·Material 아이콘이 함께 있지 않다');
+for (const tab of TABS) {
+  const stack = read(`app/(tabs)/${ tab.group }/_layout.tsx`);
+  if (!stack.includes(`screen="${ tab.screen }"`) || !stack.includes(`title="${ tab.title }"`)) failures.push(`${ tab.group } 스택 제목이 ${ tab.title } 가 아니다`);
 }
 
-const learnTab = read('app/(tabs)/learn.tsx');
+// 출시 심사(완성도) 기준: 준비 중 화면을 남기지 않는다
+for (const tab of TABS) {
+  if (/<ComingSoon\b|준비 중/.test(read(tabFile(tab)))) failures.push(`${ tab.screen } 탭에 준비 중 화면이 남아 있다`);
+}
+const interviewTab = read('app/(tabs)/(interview)/interview.tsx');
+if (!/useInterviewCourse\(\)/.test(interviewTab) || !/<PhaseList\b/.test(interviewTab)) failures.push('면접 탭이 코스 지도(useInterviewCourse·PhaseList)를 그리지 않는다');
+const interviewRoute = read('app/interview/[role]/[phase]/[step].tsx');
+if (!/buildInterview\(/.test(interviewRoute) || !/<InterviewRunner\b/.test(interviewRoute)) failures.push('면접 Step 화면이 buildInterview·InterviewRunner 를 쓰지 않는다');
+
+const learnTab = read('app/(tabs)/(learn)/learn.tsx');
 if (/<ComingSoon\b/.test(learnTab)) failures.push('학습 탭이 아직 준비 중 화면이다');
 if (!/useLearnCourse\(\)/.test(learnTab) || !/<PhaseList\b/.test(learnTab)) failures.push('학습 탭이 코스 지도(useLearnCourse·PhaseList)를 그리지 않는다');
 const lessonRoute = read('app/learn/[stage]/[phase]/[step].tsx');
@@ -53,12 +58,14 @@ if (!/Linking\.openURL\(/.test(links)) failures.push('lib/links.ts 가 Linking.o
 const config = read('lib/config.ts');
 if (!config.includes('https://www.diki.kr')) failures.push('lib/config.ts WEB_BASE_URL 이 https://www.diki.kr 이 아니다');
 
-const me = read('app/(tabs)/me.tsx');
-if (!me.includes('준비 중')) failures.push('내 정보 탭에 로그인 준비 중 안내가 없다');
-for (const webPath of ['/login', '/posts/create']) {
-  if (!new RegExp(`openWeb\\(\\s*'${ webPath.replace(/\//g, '\\/') }'\\s*\\)`).test(me)) failures.push(`내 정보 탭에 openWeb('${ webPath }') 버튼이 없다`);
+const me = read('app/(tabs)/(me)/me.tsx');
+for (const webPath of ['/posts/create', '/contact']) {
+  if (!new RegExp(`openWeb\\(\\s*'${ webPath.replace(/\//g, '\\/') }'\\s*\\)`).test(me)) failures.push(`설정 탭에 openWeb('${ webPath }') 링크가 없다`);
 }
-if (!/<Button\b/.test(me)) failures.push('내 정보 탭이 Button 으로 웹 링크를 보여주지 않는다');
+if (!me.includes('router.push(\'/privacy\')')) failures.push('설정 탭에 앱 안 개인정보 처리방침 화면 링크가 없다');
+if (!read('app/privacy.tsx').includes('APP_PRIVACY_SECTIONS.map(')) failures.push('개인정보 처리방침 화면이 core 문구(APP_PRIVACY_SECTIONS)를 쓰지 않는다');
+if (!/useThemePreference\(\)/.test(me)) failures.push('설정 탭에 테마 선택이 없다');
+if (!/resetProgress/.test(me)) failures.push('설정 탭에 기록 초기화가 없다');
 if (!/from\s+'expo-constants'/.test(me) || !/expoConfig\?\.version/.test(me)) failures.push('내 정보 탭이 expo-constants 의 expoConfig.version 으로 앱 버전을 보여주지 않는다');
 if (!/useContent\(\)/.test(me)) failures.push('내 정보 탭이 useContent 로 현재 콘텐츠를 읽지 않는다');
 for (const field of ['version.contentVersion', 'version.generatedAt', 'SOURCE_LABELS[source]']) {
@@ -98,21 +105,20 @@ expectIn('lib/recent/index.ts', recentIndex, [
   ['RecentTermsProvider·useRecentTerms 를 내보내지 않는다', /RecentTermsProvider[\s\S]*useRecentTerms/],
 ]);
 
-const home = read('app/(tabs)/index.tsx');
+const home = read('app/(tabs)/(home)/index.tsx');
 expectIn('홈 탭', home, [
   ['앱 소개 문구가 없다', '용어사전이에요'],
-  ['검색 진입이 용어사전 탭으로 가지 않는다', /router\.push\(\{\s*pathname:\s*'\/\(tabs\)\/terms',\s*params:\s*\{\s*focus:/],
-  ['최근 본 용어를 쓰지 않는다', /useRecentTerms\(\)[\s\S]*<RecentTerms\b/],
+  ['검색 진입이 용어사전 탭으로 가지 않는다', /router\.push\(\{\s*pathname:\s*'\/terms',\s*params:\s*\{\s*focus:/],
+  ['최신 포스트를 발행일 최신순으로 보여주지 않는다', /listTerms\(terms, DEFAULT_LISTING\)[\s\S]*<TermChips\s+title="최신 포스트"/],
 ]);
 
-const termsTab = read('app/(tabs)/terms.tsx');
+const termsTab = read('app/(tabs)/(terms)/terms.tsx');
 expectIn('용어사전 탭', termsTab, [
   ['useTermListing 결과를 목록으로 보여주지 않는다', /<FlatList[\s\S]*data=\{listing\.results\}/],
   ['항목을 누르면 상세로 이동하지 않는다', /useOpenTerm\(\)[\s\S]*<TermListItem[\s\S]*onPress=\{openTerm\}/],
   ['결과 없음 안내가 초기화와 연결되지 않는다', /ListEmptyComponent=\{<EmptyResult onReset=\{listing\.reset\} \/>\}/],
-  ['검색어가 없을 때만 최근 본 용어를 보여주지 않는다', /!listing\.hasQuery\s*\?\s*\(\s*<RecentTerms\b/],
-  ['정렬 선택이 없다', /<SortSelector\b[\s\S]*hasQuery=\{listing\.hasQuery\}/],
-  ['필터 시트가 없다', '<FilterSheet'],
+  ['검색창 포커스 때 최근 검색을 보여주지 않는다', /focused && listing\.input\.trim\(\) === ''\s*\?\s*\(\s*<RecentSearches\b/],
+  ['정렬·필터 버튼 줄이 없다', /<FilterBar\b[\s\S]*hasQuery=\{listing\.hasQuery\}[\s\S]*onFilter=\{listing\.setFilterState\}/],
   ['홈 검색 진입의 focus 파라미터로 검색창에 포커스하지 않는다', /useLocalSearchParams[\s\S]*inputRef\.current\?\.focus\(\)/],
 ]);
 
@@ -122,23 +128,27 @@ expectIn('components/terms/useTermListing.ts', listingHook, [
   ['디바운스 타이머가 없다', /setTimeout\([\s\S]*SEARCH_DEBOUNCE_MS\)/],
   ['콘텐츠가 바뀔 때 인덱스를 만들지 않는다', /buildSearchIndex\(terms\);[\s\S]*\},\s*\[terms\]\)/],
   ['listTerms 를 쓰지 않는다', /listTerms\(terms,\s*options\)/],
-  ['검색어가 생길 때 관련도가 기본값이 되지 않는다', 'setSortType(\'relevance\')'],
-  ['난이도 범위를 ranges.LEVEL 로 넘기지 않는다', /ranges\s*=\s*\{\s*LEVEL:/],
-  ['수정일 기간을 updatedPeriodRange 로 넘기지 않는다', /updated\s*=\s*updatedPeriodRange\(/],
-  ['초기화가 DEFAULT_LISTING 으로 돌아가지 않는다', /reset\s*=\s*useCallback\([\s\S]*DEFAULT_LISTING\.sortType[\s\S]*DEFAULT_LISTING\.sortDirection/],
+  ['검색어가 생길 때 관련도가 기본값이 되지 않는다', 'setSort(\'relevance\')'],
+  ['난이도 범위를 ranges.LEVEL 로 넘기지 않는다', 'ranges.LEVEL = level'],
+  ['직무연관도 범위를 ranges 로 넘기지 않는다', 'ranges[key] = relevance[key]'],
+  ['발행일을 created 로 넘기지 않는다', /next\.created\s*=\s*\{\s*start:\s*parseDay\(/],
+  ['초기화가 기본 정렬·필터로 돌아가지 않는다', /reset\s*=\s*useCallback\([\s\S]*setSort\(DEFAULT_SORT\)[\s\S]*setFilterState\(DEFAULT_FILTER_STATE\)/],
 ]);
 
-const sortSelector = read('components/terms/SortSelector.tsx');
-expectIn('components/terms/SortSelector.tsx', sortSelector, [
-  ...['관련도', '수정일', '난이도', '등록일', '내림차순', '오름차순'].map((label) => [`${ label } 선택지가 없다`, `'${ label }'`]),
-  ['관련도를 검색어가 있을 때만 보여주지 않는다', /hasQuery\s*\?\s*SORT_ORDER\s*:\s*SORT_ORDER\.filter\(\(type\)\s*=>\s*type\s*!==\s*'relevance'\)/],
+const listingSrc = listingHook;
+for (const label of ['관련도순', '발행일 최신순', '발행일 과거순', '높은 난이도순', '낮은 난이도순']) {
+  if (!listingSrc.includes(`'${ label }'`)) failures.push(`정렬에 ${ label } 선택지가 없다`);
+}
+const filterBar = read('components/terms/FilterBar.tsx');
+expectIn('components/terms/FilterBar.tsx', filterBar, [
+  ...['<SortSheet', '<RangeSheet', '<DateSheet'].map((tag) => [`${ tag } 시트가 없다`, tag]),
+  ['직무연관도가 DA·DS·DE 슬라이더가 아니다', /RELEVANCE_KEYS[^=]*=\s*\['DA',\s*'DS',\s*'DE'\]/],
+  ['관련도를 검색어가 있을 때만 보여주지 않는다', 'hasQuery={hasQuery}'],
 ]);
-
-const filterSheet = read('components/terms/FilterSheet.tsx');
-expectIn('components/terms/FilterSheet.tsx', filterSheet, [
-  ['난이도 1~5 선택지가 없다', /LEVELS\s*=\s*\[1,\s*2,\s*3,\s*4,\s*5\]/],
-  ['수정일 기간을 UPDATED_PERIODS 로 그리지 않는다', 'UPDATED_PERIODS.map('],
-  ...['전체', '최근 7일', '최근 30일', '최근 90일', '최근 1년'].map((label) => [`${ label } 기간이 없다`, `'${ label }'`]),
+const sortSheet = read('components/terms/SortSheet.tsx');
+expectIn('components/terms/SortSheet.tsx', sortSheet, [
+  ['관련도를 검색어가 있을 때만 보여주지 않는다', /hasQuery\s*\?\s*\(\['relevance',\s*\.\.\.ORDER\]/],
+  ['정렬을 누르면 바로 닫지 않는다', /onSelect\(option\);\s*onClose\(\);/],
 ]);
 
 const emptyResult = read('components/terms/EmptyResult.tsx');
@@ -156,7 +166,7 @@ const detailScreen = read('app/posts/[slug].tsx');
 expectIn('상세 화면 app/posts/[slug].tsx', detailScreen, [
   ['findTermBySlug 로 용어를 찾지 않는다', /findTermBySlug\(terms,\s*slugValue\)/],
   ['찾을 수 없음 화면이 없다', /if \(!term\)[\s\S]*<NotFound\b/],
-  ['용어사전으로 돌아가는 router.replace(\'/(tabs)/terms\') 가 없다', 'router.replace(\'/(tabs)/terms\')'],
+  ['용어사전으로 돌아가는 router.replace(\'/terms\') 가 없다', 'router.replace(\'/terms\')'],
   ['찾은 용어를 최근 본 용어에 기록하지 않는다', /useRecentTerms\(\)[\s\S]*addRecentTerm\(termId\)/],
   ['TermDetail 로 상세를 그리지 않는다', '<TermDetail'],
 ]);
@@ -232,8 +242,8 @@ if (!pkg.dependencies?.['react-native-webview']) failures.push('package.json 에
 
 // 이번 화면의 색은 theme 값만 쓴다
 const colorFiles = [
-  'app/(tabs)/index.tsx',
-  'app/(tabs)/terms.tsx',
+  'app/(tabs)/(home)/index.tsx',
+  'app/(tabs)/(terms)/terms.tsx',
   'lib/recent/RecentTermsProvider.tsx',
   'app/posts/[slug].tsx',
   ...['components/terms', 'components/ui', 'components/detail'].flatMap((dir) => {
@@ -259,4 +269,4 @@ if (failures.length) {
   for (const f of failures) console.error(`- ${ f }`);
   process.exit(1);
 }
-console.log(`check:screens 통과 (탭 ${ screens.length }개: ${ got }, 내 정보 탭·ContentProvider·RecentTermsProvider·홈·용어사전 목록·검색·정렬·필터·결과 없음·상세 섹션·링크·찾을 수 없음·색 ${ colorFiles.length }개 파일 확인)`);
+console.log(`check:screens 통과 (탭 ${ screens.length }개: ${ gotTabs }, 설정 탭·ContentProvider·RecentTermsProvider·홈·용어사전 목록·검색·정렬·필터·결과 없음·상세 섹션·링크·찾을 수 없음·색 ${ colorFiles.length }개 파일 확인)`);

@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
-import { useThemeColors } from '@/theme';
+import { StyleSheet, Text } from 'react-native';
+import PressableScale from '@/components/ui/PressableScale';
+import { font, radius, spacing, useThemeColors } from '@/theme';
 
 interface ChipProps {
   label: string;
@@ -8,40 +9,34 @@ interface ChipProps {
   accessibilityLabel?: string;
 }
 
+// 테두리 없이 면 색으로만 선택 상태를 구분한다
 export default function Chip({ label, selected = false, onPress, accessibilityLabel }: ChipProps) {
   const colors = useThemeColors();
   return (
-    <Pressable
+    <PressableScale
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.base,
-        selected
-          ? { backgroundColor: colors.primary, borderColor: colors.primary }
-          : { backgroundColor: colors.background, borderColor: colors.border },
-        pressed && styles.pressed,
-      ]}
+      style={[styles.base, { backgroundColor: selected ? colors['primary-opacity'] : colors['extreme-light'] }]}
     >
-      <Text style={[styles.label, { color: selected ? colors.background : colors.text }]}>
+      <Text style={[styles.label, { color: selected ? colors.accent : colors['text-secondary'] }, selected && styles.selectedLabel]}>
         {label}
       </Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  pressed: {
-    opacity: 0.7,
+    borderRadius: radius.pill,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
   label: {
-    fontSize: 14,
+    fontSize: font.subhead,
+  },
+  selectedLabel: {
+    fontWeight: '600',
   },
 });

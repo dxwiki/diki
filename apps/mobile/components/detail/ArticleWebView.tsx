@@ -4,7 +4,7 @@ import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { buildArticleHtml, parseArticleMessage } from '@diki/core';
 import { useMathJaxScript } from '@/lib/webview';
-import { useThemeColors } from '@/theme';
+import { spacing, useThemeColors } from '@/theme';
 import { useDetailLinks } from './useDetailLinks';
 
 interface ArticleWebViewProps {
@@ -67,7 +67,7 @@ export default function ArticleWebView({ content }: ArticleWebViewProps) {
 
 const styles = StyleSheet.create({
   loading: {
-    paddingVertical: 16,
+    paddingVertical: spacing.gutter,
     alignItems: 'center',
   },
   container: {

@@ -1,11 +1,12 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, View, type ScrollViewInstance } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { LessonItem } from '@diki/core';
 import Button from '@/components/ui/Button';
 import Text from '@/components/ui/Text';
 import { useProgress } from '@/lib/progress';
-import { useThemeColors } from '@/theme';
+import { font, spacing, useThemeColors } from '@/theme';
 import AnswerFeedback from './AnswerFeedback';
 import ChoiceView from './ChoiceView';
 import LessonCardView from './LessonCardView';
@@ -73,6 +74,7 @@ export default function LessonRunner({ progressKey, eyebrow, title, subtitle, le
     const correct = current.kind === 'choice'
       ? selected === current.answer
       : current.pairs.every((_, i) => assigned[i] === i);
+    void Haptics.notificationAsync(correct ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error);
     setAnswers((prev) => ({ ...prev, [position]: { selected, assigned, correct } }));
     if (!correct) {
       setMistakes((prev) => (prev.includes(current.id) ? prev : [...prev, current.id]));
@@ -86,6 +88,7 @@ export default function LessonRunner({ progressKey, eyebrow, title, subtitle, le
       return;
     }
     setFinished(true);
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     scrollRef.current?.scrollTo({ y: 0, animated: false });
     if (!recorded.current) {
       recorded.current = true;
@@ -189,11 +192,11 @@ export default function LessonRunner({ progressKey, eyebrow, title, subtitle, le
       </ScrollView>
 
       {!finished ? (
-        <View style={[styles.bar, { paddingBottom: insets.bottom + 12, borderTopColor: colors.border, backgroundColor: colors.background }]}>
+        <View style={[styles.bar, { paddingBottom: insets.bottom + 12, borderTopColor: colors.line, backgroundColor: colors.background }]}>
           <View style={styles.barButton}>
             <Button
               label="이전"
-              variant="outline"
+              variant="secondary"
               disabled={position === 0}
               onPress={() => goTo(position - 1)}
             />
@@ -216,32 +219,32 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: 40,
-    gap: 28,
+    paddingHorizontal: spacing.gutter,
+    paddingTop: spacing.gutter,
+    paddingBottom: spacing.section * 1.5,
+    gap: spacing.lg,
   },
   head: {
-    gap: 10,
+    gap: spacing.sm,
   },
   titleRow: {
-    gap: 2,
+    gap: spacing.xxs,
   },
   title: {
-    fontSize: 26,
+    fontSize: font.title1,
     fontWeight: '700',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: font.callout,
   },
   item: {
-    gap: 20,
+    gap: spacing.gutter,
   },
   bar: {
     flexDirection: 'row',
-    gap: 10,
-    paddingHorizontal: 20,
-    paddingTop: 12,
+    gap: spacing.sm,
+    paddingHorizontal: spacing.gutter,
+    paddingTop: spacing.md,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
   barButton: {

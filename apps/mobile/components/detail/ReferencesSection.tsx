@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { References } from '@diki/core';
 import Text from '@/components/ui/Text';
-import { useThemeColors } from '@/theme';
+import { font, hairline, spacing, useThemeColors } from '@/theme';
 import SectionBlock from './SectionBlock';
 
 interface ReferenceRow {
@@ -87,7 +87,7 @@ export default function ReferencesSection({ references, onOpenLink }: References
               accessibilityHint={hasLink(row.link) ? '시스템 브라우저에서 엽니다' : undefined}
               disabled={!hasLink(row.link)}
               onPress={() => onOpenLink(row.link.trim())}
-              style={({ pressed }) => [styles.row, { borderColor: colors['extreme-light'] }, pressed && styles.pressed]}
+              style={({ pressed }) => [styles.row, { borderBottomColor: colors.line }, pressed && styles.pressed]}
             >
               <Text style={styles.rowTitle}>{row.title}</Text>
               {row.details.map((detail, detailIndex) => (
@@ -109,23 +109,22 @@ export default function ReferencesSection({ references, onOpenLink }: References
 
 const styles = StyleSheet.create({
   group: {
-    gap: 8,
+    gap: spacing.xs,
   },
   groupLabel: {
-    fontSize: 15,
+    fontSize: font.body,
     fontWeight: '700',
   },
   row: {
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    gap: 4,
+    paddingVertical: spacing.md,
+    borderBottomWidth: hairline,
+    gap: spacing.xs,
   },
   rowTitle: {
     fontWeight: '600',
   },
   more: {
-    fontSize: 13,
+    fontSize: font.footnote,
     fontWeight: '600',
   },
   pressed: {

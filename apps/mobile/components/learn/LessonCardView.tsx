@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import type { LessonCard } from '@diki/core';
 import ArticleWebView from '@/components/detail/ArticleWebView';
 import Text from '@/components/ui/Text';
-import { useThemeColors } from '@/theme';
+import { font, spacing, useThemeColors } from '@/theme';
 
 export default function LessonCardView({ card }: { card: LessonCard }) {
   const colors = useThemeColors();
@@ -32,25 +32,25 @@ export default function LessonCardView({ card }: { card: LessonCard }) {
 
 const styles = StyleSheet.create({
   card: {
-    gap: 14,
+    gap: spacing.md,
   },
   label: {
-    fontSize: 14,
+    fontSize: font.subhead,
     fontWeight: '700',
   },
   body: {
-    fontSize: 19,
+    fontSize: font.title3,
     lineHeight: 30,
     fontWeight: '600',
   },
   tags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
+    gap: spacing.sm,
   },
   tag: {
     borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
   },
 });

@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import Text from '@/components/ui/Text';
-import { useThemeColors } from '@/theme';
+import { radius, spacing, useThemeColors } from '@/theme';
 import RichText from './RichText';
 import SectionBlock from './SectionBlock';
 
@@ -19,7 +19,7 @@ export default function UsecaseSection({ industries, description, example }: Use
           {industries.map((industry, index) => (
             <View
               key={`${ industry }-${ index }`}
-              style={[styles.industry, { borderColor: colors.border }]}
+              style={[styles.industry, { backgroundColor: colors['extreme-light'] }]}
             >
               <Text variant="caption">{industry}</Text>
             </View>
@@ -28,7 +28,7 @@ export default function UsecaseSection({ industries, description, example }: Use
       ) : null}
       {description ? <RichText text={description} /> : null}
       {example ? (
-        <View style={[styles.example, { backgroundColor: colors['background-secondary'], borderLeftColor: colors.primary }]}>
+        <View style={[styles.example, { borderLeftColor: colors.primary }]}>
           <Text style={styles.exampleLabel}>{'사례'}</Text>
           <RichText text={example} />
         </View>
@@ -41,19 +41,18 @@ const styles = StyleSheet.create({
   industries: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
+    gap: spacing.sm,
   },
   industry: {
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingVertical: 3,
-    paddingHorizontal: 10,
+    borderRadius: radius.pill,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
   },
   example: {
-    borderLeftWidth: 4,
-    borderRadius: 6,
-    padding: 12,
-    gap: 6,
+    borderLeftWidth: 3,
+    paddingLeft: spacing.md,
+    paddingVertical: spacing.xs,
+    gap: spacing.sm,
   },
   exampleLabel: {
     fontWeight: '700',

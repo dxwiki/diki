@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import Text from '@/components/ui/Text';
-import { useThemeColors } from '@/theme';
+import { font, spacing, useThemeColors } from '@/theme';
 
 export default function QuestionHeader({ tag, prompt, hint }: { tag?: string; prompt: string; hint?: string }) {
   const colors = useThemeColors();
@@ -19,20 +19,20 @@ export default function QuestionHeader({ tag, prompt, hint }: { tag?: string; pr
 
 const styles = StyleSheet.create({
   header: {
-    gap: 8,
+    gap: spacing.sm,
   },
   tag: {
     alignSelf: 'flex-start',
     borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
   },
   tagText: {
-    fontSize: 12,
+    fontSize: font.caption,
     fontWeight: '600',
   },
   prompt: {
-    fontSize: 19,
+    fontSize: font.title3,
     lineHeight: 28,
     fontWeight: '700',
   },

@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { LessonMatch } from '@diki/core';
 import Text from '@/components/ui/Text';
-import { useThemeColors } from '@/theme';
+import { font, spacing, useThemeColors } from '@/theme';
 import QuestionHeader from './QuestionHeader';
 
 interface MatchViewProps {
@@ -78,22 +78,22 @@ export default function MatchView({ question, assigned, activeLeft, activeRight,
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: 16,
+    gap: spacing.gutter,
   },
   rows: {
-    gap: 10,
+    gap: spacing.sm,
   },
   row: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
   },
   cell: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 8,
+    gap: spacing.sm,
     borderRadius: 14,
     borderWidth: 2,
-    padding: 12,
+    padding: spacing.md,
   },
   left: {
     flex: 2,
@@ -109,17 +109,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   numText: {
-    fontSize: 11,
+    fontSize: font.caption,
     fontWeight: '700',
   },
   leftText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: font.body,
     fontWeight: '700',
   },
   rightText: {
     flex: 1,
-    fontSize: 13,
+    fontSize: font.footnote,
     lineHeight: 19,
   },
 });

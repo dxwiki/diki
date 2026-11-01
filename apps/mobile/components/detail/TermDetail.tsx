@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { getDetailSections, type DetailSection, type TermData } from '@diki/core';
 import Screen from '@/components/ui/Screen';
+import { spacing } from '@/theme';
 import ArticleWebView from './ArticleWebView';
 import DetailHeader from './DetailHeader';
 import DifficultySection from './DifficultySection';
@@ -88,17 +89,29 @@ const renderSection = (section: DetailSection, links: DetailLinks) => {
 };
 
 // getDetailSections 순서대로 그리고 빈 섹션은 core 가 이미 뺐다 (광고 없음)
+const GROUPED_WITH_PREVIOUS = new Set<DetailSection['type']>(['difficulty']);
+
 export default function TermDetail({ term, terms }: TermDetailProps) {
   const links = useDetailLinks();
-  const sections = useMemo(() => getDetailSections(term, terms), [term, terms]);
+  const groups = useMemo(() => {
+    const result: DetailSection[][] = [];
+    getDetailSections(term, terms).forEach((section) => {
+      const last = result[result.length - 1];
+      if (last && GROUPED_WITH_PREVIOUS.has(section.type)) last.push(section);
+      else result.push([section]);
+    });
+    return result;
+  }, [term, terms]);
   return (
-    <Screen>
-      {sections.map((section) => (
+    <Screen divided>
+      {groups.map((sections) => (
         <View
-          key={section.type}
-          style={styles.section}
+          key={sections[0].type}
+          style={styles.group}
         >
-          {renderSection(section, links)}
+          {sections.map((section) => (
+            <View key={section.type}>{renderSection(section, links)}</View>
+          ))}
         </View>
       ))}
     </Screen>
@@ -106,7 +119,8 @@ export default function TermDetail({ term, terms }: TermDetailProps) {
 }
 
 const styles = StyleSheet.create({
-  section: {
-    marginBottom: 28,
+  group: {
+    gap: spacing.gutter,
+    paddingVertical: spacing.lg,
   },
 });

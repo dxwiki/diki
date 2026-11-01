@@ -1,7 +1,8 @@
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import PressableScale from '@/components/ui/PressableScale';
 import type { StageSummary } from '@diki/core';
 import Text from '@/components/ui/Text';
-import { useThemeColors } from '@/theme';
+import { font, radius, spacing, useThemeColors } from '@/theme';
 import Icon from './Icon';
 
 interface StageSelectorProps {
@@ -23,28 +24,22 @@ export default function StageSelector({ stages, unlocked, completed, selectedId,
       {stages.map((stage, i) => {
         const selected = stage.id === selectedId;
         const locked = !unlocked[i];
-        const fg = selected ? colors.background : locked ? colors.gray2 : colors.text;
+        const fg = selected ? colors.background : locked ? colors.gray2 : colors['text-secondary'];
         return (
-          <Pressable
+          <PressableScale
             key={stage.id}
             accessibilityRole="tab"
             accessibilityState={{ selected }}
             accessibilityLabel={`${ i + 1 }단계 ${ stage.label }${ completed[i] ? ' 완료' : locked ? ' 잠김' : '' }`}
             onPress={() => onSelect(stage.id)}
-            style={({ pressed }) => [
-              styles.pill,
-              selected
-                ? { backgroundColor: colors.primary, borderColor: colors.primary }
-                : { backgroundColor: colors.background, borderColor: colors.border },
-              pressed && styles.pressed,
-            ]}
+            style={[styles.pill, { backgroundColor: selected ? colors.primary : colors['extreme-light'] }]}
           >
             <View style={styles.inner}>
               {locked ? <Icon name="lock" color={fg} size={12} /> : null}
               {completed[i] ? <Icon name="check" color={fg} size={12} /> : null}
               <Text style={[styles.label, { color: fg }]}>{stage.label}</Text>
             </View>
-          </Pressable>
+          </PressableScale>
         );
       })}
     </ScrollView>
@@ -53,22 +48,21 @@ export default function StageSelector({ stages, unlocked, completed, selectedId,
 
 const styles = StyleSheet.create({
   row: {
-    gap: 8,
-    paddingVertical: 2,
+    gap: spacing.sm,
+    paddingHorizontal: spacing.gutter,
   },
   pill: {
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    borderRadius: radius.pill,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
   inner: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: spacing.sm,
   },
   label: {
-    fontSize: 15,
+    fontSize: font.body,
     fontWeight: '600',
   },
   pressed: {

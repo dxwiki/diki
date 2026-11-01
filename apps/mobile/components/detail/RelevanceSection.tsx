@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import type { DetailRelevanceItem, RelevanceRole } from '@diki/core';
 import Text from '@/components/ui/Text';
-import { useThemeColors } from '@/theme';
+import { font, hairline, spacing, useThemeColors } from '@/theme';
 import RichText from './RichText';
 import SectionBlock from './SectionBlock';
 
@@ -21,46 +21,46 @@ export default function RelevanceSection({ items }: RelevanceSectionProps) {
   const colors = useThemeColors();
   return (
     <SectionBlock title="직무 연관도">
-      {items.map((item) => {
-        const label = ROLE_LABELS[item.role];
-        const score = Math.min(Math.max(Math.round(item.score), 0), MAX_SCORE);
-        return (
-          <View
-            key={item.role}
-            style={[styles.card, { borderColor: colors['extreme-light'], backgroundColor: colors['background-secondary'] }]}
-          >
-            <View style={styles.head}>
-              <View>
-                <Text style={styles.title}>{label.title}</Text>
-                <Text variant="caption">{label.subtitle}</Text>
+      <View>
+        {items.map((item, index) => {
+          const label = ROLE_LABELS[item.role];
+          const score = Math.min(Math.max(Math.round(item.score), 0), MAX_SCORE);
+          return (
+            <View
+              key={item.role}
+              style={[styles.row, index > 0 && { borderTopWidth: hairline, borderTopColor: colors.line }]}
+            >
+              <View style={styles.head}>
+                <View>
+                  <Text style={styles.title}>{label.title}</Text>
+                  <Text variant="caption">{label.subtitle}</Text>
+                </View>
+                <View
+                  style={styles.score}
+                  accessible
+                  accessibilityLabel={`연관도 ${ score }점 (${ MAX_SCORE }점 만점)`}
+                >
+                  {Array.from({ length: MAX_SCORE }, (_, index) => (
+                    <View
+                      key={index}
+                      style={[styles.dot, { backgroundColor: index < score ? colors.primary : colors.gray4 }]}
+                    />
+                  ))}
+                </View>
               </View>
-              <View
-                style={styles.score}
-                accessible
-                accessibilityLabel={`연관도 ${ score }점 (${ MAX_SCORE }점 만점)`}
-              >
-                {Array.from({ length: MAX_SCORE }, (_, index) => (
-                  <View
-                    key={index}
-                    style={[styles.dot, { backgroundColor: index < score ? colors.primary : colors.gray4 }]}
-                  />
-                ))}
-              </View>
+              <RichText text={item.description} />
             </View>
-            <RichText text={item.description} />
-          </View>
-        );
-      })}
+          );
+        })}
+      </View>
     </SectionBlock>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 14,
-    gap: 8,
+  row: {
+    paddingVertical: spacing.md + 2,
+    gap: spacing.sm,
   },
   head: {
     flexDirection: 'row',
@@ -68,12 +68,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 16,
+    fontSize: font.callout,
     fontWeight: '700',
   },
   score: {
     flexDirection: 'row',
-    gap: 4,
+    gap: spacing.xs,
   },
   dot: {
     width: 10,

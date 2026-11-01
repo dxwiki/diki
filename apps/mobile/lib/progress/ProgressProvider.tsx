@@ -8,12 +8,16 @@ export interface ProgressContextValue {
   ready: boolean;
   state: ProgressState;
   recordAttempt: (mode: CourseMode, key: string, result: { completed: boolean; review: boolean })=> void;
+  saveDraft: (key: string, text: string)=> void;
+  resetProgress: ()=> void;
 }
 
 const ProgressContext = createContext<ProgressContextValue>({
   ready: false,
   state: EMPTY_PROGRESS,
   recordAttempt: () => undefined,
+  saveDraft: () => undefined,
+  resetProgress: () => undefined,
 });
 
 // 서버 진도 API(웹 TODO 4~5단계) 전까지 기기에만 저장한다
@@ -66,7 +70,32 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     commit(update(stateRef.current));
   }, [commit]);
 
-  const value = useMemo(() => ({ ready, state, recordAttempt }), [ready, state, recordAttempt]);
+  const enqueue = useCallback((update: (s: ProgressState)=> ProgressState) => {
+    if (!readyRef.current) {
+      pendingRef.current = [...pendingRef.current, update];
+      return;
+    }
+    commit(update(stateRef.current));
+  }, [commit]);
+
+  // 빈 답변은 초안에서 지운다
+  const saveDraft = useCallback<ProgressContextValue['saveDraft']>((key, text) => {
+    enqueue((s) => {
+      const drafts = { ...s.drafts };
+      if (text.trim()) drafts[key] = text;
+      else delete drafts[key];
+      return { ...s, drafts };
+    });
+  }, [enqueue]);
+
+  const resetProgress = useCallback(() => {
+    enqueue(() => EMPTY_PROGRESS);
+  }, [enqueue]);
+
+  const value = useMemo(
+    () => ({ ready, state, recordAttempt, saveDraft, resetProgress }),
+    [ready, state, recordAttempt, saveDraft, resetProgress],
+  );
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
 }
 
