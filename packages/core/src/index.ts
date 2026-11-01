@@ -104,3 +104,11 @@ export {
   extractJson,
   maskApiKey,
 } from './interview-ai';
+export {
+  APP_PRIVACY_TITLE,
+  APP_PRIVACY_EFFECTIVE_DATE,
+  APP_PRIVACY_INTRO,
+  APP_PRIVACY_SECTIONS,
+  APP_PRIVACY_CONTACT,
+  type PrivacySection,
+} from './privacy';
