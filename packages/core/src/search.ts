@@ -5,8 +5,8 @@ const koTokenizer = (token: lunr.Token) => {
   return token.update((word: string) => {
     return word
       .normalize('NFC') // 유니코드 정규화 (자모 분리 방지)
-      .replace(/^[^\w가-힣]+/, '') // 앞쪽 특수 문자 제거
-      .replace(/[^\w가-힣]+$/, ''); // 뒤쪽 특수 문자 제거
+      .replace(/^[^\w가-힣ㄱ-ㅎㅏ-ㅣ]+/, '') // 앞쪽 특수 문자 제거 (입력 중인 낱자모는 남긴다)
+      .replace(/[^\w가-힣ㄱ-ㅎㅏ-ㅣ]+$/, ''); // 뒤쪽 특수 문자 제거
   });
 };
 

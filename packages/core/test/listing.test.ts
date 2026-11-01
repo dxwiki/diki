@@ -184,3 +184,9 @@ test('isFilterActive 와 DEFAULT_LISTING 초기화', () => {
   assert.deepEqual(ids(listTerms(TERMS, reset)), [6, 5, 4, 3, 2, 1]);
   assert.deepEqual(ids(listTerms(realTerms, reset)), ids(listTerms(realTerms)));
 });
+
+test('낱자모만 입력하면 전체가 아니라 실제로 포함한 용어만 찾는다', () => {
+  assert.equal(searchTerms('ㅇㅁㅅㅁ', TERMS).length, 0);
+  assert.equal(searchTerms('ㄷ', TERMS).length, 0);
+  assert.ok(searchTerms('데이터', TERMS).length >= 3);
+});
