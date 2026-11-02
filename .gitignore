@@ -173,6 +173,7 @@ pyrightconfig.json
 ### NextJS ###
 # dependencies
 /node_modules
+node_modules/
 /.pnp
 .pnp.js
 .yarn/install-state.gz
@@ -228,8 +229,21 @@ service-account.json
 /public/sitemap.xml
 /public/sitemap-posts.xml
 
+# 모바일 앱(Expo) 실행·빌드 산출물
+/apps/*/.expo/
+/apps/*/dist/
+/apps/*/web-build/
+/apps/*/ios/
+/apps/*/android/
+/apps/*/expo-env.d.ts
+/apps/*/assets/mathjax/
+.metro-health-check*
+
 # output
 /src/data
+/public/data
+packages/core/.test-dist
+.ai-test-dist
 
 .cursor
 claude.md

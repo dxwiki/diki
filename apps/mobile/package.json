@@ -1,0 +1,51 @@
+{
+  "name": "@diki/mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "ios": "expo start --ios",
+    "android": "expo start --android",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .js,.mjs,.ts,.tsx",
+    "lint:fix": "eslint --fix . --ext .js,.mjs,.ts,.tsx",
+    "check:theme": "node scripts/checkTheme.mjs",
+    "check:screens": "node scripts/checkScreens.mjs",
+    "check:react": "node scripts/checkReactResolution.mjs",
+    "sync-content": "node scripts/syncContent.mjs",
+    "check:snapshot": "node scripts/checkSnapshot.mjs",
+    "copy-mathjax": "node scripts/copyMathJax.mjs",
+    "postinstall": "node scripts/copyMathJax.mjs",
+    "check:mathjax": "node scripts/checkMathJaxAsset.mjs"
+  },
+  "dependencies": {
+    "@diki/core": "*",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "~58.0.21",
+    "expo-asset": "~58.0.19",
+    "expo-constants": "~58.0.14",
+    "expo-file-system": "~58.0.13",
+    "expo-font": "~58.0.11",
+    "expo-haptics": "~58.0.7",
+    "expo-linking": "~58.0.15",
+    "expo-router": "~58.0.28",
+    "expo-splash-screen": "~58.0.12",
+    "expo-status-bar": "~58.0.4",
+    "expo-symbols": "~58.0.4",
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-gesture-handler": "~3.3.0",
+    "react-native-reanimated": "4.7.1",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-screens": "~4.30.0",
+    "react-native-webview": "14.0.1",
+    "react-native-worklets": "0.13.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.3.0",
+    "expo-mcp": "~0.2.1",
+    "mathjax": "^3.2.2",
+    "typescript": "~6.0.3"
+  }
+}

@@ -2,7 +2,7 @@ import PostCard from '@/components/posts/PostCard';
 import PrevNextSection from '../sections/PrevNextSection';
 import { fetchTermsData } from '@/utils/fetchData';
 import { TermData } from '@/types';
-import { searchTerms } from '@/utils/search';
+import { getRecommendedTerms } from '@diki/core';
 
 interface RecommendationSectionProps {
   term: TermData
@@ -11,22 +11,7 @@ interface RecommendationSectionProps {
 
 const RecommendationSection = async ({ term, lastTermId }: RecommendationSectionProps) => {
   const terms = await fetchTermsData();
-  let filteredTerms = searchTerms(term.title?.ko ?? '', terms)
-    .filter((t) => t.id !== term.id)
-    .slice(0, 6);
-
-  // 추천 포스트가 6개 미만이면 최신 컨텐츠로 채우기
-  if (filteredTerms.length < 6) {
-    const recentTerms = terms
-      .filter((t) =>
-        t.id !== term.id
-        && !filteredTerms.some((ft) => ft.id === t.id)
-      )
-      .sort((a, b) => (b.id ?? 0) - (a.id ?? 0))
-      .slice(0, 6 - filteredTerms.length);
-
-    filteredTerms = [...filteredTerms, ...recentTerms];
-  }
+  const filteredTerms = getRecommendedTerms(term, terms);
 
   return (
     <section className='w-full group-section flex flex-col gap-4'>
